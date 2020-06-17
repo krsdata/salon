@@ -1,0 +1,64 @@
+[26-Oct-2019 22:30:01 Asia/Kolkata] PHP Warning:  mysqli_connect(): (28000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 4
+[26-Oct-2019 22:30:01 Asia/Kolkata] PHP Notice:  Trying to get property 'connect_error' of non-object in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 9
+[26-Oct-2019 22:30:01 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php:37
+Stack trace:
+#0 {main}
+  thrown in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 37
+[27-Oct-2019 22:30:02 Asia/Kolkata] PHP Warning:  mysqli_connect(): (28000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 4
+[27-Oct-2019 22:30:02 Asia/Kolkata] PHP Notice:  Trying to get property 'connect_error' of non-object in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 9
+[27-Oct-2019 22:30:02 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php:37
+Stack trace:
+#0 {main}
+  thrown in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 37
+[28-Oct-2019 15:36:01 Asia/Kolkata] PHP Warning:  mysqli_connect(): (28000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 4
+[28-Oct-2019 15:36:01 Asia/Kolkata] PHP Notice:  Trying to get property 'connect_error' of non-object in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 9
+[28-Oct-2019 15:36:01 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php:37
+Stack trace:
+#0 {main}
+  thrown in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 37
+[28-Oct-2019 15:37:01 Asia/Kolkata] PHP Warning:  mysqli_connect(): (28000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 4
+[28-Oct-2019 15:37:01 Asia/Kolkata] PHP Notice:  Trying to get property 'connect_error' of non-object in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 9
+[28-Oct-2019 15:37:01 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php:37
+Stack trace:
+#0 {main}
+  thrown in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 37
+[28-Oct-2019 15:38:01 Asia/Kolkata] PHP Warning:  mysqli_connect(): (28000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 4
+[28-Oct-2019 15:38:01 Asia/Kolkata] PHP Notice:  Trying to get property 'connect_error' of non-object in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 9
+[28-Oct-2019 15:38:01 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php:37
+Stack trace:
+#0 {main}
+  thrown in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 37
+[28-Oct-2019 15:39:01 Asia/Kolkata] PHP Warning:  mysqli_connect(): (28000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 4
+[28-Oct-2019 15:39:01 Asia/Kolkata] PHP Notice:  Trying to get property 'connect_error' of non-object in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 9
+[28-Oct-2019 15:39:01 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php:37
+Stack trace:
+#0 {main}
+  thrown in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 37
+[28-Oct-2019 15:40:01 Asia/Kolkata] PHP Warning:  mysqli_connect(): (28000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 4
+[28-Oct-2019 15:40:01 Asia/Kolkata] PHP Notice:  Trying to get property 'connect_error' of non-object in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 9
+[28-Oct-2019 15:40:01 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php:37
+Stack trace:
+#0 {main}
+  thrown in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 37
+[28-Oct-2019 15:41:02 Asia/Kolkata] PHP Warning:  mysqli_connect(): (28000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 4
+[28-Oct-2019 15:41:02 Asia/Kolkata] PHP Notice:  Trying to get property 'connect_error' of non-object in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 9
+[28-Oct-2019 15:41:02 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php:37
+Stack trace:
+#0 {main}
+  thrown in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 37
+[28-Oct-2019 15:42:01 Asia/Kolkata] PHP Warning:  mysqli_connect(): (28000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 4
+[28-Oct-2019 15:42:01 Asia/Kolkata] PHP Notice:  Trying to get property 'connect_error' of non-object in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 9
+[28-Oct-2019 15:42:01 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php:37
+Stack trace:
+#0 {main}
+  thrown in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/appointmentReminder.php on line 37
+[05-May-2020 20:00:01 America/Chicago] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/InsertIntoTxnReplica.php on line 3
+[05-May-2020 20:00:02 America/Chicago] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/InsertIntoTxnReplica.php:42
+Stack trace:
+#0 {main}
+  thrown in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/InsertIntoTxnReplica.php on line 42
+[06-May-2020 20:00:01 America/Chicago] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/InsertIntoTxnReplica.php on line 3
+[06-May-2020 20:00:01 America/Chicago] PHP Fatal error:  Uncaught Error: Call to a member function query() on bool in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/InsertIntoTxnReplica.php:42
+Stack trace:
+#0 {main}
+  thrown in /home/tamarufa/public_html/marks-retech.in/Login/application/controllers/InsertIntoTxnReplica.php on line 42

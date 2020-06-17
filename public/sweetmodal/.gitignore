@@ -1,0 +1,10 @@
+node_modules
+.sass-cache
+.DS_Store
+.DS_Store?
+._*
+dist/jquery.sweet-modal*.zip
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

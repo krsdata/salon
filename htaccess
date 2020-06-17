@@ -1,0 +1,8 @@
+# Always use https for secure connections
+# Replace 'www.example.com' with your domain name
+# (as it appears on your SSL certificate)
+RewriteEngine On
+RewriteCond %{SERVER_PORT} 80
+RewriteRule ^(.*)$ https://www.marks-retech.in/ [R=301,L]
+SetEnv TZ Asia/Kolkata
+php_value date.timezone Asia/Kolkata 

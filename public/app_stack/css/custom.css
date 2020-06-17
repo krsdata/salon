@@ -1,0 +1,488 @@
+#login_page{
+	background-image: url('https://marks-retech.in/Login/public/images/login_back.jpeg');
+	background-position: center;
+	/* background-repeat: no-repeat; */
+}
+#client_book_appointment_page{
+	background-image: url('https://marks-retech.in/Login/public/images/client_background.jpg');
+	background-position: center;
+	/* background-repeat: no-repeat; */
+}
+#AddPackage{
+	font-size: 10px !important;
+}
+#AddPackage ::placeholder{
+	font-size: 10px !important;
+}
+#AddPackage select{
+	font-size: 10px !important;
+}
+#load_screen{
+    background: #ffffff;
+    opacity: 0.6;
+    position: fixed;
+    z-index:10000;
+    top: 0px;
+    width: 100%;
+    height:100%;
+}
+
+.custom-spinner{
+    width: 4rem !important;
+    height: 4rem !important;
+    margin-top: 25%;
+    margin-left: 48%;
+}
+
+.tt-dropdown-menu
+{
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 1px;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 6px 12px;
+    width: 100%;
+}
+.tt-suggestion.tt-cursor {
+    background-color: #0097cf;
+    color: #fff;
+    cursor: pointer;
+}
+.tt-suggestion p {
+    margin: 0;
+}
+
+.twitter-typeahead{
+    width: 90% !important;
+}
+
+.customized-category-card{
+   border-radius: 8px;
+    color: #ffffff;
+    text-overflow: clip;
+    height: 50px;
+  width:100px;
+  background-color: #0070c0;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+.customized-category-card:hover{
+    box-shadow: 0 2px 4px 0 rgba(0,153,255,0.86),0 2px 10px 0 rgba(0,153,255,0.50)!important;
+}
+
+.coupon-card{
+	border-radius: 8px;
+	 color: #ffffff;
+	 text-overflow: clip;
+	 height: 50px;
+ width:100px;
+ background-color: #2d5484;
+ word-wrap: break-word;
+ overflow: hidden;
+}
+.coupon-card1{
+	border-radius: 8px;
+	 color: #ffffff;
+	 text-overflow: clip;
+	 height: 50px;
+ width:100px;
+ background-color: orange;
+ word-wrap: break-word;
+ overflow: hidden;
+}
+.coupon-card2{
+	border-radius: 8px;
+	 color: #ffffff;
+	 text-overflow: clip;
+	 height: 50px;
+ width:100px;
+ background-color: yellowgreen;
+ word-wrap: break-word;
+ overflow: hidden;
+}
+
+.customized-category-card-package{
+    border-radius: 8px;
+    color: white;
+    text-overflow: clip;
+}
+.customized-category-card-package:hover{
+    box-shadow: 0 2px 4px 0 rgba(0,153,255,0.86),0 2px 10px 0 rgba(0,153,255,0.50)!important;
+}
+
+
+.modal-header{
+    background-color:#0070c0!important;
+    font-weight: bold!important;
+      color: #ffffff;
+}
+.card{
+    margin:.15rem!important;
+}
+.card-header{
+    padding:.25rem!important;
+}
+.card-body{
+    padding:.25rem!important;
+}
+.content{
+    padding-top: .25rem!important;
+}
+.packageCard{
+  padding: 5px;
+  border-radius: 10px;
+ 	/* margin: 10px; */
+  width: auto;
+  max-height: 200px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px 0 rgba(129, 131, 133, 0.86),0 2px 10px 0 rgba(241, 242, 243, 0.5)!important;
+
+}
+.packageCard:hover{
+    box-shadow: 0 2px 4px 0 rgba(0,153,255,0.86),0 2px 10px 0 rgba(0,153,255,0.50)!important;
+}
+.table{
+    margin-bottom:0px;
+}
+
+.table td, .table th {
+    padding:6px!important;
+}
+
+
+/* for billing board */
+.fixed_headers {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+  
+  .fixed_headers th,
+  .fixed_headers td {
+    text-align: left
+  }
+  .fixed_headers th {
+    text-align: left
+  }
+  .fixed_headers td:nth-child(1),
+  .fixed_headers th:nth-child(1) {
+    min-width: 120px;
+    max-width:120px;
+    word-wrap:break-word;
+  }
+  .fixed_headers td:nth-child(2),
+  .fixed_headers th:nth-child(2) {
+    min-width: 50px;
+    text-align:center;
+  }
+  .fixed_headers td:nth-child(3),
+  .fixed_headers th:nth-child(3) {
+    width: 50px;
+    text-align:center;
+  }
+
+  .fixed_headers td:nth-child(4),
+  .fixed_headers th:nth-child(4) {
+    width: 50px;
+  }
+  .fixed_headers td:nth-child(5),
+  .fixed_headers th:nth-child(5) {
+    width: 50px;
+  }
+  .fixed_headers td:nth-child(6),
+  .fixed_headers th:nth-child(6) {
+    width: 50px;
+	}
+	.fixed_headers td:nth-child(7),
+  .fixed_headers th:nth-child(7) {
+    width: 125px;
+  }
+  .fixed_headers td:nth-child(8),
+  .fixed_headers th:nth-child(8) {
+    width: 125px;
+  }
+  .fixed_headers thead {
+    background-color: #333;
+    color: #fdfdfd;
+    width: 100%;
+  }
+  .fixed_headers thead tr {
+    display: block;
+    position: relative;
+  }
+  .fixed_headers tbody {
+    display: block;
+    overflow: auto;
+    width: 100%;
+    height: 190px;
+  }
+  
+  .old_ie_wrapper {
+    height: 300px;
+    width: 750px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .old_ie_wrapper tbody {
+    height: auto;
+  }
+  
+/* end billing board */
+
+/* for packages board */
+.fixed_headers_packages {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+  
+  .fixed_headers_packages th,
+  .fixed_headers_packages td {
+    text-align: left
+  }
+  .fixed_headers_packages th {
+    text-align: left
+  }
+  .fixed_headers_packages td:nth-child(1),
+  .fixed_headers_packages th:nth-child(1) {
+    min-width: 110px;
+  }
+  .fixed_headers_packages td:nth-child(2),
+  .fixed_headers_packages th:nth-child(2) {
+    min-width: 50px;
+  }
+  .fixed_headers_packages td:nth-child(3),
+  .fixed_headers_packages th:nth-child(3) {
+    width: 100px;
+  }
+
+  .fixed_headers_packages td:nth-child(4),
+  .fixed_headers_packages th:nth-child(4) {
+    width: 100px;
+  }
+  .fixed_headers_packages td:nth-child(5),
+  .fixed_headers_packages th:nth-child(5) {
+    width: 150px;
+  }
+  .fixed_headers_packages thead {
+    background-color: #333;
+    color: #fdfdfd;
+    width: 100%;
+  }
+  .fixed_headers_packages thead tr {
+    display: block;
+    position: relative;
+  }
+  .fixed_headers_packages tbody {
+    display: block;
+    overflow: auto;
+    width: 100%;
+    height: 100px;
+  }
+  
+  .old_ie_wrapper {
+    height: 300px;
+    width: 750px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .old_ie_wrapper tbody {
+    height: auto;
+  }
+  
+/* end packages board */
+@media print{
+  #printBill {
+    display: none;
+  }
+  .bill_print{
+    font-size: 40px!important;
+    background-color: #fff!important;
+    color: black!important;
+  }
+}
+
+.error {
+  color : red !important;
+}
+.navbar {
+  border-bottom: 1px solid #edeef0;
+  background-color: #0070c0!important;
+  color: white;
+}
+.hamburger, .hamburger:after, .hamburger:before {
+  background: #fff!important;
+  display: block;
+}
+h3{
+  font-size: 1.2rem!important;
+  font-weight: 400!important;
+}
+
+#arrows-primary-step-1, #arrows-primary-step-2, #arrows-primary-step-3{
+  padding:5px;
+}
+.form-control{
+  font-size: 12px!important;
+}
+
+.sw-theme-arrows>ul.step-anchor>li a, .sw-theme-arrows>ul.step-anchor>li a:hover {
+  background: transparent;
+  color: #343a40;
+  padding: 10px 40px;
+  border: 0;
+}
+
+.sw-theme-arrows>ul.step-anchor>li>a, .sw-theme-arrows>ul.step-anchor>li>a:hover {
+  text-decoration: none;
+  padding: 10px 40px!important;
+  position: relative;
+  display: block;
+  border: 0!important;
+  border-radius: 0;
+  outline-style: none;
+}
+.nav-tabs .nav-link {
+  border: 1px solid transparent;
+  border-top-left-radius: .3rem;
+  border-top-right-radius: .3rem;
+}
+.btn-secondary {
+  color: #fff;
+  background-color: #009925;
+  border-color: #009925;
+}
+.btn-secondary:hover {
+  color: #fff;
+  background-color: #009925;
+  border-color: #009925;
+  opacity: .8;
+}
+.btn-secondary.disabled, .btn-secondary:disabled {
+  color: #fff;
+  background-color: #0099269d;
+  border-color: #0099269d;
+}
+
+button{
+  font-size: 12px!important;
+}
+#ModalCancelAppointment{
+  z-index: 10000!important;
+}
+.appointmentCard{
+  background-color:#4caf50;
+  padding:5px;
+  width: 100px;
+  max-width: 100px;
+  border-radius: 5px;
+  text-align:center;
+  color:white;
+
+}
+.appointmentCard:hover{
+  box-shadow: 0 2px 4px 0 rgba(21, 230, 132, 0.86),0 2px 10px 0 rgba(46, 235, 194, 0.637)!important;
+}
+
+.cart-edit-btn,.cart-delete-btn{
+	padding:3px 7px!important;
+
+}
+/* Modal Title color */
+
+
+body{
+	background-color: #f7f7f8 !important;
+}
+.sidebar {
+	min-width: 250px !important;
+	max-width: 250px !important;
+}
+.sidebar-bottom {
+	min-width: 250px !important;
+	max-width: 250px !important;
+}
+.sidebar-brand {
+	font-size: .75rem !important;
+	min-width: 250px !important;
+	max-width: 250px !important;
+}
+.wizard .step-content {
+	padding: .25rem!important;
+}
+.avatar {
+	width: 35px !important;
+	height: 35px !important;
+}
+.navbar {
+	padding: 5px 20px !important;
+}
+.btn{
+	font-size: 12px !important;
+}
+
+#SearchCustomerButton {
+padding: 5px 5px !important;	
+}
+.card-title {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+/*video effects*/
+.videoCard {
+  padding: 10px;
+  transition: transform .5s;
+  width: 300px;
+  height: 200px;
+	margin: 5 auto;
+
+}
+
+#cashier_login_page{
+  border-color:blue;
+  border-width:3px;
+}
+
+#cashier_login_page_2{
+	border-color:blue;
+	height: 70% !important;
+  border-width:3px;
+}
+
+.tab .tab-content {
+	background: #fff;
+	padding: 0px !important;
+	box-shadow: 0 0.1rem 0.2rem rgba(0,0,0,.05);
+	border-radius: 0 0 .3rem .3rem;
+}
+/*.fc-content,.fc-event{*/
+/*	background-color: #009925 !important;*/
+/*	border-color: #009925 !important;*/
+/*}*/
+.fc-icon-right-single-arrow:after {
+	content: "\203A";
+	font-weight: 700;
+	font-size: 100% !important;
+	top: -25% !important;
+}
+.fc-icon-left-single-arrow:after {
+	content: "\2039";
+	font-weight: 700;
+	font-size: 100%;
+	top: -25%;
+}
+
+.fc-unthemed .fc-event .fc-content {
+	color: #fff;
+	padding: .05rem;
+}
+.fc-row{
+	height: 80px !important;
+}
+.fc-scroller{
+	height: 490px !important;
+}
+
