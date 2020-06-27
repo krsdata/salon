@@ -78,12 +78,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#ChangePassword").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/Cashier/ResetCashierPassword/",
+		        url: "<?=base_url()?>Cashier/ResetCashierPassword",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
 								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {

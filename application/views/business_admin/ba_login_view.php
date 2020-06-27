@@ -97,15 +97,15 @@
 		        }   
 		    },
 		    submitHandler: function(form) {
-		    	var url_dash = "<?=base_url()?>index.php/BusinessAdmin/Dashboard/";
+		    	var url_dash = "<?=base_url()?>BusinessAdmin/Dashboard";
 				var formData = $("#BusinessAdminLogin").serialize(); 
 				$.ajax({
-			        url: "<?=base_url()?>index.php/BusinessAdmin/Login/",
+			        url: "<?=base_url()?>BusinessAdmin/Login",
 			        data: formData,
 			        type: "POST",
-			        crossDomain: true,
+			        // crossDomain: true,
 					cache: false,
-			        dataType : "json",
+			        // dataType : "json",
 			    	success: function(data) {
 	                  if(data.success == 'true'){ 
 			           	if($('.feedback').hasClass('alert-danger')){

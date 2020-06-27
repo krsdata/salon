@@ -18,6 +18,9 @@
 	<!-- <link href="<?=base_url()?>public/app_stack/css/corporate.css" rel="stylesheet"> -->
 	 <link href="<?=base_url()?>public/app_stack/css/modern.css" rel="stylesheet"> 
 	<link href="<?=base_url()?>public/app_stack/css/custom.css" rel="stylesheet">
+	<link rel="icon" 
+      type="image/png" 
+      href="https://salonfirst.in/home/favicon.ico" />
 	<!-- BEGIN SETTINGS -->
 	<!-- You can remove this after picking a style -->
 	<style>

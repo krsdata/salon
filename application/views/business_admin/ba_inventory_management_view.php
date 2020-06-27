@@ -58,8 +58,8 @@
 											<div class="modal-header">
 												<h5 class="modal-title">Success</h5>
 												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    			<span aria-hidden="true">&times;</span>
-                 			 	</button>
+													<span aria-hidden="true">&times;</span>
+												</button>
 											</div>
 											<div class="modal-body m-3">
 												<p class="mb-0" id="SuccessModalMessage"><p>
@@ -77,8 +77,8 @@
 											<div class="modal-header">
 												<h5 class="modal-title">Error</h5>
 												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
+													<span aria-hidden="true">&times;</span>
+												</button>
 											</div>
 											<div class="modal-body m-3">
 												<p class="mb-0" id="ErrorModalMessage"></p>
@@ -124,7 +124,7 @@
 							        				<option value="" selected></option>
 							        				<?php
 							 									foreach ($raw_materials as $rm) {
-							 										echo "<option value=".$rm['raw_material_category_id'].">".$rm['raw_material_name']."</option>";
+							 										echo "<option value=".$rm['service_id'].">".$rm['service_name']."</option>";
 							 									}
 							        				?>
 							        			</select>
@@ -258,67 +258,21 @@
 	$(document).ready(function(){
 	
 		$(document).ajaxStart(function() {
-      $("#load_screen").show();
-    });
+			$("#load_screen").show();
+		});
 
-    $(document).ajaxStop(function() {
-      $("#load_screen").hide();
-    });
+		$(document).ajaxStop(function() {
+			$("#load_screen").hide();
+		});
 		
-		$("#Category-Id").on('change',function(e){
-    	var parameters = {
-    		'category_id' :  $(this).val()
-    	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
-      .done(function(data, textStatus, jqXHR) {
-      		var options = "<option value='' selected></option>"; 
-       		for(var i=0;i<data.length;i++){
-       			options += "<option value="+data[i].sub_category_id+">"+data[i].sub_category_name+"</option>";
-       		}
-       		$("#Sub-Category-Id").html("").html(options);
-    	})
-    	.fail(function(jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown.toString());
-   		});
-    });
+		
 
-    $("#Sub-Category-Id").on('change',function(e){
-    	var parameters = {
-    		'sub_category_id' :  $(this).val()
-    	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicesBySubCatId/", parameters)
-      .done(function(data, textStatus, jqXHR) {
-      		var options = "<option value='' selected></option>"; 
-       		for(var i=0;i<data.length;i++){
-       			options += "<option value="+data[i].service_id+">"+data[i].service_name+"</option>";
-       		}
-       		$("#Service-Id").html("").html(options);
-    	})
-    	.fail(function(jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown.toString());
-   		});
-    });
-
-    $(document).on('change',".Raw-Material-ID",function(e){
-    	var parameters = {
-    		'raw_material_category_id' :  $(this).val()
-    	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetRawMaterial/", parameters)
-      .done(function(data, textStatus, jqXHR) {
-      		$("#Inventory-Composition-Table tr:last").find('td .form-group .Raw-Material-Name').attr('value',data.raw_material_name);
-      		$("#Inventory-Composition-Table tr:last").find('td .form-group .Raw-Material-Brand').attr('value',data.raw_material_brand);
-      		$("#Inventory-Composition-Table tr:last").find('td .form-group .Raw-Material-Unit').attr('value',data.raw_material_unit);
-    	})
-    	.fail(function(jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown.toString());
-   		});
-    });
+    
 
     $("#AddRow").click(function(event){
     	event.preventDefault();
       this.blur();
       var rowno = $("#Inventory-Composition-Table tr").length;
-      
       rowno = rowno+1;
       
       $("#Inventory-Composition-Table tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><select class=\"form-control Raw-Material-ID\" name=\"raw_material_id[]\"><option value=\"\" selected required></option><?php foreach ($raw_materials as $rm) { echo "<option value=".$rm['raw_material_category_id'].">".$rm['raw_material_name']."</option>"; } ?></select></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control Raw-Material-Name\" name=\"raw_material_name[]\" readonly required /></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control Raw-Material-Unit\" name=\"raw_material_unit[]\" readonly required /></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control Raw-Material-Brand\" name=\"raw_material_brand[]\" readonly required /></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control Consumption-Quantity\" name=\"consumption_quantity[]\" required /></div></td></tr>");
@@ -333,7 +287,101 @@
     	}
     });
 
-    $("#AddComposition").validate({
+    
+
+   
+
+    $(document).on('click',".composition-deactivate-btn",function(event) {
+      event.preventDefault();
+      this.blur(); // Manually remove focus from clicked link.
+      var parameters = {
+        service_id : $(this).attr('service_id')
+      };
+      $.ajax({
+        url: "<?=base_url()?>BusinessAdmin/DeleteComposition",
+        data: parameters,
+        type: "GET",
+        // crossDomain: true,
+				cache: false,
+        // dataType : "json",
+    		success: function(data) {
+          if(data.success == 'true'){ 
+						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
+							$("#SuccessModalMessage").html("").html(data.message);
+						}).on('hidden.bs.modal', function (e) {
+								window.location.reload();
+						});
+          }
+          else if (data.success == 'false'){                   
+						$('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e) {
+							$("#ErrorModalMessage").html("").html(data.message);
+						});
+          }
+        },
+        error: function(data){
+					$('.feedback').addClass('alert-danger');
+					$('.alert-message').html("").html(data.message); 
+        }
+			});
+    });
+
+
+	});
+</script>
+<script type="text/javascript">
+		$("#Category-Id").on('change',function(e){
+			// alert($(this).val());
+			// alert("hii");
+			var parameters = {
+				'category_id' :  $(this).val()
+			};
+			$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
+			.done(function(data, textStatus, jqXHR) {
+      		var options = "<option value='' selected></option>"; 
+       		for(var i=0;i<data.length;i++){
+       			options += "<option value="+data[i].sub_category_id+">"+data[i].sub_category_name+"</option>";
+       		}
+       		$("#Sub-Category-Id").html("").html(options);
+			})
+			.fail(function(jqXHR, textStatus, errorThrown) {
+			console.log(errorThrown.toString());
+			});
+		});
+
+    $("#Sub-Category-Id").on('change',function(e){
+		// alert($(this).val());
+    	var parameters = {
+    		'sub_category_id' :  $(this).val()
+    	};
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetServicesBySubCatId", parameters)
+      .done(function(data, textStatus, jqXHR) {
+      		var options = "<option value='' selected></option>"; 
+       		for(var i=0;i<data.length;i++){
+       			options += "<option value="+data[i].service_id+">"+data[i].service_name+"</option>";
+       		}
+       		$("#Service-Id").html("").html(options);
+    	})
+    	.fail(function(jqXHR, textStatus, errorThrown) {
+        console.log(errorThrown.toString());
+   		});
+    });
+
+	$(document).on('change',".Raw-Material-ID",function(e){
+    	var parameters = {
+    		'service_id' :  $(this).val()
+    	};
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetService", parameters)
+      .done(function(data, textStatus, jqXHR) {
+      		$("#Inventory-Composition-Table tr:last").find('td .form-group .Raw-Material-Name').attr('value',data.service_name);
+      		$("#Inventory-Composition-Table tr:last").find('td .form-group .Raw-Material-Brand').attr('value',data.service_brand);
+      		$("#Inventory-Composition-Table tr:last").find('td .form-group .Raw-Material-Unit').attr('value',data.service_unit);
+    	})
+    	.fail(function(jqXHR, textStatus, errorThrown) {
+        console.log(errorThrown.toString());
+   		});
+    });
+
+	$("#AddComposition").validate({
 	  	errorElement: "div",
 	    rules: {
 	        "service_id" : {
@@ -361,12 +409,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddComposition").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddComposition/",
+		        url: "<?=base_url()?>BusinessAdmin/AddComposition",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
 								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
@@ -391,16 +439,16 @@
             }
 				});
 			},
-		});
+	});
 
-    $(document).on('click','.composition-view-btn',function(event) {
+	$(document).on('click','.composition-view-btn',function(event) {
       event.preventDefault();
       this.blur(); // Manually remove focus from clicked link.
       var parameters = {
         service_id : $(this).attr('service_id')
       };
 
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetParticularComposition/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetParticularComposition", parameters)
       .done(function(data, textStatus, jqXHR) { 
        	var temp = "";
        	for(i=0;i<data.length;i++){
@@ -420,41 +468,4 @@
         console.log(errorThrown.toString());
    		});
     });
-
-    $(document).on('click',".composition-deactivate-btn",function(event) {
-      event.preventDefault();
-      this.blur(); // Manually remove focus from clicked link.
-      var parameters = {
-        service_id : $(this).attr('service_id')
-      };
-      $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/DeleteComposition/",
-        data: parameters,
-        type: "GET",
-        crossDomain: true,
-				cache: false,
-        dataType : "json",
-    		success: function(data) {
-          if(data.success == 'true'){ 
-						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
-						}).on('hidden.bs.modal', function (e) {
-								window.location.reload();
-						});
-          }
-          else if (data.success == 'false'){                   
-						$('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e) {
-							$("#ErrorModalMessage").html("").html(data.message);
-						});
-          }
-        },
-        error: function(data){
-					$('.feedback').addClass('alert-danger');
-					$('.alert-message').html("").html(data.message); 
-        }
-			});
-    });
-
-
-	});
 </script>

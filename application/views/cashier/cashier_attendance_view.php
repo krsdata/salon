@@ -152,12 +152,12 @@
 				// document.getElementByClass('.addAttendanceInTime').disabled = true;
 				var formData = $("#AddInTime").serialize();	
 				$.ajax({
-					url: "<?=base_url()?>index.php/Cashier/AddInTime",
+					url: "<?=base_url()?>Cashier/AddInTime",
 					data: {emp_id:emp_id},
 					type: "POST",
-					crossDomain: true,
+					// crossDomain: true,
 					cache: false,
-					dataType : "json",
+					// dataType : "json",
 					success: function(data) {
 						if(data.success == 'true'){
 							
@@ -201,12 +201,12 @@
 			submitHandler: function(form) {		
 				var formData = $("#AddInTime").serialize();			
 				$.ajax({
-					url: "<?=base_url()?>index.php/Cashier/AddIntime/",
+					url: "<?=base_url()?>Cashier/AddIntime",
 					data: formData,
 					type: "POST",
-					crossDomain: true,
+					// crossDomain: true,
 					cache: false,
-					dataType : "json",
+					// dataType : "json",
 					success: function(data) {
 						if(data.error == 'true'){
 							// $("#ModalAddInTime").modal('hide'); 
@@ -254,12 +254,12 @@
 				
 					
 				$.ajax({
-					url: "<?=base_url()?>index.php/Cashier/AddOutTime/",
+					url: "<?=base_url()?>Cashier/AddOutTime",
 					data: {emp_id:emp_id},
 					type: "POST",
-					crossDomain: true,
+					// crossDomain: true,
 					cache: false,
-					dataType : "json",
+					// dataType : "json",
 					success: function(data) {
 						if(data.success == 'true'){
 							

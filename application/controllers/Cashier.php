@@ -102,11 +102,11 @@ class Cashier extends CI_Controller {
 			if(isset($this->session->userdata['POS'])){
 				$data['customers'] = $this->session->userdata['POS'];
 			}
-
+			
 			if(isset($this->session->userdata['cart'])){
 				$data['cart'] = $this->session->userdata['cart'];
 			}
-		    if(array_search("Marks360",$data["business_admin_packages"]))
+		    			if(array_search("Marks360",$data["business_admin_packages"]))
               {
                 $rules = $this->BusinessAdminModel->RuleDetailsById($data['cashier_details']['business_outlet_id'],'mss_loyalty_rules','business_outlet_id');
                 if($rules['success'] == 'true')
@@ -135,7 +135,8 @@ class Cashier extends CI_Controller {
 		$this->load->model('AppointmentsModel');
 		$this->load->model('POSModel');
 		$this->load->model('BusinessAdminModel');
-  }
+		$this->load->helper('ssl_helper');
+  }		
 	
   private function ReturnJsonArray($success,$error,$message){
   	if($success == true && $error == false){
@@ -194,7 +195,7 @@ class Cashier extends CI_Controller {
  			
  			$this->session->sess_destroy();
  		}
-		redirect(base_url().'index.php/Cashier/Login/','refresh');
+		redirect(base_url().'Cashier/Login/','refresh');
 	}
 
 	//function for logging out the user
@@ -376,7 +377,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}					
 	}
 
@@ -422,12 +423,13 @@ class Cashier extends CI_Controller {
             {
                 $data['rules'] = ['res_arr'=>''];
                 // $data['rules'] = $rules['res_arr'];
-            }
+						}
+						// $this->PrettyPrintArray($this->session->all_userdata());
 			$data['sidebar_collapsed'] = "true";
 			$this->load->view('cashier/cashier_dashboard_view',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/Login");
 		}
 	}
 
@@ -446,7 +448,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -459,7 +461,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -474,7 +476,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 	
@@ -490,7 +492,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 	
@@ -507,7 +509,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -519,7 +521,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -536,7 +538,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -553,7 +555,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -569,7 +571,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -583,7 +585,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -599,7 +601,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -678,7 +680,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -795,7 +797,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -803,23 +805,26 @@ class Cashier extends CI_Controller {
 		if($this->IsLoggedIn('cashier')){
 			if(isset($_POST) && !empty($_POST)){
 				$sess_data = $this->GetCustomerBilling($this->input->post('customer_id'));
+				
 				$sess_data['is_package_customer'] = $this->IsPackageCustomer($this->input->post('customer_id'));
 				$curr_sess_cust_data = array();
 				if(!isset($this->session->userdata['POS'])){
 					array_push($curr_sess_cust_data, $sess_data);
 					$this->session->set_userdata('POS', $curr_sess_cust_data);
+					
 				}
 				else{
 					$curr_sess_cust_data = $this->session->userdata['POS'];
 					array_push($curr_sess_cust_data, $sess_data);
 					$this->session->set_userdata('POS', $curr_sess_cust_data);
 				}
-
 				$this->ReturnJsonArray(true,false,"Customer added!");
+			}else{
+				$this->ReturnJsonArray(false,true,"Wrong Method!");
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -902,7 +907,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -931,7 +936,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -1088,7 +1093,7 @@ class Cashier extends CI_Controller {
 			}	
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 	
@@ -1168,7 +1173,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/Login");
+			$this->LogoutUrl(base_url()."Cashier/Login");
 		}	
 	}
 
@@ -1185,7 +1190,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -1203,7 +1208,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -1221,7 +1226,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -1241,7 +1246,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
     
@@ -1261,7 +1266,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 	
@@ -1281,7 +1286,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
@@ -1301,7 +1306,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 	
@@ -1322,7 +1327,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 	
@@ -1342,7 +1347,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 	
@@ -1362,7 +1367,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
@@ -1384,7 +1389,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
@@ -1402,7 +1407,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -1419,7 +1424,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -1506,7 +1511,7 @@ class Cashier extends CI_Controller {
 			}		
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 	
@@ -1597,7 +1602,7 @@ class Cashier extends CI_Controller {
 			}		
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -1682,7 +1687,7 @@ class Cashier extends CI_Controller {
 			}		
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -1791,7 +1796,7 @@ class Cashier extends CI_Controller {
 				}       
 		}
 		else{
-				$this->LogoutUrl(base_url()."index.php/Cashier/");
+				$this->LogoutUrl(base_url()."Cashier/");
 		}   
 	}
 
@@ -1809,7 +1814,7 @@ class Cashier extends CI_Controller {
 					}
 			}
 			else{
-					$this->LogoutUrl(base_url()."index.php/Cashier/");
+					$this->LogoutUrl(base_url()."Cashier/");
 			}       
 	}
 
@@ -1842,7 +1847,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 	
@@ -1869,7 +1874,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}		
 
@@ -1898,7 +1903,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}	
 
@@ -1955,7 +1960,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -2036,7 +2041,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -2116,7 +2121,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -2180,7 +2185,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -2259,7 +2264,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -2277,7 +2282,7 @@ class Cashier extends CI_Controller {
 				}
 		}
 		else{
-				$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}   
     }
     
@@ -2401,7 +2406,7 @@ class Cashier extends CI_Controller {
             }       
     }
     else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
     }
 }
   //MOST Important Function of POS Billing. Be Careful While Changing things!
@@ -2608,7 +2613,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 	public function SendSms($sender_id,$api_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url){
@@ -2635,7 +2640,7 @@ class Cashier extends CI_Controller {
   		return json_encode($data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}				
 	}
 	//Send acshback SMS
@@ -2663,7 +2668,7 @@ class Cashier extends CI_Controller {
   		return json_encode($data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}				
 	}
 
@@ -2720,7 +2725,7 @@ class Cashier extends CI_Controller {
 			}	
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -2768,7 +2773,7 @@ class Cashier extends CI_Controller {
 				}   
 		}
 		else{
-				$this->LogoutUrl(base_url()."index.php/Cashier/");
+				$this->LogoutUrl(base_url()."Cashier/");
 		}   
 }
 	public function JobOrder(){
@@ -2814,7 +2819,7 @@ class Cashier extends CI_Controller {
 			}	
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -2845,8 +2850,13 @@ class Cashier extends CI_Controller {
                 if($data['otc_stock']['success'] == 'true'){
                     $data['otc_stock']=$data['otc_stock']['res_arr'];
                 }
-                // $this->PrettyPrintArray($data['otc_stock']);
-                // exit;
+                $where=array(
+									'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
+								);
+								$data['vendors']=$this->BusinessAdminModel->MultiWhereSelect('mss_vendors',$where);
+								if($data['vendors']['success'] == 'true'){
+										$data['vendors']=$data['vendors']['res_arr'];
+								}
                 $data['categories']  = $this->GetCategoriesOtc($this->session->userdata['logged_in']['business_outlet_id']);
                 $data['sub_categories']  = $this->GetSubCategories($this->session->userdata['logged_in']['business_outlet_id']);
                 $data['services']  = $this->GetServices($this->session->userdata['logged_in']['business_outlet_id']);
@@ -2863,7 +2873,7 @@ class Cashier extends CI_Controller {
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }   
     }
 
@@ -2880,7 +2890,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
@@ -2898,7 +2908,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -2975,7 +2985,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
@@ -3194,7 +3204,7 @@ class Cashier extends CI_Controller {
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
     }
 
@@ -3348,7 +3358,7 @@ class Cashier extends CI_Controller {
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }   
     }
 
@@ -3366,7 +3376,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -3383,7 +3393,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -3401,7 +3411,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -3424,7 +3434,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -3447,7 +3457,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 	
@@ -3490,7 +3500,7 @@ class Cashier extends CI_Controller {
                 $this->load->view('cashier/cashier_packages_view',$data);
         }
         else{
-                $this->LogoutUrl(base_url()."index.php/Cashier/");
+                $this->LogoutUrl(base_url()."Cashier/");
         }   
     }
 
@@ -3514,7 +3524,7 @@ class Cashier extends CI_Controller {
 // 			$this->load->view('cashier/cashier_packages_view',$data);
 // 		}
 // 		else{
-// 			$this->LogoutUrl(base_url()."index.php/Cashier/");
+// 			$this->LogoutUrl(base_url()."Cashier/");
 // 		}	
 // 	}
 
@@ -3530,7 +3540,7 @@ class Cashier extends CI_Controller {
  			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -3552,7 +3562,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -3588,7 +3598,7 @@ class Cashier extends CI_Controller {
       $this->load->view('cashier/cashier_active_packages_view', $data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -3610,7 +3620,7 @@ class Cashier extends CI_Controller {
 			$this->load->view('cashier/cashier_packages_history_view',$data);	
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 
@@ -3626,7 +3636,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -3642,7 +3652,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 	public function GetBilledServices(){
@@ -3657,7 +3667,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -3742,7 +3752,7 @@ class Cashier extends CI_Controller {
 		  }
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
@@ -3792,7 +3802,7 @@ class Cashier extends CI_Controller {
 				}
 		}
 		else{
-				$this->LogoutUrl(base_url()."index.php/Cashier/");
+				$this->LogoutUrl(base_url()."Cashier/");
 		}
 }
 	// BuyPackage sms
@@ -3818,7 +3828,7 @@ class Cashier extends CI_Controller {
 			return json_encode($data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}	
 
@@ -3845,7 +3855,7 @@ class Cashier extends CI_Controller {
 				return json_encode($data);
 		}
 		else{
-				$this->LogoutUrl(base_url()."index.php/Cashier/");
+				$this->LogoutUrl(base_url()."Cashier/");
 		}       
 	}
 
@@ -3871,7 +3881,7 @@ class Cashier extends CI_Controller {
 					return json_encode($data);
 			}
 			else{
-					$this->LogoutUrl(base_url()."index.php/Cashier/");
+					$this->LogoutUrl(base_url()."Cashier/");
 			}       
 	}
 	
@@ -3941,7 +3951,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
@@ -3968,7 +3978,7 @@ class Cashier extends CI_Controller {
 			return json_encode($data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}				
 	}
 
@@ -3987,7 +3997,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
@@ -4102,6 +4112,7 @@ class Cashier extends CI_Controller {
 								'customer_name' 							=> $this->input->post('customer_name'),
 								'customer_mobile' 						=> $this->input->post('customer_mobile'),
 								'customer_title' 							=> $this->input->post('customer_title'),
+								'customer_master_admin_id' 	=> $this->session->userdata['logged_in']['master_admin_id'],
 								'customer_business_admin_id' 	=> $this->session->userdata['logged_in']['business_admin_id'],
 								'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 								'customer_segment'						=>"new",
@@ -4217,7 +4228,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	
@@ -4230,7 +4241,7 @@ class Cashier extends CI_Controller {
 				}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 	//Update Appointment
@@ -4282,7 +4293,7 @@ class Cashier extends CI_Controller {
 				die;
 			}
 		}else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+			$this->LogoutUrl(base_url()."Cashier/Login/");
 		}
 		
 	}
@@ -4323,7 +4334,7 @@ class Cashier extends CI_Controller {
 				}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+			$this->LogoutUrl(base_url()."Cashier/Login/");
 		}
 	}
 
@@ -4337,7 +4348,7 @@ class Cashier extends CI_Controller {
 				}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 	//Send Appointment SMS
@@ -4362,7 +4373,7 @@ class Cashier extends CI_Controller {
 			return json_encode($data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -4389,7 +4400,7 @@ class Cashier extends CI_Controller {
 			return json_encode($data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 	//Send Update Appointment SMS
@@ -4415,7 +4426,7 @@ class Cashier extends CI_Controller {
 			return json_encode($data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 	public function SendReminderSms(){
@@ -4449,7 +4460,7 @@ class Cashier extends CI_Controller {
 			return json_encode($data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 
@@ -4551,7 +4562,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+			$this->LogoutUrl(base_url()."Cashier/Login/");
 		}
 	}
 
@@ -4598,7 +4609,7 @@ class Cashier extends CI_Controller {
 			
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
 	//Loyalty
@@ -4618,7 +4629,7 @@ class Cashier extends CI_Controller {
             else
             {
                 $data['rules'] = ['res_arr'=>''];
-                $data['rules'] = $rules['res_arr'];
+                $data['rules'] = $data['rules']['res_arr'];
             }
 			$data['sidebar_collapsed'] = "true";
       $this->load->view('cashier/cashier_loyalty_view', $data);
@@ -4645,7 +4656,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+			$this->LogoutUrl(base_url()."Cashier/Login/");
 		}
 	}
 
@@ -4717,7 +4728,7 @@ class Cashier extends CI_Controller {
 	// 					}
 	// 			}
 	// 		else{
-	// 			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+	// 			$this->LogoutUrl(base_url()."BusinessAdmin/");
 	// 		}
 	// 	}
 	// }
@@ -4757,7 +4768,7 @@ class Cashier extends CI_Controller {
 	// 				}
 	// 		}
 	// 	else{
-	// 		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+	// 		$this->LogoutUrl(base_url()."BusinessAdmin/");
 	// 	}
 	// }
 // }
@@ -4799,7 +4810,7 @@ class Cashier extends CI_Controller {
 			}
 	}
 	else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 	}
 }
 //jitesh
@@ -4942,7 +4953,7 @@ public function AddToCartRedeemPoints(){
       }   
     }
     else{
-      $this->LogoutUrl(base_url()."index.php/Cashier/");
+      $this->LogoutUrl(base_url()."Cashier/");
     }   
   }
   public function DeleteCartLoyaltyItem(){
@@ -4968,7 +4979,7 @@ public function AddToCartRedeemPoints(){
       }
     }
     else{
-      $this->LogoutUrl(base_url()."index.php/Cashier/");
+      $this->LogoutUrl(base_url()."Cashier/");
     }
 	}
 	
@@ -5429,7 +5440,7 @@ public function AddToCartRedeemPoints(){
 						}
 				}
 			else{
-				$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}
 		}
 	}
@@ -5536,7 +5547,7 @@ public function AddToCartRedeemPoints(){
 					}
 			}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 }
@@ -5595,7 +5606,7 @@ public function AddToCartRedeemPoints(){
 			}		
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 	//26/03/2020
@@ -5652,7 +5663,7 @@ public function AddToCartRedeemPoints(){
             $this->load->view('cashier/cashier_transaction_history',$data);
         }   
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
     }
 	public function CustTransHistory(){
@@ -5687,7 +5698,7 @@ public function AddToCartRedeemPoints(){
             // }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }       
 	}
 	public function CustomerBirthDayAnniver(){
@@ -5710,7 +5721,7 @@ public function AddToCartRedeemPoints(){
             $this->load->view('cashier/cashier_bday_anniversary_view',$data);
         }   
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
 	}
 	public function GetCustomerHistory(){
@@ -5750,7 +5761,7 @@ public function AddToCartRedeemPoints(){
             
         }   
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
 	}
 	public function GetCustomerHistoryAnniversary(){
@@ -5790,7 +5801,7 @@ public function AddToCartRedeemPoints(){
             
         }   
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
 	}
 	public function SendSmsMessage($option,$sender_id,$api_key,$mobile,$name,$outlet_name,$oulet_location,$address){
@@ -5820,7 +5831,7 @@ public function AddToCartRedeemPoints(){
             return json_encode($data);
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }               
     }
     public function SendMessage(){
@@ -5846,7 +5857,7 @@ public function AddToCartRedeemPoints(){
                 }
             }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
     }
     public function ExpenseReport(){
@@ -5904,7 +5915,7 @@ public function AddToCartRedeemPoints(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
     }
     //11-04-2020
@@ -5920,7 +5931,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
     }
     public function GetProductDetails(){
@@ -5943,7 +5954,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
     }
     public function GetProductDetail(){
@@ -5965,7 +5976,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
     }
     private function GetServices($outlet_id){
@@ -5982,7 +5993,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }       
     }
     private function GetCategoriesOtc($outlet_id){
@@ -5999,7 +6010,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }       
     }
     public function GetCategoriesByInventory(){
@@ -6026,7 +6037,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }       
     }
     //10 april
@@ -6046,7 +6057,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
     }
     //15-04
@@ -6076,7 +6087,7 @@ public function AddToCartRedeemPoints(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
     }
     //17-04
@@ -6097,7 +6108,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+            $this->LogoutUrl(base_url()."Cashier/Login/");
         }
     }
     public function AddDataInServiceTable(){    
@@ -6129,7 +6140,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+            $this->LogoutUrl(base_url()."Cashier/Login/");
         }
     }
     // 18-04
@@ -6150,7 +6161,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+            $this->LogoutUrl(base_url()."Cashier/Login/");
         }
     }
     public function AddDataInPackageTable(){    
@@ -6176,7 +6187,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+            $this->LogoutUrl(base_url()."Cashier/Login/");
         }
     }
     // preffered Services
@@ -6197,7 +6208,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+            $this->LogoutUrl(base_url()."Cashier/Login/");
         }
     }
     public function AddDataINPrefferedServicesTable(){  
@@ -6223,7 +6234,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+            $this->LogoutUrl(base_url()."Cashier/Login/");
         }
     }
     // preffered product
@@ -6244,7 +6255,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+            $this->LogoutUrl(base_url()."Cashier/Login/");
         }
     }
     public function AddDataINPrefferedProductTable(){   
@@ -6270,7 +6281,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+            $this->LogoutUrl(base_url()."Cashier/Login/");
         }
     }
     //26-05-2020
@@ -6296,7 +6307,7 @@ public function AddToCartRedeemPoints(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/");
         }
     }
 }

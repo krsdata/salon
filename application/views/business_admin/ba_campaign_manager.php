@@ -269,16 +269,16 @@
 				var formData = new FormData(this);
 				// formData.append('File',file);
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/InsertCampaignData/",
+		        url: "<?=base_url()?>BusinessAdmin/InsertCampaignData",
 		        data: formData,
 				contentType: "application/octet-stream",
 				enctype: 'multipart/form-data',
 				contentType: false,
 				processData: false,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 				cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalEditEmployee").modal('hide');

@@ -502,8 +502,8 @@
 																	<th>Category</th>
 																	<th>Sub-category</th>
 																	<th>Count</th>
-																	<th>MRP</th>
-																	<th>Discount</th>
+																	<!-- <th>MRP</th> -->
+																	<!-- <th>Discount</th> -->
 																	<th>Net Revenue</th>
 																</tr>
 															</thead>
@@ -515,8 +515,8 @@
 																	$total_discount=0;
 															foreach($service as $service){																
 																	$total_count+=$service['count'];
-																	$total_net_amt+=($service['net_amt']+$service['discount']);
-																	$total_discount+=$service['discount']
+																	// $total_net_amt+=($service['net_amt']);
+																	// $total_discount+=$service['discount']
 																?>
 																<tr>
 																	<td><?php echo $i;?></td>
@@ -524,8 +524,8 @@
 																	<td><?=$service['category']?></td>
 																	<td><?=$service['sub_category']?></td>
 																	<td><?=$service['count']?></td>
-																	<td><?=($service['net_amt']+$service['discount'])?></td>
-																	<td><?=$service['discount']?></td>
+																	<!-- <td><?=($service['net_amt']+$service['discount'])?></td> -->
+																	<!-- <td><?=$service['discount']?></td> -->
 																	<td><?=$service['net_amt']?></td>
 																</tr>
 																<?php
@@ -538,8 +538,8 @@
 																	<td></td>
 																	<td></td>
 																	<td><?=$total_count?></td>
-																	<td><?=$total_net_amt?></td>
-																	<td><?=$total_discount?></td>
+																	<!-- <td><?=$total_net_amt?></td> -->
+																	<!-- <td><?=$total_discount?></td> -->
 																	<td><?=($total_net_amt-$total_discount)?></td>
 																</tr>
 															</tbody>
@@ -720,8 +720,8 @@
 													<th>Category</th>
 													<th>Sub-category</th>
 													<th>Count</th>
-													<th>MRP</th>
-													<th>Discount</th>
+													<!-- <th>MRP</th> -->
+													<!-- <th>Discount</th> -->
 													<th>Net Revenue</th>
 												</tr>
 											</thead>
@@ -734,9 +734,9 @@
 													if($product_sale_today != 0){
 													$i=1;	
 													foreach($product_sale_today as $prodsales){
-														$ptxn_mrp+=$prodsales['txn_value']+$prodsales['txn_discount'];
-														$ptxn_disc+=$prodsales['txn_discount'];
-														$ptxn_value+=$prodsales['txn_value'];
+														// $ptxn_mrp+=$prodsales['txn_value']+$prodsales['txn_discount'];
+														// $ptxn_disc+=$prodsales['txn_discount'];
+														$ptxn_value+=$prodsales['txn_service_discounted_price'];
 														$ptxn_count+=$prodsales['count'];
 														
 													?>
@@ -747,9 +747,9 @@
 														<td><?=$prodsales['category_name']?></td>
 														<td><?=$prodsales['sub_category_name']?></td>
 														<td><?=$prodsales['count']?></td>
-														<td><?=$prodsales['txn_value']+$prodsales['txn_discount']?></td>
-														<td><?=$prodsales['txn_discount']?></td>
-														<td><?=$prodsales['txn_value']?></td>
+														<!-- <td><?=$prodsales['txn_value']+$prodsales['txn_discount']?></td> -->
+														<!-- <td><?=$prodsales['txn_discount']?></td> -->
+														<td><?=$prodsales['txn_service_discounted_price']?></td>
 																										
 														
 													</tr>
@@ -764,8 +764,8 @@
 														<td></td>
 														<td></td>
 														<td><?=$ptxn_count?></td>
-														<td><?=$ptxn_mrp?></td>
-														<td><?=$ptxn_disc?></td>
+														<!-- <td><?=$ptxn_mrp?></td> -->
+														<!-- <td><?=$ptxn_disc?></td> -->
 														<td><?=$ptxn_value?></td>
 														<td></td>
 													</tr>	
@@ -884,7 +884,7 @@
 	        txn_id: $(this).attr('txn_id')
 	      };
 	    //  alert($(this).attr('txn_id'));
-					$.getJSON("<?=base_url()?>index.php/Cashier/GetBilledServices/", parameters)
+					$.getJSON("<?=base_url()?>Cashier/GetBilledServices", parameters)
 					.done(function(data, textStatus, jqXHR) { 
 						var str_2 = "";	
 						for(var i=0;i<data.length;i++){						
@@ -912,7 +912,7 @@
 	        txn_id: $(this).attr('txn_id')
 	      };
 	    //  alert($(this).attr('txn_id'));
-					$.getJSON("<?=base_url()?>index.php/Cashier/GetBilledServices/", parameters)
+					$.getJSON("<?=base_url()?>Cashier/GetBilledServices", parameters)
 					.done(function(data, textStatus, jqXHR) { 
 						var str_2 = "";	
 						for(var i=0;i<data.length;i++){						
@@ -1080,12 +1080,12 @@
 		    submitHandler: function(form) {
 					var formData = $("#GetResults").serialize(); 
 					$.ajax({
-		        url: "<?=base_url()?>index.php/Cashier/ReportsManagement/",
+		        url: "<?=base_url()?>Cashier/ReportsManagement",
 		        data: formData,
 		        type: "GET",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
 	            if(data.success == 'true'){
 								JSONToCSVConvertor(data.result, "Reports", true);

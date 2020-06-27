@@ -49,7 +49,7 @@
 						<div class="card">
 							<div class="card-header">
                                 <div class="input-group">
-                                       <a href="<?= base_url() ?>index.php/BusinessAdmin/Tags"><h4><i class="fas fa-arrow-left">&emsp;Back</i></h4></a>
+                                       <a href="<?= base_url() ?>BusinessAdmin/Tags"><h4><i class="fas fa-arrow-left">&emsp;Back</i></h4></a>
                                        
                                 </div> 
 							</div>
@@ -372,7 +372,7 @@
     //   event.preventDefault();
     //   var formData = new FormData(this);
     //    $.ajax({
-    //     url: "<?=base_url();?>index.php/BusinessAdmin/CalculateRuleTag/",
+    //     url: "<?=base_url();?>BusinessAdmin/CalculateRuleTag",
     //     type: "POST",             // Type of request to be send, called as method
     //     data: formData,
     //     dataType : "json",
@@ -409,10 +409,10 @@
       event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/BusinessAdmin/InsertRuleTag/",
+        url: "<?=base_url();?>BusinessAdmin/InsertRuleTag",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,

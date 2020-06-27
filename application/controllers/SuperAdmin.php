@@ -131,7 +131,7 @@ class SuperAdmin extends CI_Controller {
  			$this->session->unset_userdata('outlets');
  			$this->session->sess_destroy();
  		}
-		redirect(base_url().'index.php/SuperAdmin/Login/','refresh');
+		redirect(base_url().'SuperAdmin/Login/','refresh');
 	}
 
 	//function for logging out the user
@@ -204,7 +204,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}					
 	}
 	
@@ -224,7 +224,7 @@ class SuperAdmin extends CI_Controller {
 			$this->load->view('superAdmin/sa_dashboard_view',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}
 	}
 
@@ -315,7 +315,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}	
 	}
 
@@ -378,7 +378,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}	
 	}
 	//send Account Details
@@ -386,7 +386,7 @@ class SuperAdmin extends CI_Controller {
 		//API key & sender ID
 		$apikey = "ll2C18W9s0qtY7jIac5UUQ";
 		$apisender = "BILLIT";
-		$msg = "Dear ".$admin_name.", your account has been created at MarkS-ReTech. Your user email is ".$admin_email." and password is ".$admin_password.". It's confidential to you. Don't share with anyone. Thanks for using BILLIT. ";
+		$msg = "Dear ".$admin_name.", your account has been created at Salon First. Your user email is ".$admin_email." and password is ".$admin_password.". It's confidential to you. Don't share with anyone. Thanks for using Salon First. ";
 		 $msg = rawurlencode($msg);   //This for encode your message content                 		
 		 
 		 // API 
@@ -462,7 +462,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}	
 	}
 
@@ -512,7 +512,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/");
+			$this->LogoutUrl(base_url()."SuperAdmin");
 		}	
 	}
 
@@ -547,7 +547,7 @@ class SuperAdmin extends CI_Controller {
 			$this->load->view('superAdmin/sa_admin_outlet_details_view',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}
 	}
 
@@ -628,7 +628,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}	
 	}
 	//
@@ -642,7 +642,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}
 	}
 	public function GetBusinessAdmin(){
@@ -658,7 +658,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}	
 	}
 
@@ -736,7 +736,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}	
 	}
 	
@@ -777,7 +777,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}	
 	}
 	//
@@ -821,7 +821,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}		
 
 	}
@@ -882,7 +882,7 @@ class SuperAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+			$this->LogoutUrl(base_url()."SuperAdmin/Login");
 		}	
 	}
 
@@ -926,7 +926,7 @@ class SuperAdmin extends CI_Controller {
 	      }
 			}		
 		else{
-			$this->LogoutUrl(base_url()."index.php/SuperAdmin/");
+			$this->LogoutUrl(base_url()."SuperAdmin");
 		}
 	}
 
@@ -1047,7 +1047,7 @@ class SuperAdmin extends CI_Controller {
         }
         else
         {
-            $this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+            $this->LogoutUrl(base_url()."SuperAdmin/Login");
         }
 	}
 	public function GetBusinessOutletLoyaltyRule()
@@ -1296,7 +1296,7 @@ class SuperAdmin extends CI_Controller {
         }
         else
         {
-            $this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+            $this->LogoutUrl(base_url()."SuperAdmin/Login");
         }
  	}
 	public function DeleteOuletRule()
@@ -1501,7 +1501,7 @@ class SuperAdmin extends CI_Controller {
         }
         else
         {
-            $this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+            $this->LogoutUrl(base_url()."SuperAdmin/Login");
         }
  	}
     //04-04-2020
@@ -1584,7 +1584,7 @@ class SuperAdmin extends CI_Controller {
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/SuperAdmin/");
+            $this->LogoutUrl(base_url()."SuperAdmin");
         }
     }
 	public function BulkUploadPackageTransaction(){
@@ -1659,7 +1659,7 @@ class SuperAdmin extends CI_Controller {
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/SuperAdmin/");
+            $this->LogoutUrl(base_url()."SuperAdmin");
         }
 	}
 	public function BulkUploadServiceTransaction(){
@@ -1738,7 +1738,7 @@ class SuperAdmin extends CI_Controller {
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/SuperAdmin/");
+            $this->LogoutUrl(base_url()."SuperAdmin");
         }
     }
 
@@ -1751,7 +1751,7 @@ class SuperAdmin extends CI_Controller {
             $this->load->view('superAdmin/sa_customer_history_view',$data);
         }   
         else{   
-            $this->LogoutUrl(base_url()."index.php/SuperAdmin/Login/");
+            $this->LogoutUrl(base_url()."SuperAdmin/Login");
         }
     }
     public function BulkUploadTransaction(){
@@ -1832,7 +1832,7 @@ class SuperAdmin extends CI_Controller {
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/SuperAdmin/");
+            $this->LogoutUrl(base_url()."SuperAdmin");
         }
     }
 

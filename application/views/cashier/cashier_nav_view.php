@@ -1,6 +1,6 @@
 <nav class="sidebar <?php if(isset($sidebar_collapsed)){ if($sidebar_collapsed){ echo 'sidebar-collapsed toggled'; }} ?>">
 	<div class="sidebar-content">
-		<a class="sidebar-brand" href="<?=base_url()?>index.php/Cashier/">
+		<a class="sidebar-brand" href="<?=base_url()?>Cashier/">
  		 	<img src="<?=base_url()?>public/images/marks_logo.png" width="25px" height="25px" class="img-responsive">
 	   	<span class="align-middle">MarkS ReTech</span>
     </a>
@@ -13,9 +13,9 @@
           <i class="align-middle" data-feather="sliders" style="color:#0070c0;"></i> <span class="align-middle">BILLIT</span>
         </a>
 				<ul id="dashboards" class="sidebar-dropdown list-unstyled collapse show">
-					<li class="sidebar-item active"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/Dashboard/"><i data-feather="shopping-cart" style="color:red"></i>Billing</a></li>
-		    		<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/Expenses/"><i class="fa fa-book" style="color:orange"></i>Expenses</a></li>
-		    		<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/Inventory"><i data-feather="pen-tool" style="color:#0070c0"></i>Inventory</a></li>
+					<li class="sidebar-item active"><a class="sidebar-link" href="<?=base_url()?>Cashier/Dashboard/"><i data-feather="shopping-cart" style="color:red"></i>Billing</a></li>
+		    		<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Expenses/"><i class="fa fa-book" style="color:orange"></i>Expenses</a></li>
+		    		<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory"><i data-feather="pen-tool" style="color:#0070c0"></i>Inventory</a></li>
 				</ul>
 			</li>
 			<li class="sidebar-item">
@@ -23,9 +23,9 @@
 					<i class="align-middle" data-feather="gift" style="color:#0070c0"></i> <span class="align-middle">Packages</span>
 				</a>
 				<ul id="packages" class="sidebar-dropdown list-unstyled collapse ">
-					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/BuyPackages/"><i data-feather="shopping-bag" style="color:orange"></i>Buy Packages</a></li>
-					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/ActivePackages/"><i data-feather="grid" style="color:green"></i>Active Packages</a></li>
-					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/PackagesHistory/"><i data-feather="book" style="color:blue"></i>Redemption History</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/BuyPackages/"><i data-feather="shopping-bag" style="color:orange"></i>Buy Packages</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/ActivePackages/"><i data-feather="grid" style="color:green"></i>Active Packages</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/PackagesHistory/"><i data-feather="book" style="color:blue"></i>Redemption History</a></li>
 				</ul>
 			</li>
 			<?php
@@ -39,7 +39,7 @@
 					<i class="align-middle" data-feather="clock" style="color:#0070c0"></i> <span class="align-middle">Appointment</span>
 				</a>
 				<ul id="tryst" class="sidebar-dropdown list-unstyled collapse ">
-					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/Appointment/"><i data-feather="watch" style="color:orange"></i>View Appointment</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Appointment/"><i data-feather="watch" style="color:orange"></i>View Appointment</a></li>
 				
 				</ul>
 			</li>
@@ -56,7 +56,7 @@
 		      <i class="align-middle" data-feather="users" style="color:#0070c0;"></i> <span class="align-middle">Loyalty</span>
 		    </a>
 				<ul id="autoengage" class="sidebar-dropdown list-unstyled collapse">
-					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/Loyalty"><i class="fa fa-rupee-sign" style="color:green"></i>Loyalty_wallet</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Loyalty"><i class="fa fa-rupee-sign" style="color:green"></i>Loyalty_wallet</a></li>
 				</ul>
 			</li>
 			<?php
@@ -67,10 +67,10 @@
                     <i class="far fa-credit-card"  style="color:#0070c0"></i> <span class="align-middle">Customers</span>
                 </a>
                 <ul id="txnhistory" class="sidebar-dropdown list-unstyled collapse ">
-                    <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/TxnHistory/"><i class="far fa-credit-card"></i>Transaction History</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/TxnHistory/"><i class="far fa-credit-card"></i>Transaction History</a></li>
                 </ul>
                 <!--<ul id="txnhistory" class="sidebar-dropdown list-unstyled collapse ">-->
-                <!--    <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/CustomerBirthDayAnniver/"><i class="far fa-cake"></i>Bday & Anniversary</a></li>-->
+                <!--    <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/CustomerBirthDayAnniver/"><i class="far fa-cake"></i>Bday & Anniversary</a></li>-->
                 <!--</ul>-->
             </li>
 			<?php
@@ -81,14 +81,14 @@
 		      <i class="align-middle" data-feather="users" style="color:#0070c0;"></i> <span class="align-middle">People</span>
 		    </a>
 				<ul id="EMSS" class="sidebar-dropdown list-unstyled collapse">
-				<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/Attendance/"><i data-feather="calendar"></i>Mark Attendance</a></li> 
+				<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Attendance/"><i data-feather="calendar"></i>Mark Attendance</a></li> 
 				</ul>
 			</li>
 			<?php
 				endif;
 			?>
-			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/ReportsManagement"><i data-feather="book" style="color:#009925;"></i>Reports</a></li>	
-			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/Video"><i data-feather="video"></i>Demo Videos</a></li>
+			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/ReportsManagement"><i data-feather="book" style="color:#009925;"></i>Reports</a></li>	
+			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Video"><i data-feather="video"></i>Demo Videos</a></li>
 			<li class="sidebar-header">
 				Other Options
 			</li>
@@ -97,8 +97,8 @@
 		          <i class="align-middle" data-feather="settings" style="color:#0070c0;"></i> <span class="align-middle">Settings</span>
 		        </a>
 				<ul id="ui" class="sidebar-dropdown list-unstyled collapse ">
-					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/Logout/"><i class="align-middle" data-feather="log-out" style="color:red"></i>Logout</a></li>
-					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>index.php/Cashier/ResetCashierPassword/"><i class="align-middle" data-feather="grid" style="color:#009925"></i>Reset Password</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Logout/"><i class="align-middle" data-feather="log-out" style="color:red"></i>Logout</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/ResetCashierPassword/"><i class="align-middle" data-feather="grid" style="color:#009925"></i>Reset Password</a></li>
 				</ul>
 			</li>
 		</ul>

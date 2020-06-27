@@ -831,12 +831,12 @@
 					var formData = $("#AddPackage").serialize(); 
 					// alert("Ashok");
 					$.ajax({
-						url: "<?=base_url()?>index.php/BusinessAdmin/BusinessAdminAddPackage/",
+						url: "<?=base_url()?>BusinessAdmin/BusinessAdminAddPackage",
 						data: formData,
 						type: "POST",
-						crossDomain: true,
+						// crossDomain: true,
 						cache: false,
-						dataType : "json",
+						// dataType : "json",
 						success: function(data) {
 							if(data.success == 'true'){ 
 								$("#ModalAddPackage").modal('hide');
@@ -891,7 +891,7 @@
 				var parameters = {
 					'category_type' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCategoriesByCategoryType/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetCategoriesByCategoryType", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -927,7 +927,7 @@
 				var parameters = {
 					'category_type' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCategoriesByCategoryType/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetCategoriesByCategoryType", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -944,7 +944,7 @@
 				var parameters = {
 					'category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
 					.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -981,7 +981,7 @@
 				var parameters = {
 					'category_type' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCategoriesByCategoryType/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetCategoriesByCategoryType", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -998,7 +998,7 @@
 				var parameters = {
 					'category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -1015,7 +1015,7 @@
 				var parameters = {
 					'sub_category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicesBySubCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetServicesBySubCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -1053,7 +1053,7 @@
 				var parameters = {
 					'category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -1071,7 +1071,7 @@
 				var parameters = {
 					'category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -1167,7 +1167,7 @@
 				var parameters = {
 					'category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -1184,7 +1184,7 @@
 				var parameters = {
 					'sub_category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicesBySubCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetServicesBySubCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						
@@ -1203,7 +1203,7 @@
 					'service_id' :  $(this).val()
 				};
 				// alert($(this).val());
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicePriceById/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetServicePriceById", parameters)
 				.done(function(data, textStatus, jqXHR) {			
 						$("#serviceTable tr:last input[temp=service_price_inr]").val(data[0].service_price_inr);
 				})
@@ -1217,7 +1217,7 @@
 					'service_id' :  $(this).val()
 				};
 				// alert($(this).val());
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicePriceById/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetServicePriceById", parameters)
 				.done(function(data, textStatus, jqXHR) {			
 						$("#discountTable tr:last input[temp=service_price_inr]").val(data[0].service_price_inr);
 				})
@@ -1231,7 +1231,7 @@
 				var parameters = {
 					'category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -1248,7 +1248,7 @@
 				var parameters = {
 					'sub_category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicesBySubCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetServicesBySubCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -1308,12 +1308,12 @@
 					"deactivate" : 'true'
 				};
 				$.ajax({
-					url: "<?=base_url()?>index.php/BusinessAdmin/ChangePackageStatus/",
+					url: "<?=base_url()?>BusinessAdmin/ChangePackageStatus",
 					data: parameters,
 					type: "POST",
-					crossDomain: true,
+					// crossDomain: true,
 					cache: false,
-					dataType : "json",
+					// dataType : "json",
 					success: function(data) {
 								if(data.success == 'true'){
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
@@ -1336,12 +1336,12 @@
 				};
 				
 				$.ajax({
-					url: "<?=base_url()?>index.php/BusinessAdmin/ChangePackageStatus/",
+					url: "<?=base_url()?>BusinessAdmin/ChangePackageStatus",
 					data: parameters,
 					type: "POST",
-					crossDomain: true,
+					// crossDomain: true,
 					cache: false,
-					dataType : "json",
+					// dataType : "json",
 					success: function(data) {
 								if(data.success == 'true'){
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {

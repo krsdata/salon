@@ -125,10 +125,10 @@ $this->load->view('superAdmin/sa_footer_view');
       event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/SuperAdmin/BulkUploadTransaction/",
+        url: "<?=base_url();?>SuperAdmin/BulkUploadTransaction",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,
@@ -163,10 +163,10 @@ $this->load->view('superAdmin/sa_footer_view');
       event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/SuperAdmin/BulkUploadServiceTransaction/",
+        url: "<?=base_url();?>SuperAdmin/BulkUploadServiceTransaction",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,
@@ -201,10 +201,10 @@ $this->load->view('superAdmin/sa_footer_view');
       event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/SuperAdmin/BulkUploadPackageTransaction/",
+        url: "<?=base_url();?>SuperAdmin/BulkUploadPackageTransaction",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,
@@ -239,10 +239,10 @@ $this->load->view('superAdmin/sa_footer_view');
       event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/SuperAdmin/UploadCustomerDetails/",
+        url: "<?=base_url();?>SuperAdmin/UploadCustomerDetails",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,

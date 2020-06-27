@@ -971,16 +971,16 @@ $("#Edit_AddRowCertification").click(function(event){
 				var formData = new FormData(this);
 				// formData.append('#cv',cv);
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddEmssEmployee/",
+		        url: "<?=base_url()?>BusinessAdmin/AddEmssEmployee",
 		        data: formData,
 				contentType: "application/octet-stream",
 				enctype: 'multipart/form-data',
 				contentType: false,
 				processData: false,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 				cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalAddEmployee").modal('hide');
@@ -1017,16 +1017,16 @@ $("#Edit_AddRowCertification").click(function(event){
 			
 				var formData = new FormData(this);
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/EditEmployee/",
+		        url: "<?=base_url()?>BusinessAdmin/EditEmployee",
 		        data: formData,
 				contentType: "application/octet-stream",
 				enctype: 'multipart/form-data',
 				contentType: false,
 				processData: false,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 				cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalEditEmployee").modal('hide');
@@ -1067,7 +1067,7 @@ $("#Edit_AddRowCertification").click(function(event){
       var parameters = {
             employee_id : $(this).attr('employee_id')
       };
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetEmployee/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetEmployee", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				$("#EditEmployee input[name=employee_first_name]").attr('value',data.employee_first_name);
 				$("#EditEmployee input[name=employee_last_name]").attr('value',data.employee_last_name);
@@ -1228,12 +1228,12 @@ $("#Edit_AddRowCertification").click(function(event){
         "deactivate" : 'true'
       };
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/ChangeEmployeeStatus/",
+        url: "<?=base_url()?>BusinessAdmin/ChangeEmployeeStatus",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						toastr["error"](data.message,"", {
@@ -1259,12 +1259,12 @@ $("#Edit_AddRowCertification").click(function(event){
         "deactivate" : 'false'
       };
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/ChangeEmployeeStatus/",
+        url: "<?=base_url()?>BusinessAdmin/ChangeEmployeeStatus",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						toastr["success"](data.message,"", {
@@ -1343,7 +1343,7 @@ $('input[type=checkbox]').change(function(e){
 			'employee_id':$('#emp_id').val()
     	};
 		
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetEmployeeweekoff/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetEmployeeweekoff", parameters)
       .done(function(data, textStatus, jqXHR) {
       		// alert(data[0].id);
 			  if(data == 0){

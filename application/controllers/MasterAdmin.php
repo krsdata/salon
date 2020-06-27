@@ -288,7 +288,7 @@ class MasterAdmin extends CI_Controller {
             $this->session->unset_userdata('outlets');
             $this->session->sess_destroy();
         }
-        redirect(base_url().'index.php/MasterAdmin/Login/','refresh');
+        redirect(base_url().'MasterAdmin/Login','refresh');
     }
     //function for logging out the user
     private function LogoutUrl($url){
@@ -414,7 +414,7 @@ class MasterAdmin extends CI_Controller {
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin");
         }                   
     }
     //Dashboard for the Business Admin
@@ -706,7 +706,7 @@ class MasterAdmin extends CI_Controller {
 					$data['sidebar_collapsed'] = "true";			
 					$this->load->view('master_admin/ma_dashboard_view',$data);
         }else{
-         $this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+         $this->LogoutUrl(base_url()."MasterAdmin");
         }
     }
     
@@ -721,7 +721,7 @@ class MasterAdmin extends CI_Controller {
 				// $this->PrettyPrintArray($data['business_admin']);    
         $this->load->view('master_admin/ma_permissions_view',$data);
       }else{
-       $this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+       $this->LogoutUrl(base_url()."MasterAdmin");
       }
     }
 	//Category permission
@@ -741,7 +741,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -761,7 +761,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -781,7 +781,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -802,7 +802,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -823,7 +823,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -843,7 +843,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -864,7 +864,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -885,7 +885,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -905,7 +905,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -927,7 +927,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -948,7 +948,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -968,7 +968,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -990,7 +990,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -1011,7 +1011,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -1031,7 +1031,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 
 	}
@@ -1044,7 +1044,7 @@ class MasterAdmin extends CI_Controller {
 		// $this->PrettyPrintArray($data);
 		$this->load->view('master_admin/ma_menu_management_view', $data);
 		} else {
-		$this->LogoutUrl(base_url() . "index.php/MasterAdmin/");
+		$this->LogoutUrl(base_url() . "MasterAdmin");
 		}
 	}
 
@@ -1055,7 +1055,7 @@ class MasterAdmin extends CI_Controller {
 					
 				$this->load->view('master_admin/ma_inventory_view',$data);
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 
@@ -1065,7 +1065,7 @@ class MasterAdmin extends CI_Controller {
 				$data = $this->GetDataForMasterAdmin("Employee Management");				   
 				$this->load->view('master_admin/ma_employee_view',$data);
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 
@@ -1078,7 +1078,7 @@ class MasterAdmin extends CI_Controller {
 		
 			return $res['sales'] = $res['sales']['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 		
 		
@@ -1091,7 +1091,7 @@ class MasterAdmin extends CI_Controller {
 			$res['sales'] = $this->MasterAdminModel->GetCurrentMonthSalesByType($data,$ma_admin_id);
 			return $res['sales'] = $res['sales']['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	
 	}
@@ -1102,7 +1102,7 @@ class MasterAdmin extends CI_Controller {
 			$res['sales'] = $this->MasterAdminModel->PreviousMonthTillSalesByType($data,$ma_admin_id);
 			return $res['sales'] = $res['sales']['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 		
 	}
@@ -1129,7 +1129,7 @@ class MasterAdmin extends CI_Controller {
 			}		
 			
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 		
 	}
@@ -1146,7 +1146,7 @@ class MasterAdmin extends CI_Controller {
 			    return $res['state'] = $res['state']['res_arr'];
 			}
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 
@@ -1165,7 +1165,7 @@ class MasterAdmin extends CI_Controller {
 				die;
 			}
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");	
+			$this->LogoutUrl(base_url()."MasterAdmin");	
 		}
 	}
 	public function GetOutlet()
@@ -1183,7 +1183,7 @@ class MasterAdmin extends CI_Controller {
 				die;
 			}
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 	public function GetFifteenSalesBy(){
@@ -1331,7 +1331,7 @@ class MasterAdmin extends CI_Controller {
 				die;
 			}
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 	private function GetFifteenSalesByType($type){
@@ -1345,7 +1345,7 @@ class MasterAdmin extends CI_Controller {
 			    $result += ['res_arr'=>''];
 			return $result['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 	private function LastFifteenDayTypeSalesByOutlet($type,$outlet_id){
@@ -1360,7 +1360,7 @@ class MasterAdmin extends CI_Controller {
 				$result += ['res_arr'=>''];
 			return $result['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 	private function LastFifteenDayTypeSalesByCity($type,$city){
@@ -1375,7 +1375,7 @@ class MasterAdmin extends CI_Controller {
 				$result += ['res_arr'=>''];
 			return $result['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 	private function LastFifteenDayTypeSalesByState($type,$state){
@@ -1390,7 +1390,7 @@ class MasterAdmin extends CI_Controller {
 				$result += ['res_arr'=>''];
 			return $result['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 	private function GetSalesByTypeToday($data,$outlet){
@@ -1403,7 +1403,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->GetOutletTodaySalesByType($where);
 			return $res['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		 
 		}
 	}
@@ -1417,7 +1417,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->OutletPreviousMonthTillSalesByType($where);
 			return $res['res_arr']; 
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 	private function GetPrevTrendsByOutlet($data,$outlet){
@@ -1430,7 +1430,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->OutletPreviousMonthSalesByType($where);
 			return $res['res_arr']; 
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 	private function GetCitySalesByTypeToday($type,$city){
@@ -1443,7 +1443,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->GetCityTodaySalesByType($where);
 			return $res['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		 
 		}
 	}
@@ -1457,7 +1457,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->GetCityCurrentMonthSalesByType($where);
 			return $res['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		 
 		}
 	}
@@ -1471,7 +1471,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->CityPreviousMonthTillSalesByType($where);
 			return $res['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		 
 		}
 	}
@@ -1485,7 +1485,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->CityPreviousMonthSalesByType($where);
 			return $res['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		 
 		}
 	}
@@ -1499,7 +1499,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->GetStateTodaySalesByType($where);
 			return $res['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		 
 		}
 	}
@@ -1513,7 +1513,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->GetStateCurrentMonthSalesByType($where);
 			return $res['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		 
 		}
 	}
@@ -1527,7 +1527,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->StatePreviousMonthTillSalesByType($where);
 			return $res['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		 
 		}
 	}
@@ -1541,7 +1541,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->StatePreviousMonthSalesByType($where);
 			return $res['res_arr'];
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		 
 		}
 	}
@@ -1556,7 +1556,7 @@ class MasterAdmin extends CI_Controller {
 // 			$res = $this->MasterAdminModel->GetOutletTodaySalesByType($where);
 // 			return $res['res_arr'];
 // 		}else{
-// 			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+// 			$this->LogoutUrl(base_url()."MasterAdmin");
 		 
 // 		}
 // 	}
@@ -1571,7 +1571,7 @@ class MasterAdmin extends CI_Controller {
 			$res = $this->MasterAdminModel->GetOutletCurrentMonthSalesByType($where);
 			return $res['res_arr']; 
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		
 		}
 	}
@@ -1586,7 +1586,7 @@ class MasterAdmin extends CI_Controller {
 // 			$res = $this->MasterAdminModel->OutletPreviousMonthTillSalesByType($where);
 // 			return $res['res_arr']; 
 // 		}else{
-// 			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+// 			$this->LogoutUrl(base_url()."MasterAdmin");
 // 		}
 // 	}
 	public function GetDailyTrendsByOutlet(){
@@ -1773,7 +1773,7 @@ class MasterAdmin extends CI_Controller {
 				die;
 			}	
 		}else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		
 		}
 	} 
@@ -1849,7 +1849,7 @@ class MasterAdmin extends CI_Controller {
         }
       }
     } else {
-      $this->LogoutUrl(base_url() . "index.php/BusinessAdmin/");
+      $this->LogoutUrl(base_url() . "SuperAdmin");
     }
   }
   public function BulkUploadOTC()
@@ -1927,7 +1927,7 @@ class MasterAdmin extends CI_Controller {
         }
       }
     } else {
-      $this->LogoutUrl(base_url() . "index.php/BusinessAdmin/");
+      $this->LogoutUrl(base_url() . "SuperAdmin");
     }
   }
 
@@ -2008,7 +2008,7 @@ class MasterAdmin extends CI_Controller {
         }
       }
     } else {
-      $this->LogoutUrl(base_url() . "index.php/BusinessAdmin/");
+      $this->LogoutUrl(base_url() . "SuperAdmin");
     }
   }
 
@@ -2079,7 +2079,7 @@ class MasterAdmin extends CI_Controller {
         }
       }
     } else {
-      $this->LogoutUrl(base_url() . "index.php/BusinessAdmin/");
+      $this->LogoutUrl(base_url() . "BusinessAdmn");
     }
   }
 
@@ -2158,7 +2158,7 @@ class MasterAdmin extends CI_Controller {
         }
       }
     } else {
-      $this->LogoutUrl(base_url() . "index.php/BusinessAdmin/");
+      $this->LogoutUrl(base_url() . "BusinessAdmn");
     }
   }
   public function GetCategoriesPublic(){
@@ -2189,7 +2189,7 @@ class MasterAdmin extends CI_Controller {
 			die;
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}		
   }
 	private function GetCategories($data){
@@ -2205,7 +2205,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}		
 	}
 	public function GetSubCategoriesPublic(){
@@ -2238,7 +2238,7 @@ class MasterAdmin extends CI_Controller {
 		}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}		
   }
 	private function GetSubCategories($data){
@@ -2254,7 +2254,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}		
 	}
    public function ReportsManagement(){
@@ -2345,7 +2345,7 @@ class MasterAdmin extends CI_Controller {
 			}		
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 	//19-05-2020
@@ -2364,7 +2364,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}		
 	}
 	private function GetProductsExport($data){
@@ -2382,7 +2382,7 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}		
 	}
 	public function GetServicePublic(){
@@ -2430,7 +2430,7 @@ class MasterAdmin extends CI_Controller {
 			die;
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}	
 	}
 	public function GetProductPublic(){
@@ -2476,7 +2476,7 @@ class MasterAdmin extends CI_Controller {
 			die;
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/MasterAdmin/");
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}	
 	}
 }

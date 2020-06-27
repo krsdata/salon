@@ -1508,12 +1508,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddCategory").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddCategory/",
+		        url: "<?=base_url()?>BusinessAdmin/AddCategory",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalAddCategory").modal('hide');
@@ -1555,12 +1555,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddSubCategory").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddSubCategory/",
+		        url: "<?=base_url()?>BusinessAdmin/AddSubCategory",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalAddSubCategory").modal('hide');
@@ -1612,12 +1612,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddService").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddService/",
+		        url: "<?=base_url()?>BusinessAdmin/AddService",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalAddService").modal('hide');
@@ -1674,12 +1674,12 @@
       submitHandler: function(form) {
         var formData = $("#AddOTCCategory").serialize(); 
         $.ajax({
-            url: "<?=base_url()?>index.php/BusinessAdmin/AddOTCService/",
+            url: "<?=base_url()?>BusinessAdmin/AddOTCService",
             data: formData,
             type: "POST",
-            crossDomain: true,
+            // crossDomain: true,
             cache: false,
-            dataType : "json",
+            // dataType : "json",
             success: function(data) {
               if(data.success == 'true'){ 
                 $("#ModalAddOTC").modal('hide');
@@ -1726,12 +1726,12 @@
 			submitHandler: function(form) {
 				var formData = $("#AddRawMaterial").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddRawMaterial/",
+		        url: "<?=base_url()?>BusinessAdmin/AddRawMaterial",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalAddRawMaterial").modal('hide');
@@ -1770,12 +1770,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditCategory").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/EditCategory/",
+		        url: "<?=base_url()?>BusinessAdmin/EditCategory",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalEditCategory").modal('hide');
@@ -1817,12 +1817,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditSubCategory").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/EditSubCategory/",
+		        url: "<?=base_url()?>BusinessAdmin/EditSubCategory",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalEditSubCategory").modal('hide');
@@ -1874,12 +1874,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditService").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/EditService/",
+		        url: "<?=base_url()?>BusinessAdmin/EditService",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalEditService").modal('hide');
@@ -1932,12 +1932,12 @@
 	    	submitHandler: function(form) {
 				var formData = $("#EditOTCCategory").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/EditOTCService/",
+		        url: "<?=base_url()?>BusinessAdmin/EditOTCService",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalEditOTC").modal('hide');
@@ -1983,12 +1983,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditRawMaterial").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/EditRawMaterial/",
+		        url: "<?=base_url()?>BusinessAdmin/EditRawMaterial",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalEditRawMaterial").modal('hide');
@@ -2022,7 +2022,7 @@
       var parameters = {
         category_id : $(this).attr('category_id')
       };
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCategory/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetCategory", parameters)
       .done(function(data, textStatus, jqXHR) { 
         $("#EditCategory input[name=category_name]").attr('value',data.category_name);
         $("#EditCategory textarea[name=category_description]").val(data.category_description);
@@ -2041,7 +2041,7 @@
       var parameters = {
         sub_category_id : $(this).attr('sub_category_id')
       };
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategory/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategory", parameters)
       .done(function(data, textStatus, jqXHR) { 
         $("#EditSubCategory input[name=sub_category_name]").attr('value',data.sub_category_name);
         $("#EditSubCategory textarea[name=sub_category_description]").val(data.sub_category_description);
@@ -2061,7 +2061,7 @@
         service_id : $(this).attr('service_id')
       };
 
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetService/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetService", parameters)
       .done(function(data, textStatus, jqXHR) { 
         $("#EditService input[name=service_name]").attr('value',data.service_name);
         $("#EditService input[name=service_price_inr]").attr('value',data.service_price_inr);
@@ -2085,7 +2085,7 @@
         service_id : $(this).attr('otc_service_id')
       };
 
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServiceOtc/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetServiceOtc", parameters)
       .done(function(data, textStatus, jqXHR) { 
         $("#EditOTCCategory input[name=otc_item_name]").attr('value',data.service_name);
         $("#EditOTCCategory input[name=otc_brand]").attr('value',data.service_brand);
@@ -2114,7 +2114,7 @@
         raw_material_category_id : $(this).attr('raw_material_category_id')
       };
 
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetRawMaterial/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetRawMaterial", parameters)
       .done(function(data, textStatus, jqXHR) { 
         $("#EditRawMaterial input[name=raw_material_name]").attr('value',data.raw_material_name);
         $("#EditRawMaterial input[name=raw_material_brand]").attr('value',data.raw_material_brand);
@@ -2137,12 +2137,12 @@
         "deactivate" : 'true'
       };
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/DeactivateService/",
+        url: "<?=base_url()?>BusinessAdmin/DeactivateService",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
@@ -2170,12 +2170,12 @@
       };
 			// alert($(this).attr('category_id'));
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/DeactivateCategory/",
+        url: "<?=base_url()?>BusinessAdmin/DeactivateCategory",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
@@ -2202,12 +2202,12 @@
         "deactivate" : 'true'
       };
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/DeactivateSubCategory/",
+        url: "<?=base_url()?>BusinessAdmin/DeactivateSubCategory",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
@@ -2234,12 +2234,12 @@
         "deactivate" : 'true'
       };
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/DeactivateService/",
+        url: "<?=base_url()?>BusinessAdmin/DeactivateService",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
@@ -2266,12 +2266,12 @@
         "deactivate" : 'true'
       };
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/DeactivateRawMaterial/",
+        url: "<?=base_url()?>BusinessAdmin/DeactivateRawMaterial",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
@@ -2294,7 +2294,7 @@
     	var parameters = {
     		'category_id' :  $(this).val()
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -2311,7 +2311,7 @@
     	var parameters = {
     		'category_id' :  $(this).val()
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -2328,7 +2328,7 @@
     	var parameters = {
     		'category_id' :  $(this).val()
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -2345,11 +2345,11 @@
   		event.preventDefault();
   		$(this).blur();
   		$.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/GetCategoriesPublic/",
+        url: "<?=base_url()?>BusinessAdmin/GetCategoriesPublic",
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 
@@ -2371,11 +2371,11 @@
   		event.preventDefault();
   		$(this).blur();
   		$.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesPublic/",
+        url: "<?=base_url()?>BusinessAdmin/GetSubCategoriesPublic",
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						JSONToCSVConvertor(data.message, "SubCategories", true);
@@ -2397,10 +2397,10 @@
       event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/BusinessAdmin/BulkUploadServices",
+        url: "<?=base_url();?>BusinessAdmin/BulkUploadServices",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,
@@ -2428,10 +2428,10 @@
       event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/BusinessAdmin/BulkUploadOTC/",
+        url: "<?=base_url();?>BusinessAdmin/BulkUploadOTC",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,
@@ -2459,10 +2459,10 @@
       event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/BusinessAdmin/BulkUploadCategory/",
+        url: "<?=base_url();?>BusinessAdmin/BulkUploadCategory",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,
@@ -2490,10 +2490,10 @@
     	event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/BusinessAdmin/BulkUploadSubCategory/",
+        url: "<?=base_url();?>BusinessAdmin/BulkUploadSubCategory",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,
@@ -2521,10 +2521,10 @@
     	event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/BusinessAdmin/BulkUploadRawMaterial/",
+        url: "<?=base_url();?>BusinessAdmin/BulkUploadRawMaterial",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,
@@ -2533,7 +2533,7 @@
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
 							$("#SuccessModalMessage").html("").html(data.message);
 						}).on('hidden.bs.modal', function (e) {
-								window.location.href = "<?=base_url()?>index.php/BusinessAdmin/MenuManagement/";
+								window.location.href = "<?=base_url()?>BusinessAdmin/MenuManagement";
 						});
           }
          	else if (data.success == 'false'){                   
@@ -2552,10 +2552,10 @@
       event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/BusinessAdmin/BulkUploadTransaction/",
+        url: "<?=base_url();?>BusinessAdmin/BulkUploadTransaction",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,
@@ -2618,7 +2618,7 @@
   {
     var parameters = {category_type : $('#sub_category_category_type').val()};
   
-    $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCategoryType",parameters)
+    $.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCategoryType",parameters)
     .done(function(data,textStatus,jqXHR){
       $('#AddSubCategory select[name=sub_category_category_id]').html("");
       for (var i=0;i<data.length;i++)
@@ -2634,7 +2634,7 @@
   {
     var parameters = {category_type : $('#Service-Category-Type').val()};
 
-    $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCategoryByCategoryType",parameters)
+    $.getJSON("<?=base_url()?>BusinessAdmin/GetCategoryByCategoryType",parameters)
     .done(function(data,textStatus,jqXHR){
       $('#AddService select[name=service_category_id]').html("");
       $('#AddService select[name=service_sub_category_id]').html("");
@@ -2652,7 +2652,7 @@
   {
     var parameters = {category_type : $('#Otc-Category-Type').val()};
 
-    $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCategoryByCategoryType",parameters)
+    $.getJSON("<?=base_url()?>BusinessAdmin/GetCategoryByCategoryType",parameters)
     .done(function(data,textStatus,jqXHR){
       $('#AddOTCCategory select[name=category_id]').html("");
       $('#AddOTCCategory select[name=otc_sub_category_id]').html("");
@@ -2773,7 +2773,7 @@ document.getElementById("total").value = t3;
       };
       
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/GetProductDataDetails/",
+        url: "<?=base_url()?>BusinessAdmin/GetProductDataDetails",
         data: parameters,
         type: "GET",
         crossDomain: true,

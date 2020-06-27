@@ -50,7 +50,7 @@
 								<div class="card-header">
 														<label style="text-align:left;padding:6px;font-weight:bold" class="btn btn-success btn-sm">Existing Commission Model</label>
 													
-														<label class="btn btn-primary btn-sm"  style="padding: 6px;float:right;"><a href="<?=base_url()?>index.php/BusinessAdmin/SetCommission" class="text-white">New Commission Model</a></label>
+														<label class="btn btn-primary btn-sm"  style="padding: 6px;float:right;"><a href="<?=base_url()?>BusinessAdmin/SetCommission" class="text-white">New Commission Model</a></label>
 														
 														
 								</div>
@@ -235,7 +235,7 @@ $(document).on('click','.edit-btn',function(event) {
             comm_id,comm_name,month
       };
 	
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/Commission_edit/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/Commission_edit", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				$("#CommEditDetails input[name=name]").val(data.names);
 				$("#CommEditDetails input[name=month]").val(data.months);
@@ -268,7 +268,7 @@ $(document).on('click','.delete_btn',function(event) {
             comm_id,emp_id,month,names
       };
 	
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/DeleteCommission/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/DeleteCommission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 						toastr["success"](data.message,"", {
 									positionClass: "toast-top-right",
@@ -307,7 +307,7 @@ $(document).on('click','.delete_btn',function(event) {
 		
 				// alert(comm_name);
 			
-						$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCommisionDetails/", parameters)
+						$.getJSON("<?=base_url()?>BusinessAdmin/GetCommisionDetails", parameters)
 	    		  .done(function(data, textStatus, jqXHR) { 
 	   	 	  			var temp_str = "<tr><th>Commission Details</th></tr>";
 						// temp_str += 	"<tr><td>Employee Name : "+data.employee_first_name,' ',data.employee_last_name+"</td>";
@@ -386,12 +386,12 @@ $(document).on('click','.delete_btn',function(event) {
 				var formData = $("#CommEditDetails").serialize(); 
 				// alert("hii");
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/UpdateCommission/",
+		        url: "<?=base_url()?>BusinessAdmin/UpdateCommission",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#CommEditDetails").modal('hide');

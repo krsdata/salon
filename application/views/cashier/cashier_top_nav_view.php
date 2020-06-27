@@ -2,18 +2,18 @@
 	<a class="sidebar-toggle d-flex mr-2">
 		<i class="hamburger align-self-center"></i>
 	</a>&ensp;&ensp;&ensp;
-	<a class="text-white" href="<?=base_url()?>index.php/Cashier/Dashboard/" title="Billing"><i data-feather="shopping-cart" ></i></a>&ensp;&ensp;&ensp;
-	<a class="text-white" href="<?=base_url()?>index.php/Cashier/BuyPackages/" title="Packages"><i data-feather="gift"></i></a>&ensp;&ensp;&ensp;
+	<a class="text-white" href="<?=base_url()?>Cashier/Dashboard/" title="Billing"><i data-feather="shopping-cart" ></i></a>&ensp;&ensp;&ensp;
+	<a class="text-white" href="<?=base_url()?>Cashier/BuyPackages/" title="Packages"><i data-feather="gift"></i></a>&ensp;&ensp;&ensp;
 	
 	<?php
 				if(array_search('Appointments', $business_admin_packages) !== false):
 	?>
-	<a class="text-white" href="<?=base_url()?>index.php/Cashier/Appointment/AddAppointmentModal"  title="Appointment">	<i data-feather="clock"></i></a>&ensp;&ensp;&ensp;
+	<a class="text-white" href="<?=base_url()?>Cashier/Appointment/AddAppointmentModal"  title="Appointment">	<i data-feather="clock"></i></a>&ensp;&ensp;&ensp;
 	<?php
 				endif;
 	?>
-	<a class="text-white" href="<?=base_url()?>index.php/Cashier/Inventory/AddInventoryModal" title="Inventory"><i class="fas fa-luggage-cart" style="font-size:17px"></i></a>&ensp;&ensp;&ensp;
-	<a class="text-white" href="<?=base_url()?>index.php/Cashier/Expenses/AddExpenseModal"  title="Expenses"><i class="far fa-list-alt" style="font-size:17px"></i></a>&ensp;&ensp;&ensp;
+	<a class="text-white" href="<?=base_url()?>Cashier/Inventory/AddInventoryModal" title="Inventory"><i class="fas fa-luggage-cart" style="font-size:17px"></i></a>&ensp;&ensp;&ensp;
+	<a class="text-white" href="<?=base_url()?>Cashier/Expenses/AddExpenseModal"  title="Expenses"><i class="far fa-list-alt" style="font-size:17px"></i></a>&ensp;&ensp;&ensp;
 	
 	<!-- <i class="fas fa-shoe-prints"></i><h5><span class="text-white font-weight-bold">45</span>&ensp;&ensp;&ensp; -->
 			
@@ -49,8 +49,8 @@
 			  	</a>
 				<div class="dropdown-menu dropdown-menu-right">
 				
-					<a class="dropdown-item" href="<?=base_url()?>index.php/Cashier/Profile/"><i class="align-middle mr-1" data-feather="user"></i> Profile</a>
-					<a class="dropdown-item" href="<?=base_url()?>index.php/Cashier/Logout/">Sign out</a>
+					<a class="dropdown-item" href="<?=base_url()?>Cashier/Profile/"><i class="align-middle mr-1" data-feather="user"></i> Profile</a>
+					<a class="dropdown-item" href="<?=base_url()?>Cashier/Logout/">Sign out</a>
 				</div>
 			</li>
 		</ul>

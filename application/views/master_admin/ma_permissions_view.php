@@ -196,7 +196,7 @@
         category_create : $(this).attr('create_category'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/CreateCategoryPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/CreateCategoryPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -216,7 +216,7 @@
         category_edit : $(this).attr('edit_category'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/EditCategoryPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/EditCategoryPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -236,7 +236,7 @@
         category_delete : $(this).attr('delete_category'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/DeleteCategoryPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/DeleteCategoryPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -256,7 +256,7 @@
         sub_category_create : $(this).attr('sub_category_create'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/CreateSUbCategoryPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/CreateSUbCategoryPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -276,7 +276,7 @@
         sub_category_edit : $(this).attr('edit_sub_category'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/EditSubCategoryPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/EditSubCategoryPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -296,7 +296,7 @@
         sub_category_delete : $(this).attr('delete_sub_category'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/DeleteSubCategoryPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/DeleteSubCategoryPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -316,7 +316,7 @@
         service_create : $(this).attr('service_create'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/CreateServicePermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/CreateServicePermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -336,7 +336,7 @@
         service_edit : $(this).attr('service_edit'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/EditServicePermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/EditServicePermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -356,7 +356,7 @@
         service_delete : $(this).attr('service_delete'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/DeleteServicePermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/DeleteServicePermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -376,7 +376,7 @@
         product_create : $(this).attr('product_create'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/CreateProductPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/CreateProductPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -396,7 +396,7 @@
         product_edit : $(this).attr('product_edit'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/EditProductPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/EditProductPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -416,7 +416,7 @@
         product_delete : $(this).attr('product_delete'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/DeleteProductPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/DeleteProductPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -436,7 +436,7 @@
         raw_material_create : $(this).attr('raw_material_create'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/CreateRawMaterialPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/CreateRawMaterialPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -456,7 +456,7 @@
         raw_material_edit : $(this).attr('raw_material_edit'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/EditRawMaterialPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/EditRawMaterialPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);
@@ -476,7 +476,7 @@
         raw_material_delete : $(this).attr('raw_material_delete'),
 				business_admin_id: $(this).attr('business_admin_id')
       };
-      $.getJSON("<?=base_url()?>index.php/MasterAdmin/DeleteRawMaterialPermission/", parameters)
+      $.getJSON("<?=base_url()?>MasterAdmin/DeleteRawMaterialPermission", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				if(data.success=='true'){
 					alert(data.message);

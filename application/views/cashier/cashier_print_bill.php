@@ -111,7 +111,7 @@ $pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 							$new_gst=0;
 							$discount=0;	
 							$total_value=0;
-							foreach ($cart as $item):
+							foreach ($cart as $item){
 								if($item['service_discount_percentage']>0){
 									$discount=$item['service_discount_percentage'];
 									$price= $item['service_price_inr'];
@@ -174,7 +174,8 @@ $pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 							</td>	
 						</tr>	
 						<?php		
-							endforeach;
+							}
+							// endforeach;
 						?>
 					</tbody>
 				</table>

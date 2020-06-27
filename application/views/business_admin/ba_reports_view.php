@@ -580,12 +580,12 @@
 		    submitHandler: function(form) {
 					var formData = $("#GetResults").serialize(); 
 					$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/ReportsManagement/",
+		        url: "<?=base_url()?>BusinessAdmin/ReportsManagement",
 		        data: formData,
 		        type: "GET",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
 	            if(data.success == 'true'){
 
@@ -614,7 +614,7 @@
 							to_date	:	$("#to_date").val()
 				};
 	    
-					$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GenerateCustomerBill/", parameters)
+					$.getJSON("<?=base_url()?>BusinessAdmin/GenerateCustomerBill", parameters)
 					.done(function(data, textStatus, jqXHR) { 
 						var str_2 = "";		
 						for(var i=0;i<data.length;i++){
@@ -663,7 +663,7 @@
 					admin_password : $("#verify_password input[name='admin_password']").val()
 	      };
 	     
-					$.getJSON("<?=base_url()?>index.php/BusinessAdmin/VerifyPassword/", parameters)
+					$.getJSON("<?=base_url()?>BusinessAdmin/VerifyPassword", parameters)
 					.done(function(data, textStatus, jqXHR) { 
 						$("#ModalVerifyPassword").modal('hide');
 						var str_2 = "";		
@@ -722,12 +722,12 @@
         "txn_service_discounted_price" : $(this).attr('txn_service_discounted_price')
       };
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/EditBills/",
+        url: "<?=base_url()?>BusinessAdmin/EditBills",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						$("#ModalEditBill").modal('hide');
@@ -776,12 +776,12 @@
 		    submitHandler: function(form) {
 					var formData = $("#cancel_bill").serialize(); 
 					$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/DeleteBills/",
+		        url: "<?=base_url()?>BusinessAdmin/DeleteBills",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
 	            if(data.success == 'true'){
 								$("#ModalCancelBill").modal('hide');

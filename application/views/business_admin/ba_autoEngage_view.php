@@ -376,12 +376,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#autoEngage").serialize();
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddTrigger/",
+		        url: "<?=base_url()?>BusinessAdmin/AddTrigger",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
 								var message2 = data.message;
@@ -429,12 +429,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#pendingAmountSms").serialize();
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/SendPendingAmountSms/",
+		        url: "<?=base_url()?>BusinessAdmin/SendPendingAmountSms",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
 								var message2 = data.message;
@@ -479,7 +479,7 @@
         auto_engage_id : $(this).attr('auto_engage_id')
       };
 
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetTrigger/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetTrigger", parameters)
       .done(function(data, textStatus, jqXHR) { 
 				$("#editTrigger select[name=trigger]").append("<option value="+data.trigger_type+" selected='selected'>"+data.trigger_type+"</option>");
         $("#editTrigger select[name=trigger]").attr('value',data.trigger_type);
@@ -514,12 +514,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#editTrigger").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/EditTrigger/",
+		        url: "<?=base_url()?>BusinessAdmin/EditTrigger",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalEditTrigger").modal('hide');
@@ -563,12 +563,12 @@
 			
       };
 			$.ajax({
-				url: "<?=base_url()?>index.php/BusinessAdmin/CancelTrigger/",
+				url: "<?=base_url()?>BusinessAdmin/CancelTrigger",
 				data: parameters,
 				type: "POST",
-				crossDomain: true,
+				// crossDomain: true,
 				cache: false,
-				dataType : "json",
+				// dataType : "json",
 				success: function(data) {
 					if(data.success == 'true'){ 
 						var message2 = data.message;

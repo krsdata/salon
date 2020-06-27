@@ -89,12 +89,12 @@
 			var formData = $("#AddCalendar").serialize(); 
 			
 			$.ajax({
-				url: "<?=base_url()?>index.php/BusinessAdmin/IntegrateGoogle/",
+				url: "<?=base_url()?>BusinessAdmin/IntegrateGoogle",
 				data: formData,
 				type: "POST",
-				crossDomain: true,
+				// crossDomain: true,
 				cache: false,
-				dataType : "json",
+				// dataType : "json",
 				success: function(data) {
 					if(data.success == 'true'){
 						$("#ModalAddCalendar").modal('hide'); 

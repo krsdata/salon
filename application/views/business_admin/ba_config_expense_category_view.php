@@ -1117,12 +1117,12 @@
                 submitHandler: function(form) {
                     var formData = $("#AddExpenseCategory").serialize();
                     $.ajax({
-                        url: "<?=base_url()?>index.php/BusinessAdmin/AddExpenseCategory/",
+                        url: "<?=base_url()?>BusinessAdmin/AddExpenseCategory",
                         data: formData,
                         type: "POST",
-                        crossDomain: true,
+                        // crossDomain: true,
                         cache: false,
-                        dataType: "json",
+                        // dataType: "json",
                         success: function(data) {
                             if (data.success == 'true') {
                                 $("#ModalAddExpenseCategory").modal('hide');
@@ -1163,12 +1163,12 @@
                 submitHandler: function(form) {
                     var formData = $("#EditExpenseCategory").serialize();
                     $.ajax({
-                        url: "<?=base_url()?>index.php/BusinessAdmin/EditExpenseCategory/",
+                        url: "<?=base_url()?>BusinessAdmin/EditExpenseCategory",
                         data: formData,
                         type: "POST",
-                        crossDomain: true,
+                        // crossDomain: true,
                         cache: false,
-                        dataType: "json",
+                        // dataType: "json",
                         success: function(data) {
                             if (data.success == 'true') {
                                 $("#ModalEditExpenseCategory").modal('hide');
@@ -1204,7 +1204,7 @@
                 var parameters = {
                     expense_type_id: $(this).attr('expense_type_id')
                 };
-                $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetExpenseType/", parameters)
+                $.getJSON("<?=base_url()?>BusinessAdmin/GetExpenseType", parameters)
                     .done(function(data, textStatus, jqXHR) {
                         $("#EditExpenseCategory input[name=expense_type]").attr('value', data
                             .expense_type);
@@ -1251,12 +1251,12 @@
                 submitHandler: function(form) {
                     var formData = $("#AddDailyExpenses").serialize();
                     $.ajax({
-                        url: "<?=base_url()?>index.php/BusinessAdmin/ConfigExpense/",
+                        url: "<?=base_url()?>BusinessAdmin/ConfigExpense",
                         data: formData,
                         type: "POST",
-                        crossDomain: true,
+                        // crossDomain: true,
                         cache: false,
-                        dataType: "json",
+                        // dataType: "json",
                         success: function(data) {
                             if (data.success == 'true') {
                                 $("#ModalAddExpense").modal('hide');
@@ -1323,12 +1323,12 @@
                 submitHandler: function(form) {
                     var formData = $("#UpdateDailyExpenses").serialize();
                     $.ajax({
-                        url: "<?=base_url()?>index.php/BusinessAdmin/UpdateExpense/",
+                        url: "<?=base_url()?>BusinessAdmin/UpdateExpense",
                         data: formData,
                         type: "POST",
-                        crossDomain: true,
+                        // crossDomain: true,
                         cache: false,
-                        dataType: "json",
+                        // dataType: "json",
                         success: function(data) {
                             // alert(data.success);
 
@@ -1379,12 +1379,12 @@
                 submitHandler: function(form) {
                     var formData = $("#GetExpensesSummary").serialize();
                     $.ajax({
-                        url: "<?=base_url()?>index.php/BusinessAdmin/ExpensesSummaryRange/",
+                        url: "<?=base_url()?>BusinessAdmin/ExpensesSummaryRange",
                         data: formData,
                         type: "GET",
-                        crossDomain: true,
+                        // crossDomain: true,
                         cache: false,
-                        dataType: "json",
+                        // dataType: "json",
                         success: function(data) {
                             var str = "";
                             for (var i = 0; i < data.length; i++) {
@@ -1423,12 +1423,12 @@
                 submitHandler: function(form) {
                     var formData = $("#GetTopExpenses").serialize();
                     $.ajax({
-                        url: "<?=base_url()?>index.php/BusinessAdmin/TopExpensesSummaryRange/",
+                        url: "<?=base_url()?>BusinessAdmin/TopExpensesSummaryRange",
                         data: formData,
                         type: "GET",
-                        crossDomain: true,
+                        // crossDomain: true,
                         cache: false,
-                        dataType: "json",
+                        // dataType: "json",
                         success: function(data) {
                             var date_array = [];
                             var outflow_array = [];
@@ -1522,12 +1522,12 @@
             submitHandler: function(form) {
                 var formData = $("#AddVendor").serialize();
                 $.ajax({
-                    url: "<?=base_url()?>index.php/BusinessAdmin/AddVendor/",
+                    url: "<?=base_url()?>BusinessAdmin/AddVendor",
                     data: formData,
                     type: "POST",
-                    crossDomain: true,
+                    // crossDomain: true,
                     cache: false,
-                    dataType: "json",
+                    // dataType: "json",
                     success: function(data) {
                         if (data.success == 'true') {
                             $("#ModalAddVendors").modal('hide');
@@ -1591,12 +1591,12 @@
                 // alert("hii");
                 var formData = $("#Update").serialize();
                 $.ajax({
-                    url: "<?=base_url()?>index.php/BusinessAdmin/UpdateVendor/",
+                    url: "<?=base_url()?>BusinessAdmin/UpdateVendor",
                     data: formData,
                     type: "POST",
-                    crossDomain: true,
+                    // crossDomain: true,
                     cache: false,
-                    dataType: "json",
+                    // dataType: "json",
                     success: function(data) {
                         if (data.success == 'true') {
                             $("#ModalAddVendors").modal('hide');
@@ -1640,7 +1640,7 @@
             var expense_type = $(this).attr('expense_type');
 
             //   };
-            //   $.getJSON("<?=base_url()?>index.php/BusinessAdmin/EditPendingExpense/", parameters)
+            //   $.getJSON("<?=base_url()?>BusinessAdmin/EditPendingExpense", parameters)
             //   .done(function(data, textStatus, jqXHR) { 
             $("#UpdatePendingExpense input[name=expense_id]").attr('value', $(this).attr('expense_id'));
             $("#UpdatePendingExpense input[name=expense_type]").attr('value', expense_type);
@@ -1823,7 +1823,7 @@
                             group : group
                         };
                     }
-				    $.getJSON("<?=base_url()?>index.php/BusinessAdmin/ExpenseReport/",parameters)
+				    $.getJSON("<?=base_url()?>BusinessAdmin/ExpenseReport",parameters)
 					.done(function(data, textStatus, jqXHR) {
                          
 						JSONToCSVConvertor(data.result,"Overall Expense Report", true);
@@ -1931,7 +1931,7 @@
             var parameters = {
             vendor_id: $(this).attr('vendor_id')
         };
-        $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetVendorDetails/", parameters)
+        $.getJSON("<?=base_url()?>BusinessAdmin/GetVendorDetails", parameters)
             .done(function(data, textStatus, jqXHR) {
                 // alert(data);
                 $("#Update input[name=vendor_id]").attr('value', data.vendor_id);

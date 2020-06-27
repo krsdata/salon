@@ -229,12 +229,12 @@ $this->load->view('business_admin/ba_header_view');
 				submitHandler: function(form) {
 					var formData = $("#GetResults").serialize();
 					$.ajax({
-						url: "<?= base_url() ?>index.php/BusinessAdmin/Attendance/",
+						url: "<?= base_url() ?>BusinessAdmin/Attendance",
 						data: formData,
 						type: "GET",
-						crossDomain: true,
+						// crossDomain: true,
 						cache: false,
-						dataType: "json",
+						// dataType: "json",
 						success: function(data) {
 							if (data.success == 'true') {
 								JSONToCSVConvertor(data.result, "Reports", true);
@@ -284,7 +284,7 @@ $this->load->view('business_admin/ba_header_view');
 					month
 				};
 				if (month == mon) {
-					$.getJSON("<?= base_url() ?>index.php/BusinessAdmin/GetDataAttendance/", parameters)
+					$.getJSON("<?= base_url() ?>BusinessAdmin/GetDataAttendance", parameters)
 						.done(function(data, textStatus, jqXHR) {
 							var temp_str = "<tr><th>Sr.No</th><th>Employee Id</th><th>Month</th><th>Employee Name</th><th>Calender Days</th><th>Working Days</th><th>Present</th><th>Leave</th><th>OverTime (hrs)</th><th>Week-Off</th><th>Holidays</th><th>Half Days</th><th>Net Days Present</th></tr>";
 							for (var i = 0; i < data.result.length; i++) {
@@ -315,7 +315,7 @@ $this->load->view('business_admin/ba_header_view');
 							console.log(errorThrown.toString());
 						});
 				}   else if (month != mon) {
-					$.getJSON("<?= base_url() ?>index.php/BusinessAdmin/GetDataAttendance/", parameters)
+					$.getJSON("<?= base_url() ?>BusinessAdmin/GetDataAttendance", parameters)
 						.done(function(data, textStatus, jqXHR) {
 							var temp_str = "<tr><th>Sr.No</th><th>Employee Id</th><th>Month</th><th>Employee Name</th><th>Calender Days</th><th>Working Days</th><th>Present</th><th>Leave</th><th>OverTime (hrs)</th><th>Week-Off</th><th>Holidays</th><th>Half Days</th><th>Net Days Present</th></tr>";
 

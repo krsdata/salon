@@ -176,7 +176,7 @@
                                                                                                     <?php
                                                                                                         foreach($vendors as $vendor){
                                                                                                     ?>
-                                                                                                            <option value="<?=$vendor['vendor_id']?>"><?=$vendor['vendor_name']?></option>
+                                                                																			<option value="<?=$vendor['vendor_id']?>"><?=$vendor['vendor_name']?></option>
                                                                                                     <?php
                                                                                                         }
                                                                                                     ?>
@@ -459,7 +459,7 @@
   		var parameters = {
   			'raw_material_category_id' :  $(this).val()
   		};
-    	$.getJSON("<?=base_url()?>index.php/Cashier/GetRawMaterial/", parameters)
+    	$.getJSON("<?=base_url()?>Cashier/GetRawMaterial", parameters)
       .done(function(data, textStatus, jqXHR) {
       	$("#AddRawMaterialInventory input[name=rm_brand]").attr('value',data.raw_material_brand);
         $("#AddRawMaterialInventory input[name=rm_category_id]").attr('value',data.raw_material_category_id);
@@ -474,7 +474,7 @@
     //   var parameters = {
     //     'service_id' :  $(this).val()
     //   };
-    //   $.getJSON("<?=base_url()?>index.php/Cashier/GetOTCItem/", parameters)
+    //   $.getJSON("<?=base_url()?>Cashier/GetOTCItem", parameters)
     //   .done(function(data, textStatus, jqXHR) {
     //     $("#AddOTCInventory input[name=otc_brand]").attr('value',data.service_brand);
     //     $("#AddOTCInventory select[name=otc_unit]").val(data.service_unit); 
@@ -503,12 +503,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddRawMaterialInventory").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/AddRawMaterialInventory/",
+	        url: "<?=base_url()?>Cashier/AddRawMaterialInventory",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalAddRawMaterial").modal('hide'); 
@@ -550,12 +550,12 @@
 			// alert(document.getElementById('expiry').value);
 				var formData = $("#AddOTCInventory").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/AddOTCInventory/",
+	        url: "<?=base_url()?>Cashier/AddOTCInventory",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalAddOTCStock").modal('hide'); 
@@ -620,12 +620,12 @@
       };
       
       $.ajax({
-        url: "<?=base_url()?>index.php/Cashier/GetProductData/",
+        url: "<?=base_url()?>Cashier/GetProductData",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cb(data.message);
@@ -659,12 +659,12 @@
 		};	
 		//   alert(parameters);
 		$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/GetProductDetails/",
+	        url: "<?=base_url()?>Cashier/GetProductDetails",
 	        data: parameters,
 	        type: "GET",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    	success: function(data) {
             if(data.success == 'true'){
 							document.getElementById("category").value = data.result[0]['category_name'];
@@ -699,7 +699,7 @@
 		};	
 		//   alert(parameters);
 		$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/GetProductDetail/",
+	        url: "<?=base_url()?>Cashier/GetProductDetail",
 	        data: parameters,
 	        type: "GET",
 	        crossDomain: true,
@@ -732,7 +732,7 @@
     		'inventory_type' :  $(this).val()
     	};
 		// alert($(this).val());
-    	$.getJSON("<?=base_url()?>index.php/Cashier/GetCategoriesByInventory/", parameters)
+    	$.getJSON("<?=base_url()?>Cashier/GetCategoriesByInventory", parameters)
       .done(function(data, textStatus, jqXHR) {
 		//   alert(data);
       		var options = "<option value='' selected></option>"; 
@@ -750,7 +750,7 @@
     		'category_id' :  $(this).val()
     	};
 		// alert($(this).val());
-    	$.getJSON("<?=base_url()?>index.php/Cashier/GetSubCategoriesByCatId/", parameters)
+    	$.getJSON("<?=base_url()?>Cashier/GetSubCategoriesByCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -770,7 +770,7 @@
     		'sub_category_id' :  $(this).val(),
 			'type'	: type
     	};
-    	$.getJSON("<?=base_url()?>index.php/Cashier/GetServicesBySubCatId/", parameters)
+    	$.getJSON("<?=base_url()?>Cashier/GetServicesBySubCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -808,7 +808,7 @@
 		event.preventDefault();
 		this.blur();
 			
-			$.getJSON("<?=base_url()?>index.php/Cashier/InventoryDownload/")	
+			$.getJSON("<?=base_url()?>Cashier/InventoryDownload")	
 			.done(function(data, textStatus, jqXHR) {
 					
 				JSONToCSVConvertor(data.result," ", true);
@@ -915,7 +915,7 @@
     		'item_id' :  $(this).val()
     	};
 		// alert($(this).val());
-    	$.getJSON("<?=base_url()?>index.php/Cashier/GetProduct/", parameters)
+    	$.getJSON("<?=base_url()?>Cashier/GetProduct", parameters)
       .done(function(data, textStatus, jqXHR) {
           var mrp = parseInt(data.result[0]['service_price_inr'])+parseInt((data.result[0]['service_price_inr']*data.result[0]['service_gst_percentage'])/100);
         //   alert(mrp);

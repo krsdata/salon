@@ -262,12 +262,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#conversion").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddConversionRatio/",
+		        url: "<?=base_url()?>BusinessAdmin/AddConversionRatio",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	// $("#ModalEditRawMaterial").modal('hide');
@@ -305,7 +305,7 @@
         loyalty_id : $(this).attr('loyalty_id')
       };
 
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetConversionRatio/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetConversionRatio", parameters)
       .done(function(data, textStatus, jqXHR) { 
         $("#EditConversionRatio input[name=conversion_ratio]").attr('value',data.loyalty_conversion);
         $("#EditConversionRatio input[name=conversion_rate]").attr('value',data.loyalty_rate);
@@ -331,12 +331,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditConversionRatio").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/UpdateConversionRatio/",
+		        url: "<?=base_url()?>BusinessAdmin/UpdateConversionRatio",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalEditConversionRatio").modal('hide');
@@ -400,12 +400,12 @@
       };
 			
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/GetCustomerData/",
+        url: "<?=base_url()?>BusinessAdmin/GetCustomerData",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cb(data.message);
@@ -438,7 +438,7 @@
 	      };
 	      
 				$("#SearchCustomerButton").attr('Customer-Id',"Nothing");
-					$.getJSON("<?=base_url()?>index.php/BusinessAdmin/AddCustomerDataInTable/", parameters)
+					$.getJSON("<?=base_url()?>BusinessAdmin/AddCustomerDataInTable", parameters)
 					.done(function(data, textStatus, jqXHR) { 
 						var str_2 = "";
 						

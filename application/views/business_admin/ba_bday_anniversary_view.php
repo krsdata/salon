@@ -319,7 +319,7 @@
             var parameters = {
                 month
             };
-            $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCustomerHistory/", parameters)
+            $.getJSON("<?=base_url()?>BusinessAdmin/GetCustomerHistory", parameters)
                 .done(function(data, textStatus, jqXHR) {
                     var temp_str =
                         "<tr><th>Sr.No</th><th>Name</th><th>Mobile No</th><th>Birthday</th><th>Lifetime Billing</th><th>Last Visit Date</th><th>Configure Message</th></tr>";
@@ -363,7 +363,7 @@
             var parameters = {
                 month
             };
-            $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCustomerHistoryAnniversary/", parameters)
+            $.getJSON("<?=base_url()?>BusinessAdmin/GetCustomerHistoryAnniversary", parameters)
                 .done(function(data, textStatus, jqXHR) {
                     // alert(data);
                     if(data.success == 'true'){
@@ -414,7 +414,7 @@
             var parameters = {
             customer_id: $(this).attr('cust_id')
         };
-        $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCustomer/", parameters)
+        $.getJSON("<?=base_url()?>BusinessAdmin/GetCustomer", parameters)
             .done(function(data, textStatus, jqXHR) {
                 // alert(data);
                 $("#EditCustomerDetails select[name=customer_title]").val(data.customer_title);
@@ -470,7 +470,7 @@
             customer_name:$(this).attr('cust_name'),
             option:$(this).attr('option')
         };
-        $.getJSON("<?=base_url()?>index.php/BusinessAdmin/SendSms/", parameters)
+        $.getJSON("<?=base_url()?>BusinessAdmin/SendSms", parameters)
             .done(function(data, textStatus, jqXHR) {
                 if(data.success == 'true'){
 							toastr["success"](data.message,"", {

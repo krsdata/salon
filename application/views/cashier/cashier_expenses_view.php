@@ -397,12 +397,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddDailyExpenses").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/Expenses/",
+	        url: "<?=base_url()?>Cashier/Expenses",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){ 
             	$("#ModalAddExpense").modal('hide');
@@ -419,7 +419,7 @@
 							timeOut: 500
 						});
 						setTimeout(function () { window.location.reload();}, 500);
-						// setTimeout(function () { window.location.href = "<?=base_url()?>index.php/Cashier/Dashboard/"; }, 500);
+						// setTimeout(function () { window.location.href = "<?=base_url()?>Cashier/Dashboard"; }, 500);
             }
             else if (data.success == 'false'){                   
         	    if($('.feedback').hasClass('alert-success')){
@@ -456,12 +456,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#GetExpensesSummary").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/ExpensesSummaryRange/",
+	        url: "<?=base_url()?>Cashier/ExpensesSummaryRange",
 	        data: formData,
 	        type: "GET",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
 						var str = "";
 						for(var i=0;i<data.length;i++){
@@ -498,12 +498,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#GetTopExpenses").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/TopExpensesSummaryRange/",
+	        url: "<?=base_url()?>Cashier/TopExpensesSummaryRange",
 	        data: formData,
 	        type: "GET",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
 	    			var date_array = [];
 	    			var outflow_array = [];
@@ -713,7 +713,7 @@
                             group : group
                         };
                     }
-				    $.getJSON("<?=base_url()?>index.php/Cashier/ExpenseReport/",parameters)
+				    $.getJSON("<?=base_url()?>Cashier/ExpenseReport",parameters)
 					.done(function(data, textStatus, jqXHR) {
                         // alert(data.result); 
 						JSONToCSVConvertor(data.result,"Overall Expense Report", true);

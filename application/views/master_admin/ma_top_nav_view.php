@@ -121,7 +121,7 @@
 						else{
 							foreach ($business_outlet_details as $outlet) {
 						?>
-							<a class="dropdown-item text-dark" href="<?=base_url()?>index.php/BusinessAdmin/SelectOutlet/<?=$outlet['business_outlet_id']?>"><?=$outlet['business_outlet_name']?></a>
+							<a class="dropdown-item text-dark" href="<?=base_url()?>BusinessAdmin/SelectOutlet/<?=$outlet['business_outlet_id']?>"><?=$outlet['business_outlet_name']?></a>
 					<?php
 							}
 						}
@@ -133,8 +133,8 @@
 			    <img src="<?=base_url()?>public/images/default.png" class="avatar img-fluid rounded-circle mr-1" alt="Business Admin" /> <span class="text-white"></span>
 			  	</a>
 				<div class="dropdown-menu dropdown-menu-right">
-					<a class="dropdown-item" href="<?=base_url()?>index.php/MasterAdmin/Profile/"><i class="align-middle mr-1" data-feather="user"></i> Profile</a>
-					<a class="dropdown-item" href="<?=base_url()?>index.php/MasterAdmin/Logout/">Sign out</a>
+					<a class="dropdown-item" href="<?=base_url()?>MasterAdmin/Profile"><i class="align-middle mr-1" data-feather="user"></i> Profile</a>
+					<a class="dropdown-item" href="<?=base_url()?>MasterAdmin/Logout">Sign out</a>
 				</div>
 			</li>
 		</ul>

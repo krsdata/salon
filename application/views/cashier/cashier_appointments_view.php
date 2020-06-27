@@ -742,12 +742,12 @@
 			var formData = $("#AddAppointment").serialize(); 
 			
 			$.ajax({
-				url: "<?=base_url()?>index.php/Cashier/AddAppointment/",
+				url: "<?=base_url()?>Cashier/AddAppointment",
 				data: formData,
 				type: "POST",
-				crossDomain: true,
+				// crossDomain: true,
 				cache: false,
-				dataType : "json",
+				// dataType : "json",
 				success: function(data) {
 					if(data.success == 'true'){
 						$("#ModalAddAppointment").modal('hide'); 
@@ -803,12 +803,12 @@
 			var formData = $("#AddAppointment1").serialize(); 
 			
 			$.ajax({
-				url: "<?=base_url()?>index.php/Cashier/AddAppointment/",
+				url: "<?=base_url()?>Cashier/AddAppointment",
 				data: formData,
 				type: "POST",
-				crossDomain: true,
+				// crossDomain: true,
 				cache: false,
-				dataType : "json",
+				// dataType : "json",
 				success: function(data) {
 					if(data.success == 'true'){
 						$("#ModalAddAppointment").modal('hide'); 
@@ -857,12 +857,12 @@
 		submitHandler: function(form) {
 					var formData = $("#editAppointment").serialize(); 
 					$.ajax({
-						url: "<?=base_url()?>index.php/Cashier/UpdateAppointment/",
+						url: "<?=base_url()?>Cashier/UpdateAppointment",
 						data: formData,
 						type: "POST",
-						crossDomain: true,
+						// crossDomain: true,
 						cache: false,
-						dataType : "json",
+						// dataType : "json",
 						success: function(data) {
 							if(data.success == 'true'){
 								$("#ModalEditAppointment").modal('hide'); 
@@ -914,7 +914,7 @@
 		var parameters = {
 			'appointmnet_date' :  $(this).val()
 		};
-		$.getJSON("<?=base_url()?>index.php/Cashier/GetWeeklyAppointment/", parameters)
+		$.getJSON("<?=base_url()?>Cashier/GetWeeklyAppointment", parameters)
 		.done(function(data, textStatus, jqXHR) {
 				var options = "<option value='' selected></option>"; 
 				for(var i=0;i<data.length;i++){
@@ -933,7 +933,7 @@
 				var parameters = {
 					'category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/Cashier/GetSubCategoriesByCatId/", parameters)
+				$.getJSON("<?=base_url()?>Cashier/GetSubCategoriesByCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -950,7 +950,7 @@
 				var parameters = {
 					'sub_category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/Cashier/GetServicesBySubCatId/", parameters)
+				$.getJSON("<?=base_url()?>Cashier/GetServicesBySubCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						var price=0;
@@ -967,7 +967,7 @@
 			var parameters = {
 				'service_id' :  $(this).val()
 			};
-			$.getJSON("<?=base_url()?>index.php/Cashier/GetAppointmentServices/", parameters)
+			$.getJSON("<?=base_url()?>Cashier/GetAppointmentServices", parameters)
 			.done(function(data, textStatus, jqXHR) {
 				$("#e_service_price_inr").val(data['message'].service_price_inr);
 				$("#e_service_est_time").val(data['message'].service_est_time);
@@ -1012,12 +1012,12 @@
       };
 			// alert(parameters);
 					$.ajax({
-						url: "<?=base_url()?>index.php/Cashier/CancelAppointment/",
+						url: "<?=base_url()?>Cashier/CancelAppointment",
 						data: parameters,
 						type: "POST",
-						crossDomain: true,
+						// crossDomain: true,
 						cache: false,
-						dataType : "json",
+						// dataType : "json",
 						success: function(data) {
 							if(data.success == 'true'){ 
 								$("#ModalEditAppointment").modal('hide'); 
@@ -1063,21 +1063,21 @@
       };
 
 			$.ajax({
-				url: "<?=base_url()?>index.php/Cashier/AddToCartFromAppointment/",
+				url: "<?=base_url()?>Cashier/AddToCartFromAppointment",
 				data: parameters,
 				type: "POST",
-				crossDomain: true,
+				// crossDomain: true,
 				cache: false,
-				dataType : "json",
+				// dataType : "json",
 				success: function(data) {
 					if(data.success == 'true'){ 
 						$("#ModalEditAppointment").modal('hide'); 
 						
 						//If you want to redirect to billing board then modify this url
-						//window.location.href = "<?=base_url()?>index.php/Cashier/PerformBilling/{customer_id}";
+						//window.location.href = "<?=base_url()?>Cashier/PerformBilling/{customer_id}";
 
 						//otherwise
-						window.location.href = "<?=base_url()?>index.php/Cashier/Dashboard/";
+						window.location.href = "<?=base_url()?>Cashier/Dashboard";
 					}
 					else if (data.success == 'false'){
 						$('#centeredModalDanger').modal('show').on('shown.bs.modal', function (e){
@@ -1133,7 +1133,7 @@
 		// return false;
 		$.ajax({
 			type: "POST",
-			url: "<?=base_url()?>index.php/Cashier/SendReminderSms/",
+			url: "<?=base_url()?>Cashier/SendReminderSms",
 			dataType: 'json',
 			data: {sender_id:sender_id,api_key:api_key,customer_name:customer_name, customer_mobile: customer_mobile,business_outlet_name:business_outlet_name,appointment_date:appointment_date,appointment_start_time:appointment_start_time},
 			success: function(data) {
@@ -1201,12 +1201,12 @@
       };
 
       $.ajax({
-        url: "<?=base_url()?>index.php/Cashier/GetCustomerData/",
+        url: "<?=base_url()?>Cashier/GetCustomerData",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cb(data.message);
@@ -1233,7 +1233,7 @@
   	var parameters = {
   		'category_id' :  $(this).val()
   	};
-  	$.getJSON("<?=base_url()?>index.php/Cashier/GetSubCategoriesByCatId/", parameters)
+  	$.getJSON("<?=base_url()?>Cashier/GetSubCategoriesByCatId", parameters)
     .done(function(data, textStatus, jqXHR) {
     		var options = "<option value='' selected></option>"; 
      		for(var i=0;i<data.length;i++){
@@ -1250,7 +1250,7 @@
   	var parameters = {
   		'sub_category_id' :  $(this).val()
   	};
-  	$.getJSON("<?=base_url()?>index.php/Cashier/GetServicesBySubCatId/", parameters)
+  	$.getJSON("<?=base_url()?>Cashier/GetServicesBySubCatId", parameters)
     .done(function(data, textStatus, jqXHR) {
     		var options = "<option value='' selected></option>"; 
      		for(var i=0;i<data.length;i++){
@@ -1268,7 +1268,7 @@
   		'service_id' :  $(this).val()
   	};
 		// alert($(this).val());
-  	$.getJSON("<?=base_url()?>index.php/Cashier/GetServiceByServiceId/", parameters)
+  	$.getJSON("<?=base_url()?>Cashier/GetServiceByServiceId", parameters)
     .done(function(data, textStatus, jqXHR) {
 			var service_est_time=0;
     		// var service_est_time = data[0].service_est_time;
@@ -1309,7 +1309,7 @@
   	var parameters = {
   		'category_id' :  $(this).val()
   	};
-  	$.getJSON("<?=base_url()?>index.php/Cashier/GetSubCategoriesByCatId/", parameters)
+  	$.getJSON("<?=base_url()?>Cashier/GetSubCategoriesByCatId", parameters)
     .done(function(data, textStatus, jqXHR) {
     		var options = "<option value='' selected></option>"; 
      		for(var i=0;i<data.length;i++){
@@ -1326,7 +1326,7 @@
   	var parameters = {
   		'sub_category_id' :  $(this).val()
   	};
-  	$.getJSON("<?=base_url()?>index.php/Cashier/GetServicesBySubCatId/", parameters)
+  	$.getJSON("<?=base_url()?>Cashier/GetServicesBySubCatId", parameters)
     .done(function(data, textStatus, jqXHR) {
     		var options = "<option value='' selected></option>"; 
      		for(var i=0;i<data.length;i++){
@@ -1344,7 +1344,7 @@
   		'service_id' :  $(this).val()
   	};
 		// alert($(this).val());
-  	$.getJSON("<?=base_url()?>index.php/Cashier/GetServiceByServiceId/", parameters)
+  	$.getJSON("<?=base_url()?>Cashier/GetServiceByServiceId", parameters)
     .done(function(data, textStatus, jqXHR) {
 			var service_est_time=0;
 				if(data[0].service_est_time==null){

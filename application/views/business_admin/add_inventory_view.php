@@ -409,7 +409,7 @@
   		var parameters = {
   			'raw_material_category_id' :  $(this).val()
   		};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetRawMaterial/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetRawMaterial", parameters)
       .done(function(data, textStatus, jqXHR) {
       	$("#AddRawMaterialInventory input[name=rm_brand]").attr('value',data.raw_material_brand);
         $("#AddRawMaterialInventory input[name=rm_category_id]").attr('value',data.raw_material_category_id);
@@ -440,12 +440,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddRawMaterialInventory").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/BusinessAdmin/AddRawMaterialInventory/",
+	        url: "<?=base_url()?>BusinessAdmin/AddRawMaterialInventory",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalAddRawMaterial").modal('hide'); 
@@ -487,12 +487,12 @@
 			// alert(document.getElementById('expiry').value);
 				var formData = $("#AddOTCInventory").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/BusinessAdmin/AddOTCInventory/",
+	        url: "<?=base_url()?>BusinessAdmin/AddOTCInventory",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalAddOTCStock").modal('hide'); 
@@ -557,12 +557,12 @@
       };
       
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/GetProductData/",
+        url: "<?=base_url()?>BusinessAdmin/GetProductData",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cb(data.message);
@@ -596,12 +596,12 @@
 		};	
 		//   alert(parameters);
 		$.ajax({
-	        url: "<?=base_url()?>index.php/BusinessAdmin/GetProductDetails/",
+	        url: "<?=base_url()?>BusinessAdmin/GetProductDetails",
 	        data: parameters,
 	        type: "GET",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    	success: function(data) {
             if(data.success == 'true'){
 							document.getElementById("category").value = data.result[0]['category_name'];
@@ -636,12 +636,12 @@
 		};	
 		//   alert(parameters);
 		$.ajax({
-	        url: "<?=base_url()?>index.php/BusinessAdmin/GetProductDetail/",
+	        url: "<?=base_url()?>BusinessAdmin/GetProductDetail",
 	        data: parameters,
 	        type: "GET",
-	        crossDomain: true,
+	        // crossDomain: true,
 			cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    	success: function(data) {
             if(data.success == 'true'){
 							document.getElementById("category").value = data.result[0]['category_name'];
@@ -670,7 +670,7 @@
     		'inventory_type' :  $(this).val()
     	};
 		// alert($(this).val());
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCategoriesByInventory/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetCategoriesByInventory", parameters)
       .done(function(data, textStatus, jqXHR) {
 		//   alert(data);
       		var options = "<option value='' selected></option>"; 
@@ -688,7 +688,7 @@
     		'category_id' :  $(this).val()
     	};
 		// alert($(this).val());
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -708,7 +708,7 @@
     		'sub_category_id' :  $(this).val(),
 			'type'	: type
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicesBySubCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetServicesBySubCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -750,7 +750,7 @@
 		event.preventDefault();
 		this.blur();
 			
-			$.getJSON("<?=base_url()?>index.php/BusinessAdmin/InventoryDownload/")	
+			$.getJSON("<?=base_url()?>BusinessAdmin/InventoryDownload")	
 			.done(function(data, textStatus, jqXHR) {
 					
 				JSONToCSVConvertor(data.result," ", true);
@@ -854,7 +854,7 @@
     		'item_id' :  $(this).val()
     	};
 		// alert($(this).val());
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetProduct/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetProduct", parameters)
       .done(function(data, textStatus, jqXHR) {
           var mrp = parseInt(data.result[0]['service_price_inr'])+parseInt((data.result[0]['service_price_inr']*data.result[0]['service_gst_percentage'])/100);
         //   alert(mrp);
@@ -888,10 +888,10 @@
       event.preventDefault();
       var formData = new FormData(this);
        $.ajax({
-        url: "<?=base_url();?>index.php/BusinessAdmin/BulkUploadInventory/",
+        url: "<?=base_url();?>BusinessAdmin/BulkUploadInventory",
         type: "POST",             // Type of request to be send, called as method
         data: formData,
-        dataType : "json",
+        // dataType : "json",
         cache: false,
         contentType: false,
         processData: false,

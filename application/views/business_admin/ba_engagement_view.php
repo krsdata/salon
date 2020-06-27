@@ -154,7 +154,7 @@
                                 </div>
                                 <div class="row" style="text-align:center">
                                     <div class="col-lg-12 col-lg-12" style="margin-top:20px">
-                                       <a href="<?= base_url() ?>index.php/BusinessAdmin/Customertimeline" class="btn btn-success btn-lg btn-block">Customer Timeline</a>
+                                       <a href="<?= base_url() ?>BusinessAdmin/Customertimeline" class="btn btn-success btn-lg btn-block">Customer Timeline</a>
                                     </div> 
 								</div>
 								<div class="row">
@@ -217,7 +217,7 @@
 					category : category 
 				};
 			
-			$.getJSON("<?=base_url()?>index.php/BusinessAdmin/EngagementReport/",parameters)
+			$.getJSON("<?=base_url()?>BusinessAdmin/EngagementReport",parameters)
 			.done(function(data, textStatus, jqXHR) {
 					
 				JSONToCSVConvertor(data.result," ", true);
@@ -237,7 +237,7 @@
 					category : category 
 				};
 			
-			$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCustDataForTimeline/",parameters)
+			$.getJSON("<?=base_url()?>BusinessAdmin/GetCustDataForTimeline",parameters)
 			.done(function(data, textStatus, jqXHR) {
 				if(category == 'All'){
 					var temp_str="<thead><th>S.No</th><th>Name</th><th>Number</th><th>Category</th></thead> ";
@@ -399,12 +399,12 @@
       };
 
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/GetCustomerData/",
+        url: "<?=base_url()?>BusinessAdmin/GetCustomerData",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cb(data.message);
@@ -439,12 +439,12 @@
 	      $("#SearchCustomerButton").attr('Customer-Id',"Nothing");
 	      
 	      $.ajax({
-	        url: "<?=base_url()?>index.php/BusinessAdmin/GetCustDataForTimelineSearch/",
+	        url: "<?=base_url()?>BusinessAdmin/GetCustDataForTimelineSearch",
 	        data: parameters,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
 				var temp_str="<thead><th>S.No</th><th>Name</th><th>Number</th><th>Visits</th><th>Total Spend</th><th>Last Visit Date</th></thead> ";

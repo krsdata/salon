@@ -1860,8 +1860,8 @@
 													<?php if($individual_customer['customer_business_admin_id']==1){?>
 													<button class="btn btn-info" data-toggle="modal" data-target="#ModalApplyCode">Apply Code</button>
 													<?php }?>
-													<a href="<?=base_url()?>index.php/Cashier/JobOrder/<?=$individual_customer['customer_id']?>/" class="btn btn-warning" target="_blank">Job Order</a>
-													<a href="<?=base_url()?>index.php/Cashier/PrintBill/<?=$individual_customer['customer_id']?>/" class="btn btn-success" id="Print-Bill" target="_blank">Print Bill</a>
+													<a href="<?=base_url()?>Cashier/JobOrder/<?=$individual_customer['customer_id']?>/" class="btn btn-warning" target="_blank">Job Order</a>
+													<a href="<?=base_url()?>Cashier/PrintBill/<?=$individual_customer['customer_id']?>/" class="btn btn-success" id="Print-Bill" target="_blank">Print Bill</a>
 													<div class="btn-group">
 														<?php if(!empty($payment['full_payment_info']) || !empty($payment['split_payment_info'])){ ?>
 														<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>Pay</button>
@@ -1983,12 +1983,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#ClearPendingAmountForm").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/ClearPendingAmount/",
+	        url: "<?=base_url()?>Cashier/ClearPendingAmount",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalClearDues").modal('hide'); 
@@ -2019,7 +2019,7 @@
 			event.preventDefault();
 			$(this).blur();
 			var parameters = {category_id : $(this).attr('category-id')};
-			$.getJSON("<?=base_url()?>index.php/Cashier/GetSubCategoriesByCatId/",parameters)
+			$.getJSON("<?=base_url()?>Cashier/GetSubCategoriesByCatId",parameters)
       .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row' style='margin-right:10px;'>";
     		for(var i=0;i<data.length;i++){
@@ -2050,7 +2050,7 @@
 					event.preventDefault();
 					$(this).blur();
 					var parameters = {category_id : $(this).attr('category-id')};
-					$.getJSON("<?=base_url()?>index.php/Cashier/GetSubCategoriesByCatId/",parameters)
+					$.getJSON("<?=base_url()?>Cashier/GetSubCategoriesByCatId",parameters)
 					.done(function(data, textStatus, jqXHR) {
 					var str = "<div class='row' style='margin-right:10px;'>";
 					for(var i=0;i<data.length;i++){    			
@@ -2079,7 +2079,7 @@
 			event.preventDefault();
 			$(this).blur();
 			var parameters = {sub_category_id : $(this).attr('sub-category-id')};
-			$.getJSON("<?=base_url()?>index.php/Cashier/GetServicesBySubCatIdOtc/",parameters)
+			$.getJSON("<?=base_url()?>Cashier/GetServicesBySubCatIdOtc",parameters)
      		 .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row' style='margin-right:10px;'>";
     		for(var i=0;i<data.length;i++){
@@ -2113,7 +2113,7 @@
 			var parameters = {service_id : $(this).attr('service-id'),service_name:$(this).attr('service-name')
 
 			};
-			$.getJSON("<?=base_url()?>index.php/Cashier/GetServicesByName/",parameters)
+			$.getJSON("<?=base_url()?>Cashier/GetServicesByName",parameters)
      		 .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row' style='margin-right:10px;'>";
     		for(var i=0;i<data.length;i++){
@@ -2141,7 +2141,7 @@
 			event.preventDefault();
 			$(this).blur();
 			var parameters = {sub_category_id : $(this).attr('sub-category-id')};
-			$.getJSON("<?=base_url()?>index.php/Cashier/GetServicesBySubCatId/",parameters)
+			$.getJSON("<?=base_url()?>Cashier/GetServicesBySubCatId",parameters)
       .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row' style='margin-right:10px;'>";
     		for(var i=0;i<data.length;i++){
@@ -2174,7 +2174,7 @@
 				customer_id : $(this).attr('customer-id')
 		 	};
 
-			$.getJSON("<?=base_url()?>index.php/Cashier/GetPackageSubCategories/",parameters)
+			$.getJSON("<?=base_url()?>Cashier/GetPackageSubCategories",parameters)
       .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row'>";
     		for(var i=0;i<data.length;i++){
@@ -2207,7 +2207,7 @@
 				customer_id : $(this).attr('customer-id')
 			};
 
-			$.getJSON("<?=base_url()?>index.php/Cashier/GetPackageServices/",parameters)
+			$.getJSON("<?=base_url()?>Cashier/GetPackageServices",parameters)
       .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row'>";
     		for(var i=0;i<data.length;i++){
@@ -2606,14 +2606,13 @@
 	        }
 	    },
 	    submitHandler: function(form) {
-				var formData = $("#ServiceDetails").serialize(); 
-				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/AddToCart/",
-	        data: formData,
-	        type: "POST",
-	        crossDomain: true,
+			var formData = $("#ServiceDetails").serialize(); 
+			$.ajax({
+	        url: "<?=base_url()?>Cashier/AddToCart",
+	        data: formData, 
+					type: "POST",
 					cache: false,
-	        dataType : "json",
+
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalServiceDetails").modal('hide'); 
@@ -2663,12 +2662,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#DiscountDetails").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/AddToCart/",
+	        url: "<?=base_url()?>Cashier/AddToCart",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalServiceDetails").modal('hide'); 
@@ -2711,12 +2710,12 @@
 
 				var formData = $("#ApplyCode").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/UpdateCartData/",
+	        url: "<?=base_url()?>Cashier/UpdateCartData",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalApplyCode").modal('hide'); 
@@ -2781,12 +2780,12 @@
 
 				var formData = $("#ServiceEditDetails").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/EditCart/",
+	        url: "<?=base_url()?>Cashier/EditCart",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalServiceEditDetails").modal('hide'); 
@@ -2841,12 +2840,12 @@
       submitHandler: function(form) {
         var formData = $("#LoyaltyServiceEditDetails").serialize(); 
         $.ajax({
-          url: "<?=base_url()?>index.php/Cashier/EditCart/",
+          url: "<?=base_url()?>Cashier/EditCart",
           data: formData,
           type: "POST",
-          crossDomain: true,
+          // crossDomain: true,
           cache: false,
-          dataType : "json",
+          // dataType : "json",
           success: function(data) {
             if(data.success == 'true'){
               $("#ModalServiceEditDetails").modal('hide'); 
@@ -2884,12 +2883,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#PackageRedemption").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/AddToCartPackageService/",
+	        url: "<?=base_url()?>Cashier/AddToCartPackageService",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalChooseServiceFromPackage").modal('hide'); 
@@ -2928,12 +2927,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#ApplyExtraDiscount").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/ApplyExtraDiscount/",
+	        url: "<?=base_url()?>Cashier/ApplyExtraDiscount",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalApplyExtraDiscount").modal('hide'); 
@@ -2987,12 +2986,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#FullPaymentInfo").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/FullPaymentInfo/",
+	        url: "<?=base_url()?>Cashier/FullPaymentInfo",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalFullPayment").modal('hide'); 
@@ -3050,20 +3049,20 @@
 	    submitHandler: function(form) {
 				var formData = $("#SplitPaymentInfo").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/SplitPaymentInfo/",
+	        url: "<?=base_url()?>Cashier/SplitPaymentInfo",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalSplitPayment").modal('hide'); 
-							$('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
-								$("#SuccessModalMessage").html("").html(data.message);
-							}).on('hidden.bs.modal', function (e) {
+							// $('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
+							// 	$("#SuccessModalMessage").html("").html(data.message);
+							// }).on('hidden.bs.modal', function (e) {
 									window.location.reload();
-							});
+							// });
             }
             else if (data.success == 'false'){                   
         	    if($('.feedback').hasClass('alert-success')){
@@ -3092,12 +3091,12 @@
       };
 
       $.ajax({
-        url: "<?=base_url()?>index.php/Cashier/DeleteCartItem/",
+        url: "<?=base_url()?>Cashier/DeleteCartItem",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						// $('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
@@ -3192,6 +3191,7 @@
       this.blur(); // Manually remove focus from clicked link.
 
 			$("#SplitPaymentInfo input[name=total_final_bill]").val(<?php if(isset($actual_bill)){ echo round($actual_bill); } ?>);
+			$("#amount_recieved").val(<?php if(isset($actual_bill)){ echo round($actual_bill); } ?>);
 			$("#SplitPaymentInfo input[name=balance_to_be_paid_back]").val(parseInt(0));
 			$("#SplitPaymentInfo input[name=total_pending_amount]").val(parseInt(0));
 			$("#SplitPaymentInfo input[name=total_amount_received]").val(parseInt(0));
@@ -3311,19 +3311,19 @@
 	    submitHandler: function(form) {
 				var formData = $("#SwapCustomer").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/Cashier/SwapWithExistingCustomer/",
+		        url: "<?=base_url()?>Cashier/SwapWithExistingCustomer",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalSwapExistingCustomer").modal('hide'); 
 								$('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
 									$("#SuccessModalMessage").html("").html(data.message);
 								}).on('hidden.bs.modal', function (e) {
-										window.location.href = "<?=base_url()?>index.php/Cashier/Dashboard/";
+										window.location.href = "<?=base_url()?>Cashier/Dashboard";
 								});
               }
               else if (data.success == 'false'){  
@@ -3448,18 +3448,18 @@
     	};
 
     	$.ajax({
-        url: "<?=base_url()?>index.php/Cashier/DoTransaction/",
+        url: "<?=base_url()?>Cashier/DoTransaction",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 				// 		$('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
 				// 			$("#SuccessModalMessage").html("").html(data.message);
 				// 		}).on('hidden.bs.modal', function (e) {
-				// 				window.location.href = "<?=base_url()?>index.php/Cashier/Dashboard/";
+				// 				window.location.href = "<?=base_url()?>Cashier/Dashboard/";
 				// 		});
 						toastr["success"](data.message,"", {
 							positionClass: "toast-top-right",
@@ -3468,7 +3468,7 @@
 							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
 							timeOut: 500
 						});
-						setTimeout(function () { window.location.href = "<?=base_url()?>index.php/Cashier/Dashboard/"; }, 500);
+						setTimeout(function () { window.location.href = "<?=base_url()?>Cashier/Dashboard/"; }, 500);
           }
           else if (data.success == 'false'){
                         alert(data.message);
@@ -3505,19 +3505,19 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditCustomerDetails").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/Cashier/EditCustomerDetails/",
+		        url: "<?=base_url()?>Cashier/EditCustomerDetails",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalCustomerDetails").modal('hide'); 
 								$('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
 									$("#SuccessModalMessage").html("").html(data.message);
 								}).on('hidden.bs.modal', function (e) {
-										window.location.href = "<?=base_url()?>index.php/Cashier/Dashboard/";
+										window.location.href = "<?=base_url()?>Cashier/Dashboard/";
 								});
               }
               else if (data.success == 'false'){  
@@ -3545,7 +3545,7 @@
     	event.preventDefault();
     	$(this).blur();
     	var parameters = { customer_id : $(this).attr('CustomerId')};
-    	$.getJSON("<?=base_url()?>index.php/Cashier/GetCustomer/", parameters)
+    	$.getJSON("<?=base_url()?>Cashier/GetCustomer", parameters)
 	      .done(function(data, textStatus, jqXHR) { 
 	      	$("#EditCustomerDetails select[name=customer_title]").val(data.customer_title);
 	        $("#EditCustomerDetails input[name=customer_name]").attr('value',data.customer_name);
@@ -3617,12 +3617,12 @@
       };
       
       $.ajax({
-        url: "<?=base_url()?>index.php/Cashier/GetSearchServiceData/",
+        url: "<?=base_url()?>Cashier/GetSearchServiceData",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cb(data.message);
@@ -3705,12 +3705,12 @@
             },
             submitHandler: function(form) { 
               $.ajax({
-                url: "<?=base_url()?>index.php/Cashier/AddToCartRedeemPoints/",
+                url: "<?=base_url()?>Cashier/AddToCartRedeemPoints",
                 data: parameter,
                 type: "POST",
-                crossDomain: true,
+                // crossDomain: true,
                 cache: false,
-                dataType : "json",
+                // dataType : "json",
                 success: function(data) {
                   if(data.success == 'true'){
                     event.preventDefault();
@@ -3767,12 +3767,12 @@
         'customer_package_profile_id' :customer_package,
         'customer_id' : customer_id};
         $.ajax({
-          url: "<?=base_url()?>index.php/Cashier/EditExpertInCart/",
+          url: "<?=base_url()?>Cashier/EditExpertInCart",
           data: parameters,
           type: "POST",
-          crossDomain: true,
+          // crossDomain: true,
           cache: false,
-          dataType : "json",
+          // dataType : "json",
           success: function(data) {
             if(data.success == 'true'){
               // $("#ModalServiceEditDetails").modal('hide'); 

@@ -640,12 +640,12 @@
       };
 			
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/TxnHistoryByCustomerS/",
+        url: "<?=base_url()?>BusinessAdmin/TxnHistoryByCustomerS",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cb(data.message);
@@ -679,7 +679,7 @@
 	      };
 	      
 			$("#SearchCustomerButton").attr('Customer-No',"Nothing");
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/AddDataInServiceTable/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/AddDataInServiceTable", parameters)
 				.done(function(data, textStatus, jqXHR) {
 					if(data.service.success == 'true'){
 						var str_2 = "";
@@ -807,12 +807,12 @@
       };
 			
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/TxnHistoryByCustomerP/",
+        url: "<?=base_url()?>BusinessAdmin/TxnHistoryByCustomerP",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cbp(data.message);
@@ -845,7 +845,7 @@
 	      };
 	      
 			$("#SearchCustomerButtonP").attr('Customer-No',"Nothing");
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/AddDataInPackageTable/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/AddDataInPackageTable", parameters)
 				.done(function(data, textStatus, jqXHR) { 
 					var str_2 = "";
 					for(var i=0;i< data.result.length;i++){
@@ -888,7 +888,7 @@
 					from_date,
 					to_date
 				};
-				$.getJSON("<?= base_url() ?>index.php/BusinessAdmin/TxnHistoryByCustomerS/", parameters)
+				$.getJSON("<?= base_url() ?>BusinessAdmin/TxnHistoryByCustomerS", parameters)
 						.done(function(data, textStatus, jqXHR) {
 							var temp_str = "<tr><th>Sr.No</th><th>Employee Id</th><th>Month</th><th>Employee Name</th><th>Calender Days</th><th>Working Days</th><th>Present</th><th>Leave</th><th>OverTime (hrs)</th><th>Week-Off</th><th>Holidays</th><th>Half Days</th><th>Net Days Present</th></tr>";
 							for (var i = 0; i < data.result.length; i++) {
@@ -942,12 +942,12 @@
       };
 			
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/TxnHistoryByCustomerPS/",
+        url: "<?=base_url()?>BusinessAdmin/TxnHistoryByCustomerPS",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cbps(data.message);
@@ -980,7 +980,7 @@
 	      };
 	      
 			$("#SearchCustomerButtonPS").attr('Customer-No',"Nothing");
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/AddDataINPrefferedServicesTable/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/AddDataINPrefferedServicesTable", parameters)
 				.done(function(data, textStatus, jqXHR) { 
 					var str_2 = "";
 					for(var i=0;i< data.result.length;i++){
@@ -1040,12 +1040,12 @@
       };
 			
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/TxnHistoryByCustomerPP/",
+        url: "<?=base_url()?>BusinessAdmin/TxnHistoryByCustomerPP",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cbpp(data.message);
@@ -1078,7 +1078,7 @@
 	      };
 	      
 			$("#SearchCustomerButtonPP").attr('Customer-No',"Nothing");
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/AddDataINPrefferedProductTable/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/AddDataINPrefferedProductTable", parameters)
 				.done(function(data, textStatus, jqXHR) { 
 					var str_2 = "";
 					for(var i=0;i< data.result.length;i++){
@@ -1115,7 +1115,7 @@
             var parameters = {
                 month
             };
-            $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCustomerHistory/", parameters)
+            $.getJSON("<?=base_url()?>BusinessAdmin/GetCustomerHistory", parameters)
                 .done(function(data, textStatus, jqXHR) {
                     var temp_str =
                         "<tr><th>Sr.No</th><th>Name</th><th>Mobile No</th><th>Birthday</th><th>Lifetime Billing</th><th>Last Visit Date</th><th>Configure Message</th></tr>";
@@ -1159,7 +1159,7 @@
             var parameters = {
                 month
             };
-            $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCustomerHistoryAnniversary/", parameters)
+            $.getJSON("<?=base_url()?>BusinessAdmin/GetCustomerHistoryAnniversary", parameters)
                 .done(function(data, textStatus, jqXHR) {
                     // alert(data);
                     if(data.success == 'true'){
@@ -1210,7 +1210,7 @@
     //         var parameters = {
     //         customer_id: $(this).attr('cust_id')
     //     };
-    //     $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCustomer/", parameters)
+    //     $.getJSON("<?=base_url()?>BusinessAdmin/GetCustomer", parameters)
     //         .done(function(data, textStatus, jqXHR) {
     //             // alert(data);
     //             $("#EditCustomerDetails select[name=customer_title]").val(data.customer_title);
@@ -1266,7 +1266,7 @@
             customer_name:$(this).attr('cust_name'),
             option:$(this).attr('option')
         };
-        $.getJSON("<?=base_url()?>index.php/BusinessAdmin/SendSms/", parameters)
+        $.getJSON("<?=base_url()?>BusinessAdmin/SendSms", parameters)
             .done(function(data, textStatus, jqXHR) {
                 if(data.success == 'true'){
 							toastr["success"](data.message,"", {
@@ -1341,7 +1341,7 @@
             var parameters = {
                 month
             };
-            $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCustomerHistory/", parameters)
+            $.getJSON("<?=base_url()?>BusinessAdmin/GetCustomerHistory", parameters)
                 .done(function(data, textStatus, jqXHR) {
                     var temp_str =
                         "<tr><th>Sr.No</th><th>Name</th><th>Mobile No</th><th>Birthday</th><th>Lifetime Billing</th><th>Last Visit Date</th><th>Configure Message</th></tr>";
@@ -1385,7 +1385,7 @@
             var parameters = {
                 month
             };
-            $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCustomerHistoryAnniversary/", parameters)
+            $.getJSON("<?=base_url()?>BusinessAdmin/GetCustomerHistoryAnniversary", parameters)
                 .done(function(data, textStatus, jqXHR) {
                     // alert(data);
                     if(data.success == 'true'){
@@ -1436,7 +1436,7 @@
             var parameters = {
             customer_id: $(this).attr('cust_id')
         };
-        $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCustomer/", parameters)
+        $.getJSON("<?=base_url()?>BusinessAdmin/GetCustomer", parameters)
             .done(function(data, textStatus, jqXHR) {
                 // alert(data);
                 $("#EditCustomerDetails select[name=customer_title]").val(data.customer_title);
@@ -1492,7 +1492,7 @@
             customer_name:$(this).attr('cust_name'),
             option:$(this).attr('option')
         };
-        $.getJSON("<?=base_url()?>index.php/BusinessAdmin/SendSms/", parameters)
+        $.getJSON("<?=base_url()?>BusinessAdmin/SendSms", parameters)
             .done(function(data, textStatus, jqXHR) {
                 if(data.success == 'true'){
 							toastr["success"](data.message,"", {
@@ -1533,12 +1533,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditCustomerDetails").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/Cashier/EditCustomerDetails/",
+		        url: "<?=base_url()?>Cashier/EditCustomerDetails",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalCustomerDetails").modal('hide'); 

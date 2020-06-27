@@ -97,15 +97,15 @@
 		        }   
 		    },
 		    submitHandler: function(form) {
-		    	var url_dash = "<?=base_url()?>index.php/MasterAdmin/Dashboard/";
+		    	var url_dash = "<?=base_url()?>MasterAdmin/Dashboard";
 				var formData = $("#MasterAdminLogin").serialize(); 
 				$.ajax({
-			        url: "<?=base_url()?>index.php/MasterAdmin/Login/",
+			        url: "<?=base_url()?>MasterAdmin/Login",
 			        data: formData,
 			        type: "POST",
-			        crossDomain: true,
+			        // crossDomain: true,
 							cache: false,
-			        dataType : "json",
+			        // dataType : "json",
 			    		success: function(data) {
 	              if(data.success == 'true'){ 
 			           	if($('.feedback').hasClass('alert-danger')){

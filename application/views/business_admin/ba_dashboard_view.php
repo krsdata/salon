@@ -1018,12 +1018,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#GetSRBC").serialize();
 		    $.ajax({
-		      url: "<?=base_url()?>index.php/BusinessAdmin/BarChartYearly/",
+		      url: "<?=base_url()?>BusinessAdmin/BarChartYearly",
 		      type: "GET",
 		      data : formData,
-		      crossDomain: true,
+		      // crossDomain: true,
 					cache: false,
-		      dataType : "json",
+		      // dataType : "json",
 		  		success: function(data) {
 		  			var label_month = [];
 		  			var yearly_data = [];
@@ -1055,11 +1055,11 @@
 		var visits_weekly = null;
 		var package_revenue = null;
 		$.ajax({
-      url: "<?=base_url()?>index.php/BusinessAdmin/GetRCVData/",
+      url: "<?=base_url()?>BusinessAdmin/GetRCVData",
       type: "GET",
-      crossDomain: true,
+      // crossDomain: true,
 			cache: false,
-      dataType : "json",
+      // dataType : "json",
   		success: function(data) {
   			var labels_revenue = [];
   			var labels_customer = [];
@@ -1291,12 +1291,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#GetRCV").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/BusinessAdmin/GetRCVData/",
+	        url: "<?=base_url()?>BusinessAdmin/GetRCVData",
 	        data: formData,
 	        type: "GET",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             var labels_revenue = [];
 		  			var labels_customer = [];
@@ -1334,11 +1334,11 @@
 <script>
 	$(document).ready(function(){
 		$.ajax({
-      url: "<?=base_url()?>index.php/BusinessAdmin/LowStockItems/",
+      url: "<?=base_url()?>BusinessAdmin/LowStockItems",
       type: "GET",
-      crossDomain: true,
+      // crossDomain: true,
 			cache: false,
-      dataType : "json",
+      // dataType : "json",
   		success: function(data) {
   			var labels = [];
   			var qty = [];
@@ -1396,11 +1396,11 @@
 <script>
 	$(document).ready(function(){
 		$.ajax({
-      url: "<?=base_url()?>index.php/BusinessAdmin/GenderDistribution/",
+      url: "<?=base_url()?>BusinessAdmin/GenderDistribution",
       type: "GET",
-      crossDomain: true,
+      // crossDomain: true,
 			cache: false,
-      dataType : "json",
+      // dataType : "json",
   		success: function(data) {
   			var count_male = 0;
   			var count_female = 0;
@@ -1450,11 +1450,11 @@
 <script>
 	$(document).ready(function(){
 		$.ajax({
-      url: "<?=base_url()?>index.php/BusinessAdmin/AgeDistribution/",
+      url: "<?=base_url()?>BusinessAdmin/AgeDistribution",
       type: "GET",
-      crossDomain: true,
+      // crossDomain: true,
 			cache: false,
-      dataType : "json",
+      // dataType : "json",
   		success: function(data) {
   			var age_group = [];
   			var age_count = [];
@@ -1491,7 +1491,7 @@
     	var parameters = {
     		'category_id' :  $(this).val()
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -1508,7 +1508,7 @@
     	var parameters = {
     		'sub_category_id' :  $(this).val()
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicesBySubCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetServicesBySubCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){

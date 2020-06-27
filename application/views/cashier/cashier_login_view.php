@@ -76,10 +76,11 @@
 	        }   
 	    },
 	    submitHandler: function(form) {
-		    var url_dash = "<?=base_url()?>index.php/Cashier/Dashboard/";
+		    var url_dash = "<?=base_url()?>Cashier/Dashboard";
 				var formData = $("#CashierLogin").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/Login/",
+	        url: "<?=base_url()?>Cashier/Login",
+		//url:"https://salonfirst.in/Cashier/Login",
 	        data: formData,
 	        type: "POST",
 	        crossDomain: true,

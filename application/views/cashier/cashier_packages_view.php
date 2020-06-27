@@ -817,7 +817,7 @@
 													</table>
 												</div>
 												<div class="mb-3">
-													<a href="<?=base_url()?>index.php/Cashier/PrintBillPackage/<?=$Package_Customer['customer_id']?>/" class="btn btn-square btn-success" id="Print-Bill" target="_blank">Print Bill</a>
+													<a href="<?=base_url()?>Cashier/PrintBillPackage/<?=$Package_Customer['customer_id']?>" class="btn btn-square btn-success" id="Print-Bill" target="_blank">Print Bill</a>
 													<div class="btn-group">
 														<?php if(!empty($package_payment['full_payment_info']) || !empty($package_payment['split_payment_info'])){ ?>
 														
@@ -900,7 +900,7 @@
       var parameters = {
         salon_package_id : $(this).attr('salon_package_id')
       };
-      $.getJSON("<?=base_url()?>index.php/Cashier/GetPackageWallet/", parameters)
+      $.getJSON("<?=base_url()?>Cashier/GetPackageWallet", parameters)
       .done(function(data, textStatus, jqXHR) { 
      		var str_2 = ""
      		
@@ -926,7 +926,7 @@
       var parameters = {
         salon_package_id : $(this).attr('salon_package_id')
       };
-      $.getJSON("<?=base_url()?>index.php/Cashier/GetPackage/", parameters)
+      $.getJSON("<?=base_url()?>Cashier/GetPackage", parameters)
       .done(function(data, textStatus, jqXHR) { 
      		var str = ""
      		for(var i=0;i<data.length;i++){
@@ -952,7 +952,7 @@
       var parameters = {
         salon_package_id : $(this).attr('salon_package_id')
       };
-      $.getJSON("<?=base_url()?>index.php/Cashier/GetPackage/", parameters)
+      $.getJSON("<?=base_url()?>Cashier/GetPackage", parameters)
       .done(function(data, textStatus, jqXHR) { 
        var str_1 = ""
      		for(var i=0;i<data.length;i++){
@@ -1005,7 +1005,7 @@
       var parameters = {
         query : query
       };
-      $.getJSON("<?=base_url()?>index.php/Cashier/GetCustomerData/", parameters)
+      $.getJSON("<?=base_url()?>Cashier/GetCustomerData", parameters)
       .done(function(data, textStatus, jqXHR) {
         cb(data.message);
       })
@@ -1038,12 +1038,12 @@
 	      $("#SearchCustomerButton").attr('Customer-Id',"Nothing");
 	      
 	      $.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/AddCustomerCartToPackage/",
+	        url: "<?=base_url()?>Cashier/AddCustomerCartToPackage",
 	        data: parameters,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
 							$("#ModalAddAppointment").modal('hide'); 
@@ -1091,12 +1091,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddNewCustomer").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/AddNewCustomerFromPackage/",
+	        url: "<?=base_url()?>Cashier/AddNewCustomerFromPackage",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalAddCustomer").modal('hide'); 
@@ -1184,12 +1184,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#PackageDetails").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/AddPackageToCart/",
+	        url: "<?=base_url()?>Cashier/AddPackageToCart",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalPackageDetails").modal('hide'); 
@@ -1246,12 +1246,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#FullPaymentInfo").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/FullPaymentPackageInfo/",
+	        url: "<?=base_url()?>Cashier/FullPaymentPackageInfo",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalFullPayment").modal('hide'); 
@@ -1309,12 +1309,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#SplitPaymentInfo").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/SplitPaymentPackageInfo/",
+	        url: "<?=base_url()?>Cashier/SplitPaymentPackageInfo",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalSplitPayment").modal('hide'); 
@@ -1351,12 +1351,12 @@
       };
 
       $.ajax({
-        url: "<?=base_url()?>index.php/Cashier/DeleteCartPackageItem/",
+        url: "<?=base_url()?>Cashier/DeleteCartPackageItem",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						$('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
@@ -1493,12 +1493,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#GiftDonorDetails").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/GiftDonarDetails/",
+	        url: "<?=base_url()?>Cashier/GiftDonarDetails",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalDodarDetail").modal('hide'); 
@@ -1616,12 +1616,12 @@
     	};
 
     	$.ajax({
-        url: "<?=base_url()?>index.php/Cashier/DoPackageTransaction/",
+        url: "<?=base_url()?>Cashier/DoPackageTransaction",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						toastr["success"](data.message,"", {

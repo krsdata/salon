@@ -601,12 +601,12 @@
       };
 			
       $.ajax({
-        url: "<?=base_url()?>index.php/Cashier/TxnHistoryByCustomerS/",
+        url: "<?=base_url()?>Cashier/TxnHistoryByCustomerS",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cb(data.message);
@@ -640,7 +640,7 @@
 	      };
 	      
 		  $("#SearchCustomerButton").attr('Customer-No',"Nothing");
-				$.getJSON("<?=base_url()?>index.php/Cashier/AddDataInServiceTable/", parameters)
+				$.getJSON("<?=base_url()?>Cashier/AddDataInServiceTable", parameters)
 				.done(function(data, textStatus, jqXHR) {
 					if(data.service.success == 'true'){
 						var str_2 = "";
@@ -768,12 +768,12 @@
       };
 			
       $.ajax({
-        url: "<?=base_url()?>index.php/Cashier/TxnHistoryByCustomerP/",
+        url: "<?=base_url()?>Cashier/TxnHistoryByCustomerP",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cbp(data.message);
@@ -806,7 +806,7 @@
 	      };
 	      
 			$("#SearchCustomerButtonP").attr('Customer-No',"Nothing");
-				$.getJSON("<?=base_url()?>index.php/Cashier/AddDataInPackageTable/", parameters)
+				$.getJSON("<?=base_url()?>Cashier/AddDataInPackageTable", parameters)
 				.done(function(data, textStatus, jqXHR) { 
 					var str_2 = "";
 					// alert(data.result.length);
@@ -850,7 +850,7 @@
 					from_date,
 					to_date
 				};
-				$.getJSON("<?= base_url() ?>index.php/Cashier/TxnHistoryByCustomerS/", parameters)
+				$.getJSON("<?= base_url() ?>Cashier/TxnHistoryByCustomerS", parameters)
 						.done(function(data, textStatus, jqXHR) {
 							var temp_str = "<tr><th>Sr.No</th><th>Employee Id</th><th>Month</th><th>Employee Name</th><th>Calender Days</th><th>Working Days</th><th>Present</th><th>Leave</th><th>OverTime (hrs)</th><th>Week-Off</th><th>Holidays</th><th>Half Days</th><th>Net Days Present</th></tr>";
 							for (var i = 0; i < data.result.length; i++) {
@@ -904,12 +904,12 @@
       };
 			
       $.ajax({
-        url: "<?=base_url()?>index.php/Cashier/TxnHistoryByCustomerPS/",
+        url: "<?=base_url()?>Cashier/TxnHistoryByCustomerPS",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cbps(data.message);
@@ -942,7 +942,7 @@
 	      };
 	      
 			$("#SearchCustomerButtonPS").attr('Customer-No',"Nothing");
-				$.getJSON("<?=base_url()?>index.php/Cashier/AddDataINPrefferedServicesTable/", parameters)
+				$.getJSON("<?=base_url()?>Cashier/AddDataINPrefferedServicesTable", parameters)
 				.done(function(data, textStatus, jqXHR) { 
 					var str_2 = "";
 					// alert(data.result.length);
@@ -1003,12 +1003,12 @@
       };
 			
       $.ajax({
-        url: "<?=base_url()?>index.php/Cashier/TxnHistoryByCustomerPP/",
+        url: "<?=base_url()?>Cashier/TxnHistoryByCustomerPP",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cbpp(data.message);
@@ -1041,7 +1041,7 @@
 	      };
 	      
 			$("#SearchCustomerButtonPP").attr('Customer-No',"Nothing");
-				$.getJSON("<?=base_url()?>index.php/Cashier/AddDataINPrefferedProductTable/", parameters)
+				$.getJSON("<?=base_url()?>Cashier/AddDataINPrefferedProductTable", parameters)
 				.done(function(data, textStatus, jqXHR) { 
 					var str_2 = "";
 					// alert(data.result.length);
@@ -1078,7 +1078,7 @@
             var parameters = {
                 month
             };
-            $.getJSON("<?=base_url()?>index.php/Cashier/GetCustomerHistory/", parameters)
+            $.getJSON("<?=base_url()?>Cashier/GetCustomerHistory", parameters)
                 .done(function(data, textStatus, jqXHR) {
                     var temp_str =
                         "<tr><th>Sr.No</th><th>Name</th><th>Mobile No</th><th>Birthday</th><th>Lifetime Billing</th><th>Last Visit Date</th></tr>";
@@ -1123,7 +1123,7 @@
             var parameters = {
                 month
             };
-            $.getJSON("<?=base_url()?>index.php/Cashier/GetCustomerHistoryAnniversary/", parameters)
+            $.getJSON("<?=base_url()?>Cashier/GetCustomerHistoryAnniversary", parameters)
                 .done(function(data, textStatus, jqXHR) {
                     // alert(data);
                     if(data.success == 'true'){    
@@ -1165,7 +1165,7 @@
             var parameters = {
             customer_id: $(this).attr('cust_id')
         };
-        $.getJSON("<?=base_url()?>index.php/Cashier/GetCustomer/", parameters)
+        $.getJSON("<?=base_url()?>Cashier/GetCustomer", parameters)
             .done(function(data, textStatus, jqXHR) {
                 $("#EditCustomerDetails select[name=customer_title]").val(data.customer_title);
                 $("#EditCustomerDetails input[name=customer_name]").attr('value', data.customer_name);
@@ -1220,7 +1220,7 @@
             customer_name:$(this).attr('cust_name'),
             option:$(this).attr('option')
         };
-        $.getJSON("<?=base_url()?>index.php/Cashier/SendMessage/", parameters)
+        $.getJSON("<?=base_url()?>Cashier/SendMessage", parameters)
             .done(function(data, textStatus, jqXHR) {
                 // alert(data);
                 if(data.success == 'true'){

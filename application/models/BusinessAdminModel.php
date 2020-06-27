@@ -1260,23 +1260,20 @@ class BusinessAdminModel extends CI_Model {
         $sql = "SELECT 
                     date(mss_transactions.txn_datetime) AS 'Payment Date',          
                     mss_transaction_settlements.txn_settlement_way AS 'Settlement Way',
-                    SUM(mss_transactions.txn_value) AS 'Total Amount'
+                    (mss_transactions.txn_value) AS 'Total Amount'
                 FROM 
                    mss_transactions, 
                    mss_transaction_settlements, 
                    mss_customers,
-                   mss_business_outlets,
-                   mss_business_admin
+                   mss_employees
                 WHERE 
                     mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id 
                     AND mss_transactions.txn_customer_id = mss_customers.customer_id 
-                    AND mss_business_outlets.business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
-                    AND mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
-                    AND mss_business_admin.business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                    AND mss_transactions.txn_cashier= mss_employees.employee_id
+                    AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."
+                    AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
                     AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
-                GROUP BY 
-                    date(mss_transactions.txn_datetime),
-                    mss_transaction_settlements.txn_settlement_way";
+                ";
 
         $query = $this->db->query($sql);
         
@@ -9444,6 +9441,25 @@ public function GetAttendanceAll($data){
         else{
             return $this->ModelHelper(false,true,"DB error!");   
         }
+    }
+
+    public function GetRawMaterialsIn($where){
+        $sql = "SELECT * FROM `mss_services`,mss_categories,mss_sub_categories 
+        where 
+        mss_services.inventory_type_id=1
+        AND mss_services.service_is_active=1
+        AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
+        AND mss_sub_categories.sub_category_category_id=mss_categories.category_id
+        AND mss_sub_categories.sub_category_is_active=1
+        AND mss_categories.category_business_outlet_id=".$this->db->escape($where['business_outlet_id'])."
+        AND mss_categories.category_is_active=".$this->db->escape($where['is_active'])."";
+         $query = $this->db->query($sql);
+         if($query){
+             return $this->ModelHelper(true,false,'',$query->result_array());
+         }
+         else{
+             return $this->ModelHelper(false,true,"DB error!");   
+         }
     }
     
 }

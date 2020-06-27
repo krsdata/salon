@@ -442,12 +442,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddOutlet").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddOutlet/",
+		        url: "<?=base_url()?>BusinessAdmin/AddOutlet",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalAddOutlet").modal('hide');
@@ -525,12 +525,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditOutlet").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/EditOutlet/",
+		        url: "<?=base_url()?>BusinessAdmin/EditOutlet",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#centeredModalDanger").modal('hide');
@@ -564,7 +564,7 @@
       var parameters = {
             business_outlet_id : $(this).attr('business_outlet_id')
       };
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetBusinessOutlet/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetBusinessOutlet", parameters)
         .done(function(data, textStatus, jqXHR) {
             
             $("#EditOutlet input[name=business_outlet_name]").attr('value',data.business_outlet_name);

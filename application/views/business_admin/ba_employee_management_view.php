@@ -437,12 +437,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddEmployee").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddEmployee/",
+		        url: "<?=base_url()?>BusinessAdmin/AddEmployee",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalAddEmployee").modal('hide');
@@ -503,12 +503,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditEmployee").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/EditEmployee/",
+		        url: "<?=base_url()?>BusinessAdmin/EditEmployee",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#centeredModalDanger").modal('hide');
@@ -542,7 +542,7 @@
       var parameters = {
             employee_id : $(this).attr('employee_id')
       };
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetEmployee/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetEmployee", parameters)
       .done(function(data, textStatus, jqXHR) { 
         $("#EditEmployee input[name=employee_first_name]").attr('value',data.employee_first_name);
         $("#EditEmployee input[name=employee_last_name]").attr('value',data.employee_last_name);
@@ -572,12 +572,12 @@
         "deactivate" : 'true'
       };
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/ChangeEmployeeStatus/",
+        url: "<?=base_url()?>BusinessAdmin/ChangeEmployeeStatus",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
@@ -601,7 +601,7 @@
       };
       
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/ChangeEmployeeStatus/",
+        url: "<?=base_url()?>BusinessAdmin/ChangeEmployeeStatus",
         data: parameters,
         type: "POST",
         crossDomain: true,

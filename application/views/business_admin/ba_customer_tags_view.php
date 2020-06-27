@@ -53,7 +53,7 @@
 							<div class="card-body">
                                <div class="row">
                                     <div class="col-lg-2 col-lg-2" style="margin-top:20px">
-                                       <a href="<?= base_url() ?>index.php/BusinessAdmin/SetTags" class="btn btn-primary btn-lg btn-block">Create New Tag</a>
+                                       <a href="<?= base_url() ?>BusinessAdmin/SetTags" class="btn btn-primary btn-lg btn-block">Create New Tag</a>
                                    </div> 
                                </div>
                                <div class="row">
@@ -173,7 +173,7 @@ $('.date').on('apply.daterangepicker', function(ev, picker) {
             tag_id: $(this).attr('tag_id'),
             
         };
-        $.getJSON("<?=base_url()?>index.php/BusinessAdmin/DeleteTag/", parameters)
+        $.getJSON("<?=base_url()?>BusinessAdmin/DeleteTag", parameters)
             .done(function(data, textStatus, jqXHR) {
                 if(data.success == 'true'){
 							toastr["success"](data.message,"", {
@@ -215,7 +215,7 @@ $('.date').on('apply.daterangepicker', function(ev, picker) {
             tag_id: $(this).attr('tag_id'),
             
         };
-        $.getJSON("<?=base_url()?>index.php/BusinessAdmin/EditTag/", parameters)
+        $.getJSON("<?=base_url()?>BusinessAdmin/EditTag", parameters)
             .done(function(data, textStatus, jqXHR) {
                
 									var temp_str = "";
@@ -274,7 +274,7 @@ $('.date').on('apply.daterangepicker', function(ev, picker) {
             tag_id: $(this).attr('tag_id'),
             
         };
-        $.getJSON("<?=base_url()?>index.php/BusinessAdmin/DownloadTag/", parameters)
+        $.getJSON("<?=base_url()?>BusinessAdmin/DownloadTag", parameters)
             .done(function(data, textStatus, jqXHR) {
                 JSONToCSVConvertor(data.result," ", true);
             })

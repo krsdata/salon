@@ -64,7 +64,7 @@
 												<td><?=$value['business_admin_account_expiry_date']?></td>
 												<td>
 												    <button class="btn btn-success edit_admin" data-toggle="modal" data-target="#ModalEditAdmin" business_admin_id="<?=$value['business_admin_id']?>" ><i class="fa fa-pen"></i></button>
-											<a href="../AdminOuletDetails?var=<?=$value['business_admin_id']?>" class="btn btn-primary" >Details</a>
+											<a href="AdminOuletDetails?var=<?=$value['business_admin_id']?>" class="btn btn-primary" >Details</a>
 											<button class="btn btn-info reset_pass" data-toggle="modal" data-target="#ModalResetAdminPassword" business_admin_id="<?=$value['business_admin_id']?>" >Re-Password</button>
 												</td>
 											</tr>
@@ -995,12 +995,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddMasterAdmin").serialize();
 				$.ajax({
-		        url: "<?=base_url()?>index.php/SuperAdmin/AddMasterAdmin/",
+		        url: "<?=base_url()?>SuperAdmin/AddMasterAdmin",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalAddMasterAdmin").modal('hide');
@@ -1073,12 +1073,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddAdmin").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/SuperAdmin/AddAdmin/",
+		        url: "<?=base_url()?>SuperAdmin/AddAdmin",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalAddAdmin").modal('hide');
@@ -1142,12 +1142,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditAdmin").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/SuperAdmin/EditAdmin/",
+		        url: "<?=base_url()?>SuperAdmin/EditAdmin",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
 								
@@ -1185,7 +1185,7 @@
       business_admin_id: $(this).attr('business_admin_id')
     	};
 			// alert($(this).attr('business_admin_id'));
-			$.getJSON("<?= base_url() ?>index.php/SuperAdmin/GetBusinessAdmin/", parameters)
+			$.getJSON("<?= base_url() ?>SuperAdmin/GetBusinessAdmin", parameters)
 				.done(function(data, textStatus, jqXHR) {
 
 				$("#EditAdmin input[name=business_admin_first_name]").val(data.business_admin_first_name);
@@ -1236,12 +1236,12 @@
 		submitHandler: function(form) {
 			var formData = $("#AddOutlet").serialize(); 
 			$.ajax({
-					url: "<?=base_url()?>index.php/SuperAdmin/AddOutlet/",
+					url: "<?=base_url()?>SuperAdmin/AddOutlet",
 					data: formData,
 					type: "POST",
-					crossDomain: true,
+					// crossDomain: true,
 					cache: false,
-					dataType : "json",
+					// dataType : "json",
 					success: function(data) {
 						if(data.success == 'true'){ 
 							$("#ModalAddOutlet").modal('hide');
@@ -1284,12 +1284,12 @@
 			// });
 			var formData = $("#AddModule").serialize(); 
 			$.ajax({
-					url: "<?=base_url()?>index.php/SuperAdmin/AddModule/",
+					url: "<?=base_url()?>SuperAdmin/AddModule",
 					data: formData,
 					type: "POST",
-					crossDomain: true,
+					// crossDomain: true,
 					cache: false,
-					dataType : "json",
+					// dataType : "json",
 					success: function(data) {
 						if(data.success == 'true'){ 
 							$("#ModalAddModule").modal('hide');
@@ -1341,12 +1341,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#ChangePassword").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/superAdmin/ResetAdminPassword/",
+		        url: "<?=base_url()?>SuperAdmin/ResetAdminPassword",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
 								$("#ModalResetAdminPassword").modal('hide');
@@ -1383,7 +1383,7 @@
 					'business_admin_id' :  $(this).val()
 				};
 
-				$.getJSON("<?=base_url()?>index.php/SuperAdmin/GetBusinessOutlets/", parameters)
+				$.getJSON("<?=base_url()?>SuperAdmin/GetBusinessOutlets", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -1483,12 +1483,12 @@
 		    submitHandler: function(form) {
 					var formData = $("#admin_data").serialize(); 
 					$.ajax({
-		        url: "<?=base_url()?>index.php/SuperAdmin/CustomerData/",
+		        url: "<?=base_url()?>SuperAdmin/CustomerData",
 		        data: formData,
 		        type: "GET",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
 	            if(data.success == 'true'){
 								$("#ModalCustomerData").modal('hide');

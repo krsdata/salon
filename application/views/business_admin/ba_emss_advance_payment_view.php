@@ -200,12 +200,12 @@
 				
 					
 				$.ajax({
-					url: "<?=base_url()?>index.php/BusinessAdmin/AdvancePayment/",
+					url: "<?=base_url()?>BusinessAdmin/AdvancePayment",
 					data: {emp_id:emp_id,date:date,amount:amount,reason:reason,payment_mode},
 					type: "POST",
-					crossDomain: true,
+					// crossDomain: true,
 					cache: false,
-					dataType : "json",
+					// dataType : "json",
 					success: function(data) {
 						if(data.success == 'true'){
 							

@@ -1925,7 +1925,6 @@ class CashierModel extends CI_Model {
 			public function ServiceWiseSale($data){
 				$sql="SELECT 
 				date(mss_transactions.txn_datetime) AS 'billing_date',
-				(mss_transactions.txn_discount)'discount',
 				mss_categories.category_name AS 'category',
 				mss_sub_categories.sub_category_name AS 'sub_category',
 				mss_services.service_name AS 'service',
@@ -2182,7 +2181,7 @@ class CashierModel extends CI_Model {
                       $cashback_generated = ($data['net_amount']/$value['amount1'])*$value['cashback'];
                       $rule_validity = $value['rule_validity'];
                       $data = array(
-                          $points_generated,
+                          $cashback_generated,
                           $rule_validity,
                       );
                       return $this->ModelHelper(true,false,'',$data);
@@ -2467,14 +2466,8 @@ mss_transaction_services.txn_service_discount_absolute AS 'disc2',
       mss_categories.category_name,
       mss_sub_categories.sub_category_name,
       mss_services.service_name,
-      mss_transaction_services.txn_service_discounted_price,
-      mss_transactions.txn_value,
-      mss_transactions.txn_discount,
-      mss_transactions.txn_unique_serial_id,
-      mss_transactions.txn_pending_amount,
-      mss_transactions.txn_total_tax,
-      mss_transaction_settlements.txn_settlement_way, 
-      SUM(mss_transaction_services.txn_service_quantity) AS 'count'
+      SUM(mss_transaction_services.txn_service_discounted_price) AS 'txn_service_discounted_price', 
+      COUNT(mss_transaction_services.txn_service_quantity) AS 'count'
       FROM
                 mss_transactions,
                 mss_transaction_services,
@@ -2482,31 +2475,22 @@ mss_transaction_services.txn_service_discount_absolute AS 'disc2',
                 mss_customers,
                 mss_categories,
                 mss_sub_categories,
-                mss_services,
-                mss_business_outlets,
-                mss_business_admin,
-                mss_transaction_settlements
+                mss_services
         WHERE
                 mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
-                AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
                 AND mss_transaction_services.txn_service_status=1
                 AND mss_transactions.txn_status=1
                 AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
                 AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                AND mss_categories.category_type = 'Products'
+                AND mss_services.inventory_type = 'Retail Product'
                 AND mss_transactions.txn_customer_id = mss_customers.customer_id
-                AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
-                AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
                 AND employee_business_outlet=".$this->session->userdata['logged_in']['business_outlet_id']."
                 AND employee_business_admin=".$this->session->userdata['logged_in']['business_admin_id']."
-                AND date(mss_transactions.txn_datetime) = CURRENT_DATE
-       GROUP BY         
-                    mss_transactions.txn_datetime,
-                    mss_categories.category_id,
-                    mss_sub_categories.sub_category_id,
-                    mss_services.service_id";
+                AND date(mss_transactions.txn_datetime) = CURRENT_DATE 
+                GROUP BY
+                mss_services.service_id";
         //execute the query
         $query = $this->db->query($sql);
         

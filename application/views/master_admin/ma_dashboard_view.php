@@ -1616,7 +1616,7 @@
   function getcity(state)
   {
     var parameters = { state : state};
-    $.getJSON("<?=base_url()?>index.php/MasterAdmin/GetCityStateWise",parameters)
+    $.getJSON("<?=base_url()?>MasterAdmin/GetCityStateWise",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
@@ -1632,7 +1632,7 @@
   function getoutlet(city)
   {
     var parameters = {city : city};
-    $.getJSON("<?=base_url()?>index.php/MasterAdmin/GetOutlet",parameters)
+    $.getJSON("<?=base_url()?>MasterAdmin/GetOutlet",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
@@ -1648,7 +1648,7 @@
   function SalesGetCity(state)
   {
     var parameters = { state : state};
-    $.getJSON("<?=base_url()?>index.php/MasterAdmin/GetCityStateWise",parameters)
+    $.getJSON("<?=base_url()?>MasterAdmin/GetCityStateWise",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
@@ -1664,7 +1664,7 @@
   function SalesGetOutlet(city)
   {
     var parameters = {city : city};
-    $.getJSON("<?=base_url()?>index.php/MasterAdmin/GetOutlet",parameters)
+    $.getJSON("<?=base_url()?>MasterAdmin/GetOutlet",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
@@ -1680,7 +1680,7 @@
   function DailyGetCity(state)
   {
     var parameters = { state : state};
-    $.getJSON("<?=base_url()?>index.php/MasterAdmin/GetCityStateWise",parameters)
+    $.getJSON("<?=base_url()?>MasterAdmin/GetCityStateWise",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
@@ -1696,7 +1696,7 @@
   function DailyGetOutlet(city)
   {
     var parameters = {city : city};
-    $.getJSON("<?=base_url()?>index.php/MasterAdmin/GetOutlet",parameters)
+    $.getJSON("<?=base_url()?>MasterAdmin/GetOutlet",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
@@ -1712,7 +1712,7 @@
   function HistoricGetOutlet(city)
   {
     var parameters = {city : city};
-    $.getJSON("<?=base_url()?>index.php/MasterAdmin/GetOutlet",parameters)
+    $.getJSON("<?=base_url()?>MasterAdmin/GetOutlet",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
@@ -1728,7 +1728,7 @@
   function HistoricGetCity(state)
   {
     var parameters = { state : state};
-    $.getJSON("<?=base_url()?>index.php/MasterAdmin/GetCityStateWise",parameters)
+    $.getJSON("<?=base_url()?>MasterAdmin/GetCityStateWise",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
@@ -1748,12 +1748,12 @@
     submitHandler:function(form){
       var formData = $("#FifteenSort").serialize();
       $.ajax({
-        url:"<?=base_url()?>index.php/MasterAdmin/GetFifteenSalesBy/",
+        url:"<?=base_url()?>MasterAdmin/GetFifteenSalesBy",
         data : formData,
         type : "POST",
-        crossDomain : true,
+        // crossDomain : true,
         cache : false,
-        dataType : "json",
+        // dataType : "json",
         success : function(data)
         {
           // alert("Hii");
@@ -1818,12 +1818,12 @@
     submitHandler:function(form){
       var formData = $().serialize();
       $.ajax({
-        url:"<?=base_url()?>index.php/MasterAdmin/GetFifteenSalesByOutletId/",
+        url:"<?=base_url()?>MasterAdmin/GetFifteenSalesByOutletId/",
         data : formData,
         type : "POST",
-        crossDomain : true,
+        // crossDomain : true,
         cache : false,
-        dataType : "json",
+        // dataType : "json",
         success : function(data)
         {
           if(data.success == 'true')
@@ -1849,12 +1849,12 @@
     submitHandler:function(form){
       var formData = $('#SortDaily').serialize();
       $.ajax({
-        url:"<?=base_url()?>index.php/MasterAdmin/GetDailyTrendsByOutlet/",
+        url:"<?=base_url()?>MasterAdmin/GetDailyTrendsByOutlet",
         data : formData,
         type : "POST",
-        crossDomain : true,
+        // crossDomain : true,
         cache : false,
-        dataType : "json",
+        // dataType : "json",
         success : function(data)
         {
           var tableDaily ='<thead><tr><th>#</td><th>Total Sales</th><th>Service Sale</th><th>Package Sale</th><th>Product Sale</th><th>#Bill</th></tr></thead><tbody><tr><td>FTD</td><td id="ftd_total">'+data[12]+'</td><td id="ftd_service">'+data[0].total_sales+'</td><td id="ftd_package">'+data[8].package_sales+'</td><td id="ftd_product">'+data[1].total_sales+'</td><td id="ftd_bill_count">'+data[13]+'</td></tr><tr><td>MTD</td><td id="mtd_total">'+data[14]+'</td><td id="mtd_service">'+parseInt(data[2].total_sales)+'</td><td id="mtd_package">'+parseInt(data[9].packages)+'</td><td id="mtd_product">'+parseInt(data[3].total_sales)+'</td><td id="mtd_bill_count">'+parseInt(data[15])+'</td></tr><tr><td>LMTD</td><td id="lmtd_total">'+parseInt(data[16])+'</td><td id="lmtd_service">'+parseInt(data[4].total_sales)+'</td><td id="lmtd_package">'+parseInt(data[10].packages)+'</td><td id="lmtd_product">'+parseInt(data[5].total_sales)+'</td><td id="lmtd_bill_count">'+data[17]+'</td></tr><tr><td>Last Month Full</td><td id="lmf_total">'+parseInt(data[18])+'</td><td id="lmf_service">'+parseInt(data[6].total_sales)+'</td><td id="lmf_package">'+parseInt(data[11].packages)+'</td><td id="lmf_product">'+parseInt(data[7].total_sales)+'</td><td id="lmf_bill_count">'+data[19]+'</td></tr></tbody>'

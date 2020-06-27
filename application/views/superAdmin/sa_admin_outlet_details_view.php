@@ -21,7 +21,7 @@ $this->load->view('superAdmin/sa_header_view');
                     <h5 class="card-title">Outlet List</h5>
                   </div>
                   <div class="col-md-2">
-                    <a href="<?= base_url() ?>index.php/SuperAdmin/Dashboard/" class="btn btn-primary">Back to Dashboard</a>
+                    <a href="<?= base_url() ?>SuperAdmin/Dashboard" class="btn btn-primary">Back to Dashboard</a>
                   </div>
                   <div class="col-md-4">
                     <button class="btn btn-success  float-right" data-toggle="modal" data-target="#ModalAddOutlet"><i class="fas fa-fw fa-plus"></i>Add Outlet</button>
@@ -747,12 +747,12 @@ $this->load->view('superAdmin/sa_footer_view');
           package_exoiry_date: '2030-12-31'
         };
         $.ajax({
-          url: "<?= base_url() ?>index.php/SuperAdmin/UpdateModule/",
+          url: "<?= base_url() ?>SuperAdmin/UpdateModule",
           data: parameters,
           type: "POST",
-          crossDomain: true,
+          // crossDomain: true,
           cache: false,
-          dataType: "json",
+          // dataType: "json",
           success: function(data) {
             if (data.success == 'true') {
               alert("Module Successully Assigned To Admin")
@@ -772,12 +772,12 @@ $this->load->view('superAdmin/sa_footer_view');
           package_expiry_date: '2018-01-10'
         };
         $.ajax({
-          url: "<?= base_url() ?>index.php/SuperAdmin/UpdateModule/",
+          url: "<?= base_url() ?>SuperAdmin/UpdateModule",
           data: parameters,
           type: "POST",
-          crossDomain: true,
+          // crossDomain: true,
           cache: false,
-          dataType: "json",
+          // dataType: "json",
           success: function(data) {
             if (data.success == 'true') {
               alert("You Revoked Module From Admin")
@@ -849,12 +849,12 @@ $this->load->view('superAdmin/sa_footer_view');
       submitHandler: function(form) {
         var formData = $("#AddOutlet").serialize();
         $.ajax({
-          url: "<?= base_url() ?>index.php/SuperAdmin/AddOutlet/",
+          url: "<?= base_url() ?>SuperAdmin/AddOutlet",
           data: formData,
           type: "POST",
-          crossDomain: true,
+          // crossDomain: true,
           cache: false,
-          dataType: "json",
+          // dataType: "json",
           success: function(data) {
             if (data.success == 'true') {
               $("#ModalAddOutlet").modal('hide');
@@ -933,12 +933,12 @@ $this->load->view('superAdmin/sa_footer_view');
       submitHandler: function(form) {
         var formData = $("#EditOutlet").serialize();
         $.ajax({
-          url: "<?= base_url() ?>index.php/SuperAdmin/EditOutlet/",
+          url: "<?= base_url() ?>SuperAdmin/EditOutlet",
           data: formData,
           type: "POST",
-          crossDomain: true,
+          // crossDomain: true,
           cache: false,
-          dataType: "json",
+          // dataType: "json",
           success: function(data) {
             if (data.success == 'true') {
               $("#ModalEditOutlet").modal('hide');
@@ -1136,12 +1136,12 @@ $this->load->view('superAdmin/sa_footer_view');
     submitHandler: function(form) {
       var formData = $("#LoyaltyRule").serialize();
       $.ajax({
-        url: "<?= base_url() ?>index.php/SuperAdmin/AddLoyaltyRule/",
+        url: "<?= base_url() ?>SuperAdmin/AddLoyaltyRule",
         data: formData,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
         cache: false,
-        dataType: "json",
+        // dataType: "json",
         success: function(data) {
           if (data.success == 'true') {
             $("#ModalEditRule").modal('hide');
@@ -1174,7 +1174,7 @@ $this->load->view('superAdmin/sa_footer_view');
     var parameters = {
       business_outlet_id: $(this).attr('business_outlet_id')
     };
-    $.getJSON("<?= base_url() ?>index.php/SuperAdmin/GetBusinessOutlet/", parameters)
+    $.getJSON("<?= base_url() ?>SuperAdmin/GetBusinessOutlet", parameters)
       .done(function(data, textStatus, jqXHR) {
 
         $("#EditOutlet input[name=business_outlet_name]").attr('value', data.business_outlet_name);
@@ -1219,12 +1219,12 @@ $this->load->view('superAdmin/sa_footer_view');
       business_outlet_status: $(this).attr('business_outlet_status')
     };
     $.ajax({
-      url: "<?= base_url() ?>index.php/SuperAdmin/DeleteOutlet/",
+      url: "<?= base_url() ?>SuperAdmin/DeleteOutlet",
       data: parameters,
       type: "POST",
-      crossDomain: true,
+      // crossDomain: true,
       cache: false,
-      dataType: "json",
+      // dataType: "json",
       success: function(data) {
         if (data.success == 'true') {
           $("#ModalEditAdmin").modal('hide');
@@ -1262,12 +1262,12 @@ $this->load->view('superAdmin/sa_footer_view');
     submitHandler: function(form) {
       var formData = $("#sendmail").serialize();
       $.ajax({
-        url: "<?= base_url() ?>index.php/SuperAdmin/SendMail/",
+        url: "<?= base_url()?>iSuperAdmin/SendMail",
         data: formData,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
         cache: false,
-        dataType: "json",
+        // dataType: "json",
         success: function(data) {
           if (data.success == 'true') {
             alert("Mail Send Successfully.")
@@ -1290,7 +1290,7 @@ $this->load->view('superAdmin/sa_footer_view');
     var parameters = {
       business_outlet_id: $(this).attr('business_outlet_id')
     };
-    $.getJSON("<?= base_url() ?>index.php/SuperAdmin/GetBusinessOutletLoyaltyRule/", parameters)
+    $.getJSON("<?= base_url() ?>SuperAdmin/GetBusinessOutletLoyaltyRule", parameters)
       .done(function(data, textStatus, jqXHR) {
         if (data.success == 'true') {
           //  alert(data.res_arr.length);
@@ -1419,12 +1419,12 @@ $this->load->view('superAdmin/sa_footer_view');
       business_outlet_id: $(this).attr('business_outlet_id')
     };
     $.ajax({
-      url: "<?= base_url() ?>index.php/SuperAdmin/DeleteOuletRule/",
+      url: "<?= base_url() ?>SuperAdmin/DeleteOuletRule",
       data: parameters,
       type: "POST",
-      crossDomain: true,
+      // crossDomain: true,
       cache: false,
-      dataType: "json",
+      // dataType: "json",
       success: function(data) {
         if (data.success == 'true') {
           $("#ModalEditOutlet").modal('hide');
@@ -1465,12 +1465,12 @@ $this->load->view('superAdmin/sa_footer_view');
       submitHandler: function(form) {
         var formData = $("#AddMoreRule").serialize();
         $.ajax({
-          url: "<?= base_url() ?>index.php/SuperAdmin/AddLoyaltyRule/",
+          url: "<?= base_url() ?>SuperAdmin/AddLoyaltyRule",
           data: formData,
           type: "POST",
-          crossDomain: true,
+          // crossDomain: true,
           cache: false,
-          dataType: "json",
+          // dataType: "json",
           success: function(data) {
             if (data.success == 'true') {
               $("#ModalEditOutlet").modal('hide');
@@ -1584,12 +1584,12 @@ $this->load->view('superAdmin/sa_footer_view');
     submitHandler: function(form) {
       var formData = $("#EditLoyaltyRule").serialize();
       $.ajax({
-        url: "<?= base_url() ?>index.php/SuperAdmin/UpdateLoyaltyRule/",
+        url: "<?= base_url() ?>SuperAdmin/UpdateLoyaltyRule",
         data: formData,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
         cache: false,
-        dataType: "json",
+        // dataType: "json",
         success: function(data) {
           if (data.success == 'true') {
             $("#ModalEditRule").modal('hide');

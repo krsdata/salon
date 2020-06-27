@@ -533,12 +533,12 @@
 				$("#file_contents").val(business_details);
 				var formData = $("#GetResults").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/MasterAdmin/ReportsManagement/",
+		        url: "<?=base_url()?>MasterAdmin/ReportsManagement",
 		        data: formData,
 		        type: "GET",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
 	            if(data.success == 'true'){
 

@@ -106,7 +106,7 @@ class BusinessAdmin extends CI_Controller {
  			$this->session->unset_userdata('outlets');
  			$this->session->sess_destroy();
  		}
-		redirect(base_url().'index.php/BusinessAdmin/Login/','refresh');
+		redirect(base_url().'BusinessAdmin/Login','refresh');
 	}
 
 	//function for logging out the user
@@ -243,7 +243,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin");
 		}					
 	}
 
@@ -1084,7 +1084,7 @@ class BusinessAdmin extends CI_Controller {
             $this->load->view('business_admin/ba_dashboard_view',$data);
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 }
 
@@ -1949,7 +1949,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -1969,7 +1969,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin");
 		}			
 	}
 
@@ -1992,7 +1992,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin");
 		}			
 	}
 
@@ -2025,7 +2025,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin");
 		}	
 	}
 
@@ -2068,7 +2068,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin");
 		}	
 	}
 
@@ -2080,7 +2080,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin");
 		}	
 	}
 
@@ -2092,7 +2092,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin");
 		}	
 	}
 
@@ -2104,7 +2104,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin");
 		}	
 	}
 
@@ -2122,7 +2122,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin");
 		}	
 	}
 	//monthly card data
@@ -2140,7 +2140,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin");
 		}	
 	}
 	//last month data
@@ -2158,7 +2158,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin");
 		}	
 	}
 	//
@@ -2175,7 +2175,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -2196,7 +2196,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -2208,7 +2208,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -2220,7 +2220,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -2236,7 +2236,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -2252,7 +2252,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	*/
 
@@ -2311,7 +2311,7 @@ class BusinessAdmin extends CI_Controller {
             $this->load->view('business_admin/ba_menu_management_view',$data);
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 	}
 
@@ -2334,7 +2334,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -2357,7 +2357,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -2491,7 +2491,7 @@ class BusinessAdmin extends CI_Controller {
           }
         }
         else{
-          $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+          $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
 
@@ -2508,7 +2508,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -2526,26 +2526,28 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
 	public function Inventory(){
 		if($this->IsLoggedIn('business_admin')){
-			$data = $this->GetDataForAdmin("Add Composition");
-			if(isset($data['selected_outlet']) || !empty($data['selected_outlet'])){
-				$data['categories']  = $this->GetCategories($this->session->userdata['outlets']['current_outlet']);
-				$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['outlets']['current_outlet']);
-				$data['services']  = $this->GetServices($this->session->userdata['outlets']['current_outlet']);
-				$data['raw_materials'] = $this->GetRawMaterials($this->session->userdata['outlets']['current_outlet']);
-				$data['compositions'] = $this->GetCompositions($this->session->userdata['outlets']['current_outlet']);
-			}
-			$this->load->view('business_admin/ba_inventory_management_view',$data);
+				$data = $this->GetDataForAdmin("Add Composition");
+				if(isset($data['selected_outlet']) || !empty($data['selected_outlet'])){
+						$data['categories']  = $this->GetCategories($this->session->userdata['outlets']['current_outlet']);
+						$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['outlets']['current_outlet']);
+						$data['services']  = $this->GetServices($this->session->userdata['outlets']['current_outlet']);
+						$data['raw_materials'] = $this->GetRawMaterialsIn($this->session->userdata['outlets']['current_outlet']);
+						// $this->PrettyPrintArray($data['raw_materials']); 
+						$data['compositions'] = $this->GetCompositions($this->session->userdata['outlets']['current_outlet']);
+				}
+				$this->load->view('business_admin/ba_inventory_management_view',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+				$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
 		}
-	}
+}
+
 
 	public function AddCategory(){
 		if($this->IsLoggedIn('business_admin')){
@@ -2587,7 +2589,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -2630,7 +2632,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -2673,7 +2675,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -2717,7 +2719,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -2793,7 +2795,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -2843,7 +2845,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -2870,7 +2872,14 @@ class BusinessAdmin extends CI_Controller {
                 else{
                         $barcode_id = $this->BusinessAdminModel->DetailsById($_POST['otc_barcode'],'mss_services','barcode');
                         // $barcode_id = $barcode_id['res_arr']; 
-                        $barcode_id=count($barcode_id)-3;
+												$barcode_id=count($barcode_id)-3;
+												
+												$inv=0;
+												if($_POST['otc_inventory_type'] == 'Raw Material'){
+													$inv=1;
+												}else{
+													$inv=2;
+												}
                         foreach($_POST['qty_per_item'] as $key=>$value){
                             $data = array(
                                 'inventory_type'                => $this->input->post('otc_inventory_type'),
@@ -2900,7 +2909,7 @@ class BusinessAdmin extends CI_Controller {
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }   
     }
 
@@ -2946,7 +2955,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -2989,7 +2998,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -3046,7 +3055,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3088,7 +3097,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3133,7 +3142,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -3185,7 +3194,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -3338,7 +3347,7 @@ class BusinessAdmin extends CI_Controller {
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }   
     }
 	public function AddOutlet(){
@@ -3412,7 +3421,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 //upload outletLogo
@@ -3437,7 +3446,7 @@ class BusinessAdmin extends CI_Controller {
 // 		} 
 // 	}
 // 	else{
-// 		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+// 		$this->LogoutUrl(base_url()."BusinessAdmin/");
 // 	}
 // }
 //
@@ -3451,7 +3460,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3465,7 +3474,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3479,7 +3488,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
     
@@ -3499,7 +3508,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3513,7 +3522,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3528,7 +3537,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3542,7 +3551,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3556,7 +3565,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3575,7 +3584,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -3600,7 +3609,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -3670,7 +3679,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -3680,7 +3689,7 @@ public function GetEmployee(){
 			die;
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -3689,7 +3698,7 @@ public function GetEmployee(){
 			$this->ReturnJsonArray(true,false,$this->GetSubCategories($this->session->userdata['outlets']['current_outlet']));
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -3707,7 +3716,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -3725,7 +3734,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 	
@@ -3744,7 +3753,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3763,7 +3772,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3782,7 +3791,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3800,7 +3809,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -3819,7 +3828,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -3838,7 +3847,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -3855,7 +3864,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -3872,7 +3881,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -3888,7 +3897,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -3939,7 +3948,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -3970,7 +3979,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4001,7 +4010,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4031,7 +4040,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4069,7 +4078,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4090,10 +4099,10 @@ public function GetEmployee(){
 				$this->session->set_userdata('outlets', $session_data);	
 			}
 
-			redirect(base_url()."index.php/BusinessAdmin/Dashboard/",'refresh');
+			redirect(base_url()."BusinessAdmin/Dashboard/",'refresh');
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4343,7 +4352,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4361,7 +4370,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -4411,7 +4420,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4463,7 +4472,7 @@ public function GetEmployee(){
 			}		
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4537,7 +4546,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4611,7 +4620,7 @@ public function GetEmployee(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
 
@@ -4684,7 +4693,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4756,7 +4765,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4829,7 +4838,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -4851,7 +4860,7 @@ public function GetEmployee(){
 				$this->load->view('business_admin/ba_loyalty_view',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -4910,7 +4919,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -4928,7 +4937,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 //Update Coversion ratio
@@ -4988,7 +4997,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -5006,7 +5015,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	//
@@ -5026,7 +5035,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	
@@ -5049,7 +5058,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	//delete bills
@@ -5081,7 +5090,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -5109,7 +5118,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	//edit bills
@@ -5138,7 +5147,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 
@@ -5161,7 +5170,7 @@ public function GetEmployee(){
 				$this->load->view('business_admin/ba_emss_employee_details_view',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -5184,7 +5193,7 @@ public function GetEmployee(){
 	// 			$this->load->view('business_admin/ba_emss_attendance_view',$data);
 	// 	}
 	// 	else{
-	// 		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+	// 		$this->LogoutUrl(base_url()."BusinessAdmin/");
 	// 	}	
 	// }
 
@@ -5206,7 +5215,7 @@ public function GetEmployee(){
 	// 			$this->load->view('business_admin/ba_emss_salary_view',$data);
 	// 	}
 	// 	else{
-	// 		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+	// 		$this->LogoutUrl(base_url()."BusinessAdmin/");
 	// 	}	
 	// }
 	// public function Commission(){
@@ -5227,7 +5236,7 @@ public function GetEmployee(){
 	// 			$this->load->view('business_admin/ba_emss_commission_view',$data);
 	// 	}
 	// 	else{
-	// 		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+	// 		$this->LogoutUrl(base_url()."BusinessAdmin/");
 	// 	}	
 	// }
 
@@ -5283,7 +5292,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 	public function EditHolidays(){
@@ -5300,7 +5309,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	public function CancelHolidays(){
@@ -5316,7 +5325,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	//Add EMSS employee
@@ -5461,7 +5470,7 @@ public function GetEmployee(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/Login/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/Login/");
         }   
     }
 
@@ -5484,7 +5493,7 @@ public function GetEmployee(){
 					$this->load->view('business_admin/ba_autoEngage_view',$data);
 			}
 			else{
-				$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}	
 		}
 		public function AddTrigger(){
@@ -5547,7 +5556,7 @@ public function GetEmployee(){
 				}
 			}
 			else{
-				$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}	
 		}
 		
@@ -5592,7 +5601,7 @@ public function GetEmployee(){
 				}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/Login/");
+			$this->LogoutUrl(base_url()."Cashier/Login/");
 		}
 	}
 	
@@ -5619,7 +5628,7 @@ public function GetEmployee(){
 			return json_encode($data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/Cashier/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}		
 	}
 		
@@ -5633,7 +5642,7 @@ public function GetEmployee(){
 					die;
 				}
 			}else{
-				$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}
 		}
 		//edit trigger
@@ -5678,7 +5687,7 @@ public function GetEmployee(){
 				}
 			}
 			else{
-				$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}	
 		}
 	
@@ -5721,7 +5730,7 @@ public function GetEmployee(){
 				}
 			}
 			else{
-				$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}	
 		}
 		//suspend trigger
@@ -5765,7 +5774,7 @@ public function GetEmployee(){
 				}
 			}
 			else{
-				$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}	
 		}
 		
@@ -5786,7 +5795,7 @@ public function GetEmployee(){
 				$this->load->view('business_admin/ba_deals&discount_view',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -5864,7 +5873,7 @@ public function GetEmployee(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 		
@@ -5888,7 +5897,7 @@ public function GetEmployee(){
 		$this->load->view('business_admin/ba_emss_commission_opening',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 }
     
@@ -5924,7 +5933,7 @@ public function GetEmployee(){
 	}
 	
 	else{
-		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+		$this->LogoutUrl(base_url()."BusinessAdmin/");
 	}	
 }
     
@@ -5946,7 +5955,7 @@ public function GetEmployee(){
 		}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
     }
     
@@ -5978,7 +5987,7 @@ public function GetEmployee(){
 	}
 	
 	else{
-		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+		$this->LogoutUrl(base_url()."BusinessAdmin/");
 	}	
 }
 
@@ -5992,7 +6001,7 @@ public function ba_emss_attendance(){
 		$this->load->view('business_admin/ba_emss_attendance_view',$attendance_data);
 	}
 	else{
-		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+		$this->LogoutUrl(base_url()."BusinessAdmin/");
 	}	
 }
 
@@ -6016,7 +6025,7 @@ public function SetCommission()
 			$this->load->view('business_admin/ba_emss_commission_view',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 
 
@@ -6041,7 +6050,7 @@ public function SetCommission()
 			$this->load->view('business_admin/ba_emss_commission_view_all',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 
 
@@ -6077,7 +6086,7 @@ public function SetCommission()
 				
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 //Insert values in table for setting commission
@@ -6313,7 +6322,7 @@ public function SetCommission()
 				}             
 			}
 			else{
-				$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}   
   	}
 
@@ -6378,7 +6387,7 @@ public function SetCommission()
 						
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -6552,7 +6561,7 @@ public function Attendance(){
         $this->load->view('business_admin/ba_emss_attendance_view',$data);
     }
     else{
-        $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+        $this->LogoutUrl(base_url()."BusinessAdmin/");
     }   
 }
 
@@ -6833,7 +6842,7 @@ public function AttendanceEMP()
 	}
 	
 	else{
-		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+		$this->LogoutUrl(base_url()."BusinessAdmin/");
 	}	
 }
 
@@ -7234,7 +7243,7 @@ public function AttendanceEMP()
 				}
 			}
 			else{
-				$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}	
 	}
 
@@ -7251,7 +7260,7 @@ public function Salary(){
 					$this->load->view('business_admin/ba_emss_salary_view',$data);
 	}
 	else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 	}   
 }
 // show Salary of employeee
@@ -7303,7 +7312,7 @@ public function ShowSalary(){
 	}
 	
 	else{
-		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+		$this->LogoutUrl(base_url()."BusinessAdmin/");
 	}	
 }
 
@@ -7373,7 +7382,7 @@ public function AdvancePayment()
 			}
 	}
 	else{
-		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+		$this->LogoutUrl(base_url()."BusinessAdmin/");
 	}	
 }
 
@@ -7408,7 +7417,7 @@ public function InsertSalary(){
 	}
 	
 	else{
-		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+		$this->LogoutUrl(base_url()."BusinessAdmin/");
 	}
 }
     public function GetCommisionDetails(){
@@ -7437,7 +7446,7 @@ public function InsertSalary(){
     	}
     	
     	else{
-    		$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+    		$this->LogoutUrl(base_url()."BusinessAdmin/");
     	}	
     }
 	//
@@ -7483,7 +7492,7 @@ public function InsertSalary(){
 				$this->load->view('business_admin/ba_loyalty_dashboard_view',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	//Loyalty Dashboard Integrated 
@@ -7531,14 +7540,14 @@ public function InsertSalary(){
 				else
 				{
 					$data['rules'] = ['res_arr'=>''];
-					$data['rules'] = $rules['res_arr'];
+					$data['rules'] = $data['rules']['res_arr'];
 				}
 				// $this->PrettyPrintArray($data);
 				// exit;
 				$this->load->view('business_admin/ba_loyalty_dashboard_integrated',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	//Loyalty  Delete Offer
@@ -7670,7 +7679,7 @@ public function InsertSalary(){
 				
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 			
 
@@ -7737,7 +7746,7 @@ public function InsertSalary(){
 				
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 			
 
@@ -7831,7 +7840,7 @@ public function InsertSalary(){
 				
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 			
 	}
@@ -7851,7 +7860,7 @@ public function InsertSalary(){
 		}
 		else
 		{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	//Loyalty Update Offer
@@ -7898,7 +7907,7 @@ public function InsertSalary(){
 		}
 		else
 		{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	//Update Integrated Offer
@@ -7947,7 +7956,7 @@ public function InsertSalary(){
 		}
 		else
 		{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
   public function GetSubCategoriesByCategoryType()
@@ -7968,7 +7977,7 @@ public function InsertSalary(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
   }
   public function GetCategoryByCategoryType()
@@ -7988,7 +7997,7 @@ public function InsertSalary(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
   }
   //StandAlone
@@ -8072,7 +8081,7 @@ public function InsertSalary(){
 				
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 			
 	}
@@ -8138,7 +8147,7 @@ public function InsertSalary(){
 		  
 		}
 		else{
-		  $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+		  $this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	  }
 	  
@@ -8211,7 +8220,7 @@ public function InsertSalary(){
             
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
 
@@ -8298,7 +8307,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 	}
 	public function ExpenseReport(){
@@ -8357,7 +8366,7 @@ public function InsertSalary(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
 	public function CustomerBirthDayAnniver(){
@@ -8371,7 +8380,7 @@ public function InsertSalary(){
             $this->load->view('business_admin/ba_bday_anniversary_view',$data);
         }   
         else{   
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 	}
 	public function GetCustomerHistory(){
@@ -8411,7 +8420,7 @@ public function InsertSalary(){
             
         }   
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function GetCustomerHistoryAnniversary(){
@@ -8451,7 +8460,7 @@ public function InsertSalary(){
             
         }   
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 	}
 	public function GetCustomer(){
@@ -8471,7 +8480,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }   
     }
     public function SendSms(){
@@ -8497,7 +8506,7 @@ public function InsertSalary(){
                 }
             }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function SendSmsMessage($option,$sender_id,$api_key,$mobile,$name,$outlet_name,$oulet_location,$address){
@@ -8527,7 +8536,7 @@ public function InsertSalary(){
             return json_encode($data);
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }               
 	}
 	//01-04-2020
@@ -8547,7 +8556,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }   
     }
     //Update vendors Details
@@ -8581,7 +8590,7 @@ public function InsertSalary(){
             }
         }
         else{
-          $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+          $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function TxnHistory(){
@@ -8643,7 +8652,7 @@ public function InsertSalary(){
 			$this->load->view('business_admin/ba_transaction_history',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
     public function CustTransHistory(){
@@ -8678,7 +8687,7 @@ public function InsertSalary(){
             // }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }       
 	}
 	public function GetProductDataDetails(){
@@ -8693,7 +8702,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function EditOTCService(){
@@ -8743,7 +8752,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }   
     }
     public function ServiceReportDownload(){
@@ -8782,7 +8791,7 @@ public function InsertSalary(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     // function for cust transaction history search function
@@ -8804,7 +8813,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function AddDataInServiceTable(){    
@@ -8840,7 +8849,7 @@ public function InsertSalary(){
             // }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     // 18-04
@@ -8861,7 +8870,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function AddDataInPackageTable(){    
@@ -8887,7 +8896,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     // preffered Services
@@ -8908,7 +8917,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function AddDataINPrefferedServicesTable(){  
@@ -8934,7 +8943,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     // preffered product
@@ -8955,7 +8964,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function AddDataINPrefferedProductTable(){   
@@ -8981,7 +8990,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     //27-04-2020
@@ -9066,7 +9075,7 @@ public function InsertSalary(){
             $this->load->view('business_admin/ba_engagement_view',$data);
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function Customertimeline(){
@@ -9136,7 +9145,7 @@ public function InsertSalary(){
             $this->load->view('business_admin/ba_customer_timeline_view',$data);
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
 	public function InsertTimeline(){  
@@ -9180,7 +9189,7 @@ public function InsertSalary(){
             }
         }
         else{
-          $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+          $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function Campaigns(){
@@ -9258,7 +9267,7 @@ public function InsertSalary(){
             $this->load->view('business_admin/ba_campaign_manager',$data);
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     //Insert Camapign Details 
@@ -9307,7 +9316,7 @@ public function InsertSalary(){
                 }               
             }
             else{
-                $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+                $this->LogoutUrl(base_url()."BusinessAdmin/");
             }   
     }
     public function SendSmsCampaign($sender_id,$api_key,$mobile,$camapign_name,$name,$cust_name,$message,$outlet_name){
@@ -9332,7 +9341,7 @@ public function InsertSalary(){
         return json_encode($data);
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }               
     }
       public function SendCampaignData($datasend){
@@ -9564,7 +9573,7 @@ public function InsertSalary(){
                 }               
             }
             else{
-                $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+                $this->LogoutUrl(base_url()."BusinessAdmin/");
             }   
     }
 	// 27-04
@@ -9676,7 +9685,7 @@ public function InsertSalary(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     // 28-04
@@ -9696,7 +9705,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }   
 	}
 	public function EditCustomerDetails(){
@@ -9797,7 +9806,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 	}
 	public function GetCustDataForTimeline(){
@@ -9907,7 +9916,7 @@ public function InsertSalary(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
 	public function GetCustDataForTimelineSearch(){
@@ -9938,7 +9947,7 @@ public function InsertSalary(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function IntegrateGoogle(){
@@ -9962,7 +9971,7 @@ public function InsertSalary(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	public function IntegrateFacebook(){
@@ -10101,7 +10110,7 @@ public function InsertSalary(){
             $this->load->view('business_admin/ba_customer_tags_view',$data);
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function SetTags(){
@@ -10117,7 +10126,7 @@ public function InsertSalary(){
             $this->load->view('business_admin/ba_set_rule_tag_view',$data);
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function CalculateRuleTag(){
@@ -10174,7 +10183,7 @@ public function InsertSalary(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function InsertRuleTag(){
@@ -10240,7 +10249,7 @@ public function InsertSalary(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function DeleteTag(){
@@ -10274,7 +10283,7 @@ public function InsertSalary(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function DownloadTag(){
@@ -10359,7 +10368,7 @@ public function InsertSalary(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function EditTag(){
@@ -10393,7 +10402,7 @@ public function InsertSalary(){
                     }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     //4-05-2020
@@ -10408,7 +10417,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }       
     }
     public function AddRecommendedService(){
@@ -10428,7 +10437,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }       
     }
     public function EditRecommendedService(){
@@ -10457,7 +10466,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }       
     }
     public function UpdateRecommendedService(){
@@ -10496,7 +10505,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }       
     }
     public function DeleteRecomService(){
@@ -10529,7 +10538,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }       
     }
     //15-05-2020  Ranjeet Yadav
@@ -10539,7 +10548,7 @@ public function InsertSalary(){
 			$this->load->view('business_admin/ba_google_reviews_view',$data);
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
 	//21-05-2020 Pritam
@@ -10589,7 +10598,7 @@ public function InsertSalary(){
             $this->load->view('business_admin/ba_inventory_health_view',$data);
         }   
         else{   
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     public function InventoryStatus(){
@@ -10662,7 +10671,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     
@@ -10686,7 +10695,7 @@ public function InsertSalary(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
     //26-05-2020
@@ -10729,7 +10738,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }   
 	}
 	private function GetOTCItems(){
@@ -10747,7 +10756,7 @@ public function InsertSalary(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 	private function GetCategoriesOtc($outlet_id){
@@ -10764,7 +10773,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }       
 	}
 	private function GetRawMaterialStock(){	
@@ -10781,7 +10790,7 @@ public function InsertSalary(){
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}		
 	}
 
@@ -11001,7 +11010,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 	}
 	public function GetProductData(){
@@ -11016,7 +11025,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 	}
 	
@@ -11044,7 +11053,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }       
 	}
 	public function GetProductDetails(){
@@ -11067,7 +11076,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 	}
 	public function GetProductDetail(){
@@ -11089,7 +11098,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 	}
 	public function GetProduct(){
@@ -11114,7 +11123,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 	}
 
@@ -11189,7 +11198,7 @@ public function InsertSalary(){
             }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
 	}
 	//29-05-2020
@@ -11221,7 +11230,7 @@ public function InsertSalary(){
                 }
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
     // Print Salary
@@ -11263,8 +11272,26 @@ public function InsertSalary(){
             }   
         }
         else{
-            $this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
         }   
-    }
+		}
+		
+
+		private function GetRawMaterialsIn($outlet_id){
+			if($this->IsLoggedIn('business_admin')){
+					$where = array(
+							'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+							'is_active'         => TRUE,
+							'business_outlet_id'=> $outlet_id
+					);
+					$data = $this->BusinessAdminModel->GetRawMaterialsIn($where);
+					if($data['success'] == 'true'){ 
+							return $data['res_arr'];
+					}
+			}
+			else{
+					$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+			}       
+	}
 }
 	    

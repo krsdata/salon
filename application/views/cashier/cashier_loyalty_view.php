@@ -144,12 +144,12 @@
       };
 			
       $.ajax({
-        url: "<?=base_url()?>index.php/Cashier/GetCustomerData/",
+        url: "<?=base_url()?>Cashier/GetCustomerData",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cb(data.message);
@@ -182,7 +182,7 @@
 	      };
 	      
 				$("#SearchCustomerButton").attr('Customer-Id',"Nothing");
-					$.getJSON("<?=base_url()?>index.php/Cashier/AddCustomerDataInTable/", parameters)
+					$.getJSON("<?=base_url()?>Cashier/AddCustomerDataInTable", parameters)
 					.done(function(data, textStatus, jqXHR) { 
 						var str_2 = "";
 						

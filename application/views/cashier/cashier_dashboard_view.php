@@ -8,7 +8,7 @@
 
 	<div class="main">
 		<?php
-			 $this->load->view('cashier/cashier_top_nav_view');
+			$this->load->view('cashier/cashier_top_nav_view');
 		?>
 		<main class="content">
 			<div class="container-fluid p-0">
@@ -351,12 +351,12 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12" style="text-align: center">  
-                                            <a href="<?=base_url()?>index.php/Cashier/BuyPackages/<?=$customer['customer_id']?>" title="Packages"> <button type="button" class="btn btn-warning" style="width:150px">Buy Package</button></a>
+                                            <a href="<?=base_url()?>Cashier/BuyPackages/<?=$customer['customer_id']?>" title="Packages"> <button type="button" class="btn btn-warning" style="width:150px">Buy Package</button></a>
                                         </div>
                                     </div>
                                     <div class="row" style="padding:2px">
                                         <div class="col-lg-12" style="text-align: center">  
-                                            <a href="<?=base_url()?>index.php/Cashier/PerformBilling/<?=$customer['customer_id']?>" title="Billit"> <button type="button" class="btn btn-success" style="width:150px">BILL IT</button></a>
+                                            <a href="<?=base_url()?>Cashier/PerformBilling/<?=$customer['customer_id']?>" title="Billit"> <button type="button" class="btn btn-success" style="width:150px">BILL IT</button></a>
                                         </div>
                                     </div>
                             </div>
@@ -418,7 +418,7 @@
     	event.preventDefault();
     	$(this).blur();
     	var parameters = { customer_id : $(this).attr('CustomerId')};
-    	$.getJSON("<?=base_url()?>index.php/Cashier/GetCustomer/", parameters)
+    	$.getJSON("<?=base_url()?>Cashier/GetCustomer", parameters)
 	      .done(function(data, textStatus, jqXHR) { 
 	      	$("#EditCustomerDetails select[name=customer_title]").val(data.customer_title);
 	        $("#EditCustomerDetails input[name=customer_name]").attr('value',data.customer_name);
@@ -511,12 +511,12 @@
       };
 
       $.ajax({
-        url: "<?=base_url()?>index.php/Cashier/GetCustomerData/",
+        url: "<?=base_url()?>Cashier/GetCustomerData",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cb(data.message);
@@ -536,6 +536,7 @@
     $(document).on('click',"#SearchCustomerButton",function(event){
     	event.preventDefault();
       this.blur();
+      var url= "<?=base_url()?>Cashier/AddCustomerCardToDashboard";
       var customer_id = $(this).attr('Customer-Id');
       if(customer_id == "Nothing"){
       	$('#centeredModalDanger').modal('show').on('shown.bs.modal', function (e) {
@@ -546,17 +547,17 @@
 	      var parameters = {
 	        customer_id : $(this).attr('Customer-Id')
 	      };
+					console.log(parameters);
 	      
-	      $("#SearchCustomerButton").attr('Customer-Id',"Nothing");
+	      // $("#SearchCustomerButton").attr('Customer-Id',"Nothing");
 	      
 	      $.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/AddCustomerCardToDashboard/",
-	        data: parameters,
+	        url: "<?=base_url()?>Cashier/AddCustomerCardToDashboard",
+	        data: {customer_id : $(this).attr('Customer-Id')},
 	        type: "POST",
-	        crossDomain: true,
 					cache: false,
-	        dataType : "json",
-	    		success: function(data) {
+
+    		success: function(data) {
             if(data.success == 'true'){
 							window.location.reload();
             }
@@ -594,12 +595,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditCustomerDetails").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/Cashier/EditCustomerDetails/",
+		        url: "<?=base_url()?>Cashier/EditCustomerDetails",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalCustomerDetails").modal('hide'); 
@@ -649,12 +650,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddNewCustomer").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/AddNewCustomer/",
+	        url: "<?=base_url()?>Cashier/AddNewCustomer",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalAddCustomer").modal('hide'); 
@@ -704,12 +705,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#ClearPendingAmountForm").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/ClearPendingAmount/",
+	        url: "<?=base_url()?>Cashier/ClearPendingAmount",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalClearDues").modal('hide'); 

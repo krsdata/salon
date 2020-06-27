@@ -58,7 +58,7 @@ $this->load->view('business_admin/ba_header_view');
 										</div>
 										<div class="form-group col-md-6" style="text-align: right;">
 											<label style="text-align:left;padding:6px;" class="btn btn-primary btn-sm">
-												<a href="<?= base_url() ?>index.php/BusinessAdmin/Commission_opening" style="text-decoration-color:white;" class="text-white">Existing Commission Model</a>
+												<a href="<?= base_url() ?>BusinessAdmin/Commission_opening" style="text-decoration-color:white;" class="text-white">Existing Commission Model</a>
 											</label>
 										</div>
 									</div>
@@ -359,7 +359,7 @@ $this->load->view('business_admin/ba_footer_view');
 				month: month,
 				base_kpi: base_kpi
 			};
-			$.getJSON("<?= base_url() ?>index.php/BusinessAdmin/Commission/", parameters)
+			$.getJSON("<?= base_url() ?>BusinessAdmin/Commission", parameters)
 				.done(function(data, textStatus, jqXHR) {
 					//   $("#form1 input[name=t2]").val(data.employee_basic_salary);
 
@@ -437,12 +437,12 @@ $this->load->view('business_admin/ba_footer_view');
 		submitHandler: function(form) {
 			var formData = $("#insert_commission").serialize(); 
 			$.ajax({
-				url: "<?= base_url() ?>index.php/BusinessAdmin/InsertCommission/",
+				url: "<?= base_url() ?>BusinessAdmin/InsertCommission",
 				data: formData,
 				type: "POST",
-				crossDomain: true,
+				// crossDomain: true,
 				cache: false,
-				dataType : "json",
+				// dataType : "json",
 				success: function(data) {
 					if(data.success == 'true'){ 
 						// $("#ModalAddPackage").modal('hide');

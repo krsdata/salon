@@ -50,7 +50,7 @@
 							<div class="card-header" style="background:lightgray">
                                
                                 <div class="input-group">
-                                       <a href="<?= base_url() ?>index.php/BusinessAdmin/Engagement"><h4><i class="fas fa-arrow-left">&emsp;Customer Timeline Setup</i></h4></a>
+                                       <a href="<?= base_url() ?>BusinessAdmin/Engagement"><h4><i class="fas fa-arrow-left">&emsp;Customer Timeline Setup</i></h4></a>
                                        
                                 </div> 
                             </div>
@@ -241,12 +241,12 @@
 		submitHandler: function(form) {
 			var formData = $("#timelinedata").serialize(); 
 			$.ajax({
-				url: "<?= base_url() ?>index.php/BusinessAdmin/InsertTimeline/",
+				url: "<?= base_url() ?>BusinessAdmin/InsertTimeline",
 				data: formData,
 				type: "POST",
-				crossDomain: true,
+				// crossDomain: true,
 				cache: false,
-				dataType : "json",
+				// dataType : "json",
 				success: function(data) {
 					if(data.success == 'true'){ 
 						// $("#ModalAddPackage").modal('hide');

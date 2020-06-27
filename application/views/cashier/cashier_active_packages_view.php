@@ -167,7 +167,7 @@
       var parameters = {
         salon_package_id : $(this).attr('salon_package_id')
       };
-      $.getJSON("<?=base_url()?>index.php/Cashier/GetPackageWallet/", parameters)
+      $.getJSON("<?=base_url()?>Cashier/GetPackageWallet", parameters)
       .done(function(data, textStatus, jqXHR) { 
      		var str_2 = ""
      		
@@ -193,7 +193,7 @@
       var parameters = {
         salon_package_id : $(this).attr('salon_package_id')
       };
-      $.getJSON("<?=base_url()?>index.php/Cashier/GetPackage/", parameters)
+      $.getJSON("<?=base_url()?>Cashier/GetPackage", parameters)
       .done(function(data, textStatus, jqXHR) { 
      		var str = ""
      		for(var i=0;i<data.length;i++){
@@ -219,7 +219,7 @@
       var parameters = {
         salon_package_id : $(this).attr('salon_package_id')
       };
-      $.getJSON("<?=base_url()?>index.php/Cashier/GetPackage/", parameters)
+      $.getJSON("<?=base_url()?>Cashier/GetPackage", parameters)
       .done(function(data, textStatus, jqXHR) { 
        var str_1 = ""
      		for(var i=0;i<data.length;i++){

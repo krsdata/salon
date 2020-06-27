@@ -124,7 +124,7 @@
 			var parameters = {
 				'status' :  $(this).val()
 			};
-			$.getJSON("<?=base_url()?>index.php/BusinessAdmin/InventoryStatus/", parameters)
+			$.getJSON("<?=base_url()?>BusinessAdmin/InventoryStatus", parameters)
 		.done(function(data, textStatus, jqXHR) {
 				// alert(data.stock);
 				if((data.stock == 'Slow')){

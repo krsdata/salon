@@ -581,12 +581,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#addDeals").serialize();
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddDeals/",
+		        url: "<?=base_url()?>BusinessAdmin/AddDeals",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
 								var message2 = data.message;
@@ -649,7 +649,7 @@
 				var parameters = {
 					'category_type' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCategoriesByCategoryType/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetCategoriesByCategoryType", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -685,7 +685,7 @@
 				var parameters = {
 					'category_type' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCategoriesByCategoryType/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetCategoriesByCategoryType", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -702,7 +702,7 @@
 				var parameters = {
 					'category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
 					.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -739,7 +739,7 @@
 				var parameters = {
 					'category_type' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetCategoriesByCategoryType/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetCategoriesByCategoryType", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -756,7 +756,7 @@
 				var parameters = {
 					'category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){
@@ -773,7 +773,7 @@
 				var parameters = {
 					'sub_category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicesBySubCatId/", parameters)
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetServicesBySubCatId", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){

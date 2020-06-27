@@ -53,7 +53,7 @@
 										<h5 class="card-title" style="padding:8px">Salary</h5>
 									</div>
 									<div class="col-md-6">
-										<h5 class="card-title float-right" style="padding:8px"><a href="<?=base_url()?>index.php/BusinessAdmin/CheckEmployeeSalary/">Check Salary</a></h5>
+										<h5 class="card-title float-right" style="padding:8px"><a href="<?=base_url()?>BusinessAdmin/CheckEmployeeSalary">Check Salary</a></h5>
 									</div>
 								</div>
 							</div>

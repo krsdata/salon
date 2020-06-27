@@ -252,12 +252,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#AddHolidays").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/BusinessAdmin/Holidays/",
+	        url: "<?=base_url()?>BusinessAdmin/Holidays",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){ 
             	$("#createHolidays").modal('hide');
@@ -306,12 +306,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#edit_Holiday").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/EditHolidays/",
+		        url: "<?=base_url()?>BusinessAdmin/EditHolidays",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#EditHolidays").modal('hide');
@@ -357,12 +357,12 @@
         "holiday_id" : $(this).attr('holiday_id')
       };
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/CancelHolidays/",
+        url: "<?=base_url()?>BusinessAdmin/CancelHolidays",
         data: parameters,
         type: "POST",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {

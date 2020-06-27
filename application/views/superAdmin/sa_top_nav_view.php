@@ -9,7 +9,7 @@
 			    <img src="<?=base_url()?>public/images/default.png" class="avatar img-fluid rounded-circle mr-1" alt="Super Admin" /> <span class="text-white">Virat</span>
 			  	</a>
 				<div class="dropdown-menu dropdown-menu-right">
-					<a class="dropdown-item" href="<?=base_url()?>index.php/SuperAdmin/Logout/">Sign out</a>
+					<a class="dropdown-item" href="<?=base_url()?>SuperAdmin/Logout">Sign out</a>
 				</div>
 			</li>
 		</ul>

@@ -672,12 +672,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#NewVisitOffersTable").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/InsertIntegratedVisitOffer/",
+		        url: "<?=base_url()?>BusinessAdmin/InsertIntegratedVisitOffer",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	// $("#ModalEditRawMaterial").modal('hide');
@@ -728,12 +728,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#NewOffersTable").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/InsertOffer/",
+		        url: "<?=base_url()?>BusinessAdmin/InsertOffer",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	// $("#ModalEditRawMaterial").modal('hide');
@@ -779,7 +779,7 @@
 				offer_id : $(this).attr('offer_id')
 			};
 
-			$.getJSON("<?=base_url()?>index.php/BusinessAdmin/LoyaltyDeleteOfferIntegrated/",parameters)
+			$.getJSON("<?=base_url()?>BusinessAdmin/LoyaltyDeleteOfferIntegrated",parameters)
 			.done(function(data,textStatus,jqXHR){
 				if(data.success == 'true')
         {
@@ -815,7 +815,7 @@
         offer_id : $(this).attr('offer_id')
       };
 
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetOffers/",parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetOffers",parameters)
       .done(function(data,textStatus,jqXHR){
         $("#EditOffers input[name=points]").attr('value',data.points);
         $("EditOffers input[name=offers]").attr('value',data.offers);
@@ -846,12 +846,12 @@
         submitHandler : function(form){
           var formData = $("#EditOffer").serialize();
           $.ajax({
-            url   : "<?=base_url()?>index.php/BusinessAdmin/UpdateOffer/",
+            url   : "<?=base_url()?>BusinessAdmin/UpdateOffer",
             data  : formData,
             type  : "POST",
             cache : false,
-            crossDomain : true,
-            dataType    : "json",
+            // crossDomain : true,
+            // dataType    : "json",
             success :function(data)
             {
               if(data.success == 'true')
@@ -882,7 +882,7 @@
         offer_id : $(this).attr('offer_id')
       };
 
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetOffers/",parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetOffers",parameters)
       .done(function(data,textStatus,jqXHR){
         $("#EditOffers input[name=points]").attr('value',data.visits);
         $("EditOffers input[name=offers]").attr('value',data.offers);
@@ -916,12 +916,12 @@
         submitHandler : function(form){
           var formData = $("#EditVisit").serialize();
           $.ajax({
-            url   : "<?=base_url()?>index.php/BusinessAdmin/UpdateVisitOfferIntegrated/",
+            url   : "<?=base_url()?>BusinessAdmin/UpdateVisitOfferIntegrated",
             data  : formData,
             type  : "POST",
             cache : false,
-            crossDomain : true,
-            dataType    : "json",
+            // crossDomain : true,
+            // dataType    : "json",
             success :function(data)
             {
               if(data.success == 'true')
@@ -963,12 +963,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#conversion").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/AddConversionRatio/",
+		        url: "<?=base_url()?>BusinessAdmin/AddConversionRatio",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	// $("#ModalEditRawMaterial").modal('hide');
@@ -1006,7 +1006,7 @@
         loyalty_id : $(this).attr('loyalty_id')
       };
 
-      $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetConversionRatio/", parameters)
+      $.getJSON("<?=base_url()?>BusinessAdmin/GetConversionRatio", parameters)
       .done(function(data, textStatus, jqXHR) { 
         $("#EditConversionRatio input[name=conversion_ratio]").attr('value',data.loyalty_conversion);
         $("#EditConversionRatio input[name=conversion_rate]").attr('value',data.loyalty_rate);
@@ -1032,12 +1032,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#EditConversionRatio").serialize(); 
 				$.ajax({
-		        url: "<?=base_url()?>index.php/BusinessAdmin/UpdateConversionRatio/",
+		        url: "<?=base_url()?>BusinessAdmin/UpdateConversionRatio",
 		        data: formData,
 		        type: "POST",
-		        crossDomain: true,
+		        // crossDomain: true,
 						cache: false,
-		        dataType : "json",
+		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalEditConversionRatio").modal('hide');
@@ -1101,12 +1101,12 @@
       };
 			
       $.ajax({
-        url: "<?=base_url()?>index.php/BusinessAdmin/GetCustomerData/",
+        url: "<?=base_url()?>BusinessAdmin/GetCustomerData",
         data: parameters,
         type: "GET",
-        crossDomain: true,
+        // crossDomain: true,
 				cache: false,
-        dataType : "json",
+        // dataType : "json",
         global : false,
     		success: function(data) {
          	cb(data.message);
@@ -1139,7 +1139,7 @@
 	      };
 	      
 				$("#SearchCustomerButton").attr('Customer-Id',"Nothing");
-					$.getJSON("<?=base_url()?>index.php/BusinessAdmin/AddCustomerDataInTable/", parameters)
+					$.getJSON("<?=base_url()?>BusinessAdmin/AddCustomerDataInTable", parameters)
 					.done(function(data, textStatus, jqXHR) { 
 						var str_2 = "";
 						
@@ -1255,7 +1255,7 @@
     	var parameters = {
     		'category_id' :  $(this).val()
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -1272,7 +1272,7 @@
     	var parameters = {
     		'sub_category_id' :  $(this).val()
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicesBySubCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetServicesBySubCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -1292,7 +1292,7 @@
     	var parameters = {
     		'category_id' :  $(this).val()
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -1309,7 +1309,7 @@
     	var parameters = {
     		'sub_category_id' :  $(this).val()
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicesBySubCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetServicesBySubCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value='' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -1328,7 +1328,7 @@
     	var parameters = {
     		'category_id' :  $(this).val()
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSubCategoriesByCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value=' ' selected></option>"; 
        		for(var i=0;i<data.length;i++){
@@ -1345,7 +1345,7 @@
     	var parameters = {
     		'sub_category_id' :  $(this).val()
     	};
-    	$.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetServicesBySubCatId/", parameters)
+    	$.getJSON("<?=base_url()?>BusinessAdmin/GetServicesBySubCatId", parameters)
       .done(function(data, textStatus, jqXHR) {
       		var options = "<option value=' ' selected></option>"; 
        		for(var i=0;i<data.length;i++){

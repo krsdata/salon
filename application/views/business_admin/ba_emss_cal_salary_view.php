@@ -195,7 +195,7 @@
                 var formData = $('#form1').serialize();
                 event.preventDefault();
                 $(this).blur();
-                $.getJSON("<?=base_url()?>index.php/BusinessAdmin/GetSalaryEmployee", formData)
+                $.getJSON("<?=base_url()?>BusinessAdmin/GetSalaryEmployee", formData)
                     .done(function(data, textStatus, jqXHR) {
                         // alert(data.result.length);
                         
@@ -220,7 +220,7 @@
                                 temp_str += "<td>" + formatter.format(data.result[i].leaves) + "</td>";
                                 temp_str += "<td>" + formatter.format(data.result[i].overtime) + "</td>";
                                 temp_str += "<td>" + formatter.format(data.result[i].netpayout) + "</td>";
-                                temp_str += 	"<td><a href='<?=base_url()?>index.php/BusinessAdmin/PrintSalary/"+data.result[i].expert_id+"/"+data.result[i].month+"' class='btn btn-success' id='Print' target='_blank'>Print</a></td>";
+                                temp_str += 	"<td><a href='<?=base_url()?>BusinessAdmin/PrintSalary/"+data.result[i].expert_id+"/"+data.result[i].month+"' class='btn btn-success' id='Print' target='_blank'>Print</a></td>";
                                 temp_str += "</tr>";
                             }
                             
@@ -246,7 +246,7 @@
                     emp_id,
                     month
                 };
-                $.getJSON("<?=base_url()?>index.php/BusinessAdmin/ShowSalary/", parameters)
+                $.getJSON("<?=base_url()?>BusinessAdmin/ShowSalary", parameters)
                     .done(function(data, textStatus, jqXHR) {
                         var formatter = new Intl.NumberFormat('en-IN', {
                                 // style: 'currency',
@@ -282,12 +282,12 @@
                 "payout": $(this).attr('payout'),
             };
             $.ajax({
-                url: "<?=base_url()?>index.php/BusinessAdmin/InsertSalary/",
+                url: "<?=base_url()?>BusinessAdmin/InsertSalary",
                 data: parameters,
                 type: "POST",
-                crossDomain: true,
+                // crossDomain: true,
                 cache: false,
-                dataType: "json",
+                // dataType: "json",
                 success: function(data) {
                     if (data.success == 'true') {
                         toastr["success"](data.message, "", {

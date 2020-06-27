@@ -123,12 +123,12 @@
 	    submitHandler: function(form) {
 				var formData = $("#redemptionDate").serialize(); 
 				$.ajax({
-	        url: "<?=base_url()?>index.php/Cashier/FilterRedemption/",
+	        url: "<?=base_url()?>Cashier/FilterRedemption",
 	        data: formData,
 	        type: "POST",
-	        crossDomain: true,
+	        // crossDomain: true,
 					cache: false,
-	        dataType : "json",
+	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
 							var row="";

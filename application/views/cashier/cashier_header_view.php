@@ -7,6 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description" content="Responsive Bootstrap 4 Admin &amp; Dashboard Template">
 	<meta name="author" content="Bootlab">
+	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> 
 
 	<title><?=$title?></title>
 
@@ -20,6 +21,9 @@
 	<link href="<?=base_url()?>public/app_stack/css/custom.css" rel="stylesheet">
 	<link href="<?=base_url()?>public/app_stack/css/main.min.css" rel="stylesheet">
 	<link href="<?=base_url()?>public/app_stack/css/daygrid.main.min.css" rel="stylesheet">
+	<link rel="icon" 
+      type="image/png" 
+      href="https://salonfirst.in/home/favicon.ico" />
 	<!-- BEGIN SETTINGS -->
 	<!-- You can remove this after picking a style -->
 	<style>
