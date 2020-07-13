@@ -89,7 +89,7 @@ define ('PDF_HEADER_LOGO_WIDTH', 0);
 /**
  * Page format.
  */
-define ('PDF_PAGE_FORMAT', array('72','150'));
+define ('PDF_PAGE_FORMAT', array('30','150'));
 
 /**
  * Page orientation (P=portrait, L=landscape).
