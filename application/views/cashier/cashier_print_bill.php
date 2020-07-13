@@ -1,33 +1,10 @@
 <?php
-
-	// $this->load->view('universal/header_view');
 	tcpdf();
 	
-	// Extend the TCPDF class to create custom Header and Footer
-// class MYPDF extends TCPDF {
-
-// 	//Page header
-// 	public function Header() {
-// 			// Set font
-// 			$this->SetFont('helvetica', 'B', 14);
-// 			// Title
-// 			$this->Cell(0, 15,'Invoice', 0, false, 'C', 0, '', 0, false, 'M', 'M');
-// 	}
-
-// 	// Page footer
-// 	public function Footer() {
-// 			// Position at 15 mm from bottom
-// 			$this->SetY(-15);
-// 			// Set font
-// 			$this->SetFont('helvetica', 'I', 8);
-// 			// Page number
-// 			$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
-// 	}
-// }
-$pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-	$pdf->SetCreator(PDF_CREATOR);
-	$pdf->SetTitle($shop_details['business_outlet_name']);
-	$pdf->SetHeaderData(PDF_HEADER_LOGO,10, $shop_details['business_outlet_bill_header_msg'], PDF_HEADER_STRING);
+	$pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+	// $pdf->SetCreator(PDF_CREATOR);
+	// $pdf->SetTitle($shop_details['business_outlet_name']);
+	$pdf->SetHeaderData(PDF_HEADER_LOGO,1, $shop_details['business_outlet_bill_header_msg'], PDF_HEADER_STRING);
 	$pdf->SetTitle($shop_details['business_outlet_name']);
 	$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
 	$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));

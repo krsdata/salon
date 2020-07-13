@@ -788,6 +788,7 @@ class BusinessAdminModel extends CI_Model {
 
     private function GetPackageReport($data){
        $sql = "SELECT
+                    mss_package_transactions.package_txn_unique_serial_id AS 'Serial Id',
                     mss_customers.customer_name AS 'Customer Name',
                     mss_customers.customer_mobile AS 'Customer Mobile',
                     date(mss_package_transactions.datetime) AS 'Purchase Date',
@@ -868,6 +869,10 @@ class BusinessAdminModel extends CI_Model {
                      mss_categories.category_name AS 'Category',
                      mss_sub_categories.sub_category_name AS 'Sub-Category',
                      mss_services.service_name AS 'Service',
+                     mss_services.inventory_type AS 'Type' ,
+                     ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'MRP',
+                     mss_transaction_services.txn_service_quantity AS 'Quantity',
+                     (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
                      mss_employees.employee_first_name As 'Expert Name',
                      mss_transaction_services.txn_service_discounted_price AS 'Discounted Service Amt',
                      mss_transactions.txn_value AS 'Net Bill Amt'
@@ -1158,33 +1163,34 @@ class BusinessAdminModel extends CI_Model {
 
     private function GetBillWiseSalesReport($data){
         $sql = "SELECT 
-                    mss_transactions.txn_unique_serial_id AS 'Txn Unique Serial Id',
-                    date(mss_transactions.txn_datetime) AS 'Billing Date',
-                    mss_customers.customer_mobile AS 'Mobile No',
-                    mss_customers.customer_name AS 'Customer Name',
-                    (mss_transactions.txn_discount+mss_transactions.txn_value) AS 'MRP Amt',
-                    mss_transactions.txn_discount AS 'Discount',
-                    mss_transactions.txn_value AS 'Net Amount',
-					mss_transactions.txn_status AS 'billed=1/canceled=0',
-					mss_transactions.txn_remarks AS 'Remarks',
-                    mss_transactions.txn_total_tax AS 'Total Tax (Rs.)',
-                    mss_transactions.txn_pending_amount AS 'Pending Amount',
-                    mss_transaction_settlements.txn_settlement_way AS 'Settlement Way',
-                    mss_transaction_settlements.txn_settlement_payment_mode AS 'Payment Mode'
-                    
-                FROM 
-                    mss_customers,
-                    mss_transactions,
-                    mss_transaction_settlements,
-                    mss_employees
-                WHERE 
-                    mss_transactions.txn_customer_id = mss_customers.customer_id
-                    AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
-                    AND mss_transactions.txn_cashier= mss_employees.employee_id
-                    AND mss_transactions.txn_status=1
-                    AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
-                    AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." 
-                    AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])." GROUP BY mss_transactions.txn_unique_serial_id ";
+        mss_transactions.txn_unique_serial_id AS 'Txn Unique Serial Id',
+        date(mss_transactions.txn_datetime) AS 'Billing Date',
+        mss_customers.customer_mobile AS 'Mobile No',
+        mss_customers.customer_name AS 'Customer Name',
+        (mss_transactions.txn_discount+mss_transactions.txn_value) AS 'MRP Amt',
+        mss_transactions.txn_discount AS 'Discount',
+        mss_transactions.txn_value AS 'Net Amount',
+        mss_transactions.txn_status AS 'billed=1/canceled=0',
+        mss_transactions.txn_remarks AS 'Remarks',
+        mss_transactions.txn_total_tax AS 'Total Tax (Rs.)',
+        mss_transactions.txn_pending_amount AS 'Pending Amount',
+        mss_transaction_settlements.txn_settlement_way AS 'Settlement Way',
+        mss_transaction_settlements.txn_settlement_payment_mode AS 'Payment Mode'
+        
+    FROM 
+        mss_customers,
+        mss_transactions,
+        mss_transaction_settlements,
+        mss_employees
+    WHERE 
+        mss_transactions.txn_customer_id = mss_customers.customer_id
+        AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+        AND mss_transactions.txn_cashier= mss_employees.employee_id
+        AND mss_transactions.txn_status=1
+        AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
+        AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." 
+        AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])." GROUP BY mss_transactions.txn_id ";
+        
 
         $query = $this->db->query($sql);
         

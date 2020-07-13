@@ -298,11 +298,11 @@
 																	
 																		<div class="form-group col-md-3">
 																			<label class="form-label">Discount Absolute</label>
-																			<input type="number" class="form-control" name="service_discount_absolute" placeholder="Enter absolute value only" value="0">
+																			<input type="number" class="form-control" name="service_discount_absolute" placeholder="Enter absolute value only" min="0" value="0">
 																		</div>
 																		<div class="form-group col-md-3">
 																			<label class="form-label">Discount %</label>
-																			<input type="number" class="form-control" name="service_discount_percentage" placeholder="Enter % value only" value="0">
+																			<input type="number" class="form-control" name="service_discount_percentage" placeholder="Enter % value only" min="0" value="0">
 																		</div>
 																		<div class="form-group col-md-3">
 																			<label class="form-label">Add on Price</label>

@@ -103,9 +103,9 @@
 			        url: "<?=base_url()?>MasterAdmin/Login",
 			        data: formData,
 			        type: "POST",
-			        // crossDomain: true,
+			        crossDomain: true,
 							cache: false,
-			        // dataType : "json",
+			        dataType : "json",
 			    		success: function(data) {
 	              if(data.success == 'true'){ 
 			           	if($('.feedback').hasClass('alert-danger')){

@@ -2652,7 +2652,7 @@ class Cashier extends CI_Controller {
 			// $apisender = "BILLIT";
 			// $apikey="32kO6tWy5UuN16e3fOQpPg";
 			// $apisender="DSASSH";
-  		$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt."/-. You earned a Cashback of ".$cashback."/-. Look forward to serving you again!";
+  		$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt."/-. Look forward to serving you again!";
    		$msg = rawurlencode($msg);   //This for encode your message content                 		
  			
  			// API 
