@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<?php
+$url = "https://salonfirst.in/";
+?>
 <html lang="en">
 
 <head>
@@ -66,7 +69,7 @@
           <li><a href="#contact"><b>Contact Us!</b></a></li>
           <li class="drop-down"><a href=""><b>Login</b></a>
             <ul>
-              <li><a href="https://salonfirst.in/Cashier/Login">Cashier</a></li>
+              <li><a href="<?php echo $url;?>/Cashier/Login">Cashier</a></li>
               <!-- <li class="drop-down"><a href="#">Admin</a> -->
                 <!-- <ul>
                   <li><a href="#">Deep Drop Down 1</a></li>
@@ -76,8 +79,8 @@
                   <li><a href="#">Deep Drop Down 5</a></li>
                 </ul> -->
               </li>
-              <li><a href="https://salonfirst.in/BusinessAdmin/Login">Admin</a></li>
-              <li><a href="https://salonfirst.in/MasterAdmin/Login">Master Admin</a></li>
+              <li><a href="<?php echo $url;?>/BusinessAdmin/Login">Admin</a></li>
+              <li><a href="<?php echo $url;?>/MasterAdmin/Login">Master Admin</a></li>
               <!-- <li><a href="#">Drop Down 5</a></li> -->
             </ul>
           </li>
