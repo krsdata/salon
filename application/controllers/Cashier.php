@@ -2462,7 +2462,7 @@ class Cashier extends CI_Controller {
 	)
   */
 	
-	public function DoTransaction(){
+	public function DoTransaction(){		
 		if($this->IsLoggedIn('cashier')){			
 			if(isset($_POST) && !empty($_POST)){
 				$customer_id = $_POST['txn_data']['txn_customer_id'];				
@@ -2475,12 +2475,14 @@ class Cashier extends CI_Controller {
 					}
 				}
 				// end
+				$business_admin_id =  $this->session->userdata['logged_in']['business_admin_id'];
 				$result = $this->CashierModel->BillingTransaction($_POST,$this->session->userdata['logged_in']['business_outlet_id'],$this->session->userdata['logged_in']['business_admin_id']);
 
 				if($result['success'] == 'true'){
 					$transcation_detail = $this->CashierModel->GetBilledServicesByTxnId($result['res_arr']['res_arr']['insert_id']);
 					//print_r($transcation_detail);
 					$cart_data['transaction_id'] = $result['res_arr']['res_arr']['insert_id'];
+					$cart_data['outlet_admin_id'] = $business_admin_id;					
 					$cart_data['transaction_time'] = $transcation_detail['res_arr'][0]['txn_datetime'];
 					$cart_data['cart_data'] = json_encode($_POST['cart_data']);
 					$cart_detail = $this->CashierModel->Insert($cart_data,'mss_transaction_cart');
@@ -6406,11 +6408,11 @@ public function AddToCartRedeemPoints(){
 					 
 					
 					$data['cart'] = $cart;
-					#echo "<pre>";
-					
-					// print_r($cart);
+					// echo "<pre>";
+					$outlet_admin_id = $result[0]['outlet_admin_id'];
+					//print_r($result[0]['outlet_admin_id']);die;
 					// print_r($data['cart']);
-					$sql ="SELECT config_value from mss_config where config_key='salon_logo'";
+					$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id=$outlet_admin_id";
 
 					$query = $this->db->query($sql);
 					$result = $query->result_array();
