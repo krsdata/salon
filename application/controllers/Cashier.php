@@ -2993,8 +2993,8 @@ class Cashier extends CI_Controller {
         if($this->IsLoggedIn('cashier')){
             if(isset($_POST) && !empty($_POST)){
 				// $this->PrettyPrintArray($_POST);
-				$this->form_validation->set_rules('otc_item','OTC Name', 'trim|required');
-                $this->form_validation->set_rules('sku_size', 'SKU', 'trim|required|is_natural_no_zero');
+					$this->form_validation->set_rules('otc_item','OTC Name', 'trim|required');
+          $this->form_validation->set_rules('sku_size', 'SKU', 'trim|required|is_natural_no_zero');
                 $a=explode(',',$_POST['sku_size']);
                 $_POST['service_id']=$a[0];
                 $_POST['sku_size']=$a[1];
@@ -3004,10 +3004,9 @@ class Cashier extends CI_Controller {
                 $master_admin = $this->CashierModel->DetailsById($this->session->userdata['logged_in']['business_admin_id'],'mss_business_admin','business_admin_id');
                 $master_admin_id = $master_admin['res_arr']['business_master_admin_id'];
                 $service_details = $this->CashierModel->DetailsById($_POST['service_id'],'mss_services','service_id');
-				$service_details = $service_details['res_arr'];
+								$service_details = $service_details['res_arr'];
 				
-                if ($this->form_validation->run() == FALSE) 
-                {
+                if ($this->form_validation->run() == FALSE){
                     $data = array(
                                     'success' => 'false',
                                     'error'   => 'true',
@@ -3038,8 +3037,8 @@ class Cashier extends CI_Controller {
                             'datetime'  =>date('Y-m-d h:i:s'),
                             'invoice_amt'   => $service_details['service_price_inr']*$_POST['sku_count'],
                             'barcode'   => $service_details['barcode'],
-							'sku_count' => $_POST['sku_count'],
-							'mss_service_id'=>$this->input->post('service_id'),
+														'sku_count' => $_POST['sku_count'],
+														'mss_service_id'=>$this->input->post('service_id'),
                             'stock_level'   => ' ',
                             'usg_category'=>$_POST['otc_inventory_type'],
                             'expiry'    => $_POST['month'],
@@ -3659,6 +3658,22 @@ class Cashier extends CI_Controller {
 		if($this->IsLoggedIn('cashier')){
 			if(isset($_GET) && !empty($_GET)){
 				$data = $this->CashierModel->GetBilledServicesByTxnId($_GET['txn_id']);
+				if($data['success'] == 'true'){	
+					header("Content-type: application/json");
+					print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
+					die;	
+				}
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/");
+		}		
+	}
+
+	public function GetBilledPackages(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_GET) && !empty($_GET)){
+				$data = $this->CashierModel->GetBilledPackagesByTxnId($_GET['txn_id']);
 				if($data['success'] == 'true'){	
 					header("Content-type: application/json");
 					print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));

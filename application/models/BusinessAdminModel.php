@@ -1345,7 +1345,8 @@ class BusinessAdminModel extends CI_Model {
                     mss_customers.customer_mobile AS 'Customer Mobile',
                     mss_pending_amount_tracker.pending_amount_submitted AS 'Cleared Pending Amount',
                     mss_pending_amount_tracker.pending_amount_outstanding AS 'Pending Amount Outstanding',
-                    mss_pending_amount_tracker.date_time AS 'Date & Time'
+                    mss_pending_amount_tracker.date_time AS 'Date & Time',
+					mss_pending_amount_tracker.payment_type
                 FROM
                     mss_customers,
                     mss_pending_amount_tracker,
