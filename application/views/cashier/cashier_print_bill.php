@@ -43,7 +43,7 @@ class MYPDF extends TCPDF {
 	$pdf->SetCreator(PDF_CREATOR);
 	$pdf->SetTitle($shop_details['business_outlet_name']);
 	//$pdf->SetHeaderData(PDF_HEADER_LOGO,10, $shop_details['business_outlet_bill_header_msg'], PDF_HEADER_STRING);
-	$pdf->SetHeaderData(PDF_HEADER_LOGO,20, '', '');
+	$pdf->SetHeaderData(PDF_HEADER_LOGO,18, '', '');
 
 	$pdf->SetTitle($shop_details['business_outlet_name']);
 	$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -52,9 +52,9 @@ class MYPDF extends TCPDF {
 	$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 	// $pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-20, PDF_MARGIN_RIGHT-10);
 	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-	$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-	$pdf->SetFont('helvetica', '', 9);
+	$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP-4, PDF_MARGIN_RIGHT);
+	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM-40);
+	$pdf->SetFont('helvetica', '', 7);
 	$pdf->setFontSubsetting(false);
 	$pdf->AddPage('P','A7');
 	ob_start();
@@ -70,7 +70,7 @@ class MYPDF extends TCPDF {
 					$shop=$shop_details['business_outlet_address'];
 					$cust=$shop_details['business_outlet_bill_header_msg'];
 					$pdf->MultiCell(0,	0,$cust, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
-					$pdf->Ln(8);
+					$pdf->Ln(4);
 				// set color for text
 					$pdf->SetTextColor(0, 63, 127);
 					$shop=$shop_details['business_outlet_address'];
@@ -90,8 +90,8 @@ class MYPDF extends TCPDF {
 					$y = $pdf->getY();
 					
 					// write the first column
-					$pdf->writeHTMLCell(70, '', '', $y+10, $first_column, 0, 0, 0, true, 'J', false);
-					$pdf->writeHTMLCell(70, '', '', $y+14, $second_column, 0, 0, 0, true, 'J', true);
+					$pdf->writeHTMLCell(40, '', '', $y+3, $first_column, 0, 0, 0, true, 'J', false);
+					$pdf->writeHTMLCell(40, '', '', $y+6, $second_column, 0, 0, 0, true, 'J', true);
 					
 				?>
 			</div>
