@@ -240,9 +240,12 @@
 																	<div class="form-group  col-md-6">
 																		<label>Payment Type</label>
 																		<select name="payment_type" class="form-control">
-																		<option value="cash">Cash</option>
-																		<option value="card">Card</option>
-																		<option value="wallet">Wallet</option>
+																			<option value="cash">Cash</option>
+																			<option value="credit_card">Credit Card</option>
+																			<option value="debit_card">Debit Card</option>
+																			<option value="paytm">Paytm</option>
+																			<option value="google_pay">Google Pay</option>
+																			<option value="phonepe">PhonePe</option>
 																		</select>
 																	</div>
 																	<input type="number" name="customer_id" readonly hidden>
