@@ -2677,7 +2677,7 @@ class Cashier extends CI_Controller {
  			
  			// API 
 			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
-                    
+                    error_log("msgurl ============ ".$url);
   		$ch = curl_init($url);
   		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
   		curl_setopt($ch,CURLOPT_POST,1);
@@ -6353,7 +6353,7 @@ public function AddToCartRedeemPoints(){
 		if(1){	
 			$customer_id = $this->uri->segment(3);
 			$card_id = $this->uri->segment(4);
-			//$card_id = base64_decode($card_id);						
+			$card_id = base64_decode($card_id);						
 			// print_r($service_id_arr);
 			// die;
 			if(isset($customer_id)){

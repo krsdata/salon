@@ -11,7 +11,8 @@ class MYPDF extends TCPDF {
 		
         //echo SALON_LOGO_IMG;die;
 		$image_file = SALON_LOGO_IMG;//K_PATH_IMAGES.'logo_example.jpg';
-        $this->Image($image_file, 32, 10, 10, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+		$ext = pathinfo(SALON_LOGO_IMG, PATHINFO_EXTENSION);
+        $this->Image($image_file, 32, 10, 10, '', strtoupper($ext), '', 'T', false, 300, '', false, false, 0, false, false, false);
         $this->SetLineStyle(array('width' => 0.85 / $this->k, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $headerdata['line_color']));
 			$this->SetY((32.835 / $this->k) + max($imgy, $this->y));
 			if ($this->rtl) {
