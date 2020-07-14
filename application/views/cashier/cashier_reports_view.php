@@ -249,7 +249,7 @@
 																	?>
 																	
 																	<tr>
-																		<td data-target="#BillModal" data-toggle="modal" class="showBilledPackages" txn_id="<?=$package_transaction['bill_no']?>"><?=$package_transaction['Txn_id']?></td>												
+																		<td data-target="" data-toggle="modal" class="showBilledPackages" txn_id="<?=$package_transaction['bill_no']?>"><?=$package_transaction['Txn_id']?></td>												
 																		<td><?=$package_transaction['mobile']?></td>
 																		<td><?=$package_transaction['name']?></td>
 																		<td><?=$package_transaction['mrp_amt']?></td>
@@ -356,6 +356,34 @@
 															</tr>
 														</thead>
 														<tbody id="tabid">
+															
+														</tbody>
+													</table>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="modal" id="PackageBillModal" tabindex="-1" role="dialog" aria-hidden="true">	
+											<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title text-white">Package Bill Details</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body">
+													<table id="" style="width:100%;text-align:center">
+														<thead>
+															<tr>
+																<th>Package Name</th>
+																<th>Price</th>
+																<th>Discount </th>
+																<th>Customer Name</th>
+																<th>Expert</th>
+															</tr>
+														</thead>
+														<tbody id="package_billed">
 															
 														</tbody>
 													</table>
@@ -912,20 +940,20 @@
 	        txn_id: $(this).attr('txn_id')
 	      };
 	    //  alert($(this).attr('txn_id'));
-					$.getJSON("<?=base_url()?>Cashier/GetBilledServices", parameters)
+					$.getJSON("<?=base_url()?>Cashier/GetBilledPackages", parameters)
 					.done(function(data, textStatus, jqXHR) { 
 						var str_2 = "";	
 						for(var i=0;i<data.length;i++){						
 							str_2 += "<tr>";
-							str_2 += "<td>"+data[i].service_name+"</td>";
-							str_2 += "<td>"+data[i].txn_service_discounted_price+"</td>";
-							str_2 += "<td>"+data[i].disc1+"</td>";
-							str_2 += "<td>"+data[i].disc2+"</td>";
-							str_2 += "<td>"+data[i].txn_service_quantity+"</td>";
+							str_2 += "<td>"+data[i].salon_package_name+"</td>";
+							str_2 += "<td>"+data[i].package_txn_value+"</td>";
+							str_2 += "<td>"+data[i].package_txn_discount+"</td>";
+							str_2 += "<td>"+data[i].customer_name+"</td>";
+							str_2 += "<td>"+data[i].employee_first_name+"</td>";
 							str_2 += "</tr>";
 						}				
-						$("#tabid").html(str_2);
-						$("#BillModal").modal('show');
+						$("#package_billed").html(str_2);
+						$("#PackageBillModal").modal('show');
 					})
 					.fail(function(jqXHR, textStatus, errorThrown) {
 						console.log(errorThrown.toString());

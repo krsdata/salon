@@ -795,6 +795,18 @@
 			// 	$("#AddPackage input[name=service_total_value]").val(base_price*qty);
 			// }
 			});
+
+
+			$("#AddPackage input[name=virtual_wallet_money_absolute]").on('input',function(){
+				if(parseInt($(this).val()) >0){
+					$("#AddPackage input[name=virtual_wallet_money_percentage]").val(0);
+				}
+			});
+			$("#AddPackage input[name=virtual_wallet_money_percentage]").on('input',function(){
+				if(parseInt($(this).val()) >0){
+					$("#AddPackage input[name=virtual_wallet_money_absolute]").val(0);
+				}
+			});
 	//
 			$("#AddPackage").validate({
 				errorElement: "div",

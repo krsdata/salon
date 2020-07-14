@@ -596,7 +596,7 @@
 																		</div>
 																		<div class="form-group col-md-6">
 																			<label class="form-label">Amount Received</label>
-																			<input type="number" class="form-control" name="total_amount_received" readonly min="0">
+																			<input type="number" class="form-control" name="total_amount_received" readonly min="0" >
 																		</div>
 																	</div>
 																	<div class="form-row">

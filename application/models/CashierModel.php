@@ -444,6 +444,23 @@ class CashierModel extends CI_Model {
             return $this->ModelHelper(false,true,'You are not allowed to bill the another customer which is not under you. Please do not change url!');
         }
     }
+
+    public function VerifyOfflineCustomer($where){
+        $this->db->select('*');
+        $this->db->from('mss_customers');
+        $this->db->where('customer_id',$where['customer_id']);
+        // $this->db->where('customer_business_outlet_id',$where['business_outlet_id']);
+        // $this->db->where('customer_business_admin_id',$where['business_admin_id']);
+        //$this->db->where('customer_master_admin_id',$where['master_admin_id']);
+        $query = $this->db->get();
+
+        if ($query->num_rows() == 1){
+            return $this->ModelHelper(true,false);
+        }
+        else{
+            return $this->ModelHelper(false,true,'You are not allowed to bill the another customer which is not under you. Please do not change url!');
+        }
+    }
     
     /* SAMPLE-DATA coming from the POST Request
     Array
@@ -1961,6 +1978,35 @@ class CashierModel extends CI_Model {
 					} 
 				}
 				
+				public function GetBilledPackagesByTxnId($where){
+					$sql = "SELECT 
+					mss_package_transactions.package_txn_discount,
+					mss_package_transactions.package_txn_value,
+					mss_salon_packages.salon_package_name,
+					mss_customers.customer_name,
+					mss_employees.employee_first_name
+				FROM
+					mss_customers,
+					mss_employees,
+					mss_package_transactions,
+					mss_transaction_package_details,
+					mss_salon_packages
+				WHERE 
+					mss_package_transactions.package_txn_customer_id=mss_customers.customer_id AND
+					mss_package_transactions.package_txn_expert=mss_employees.employee_id AND 
+					mss_transaction_package_details.salon_package_id=mss_salon_packages.salon_package_id AND
+					mss_transaction_package_details.package_txn_id=mss_package_transactions.package_txn_id AND
+					mss_package_transactions.package_txn_id=".$this->db->escape($where)." ";
+					//execute the query
+					$query = $this->db->query($sql);
+					
+					if ($query->num_rows() >0){
+					   return $this->ModelHelper(true,false,'',$query->result_array());
+					} 
+					else{
+					   return $this->ModelHelper(false,true,"No Data Found!");
+					} 
+				}
 			public function ExpertWiseSale($data){
                 // $this->PrettyPrintArray($data);
                 // exit;
@@ -2359,6 +2405,7 @@ class CashierModel extends CI_Model {
 		$sql = "SELECT mss_transactions.txn_id,
 		mss_services.service_name,
 		mss_transactions.txn_customer_id,
+        mss_transactions.txn_datetime,
 		mss_employees.employee_first_name,
         mss_employees.employee_last_name,
 		mss_transactions.txn_value,
@@ -2713,6 +2760,7 @@ mss_transaction_services.txn_service_discount_absolute AS 'disc2',
 			date(mss_transactions.txn_datetime) = CURRENT_DATE 
 			AND mss_transactions.txn_customer_id = mss_customers.customer_id
 			AND mss_transactions.txn_cashier= mss_employees.employee_id
+			AND mss_transactions.txn_status=1
 			AND mss_employees.employee_business_admin=".$this->session->userdata['logged_in']['business_admin_id']."
 			AND mss_employees.employee_business_outlet=".$this->session->userdata['logged_in']['business_outlet_id']."
         ";
