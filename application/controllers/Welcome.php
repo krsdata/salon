@@ -6,6 +6,6 @@ class Welcome extends CI_Controller {
 	public function index()
 	{
 		// $this->load->view('welcome_message');
-		redirect('https://salonfirst.in/home', 'refresh');
+		redirect('http://localhost/salon/home', 'refresh');
 	}
 }
