@@ -1,33 +1,50 @@
 <?php
-
-	// $this->load->view('universal/header_view');
 	tcpdf();
-	
+
+	//$variable = $logo;
+	define('SALON_LOGO_IMG',base_url('public/images/').$logo);
 	// Extend the TCPDF class to create custom Header and Footer
-// class MYPDF extends TCPDF {
+class MYPDF extends TCPDF {
+	    
+	//Page header
+	public function Header() {		
+		
+        //echo SALON_LOGO_IMG;die;
+		$image_file = SALON_LOGO_IMG;//K_PATH_IMAGES.'logo_example.jpg';
+		$ext = pathinfo(SALON_LOGO_IMG, PATHINFO_EXTENSION);
+        $this->Image($image_file, 32, 10, 10, '', strtoupper($ext), '', 'T', false, 300, '', false, false, 0, false, false, false);
+        $this->SetLineStyle(array('width' => 0.85 / $this->k, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $headerdata['line_color']));
+			$this->SetY((32.835 / $this->k) + max($imgy, $this->y));
+			if ($this->rtl) {
+				$this->SetX($this->original_rMargin);
+			} else {
+				$this->SetX($this->original_lMargin);
+			}
+			$this->Cell(($this->w - $this->original_lMargin - $this->original_rMargin), 0, '', 'T', 0, 'C');
+			// Set font
+			//$this->SetFont('helvetica', 'B', 14);
+			// Title
+			//$this->Cell(0, 15,'Invoice', 0, false, 'C', 0, '', 0, false, 'M', 'M');
+	}
 
-// 	//Page header
-// 	public function Header() {
-// 			// Set font
-// 			$this->SetFont('helvetica', 'B', 14);
-// 			// Title
-// 			$this->Cell(0, 15,'Invoice', 0, false, 'C', 0, '', 0, false, 'M', 'M');
-// 	}
+	// Page footer
+	// public function Footer() {
+	// 		// Position at 15 mm from bottom
+	// 		$this->SetY(-15);
+	// 		// Set font
+	// 		$this->SetFont('helvetica', 'I', 8);
+	// 		// Page number
+	// 		$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+	// }
+}
+	
 
-// 	// Page footer
-// 	public function Footer() {
-// 			// Position at 15 mm from bottom
-// 			$this->SetY(-15);
-// 			// Set font
-// 			$this->SetFont('helvetica', 'I', 8);
-// 			// Page number
-// 			$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
-// 	}
-// }
-$pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+	$pdf = new MYPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 	$pdf->SetCreator(PDF_CREATOR);
 	$pdf->SetTitle($shop_details['business_outlet_name']);
-	$pdf->SetHeaderData(PDF_HEADER_LOGO,10, $shop_details['business_outlet_bill_header_msg'], PDF_HEADER_STRING);
+	//$pdf->SetHeaderData(PDF_HEADER_LOGO,10, $shop_details['business_outlet_bill_header_msg'], PDF_HEADER_STRING);
+	$pdf->SetHeaderData(PDF_HEADER_LOGO,20, '', '');
+
 	$pdf->SetTitle($shop_details['business_outlet_name']);
 	$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
 	$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
@@ -39,7 +56,7 @@ $pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 	$pdf->SetFont('helvetica', '', 9);
 	$pdf->setFontSubsetting(false);
-	$pdf->AddPage();
+	$pdf->AddPage('P','A7');
 	ob_start();
 			// we can have any view part here like HTML, PHP etc
 			
@@ -48,13 +65,21 @@ $pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 		<div class="container-fluid">
 			<div class="col-md-12">
 				<?php
+
+					$pdf->SetTextColor(0, 63, 127);
+					$shop=$shop_details['business_outlet_address'];
+					$cust=$shop_details['business_outlet_bill_header_msg'];
+					$pdf->MultiCell(0,	0,$cust, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					$pdf->Ln(8);
 				// set color for text
 					$pdf->SetTextColor(0, 63, 127);
 					$shop=$shop_details['business_outlet_address'];
 					$cust=$individual_customer['customer_name'].' '.date('d-M-Y h:i A');
 					$pdf->MultiCell(25,	0,$cust, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					$pdf->Ln(2);
 					// $pdf->Cell(30, 25,'Date : '.date('d-M-Y h:i A') , 0, 0, 'L', 0, '', 0, false, 'T', 'C');
-					$pdf->MultiCell(40,0,$shop, 0, 'R', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					// $pdf->MultiCell(40,0,$shop, 0, 'R', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					$pdf->MultiCell(140,0,$shop, 0, 'R', 0, 0, '', '', true, 0, false, true, 0, 'T');
 					// $bill_no=180;
 					$html ='<br>';
 					$pdf->writeHTML($html, true, false, true, false, '');
@@ -191,7 +216,8 @@ $pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 					<table class="table table-hover bill_print">
 						<tbody>
 							<tr>
-								<td style="width:70%;">Total Bill</td>
+								<!-- <td style="width:70%;">Total Bill</td> -->
+								<td style="width:66%;">Total Bill</td>
 								<td style="width:30%;"><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
 								<?=round($total_service_value)?>
 								</td>
@@ -285,5 +311,6 @@ $pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 		// $pdf->writeHTML($header, true, false, true, false, 'T');
 		$pdf->writeHTML($content, true, false, true, false, '');
 		$pdf->writeHTML($footer, true, false, true, false, 'C');
+		//Add a custom size  
 		$pdf->Output('bill.pdf', 'I');
 ?>

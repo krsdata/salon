@@ -444,6 +444,23 @@ class CashierModel extends CI_Model {
             return $this->ModelHelper(false,true,'You are not allowed to bill the another customer which is not under you. Please do not change url!');
         }
     }
+
+    public function VerifyOfflineCustomer($where){
+        $this->db->select('*');
+        $this->db->from('mss_customers');
+        $this->db->where('customer_id',$where['customer_id']);
+        // $this->db->where('customer_business_outlet_id',$where['business_outlet_id']);
+        // $this->db->where('customer_business_admin_id',$where['business_admin_id']);
+        //$this->db->where('customer_master_admin_id',$where['master_admin_id']);
+        $query = $this->db->get();
+
+        if ($query->num_rows() == 1){
+            return $this->ModelHelper(true,false);
+        }
+        else{
+            return $this->ModelHelper(false,true,'You are not allowed to bill the another customer which is not under you. Please do not change url!');
+        }
+    }
     
     /* SAMPLE-DATA coming from the POST Request
     Array
@@ -2388,6 +2405,7 @@ class CashierModel extends CI_Model {
 		$sql = "SELECT mss_transactions.txn_id,
 		mss_services.service_name,
 		mss_transactions.txn_customer_id,
+        mss_transactions.txn_datetime,
 		mss_employees.employee_first_name,
         mss_employees.employee_last_name,
 		mss_transactions.txn_value,
