@@ -52,7 +52,7 @@ class MYPDF extends TCPDF {
 	$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 	// $pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-20, PDF_MARGIN_RIGHT-10);
 	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-	$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP-4, PDF_MARGIN_RIGHT);
+	$pdf->SetMargins(PDF_MARGIN_LEFT-4, PDF_MARGIN_TOP-4, PDF_MARGIN_RIGHT);
 	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM-40);
 	$pdf->SetFont('helvetica', '', 6.5);
 	$pdf->setFontSubsetting(false);
