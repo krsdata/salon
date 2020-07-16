@@ -1406,13 +1406,12 @@ class CashierModel extends CI_Model {
     }
 
     public function BoolPackageCustomer($customer_id){
-        $sql = "SELECT 
-                    COUNT(*) as package_count
-                FROM
-                    mss_customer_packages
-                WHERE
-                    mss_customer_packages.customer_id = ".$this->db->escape($customer_id)."
-                    AND mss_customer_packages.package_expiry_date > DATE(NOW())";
+        $sql = "SELECT MAX(mss_customer_packages.package_expiry_date), 
+			SUM(mss_customer_package_profile.service_count) AS 'service_count' 
+			FROM mss_customer_packages, 
+				mss_customer_package_profile 
+			WHERE mss_customer_packages.customer_package_id= mss_customer_package_profile.customer_package_id AND 		mss_customer_packages.package_expiry_date > CURRENT_DATE AND 
+				mss_customer_packages.customer_id =".$this->db->escape($customer_id)." ";
 
         //execute the query
         $query = $this->db->query($sql);
