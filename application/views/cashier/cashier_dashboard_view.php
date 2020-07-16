@@ -329,45 +329,51 @@
 					<?php
 						}
 						else{
-                            foreach ($customers as $customer) {
-                        ?>
-                        <div class="col-md-1 col-sm-3 d-flex mb-2">
-                            <div class="packageCard flex-fill">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div style="color:blue;text-decoration:underline;"><a class="EditViewCustomer" CustomerId="<?=$customer['customer_id']?>" ><?=$customer['customer_name'];?></a></div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <?php if(isset($customer['is_package_customer'])){ if($customer['is_package_customer'] == 'true'){ echo "<i class='fa fa-parking' style='font-size:21px;color:green;float:right'></i>";}}?>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <?=$dispnum = substr($customer['customer_mobile'], 0, 0) . str_repeat("*",6).substr($customer['customer_mobile'], 6,10)?>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <small><a  class="ClearPendingAmount text-danger"  title="Pending Amount" PendingAmount="<?=$customer['customer_pending_amount']?>"  CustomerId="<?=$customer['customer_id']?>">Due Amount : <?=$customer['customer_pending_amount']?>/-</a></small>    
-                                        </div>
-                                        <div class="col-md-12">
-                                            <small>Wallet Balance: <?=$customer['customer_virtual_wallet']?></small>
-                                        </div>
-                                        
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-12" style="text-align: center">  
-                                            <a href="<?=base_url()?>Cashier/BuyPackages/<?=$customer['customer_id']?>" title="Packages"> <button type="button" class="btn btn-warning" style="width:150px">Buy Package</button></a>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="padding:2px">
-                                        <div class="col-lg-12" style="text-align: center">  
-                                            <a href="<?=base_url()?>Cashier/PerformBilling/<?=$customer['customer_id']?>" title="Billit"> <button type="button" class="btn btn-success" style="width:150px">BILL IT</button></a>
-                                        </div>
-                                    </div>
-                            </div>
-                        </div>
-                        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
-                        <?php   
-                            }
-                        }
-                        ?>
+							foreach ($customers as $customer) {
+								?>
+								<div class="col-md-1 col-sm-3 d-flex mb-2">
+									<div class="packageCard flex-fill">
+										<div class="row">
+												<div class="col-md-6">
+														<div style="color:blue;text-decoration:underline;"><a class="EditViewCustomer" CustomerId="<?=$customer['customer_id']?>" ><?=$customer['customer_name'];?></a></div>
+												</div>
+												<div class="col-md-6">
+														<?php 
+															if(isset($customer['is_package_customer'])){ 
+																if($customer['is_package_customer']['service_count'] > 0){ 
+																	echo "<i class='fa fa-parking' style='font-size:21px;color:green;float:right'></i>";
+																}
+															}
+														?>
+												</div>
+												<div class="col-md-12">
+														<?=$dispnum = substr($customer['customer_mobile'], 0, 0) . str_repeat("*",6).substr($customer['customer_mobile'], 6,10)?>
+												</div>
+												<div class="col-md-12">
+														<small><a  class="ClearPendingAmount text-danger"  title="Pending Amount" PendingAmount="<?=$customer['customer_pending_amount']?>"  CustomerId="<?=$customer['customer_id']?>">Due Amount : <?=$customer['customer_pending_amount']?>/-</a></small>    
+												</div>
+												<div class="col-md-12">
+														<small>Wallet Balance: <?=$customer['customer_virtual_wallet']?></small>
+												</div>
+												
+										</div>
+										<div class="row">
+												<div class="col-lg-12" style="text-align: center">  
+														<a href="<?=base_url()?>Cashier/BuyPackages/<?=$customer['customer_id']?>" title="Packages"> <button type="button" class="btn btn-warning" style="width:150px">Buy Package</button></a>
+												</div>
+										</div>
+										<div class="row" style="padding:2px">
+												<div class="col-lg-12" style="text-align: center">  
+														<a href="<?=base_url()?>Cashier/PerformBilling/<?=$customer['customer_id']?>" title="Billit"> <button type="button" class="btn btn-success" style="width:150px">BILL IT</button></a>
+												</div>
+										</div>
+									</div>
+								</div>
+								&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+								<?php   
+										}
+								}
+						?>
 				</div>
 			</div>
 		</main>

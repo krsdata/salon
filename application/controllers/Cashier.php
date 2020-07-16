@@ -529,12 +529,8 @@ class Cashier extends CI_Controller {
 		if($this->IsLoggedIn('cashier')){
 			$data = $this->CashierModel->BoolPackageCustomer($customer_id);
 			if($data['success'] == 'true'){	
-				if($data['res_arr']['package_count'] >= 1){
-					return 'true';
-				}
-				else{
-					return 'false';
-				}
+				return $data['res_arr'];
+
 			}
 		}
 		else{
@@ -807,6 +803,7 @@ class Cashier extends CI_Controller {
 				$sess_data = $this->GetCustomerBilling($this->input->post('customer_id'));
 				
 				$sess_data['is_package_customer'] = $this->IsPackageCustomer($this->input->post('customer_id'));
+				// $this->PrettyPrintArray($sess_data['is_package_customer']);
 				$curr_sess_cust_data = array();
 				if(!isset($this->session->userdata['POS'])){
 					array_push($curr_sess_cust_data, $sess_data);
