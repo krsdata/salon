@@ -29,10 +29,10 @@ function remove_ssl()
 
 function shortUrl($url){
 
-  echo $cutly = "https://cutt.ly/api/api.php?key=573f0fc3387bba7b17526dd095e3a3dbc6ccf&short=$url&name=";die;
+  $cutly = "https://cutt.ly/api/api.php?key=573f0fc3387bba7b17526dd095e3a3dbc6ccf&short=$url&name=";
   $json = file_get_contents($cutly);
   $json = json_decode($json,true);  
-  print_r($json);
-  die;
+//  print_r($json);
+  //die;
   return $json['url']['shortLink'];
 }
