@@ -71,16 +71,16 @@ class MYPDF extends TCPDF {
 					$shop=$shop_details['business_outlet_address'];
 					$cust=$shop_details['business_outlet_bill_header_msg'];
 					$pdf->MultiCell(0,	0,$cust, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
-					$pdf->Ln(4);
+					$pdf->Ln(3);
 				// set color for text
 					$pdf->SetTextColor(0, 63, 127);
 					$shop=$shop_details['business_outlet_address'];
 					$cust=$individual_customer['customer_name'].' '.date('d-M-Y h:i A');
-					$pdf->MultiCell(25,	0,$cust, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					$pdf->MultiCell(45,	0,$shop, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
 					$pdf->Ln(6);
 					// $pdf->Cell(30, 25,'Date : '.date('d-M-Y h:i A') , 0, 0, 'L', 0, '', 0, false, 'T', 'C');
 					// $pdf->MultiCell(40,0,$shop, 0, 'R', 0, 0, '', '', true, 0, false, true, 0, 'T');
-					$pdf->MultiCell(140,0,$shop, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					$pdf->MultiCell(140,0,$cust, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
 					// $bill_no=180;
 					$html ='<br>';
 					$pdf->writeHTML($html, true, false, true, false, '');
