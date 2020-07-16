@@ -2486,6 +2486,7 @@ class Cashier extends CI_Controller {
 					if($cart_detail['success'] == 'true'){
 						$detail_id = $cart_detail['res_arr']['insert_id'];
 						$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
+						$bill_url = shortUrl($bill_url);
 					}
 
 					// print_r($bill_url);
