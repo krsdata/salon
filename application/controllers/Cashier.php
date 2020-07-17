@@ -2485,6 +2485,7 @@ class Cashier extends CI_Controller {
 					if($cart_detail['success'] == 'true'){
 						$detail_id = $cart_detail['res_arr']['insert_id'];
 						$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
+						$bill_url = shortUrl($bill_url);
 					}
 
 					//1.Unset the payment session
@@ -2707,7 +2708,7 @@ class Cashier extends CI_Controller {
 					$outlet_admin_id =$this->session->userdata['logged_in']['business_outlet_id'];
 					//print_r($result[0]['outlet_admin_id']);die;
 					// print_r($data['cart']);
-					$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id=$outlet_admin_id";
+					$sql ="SELECT config_value from mss_config where config_key='salon_logo'";
 
 					$query = $this->db->query($sql);
 					$result = $query->result_array();
@@ -6408,7 +6409,7 @@ public function AddToCartRedeemPoints(){
 					$outlet_admin_id = $result[0]['outlet_admin_id'];
 					//print_r($result[0]['outlet_admin_id']);die;
 					// print_r($data['cart']);
-					$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id=$outlet_admin_id";
+					$sql ="SELECT config_value from mss_config where config_key='salon_logo'";
 
 					$query = $this->db->query($sql);
 					$result = $query->result_array();

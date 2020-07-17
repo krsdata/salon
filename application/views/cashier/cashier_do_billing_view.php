@@ -1656,7 +1656,7 @@
 															        		<td>
 															        			<div class="form-group">
 																							<label class="form-label">Amount Received</label>
-																							<input type="number" placeholder="Amount in INR" class="form-control" name="amount_received[]"  onchange="return validateSplitPayment(this,event);"  id="amount_recieved">
+																							<input type="number" placeholder="Amount in INR" class="form-control" name="amount_received[]"  onchange="return validateSplitPayment(this,event);">
 																						</div>
 															        		</td>
 															       		</tr>
@@ -3194,7 +3194,6 @@
       this.blur(); // Manually remove focus from clicked link.
 
 			$("#SplitPaymentInfo input[name=total_final_bill]").val(<?php if(isset($actual_bill)){ echo round($actual_bill); } ?>);
-			$("#amount_recieved").val(<?php if(isset($actual_bill)){ echo round($actual_bill); } ?>);
 			$("#SplitPaymentInfo input[name=balance_to_be_paid_back]").val(parseInt(0));
 			$("#SplitPaymentInfo input[name=total_pending_amount]").val(parseInt(0));
 			$("#SplitPaymentInfo input[name=total_amount_received]").val(parseInt(0));
@@ -3394,7 +3393,7 @@
     	<?php
     		}
 
-    		if(!empty($payment['split_payment_info'])){
+    	if(!empty($payment['split_payment_info'])){
     	?>
     	var split_payment_key_val = "";
 
@@ -3436,7 +3435,7 @@
 			//Credit Cashback	
 			if ($('#cashback').is(":checked"))
 				{
-					cashback = 0;	
+					cashback = 1;	
 				}else{
 					cashback=0
 				}			
@@ -3466,7 +3465,7 @@
 							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
 							timeOut: 500
 						});
-						setTimeout(function () { window.location.href = "<?=base_url()?>Cashier/Dashboard/"; }, 500);
+						setTimeout(function () { window.location.href = "<?=base_url()?>Cashier/Dashboard"; }, 500);
           }
           else if (data.success == 'false'){
                         alert(data.message);

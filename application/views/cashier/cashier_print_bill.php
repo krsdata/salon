@@ -52,11 +52,12 @@ class MYPDF extends TCPDF {
 	$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 	// $pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-20, PDF_MARGIN_RIGHT-10);
 	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-	$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP-4, PDF_MARGIN_RIGHT);
+	$pdf->SetMargins(PDF_MARGIN_LEFT-4, PDF_MARGIN_TOP-4, PDF_MARGIN_RIGHT);
 	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM-40);
-	$pdf->SetFont('helvetica', '', 7);
+	$pdf->SetFont('helvetica', '', 6.5);
 	$pdf->setFontSubsetting(false);
 	$pdf->AddPage('P','A7');
+
 	ob_start();
 			// we can have any view part here like HTML, PHP etc
 			
@@ -76,10 +77,10 @@ class MYPDF extends TCPDF {
 					$shop=$shop_details['business_outlet_address'];
 					$cust=$individual_customer['customer_name'].' '.date('d-M-Y h:i A');
 					$pdf->MultiCell(25,	0,$cust, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
-					$pdf->Ln(2);
+					$pdf->Ln(6);
 					// $pdf->Cell(30, 25,'Date : '.date('d-M-Y h:i A') , 0, 0, 'L', 0, '', 0, false, 'T', 'C');
 					// $pdf->MultiCell(40,0,$shop, 0, 'R', 0, 0, '', '', true, 0, false, true, 0, 'T');
-					$pdf->MultiCell(140,0,$shop, 0, 'R', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					$pdf->MultiCell(140,0,$shop, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
 					// $bill_no=180;
 					$html ='<br>';
 					$pdf->writeHTML($html, true, false, true, false, '');
@@ -90,8 +91,8 @@ class MYPDF extends TCPDF {
 					$y = $pdf->getY();
 					
 					// write the first column
-					$pdf->writeHTMLCell(40, '', '', $y+3, $first_column, 0, 0, 0, true, 'J', false);
-					$pdf->writeHTMLCell(40, '', '', $y+6, $second_column, 0, 0, 0, true, 'J', true);
+					$pdf->writeHTMLCell(40, '', '', $y+2, $first_column, 0, 0, 0, true, 'J', false);
+					$pdf->writeHTMLCell(40, '', '', $y+5, $second_column, 0, 0, 0, true, 'J', true);
 					
 				?>
 			</div>
@@ -118,7 +119,7 @@ class MYPDF extends TCPDF {
 				<table class="table bill_print">
 					<thead>
 						<hr/>
-						<tr style="margin-top:10px;">
+						<tr style="margin-top:5px;">
 							<th style="width:40%;"><strong>Service</strong></th>
 							<th  style="width:20%;text-align:center;"><strong>MRP</strong></th>
 							<th  style="width:15%;text-align:center;"><strong>Qty</strong></th>
