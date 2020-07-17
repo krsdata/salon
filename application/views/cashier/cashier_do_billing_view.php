@@ -345,8 +345,8 @@
 																<div class="alert alert-dismissible feedback mt-0 mb-0" role="alert">
 																	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 																		<span aria-hidden="true">&times;</span>
-											                         </button>
-																     <div class="alert-message"></div>
+											            </button>
+																    <div class="alert-message"></div>
 																</div>
 															</div>
 														</div>
@@ -3436,7 +3436,7 @@
 			//Credit Cashback	
 			if ($('#cashback').is(":checked"))
 				{
-					cashback = 100;	
+					cashback = 0;	
 				}else{
 					cashback=0
 				}			
@@ -3459,11 +3459,6 @@
         // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
-				// 		$('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
-				// 			$("#SuccessModalMessage").html("").html(data.message);
-				// 		}).on('hidden.bs.modal', function (e) {
-				// 				window.location.href = "<?=base_url()?>Cashier/Dashboard/";
-				// 		});
 						toastr["success"](data.message,"", {
 							positionClass: "toast-top-right",
 							progressBar: "toastr-progress-bar",

@@ -897,7 +897,7 @@ class BusinessAdminModel extends CI_Model {
                      ORDER BY
                         mss_transactions.txn_id";
 
-        $query = $this->db->query($sql);
+        $query = $this->db->query($sql); 
         
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());

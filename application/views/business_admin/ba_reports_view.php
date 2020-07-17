@@ -709,8 +709,7 @@
       	$("#ModalVerifyPassword").modal('show');
 			}else{
 				alert("Bill Can be edited only on  Full Payment.");
-			}
-		      
+			}		      
     });
 		//delete individual service
 		$(document).on('click','.Edit_individual_service',function(event) {
