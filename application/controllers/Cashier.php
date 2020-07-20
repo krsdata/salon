@@ -2470,7 +2470,7 @@ class Cashier extends CI_Controller {
 					}
 				}
 				// end
-				$business_admin_id =  $this->session->userdata['logged_in']['business_admin_id'];
+				$business_admin_id =  $this->session->userdata['logged_in']['business_outlet_id'];
 				$result = $this->CashierModel->BillingTransaction($_POST,$this->session->userdata['logged_in']['business_outlet_id'],$this->session->userdata['logged_in']['business_admin_id']);
 
 				if($result['success'] == 'true'){
