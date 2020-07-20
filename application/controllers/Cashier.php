@@ -2044,8 +2044,7 @@ class Cashier extends CI_Controller {
 
 	public function SplitPaymentInfo(){
 		if($this->IsLoggedIn('cashier')){
-			if(isset($_POST) && !empty($_POST)){
-				
+			if(isset($_POST) && !empty($_POST)){				
 				$this->form_validation->set_rules('total_final_bill', 'Final Bill', 'trim|required');
 				$this->form_validation->set_rules('total_amount_received', 'Amount Received', 'trim|required');
 				$this->form_validation->set_rules('balance_to_be_paid_back', 'Balance', 'trim|required');
@@ -2351,7 +2350,7 @@ class Cashier extends CI_Controller {
             $data['card_data']= $this->BusinessAdminModel->TodayPackageSales($where);
             $data['card_data']=$data['card_data']['res_arr'];
             $data['package_payment_wise'] = $this->BusinessAdminModel->GetPackageSalesPaymentWiseData($where);
-            $data['package_payment_wise']=$data['package_payment_wise']['res_arr'];
+						$data['package_payment_wise']=$data['package_payment_wise']['res_arr'];
             $data['product_sale_today']=$this->CashierModel->ProductsSalesToday();
             if(isset($data['product_sale_today']['res_arr'])){
                 $data['product_sale_today']=$data['product_sale_today']['res_arr'];
@@ -3731,9 +3730,10 @@ class Cashier extends CI_Controller {
 							$curr_sess_cust_data = $this->session->userdata['POS'];
 							
 							$key = array_search($customer_id, array_column($curr_sess_cust_data,'customer_id'));
-							unset($curr_sess_cust_data[$key]);	
-							array_splice($curr_sess_cust_data, $key, $key); 
-
+							unset($curr_sess_cust_data[$key]);
+							if($key==0){
+								array_splice($curr_sess_cust_data, 0, $key);
+							}								 
 							$this->session->set_userdata('POS', $curr_sess_cust_data);
 							
 							$this->ReturnJsonArray(true,false,"Pending Amount changed successfully!");

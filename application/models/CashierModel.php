@@ -311,8 +311,9 @@ class CashierModel extends CI_Model {
         $this->db->select('*');
         $this->db->from('mss_customers');
         $this->db->where('customer_mobile',$where['customer_mobile']);
-        $this->db->where('customer_business_admin_id',$where['customer_business_admin_id']);
-        $this->db->where('customer_business_outlet_id',$where['customer_business_outlet_id']);
+        // $this->db->where('customer_business_admin_id',$where['customer_business_admin_id']);
+		// $this->db->where('customer_business_outlet_id',$where['customer_business_outlet_id']);
+		$this->db->where('customer_master_admin_id',$where['customer_master_admin_id']);
         
         $query = $this->db->get();
 
@@ -527,9 +528,9 @@ class CashierModel extends CI_Model {
             4. Update the pending amounts for the customers if any
             5. Last but not least if composition is available then update the stock for the services taken.
         */
-        //$this->PrintArray($data);
+        // $this->PrintArray($data);
         //exit;
-			if($data['cashback']>0)
+				if($data['cashback']>0)
                 {
                     $data_cashback = array(
                         'business_outlet_id' => $outlet_id,
@@ -545,7 +546,7 @@ class CashierModel extends CI_Model {
 						$cashback = ['res_arr'=>''];
 						$cashback = $cashback['res_arr'];
 					}
-                }
+				}
                 //jitesh ends code
         		//end of calculate points
         $this->db->trans_start();
@@ -669,6 +670,7 @@ class CashierModel extends CI_Model {
 
 				//5 loyalty wallet payment
 				//jitesh
+				
 				if(!empty($cashback))
 				{
 					if($cashback['rule_type'] == 'Offers Single Rule' || $cashback['rule_type'] == 'Offers Multiple Rule' || $cashback['rule_type'] == 'Offers LTV Rule')
@@ -2119,7 +2121,7 @@ class CashierModel extends CI_Model {
     //Points Calculation
     public function CheckRule($data,$table_name,$where)
     {
-        $sql = "SELECT *
+      	  $sql = "SELECT *
                   FROM
                   $table_name
                   WHERE "
@@ -2130,14 +2132,12 @@ class CashierModel extends CI_Model {
           if($query->num_rows() > 0)
           {
               $result = $query->result_array();
-              // print_r($result);
+							
               foreach ($result as $key=>$value)
               {
-                //   print_r($value);
-                //   exit;
                   if($value['rule_type'] == 'Offers Single Rule')
                   {
-                      $points_generated = ($data['net_amount']*$value['points'])/$value['amount1'];
+											$points_generated = ($data['net_amount']*$value['points'])/$value['amount1'];
                       $points_validity  =  $value['rule_validity'];
                       $data = array(
                           'points_generated' => $points_generated,

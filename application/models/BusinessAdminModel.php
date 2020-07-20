@@ -2488,7 +2488,6 @@ class BusinessAdminModel extends CI_Model {
 		WHERE
 		mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
 		AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_transaction_settlement_id
-		AND mss_package_transaction_settlements.settlement_way = 'Full Payment'
 		AND mss_customers.customer_business_admin_id =  ".$this->db->escape($where['business_admin_id'])."
 		AND mss_customers.customer_business_outlet_id =  ".$this->db->escape($where['business_outlet_id'])."
 		AND date(mss_package_transactions.datetime) = date(now())
@@ -2500,7 +2499,7 @@ class BusinessAdminModel extends CI_Model {
 			foreach ($package_full_payment as $k) {
 					switch ($k['Payment Mode']) {
 							case 'Cash':
-									$data['cash']           += (int) $k['Sum Amount'];
+									$data['cash'] += (int) $k['Sum Amount'];
 									break;
 							case 'Credit_Card':
 									$data['credit_card']    += (int) $k['Sum Amount'];
@@ -2527,22 +2526,23 @@ class BusinessAdminModel extends CI_Model {
 			}
 
 
-		$sql2 = "SELECT 
-					mss_package_transaction_settlements.payment_mode AS 'Payment Mode'
-				FROM 
-					mss_package_transactions, 
-					mss_package_transaction_settlements, 
-					mss_customers 
-				WHERE 
-					mss_package_transactions.package_txn_customer_id = mss_customers.customer_id 
-					AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_transaction_settlement_id
-					AND mss_package_transaction_settlements.settlement_way = 'Split Payment'
-					AND mss_customers.customer_business_admin_id =".$this->db->escape($where['business_admin_id'])."
-					AND mss_customers.customer_business_outlet_id = ".$this->db->escape($where['business_outlet_id'])."
-					AND date(mss_package_transactions.datetime) = date(now()) ";
+		$sql2 = "SELECT
+			mss_package_transaction_settlements.payment_mode AS 'Payment Mode'
+		FROM
+			mss_package_transactions,
+			mss_package_transaction_settlements,
+			mss_employees
+		WHERE 
+			mss_package_transactions.package_txn_id= mss_package_transaction_settlements.package_txn_id AND
+			mss_package_transaction_settlements.settlement_way='Split Payment' AND 
+			mss_package_transactions.package_txn_cashier=mss_employees.employee_id AND
+			mss_employees.employee_business_outlet=".$this->db->escape($where['business_outlet_id'])." AND
+			mss_employees.employee_business_admin=".$this->db->escape($where['business_admin_id'])." AND 
+			date(mss_package_transactions.datetime)= CURRENT_DATE ";
 
 		$query2 = $this->db->query($sql2);
 		$package_split_payment = $query2->result_array();
+		
 		foreach ($package_split_payment as $k) {
 				$str = $k["Payment Mode"];
 				$someArray=array();

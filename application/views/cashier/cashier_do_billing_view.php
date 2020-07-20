@@ -1656,7 +1656,7 @@
 															        		<td>
 															        			<div class="form-group">
 																							<label class="form-label">Amount Received</label>
-																							<input type="number" placeholder="Amount in INR" class="form-control" name="amount_received[]"  onchange="return validateSplitPayment(this,event);">
+																							<input type="number" placeholder="Amount in INR" class="form-control" name="amount_received[]"  onchange="return validateSplitPayment(this,event);" required>
 																						</div>
 															        		</td>
 															       		</tr>
