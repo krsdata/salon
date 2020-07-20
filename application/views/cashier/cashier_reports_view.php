@@ -578,10 +578,8 @@
 										</div>
 									</div>
 									<div class="tab-pane show active" id="tab-4" role="tabpanel">
-										<div class="row">
-											<div class="col-md-1">
-											</div>	
-											<div class="col-md-2">
+										<div class="row">	
+											<div class="col-md-3">
 												<div class="card flex-fill" style="height:144px;">
 													<div class="card-header">
 														<span class="badge badge-success float-right">Today</span>
@@ -613,7 +611,7 @@
 													</div>
 												</div>
 											</div>
-											<div class="col-md-2">
+											<div class="col-md-3">
 												<div class="card flex-fill" style="height:144px;">
 													<div class="card-header">
 														<span class="badge badge-success float-right">Today</span>
@@ -639,7 +637,7 @@
 													</div>
 												</div>
 											</div>
-											<div class="col-md-2">
+											<div class="col-md-3">
 												<div class="card flex-fill" style="height:144px;">
 													<div class="card-header">
 														<span class="badge badge-success float-right">Today</span>
@@ -676,7 +674,7 @@
 													</div>
 												</div>
 											</div>
-											<div class="col-md-2">
+											<div class="col-md-3">
 												<div class="card flex-fill" style="height:144px;">
 													<div class="card-header">
 														<span class="badge badge-success float-right">Today</span>
@@ -702,39 +700,6 @@
 														</div>
 													</div>
 												</div>
-											</div>
-											<div class="col-md-2">
-												<div class="card flex-fill" style="height:144px;">
-													<div class="card-header">
-														<span class="badge badge-success float-right">Today</span>
-														<h5 class="card-title mb-0">Loyalty Wallet in <i class="fa fa-rupee-sign"></i></h5>
-													</div>
-													<div class="card-body">
-														<div class="row d-flex align-items-center mb-1">
-															<div class="col-md-12">
-																<table style="width:100%;">
-																	<!-- <tr>
-																		<td>
-																<div class="d-flex align-items-center mb-0 font-weight-light">
-																	<?php
-																	if($cards_data['customer_count']['customer_count'] != ''){
-																		echo $cards_data['customer_count']['customer_count'];
-																	}
-																	else{
-																		echo "0";
-																	}
-																	?> -->
-																</div></td></tr>
-																<tr><td>Generated : </td><td><?=$loyalty_points_given?></td></tr>
-																<tr><td>Redeemed : </td><td><?=$loyalty_payment?></td></tr>
-																</table>
-																
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="col-md-1">
 											</div>
 										</div>
 									</div>
