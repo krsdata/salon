@@ -345,8 +345,8 @@
 																<div class="alert alert-dismissible feedback mt-0 mb-0" role="alert">
 																	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 																		<span aria-hidden="true">&times;</span>
-											                         </button>
-																     <div class="alert-message"></div>
+											            </button>
+																    <div class="alert-message"></div>
 																</div>
 															</div>
 														</div>
@@ -1656,7 +1656,7 @@
 															        		<td>
 															        			<div class="form-group">
 																							<label class="form-label">Amount Received</label>
-																							<input type="number" placeholder="Amount in INR" class="form-control" name="amount_received[]"  onchange="return validateSplitPayment(this,event);"  id="amount_recieved">
+																							<input type="number" placeholder="Amount in INR" class="form-control" name="amount_received[]"  onchange="return validateSplitPayment(this,event);" required>
 																						</div>
 															        		</td>
 															       		</tr>
@@ -3394,7 +3394,7 @@
     	<?php
     		}
 
-    		if(!empty($payment['split_payment_info'])){
+    	if(!empty($payment['split_payment_info'])){
     	?>
     	var split_payment_key_val = "";
 
@@ -3436,7 +3436,7 @@
 			//Credit Cashback	
 			if ($('#cashback').is(":checked"))
 				{
-					cashback = 100;	
+					cashback = 1;	
 				}else{
 					cashback=0
 				}			
@@ -3459,11 +3459,6 @@
         // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
-				// 		$('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
-				// 			$("#SuccessModalMessage").html("").html(data.message);
-				// 		}).on('hidden.bs.modal', function (e) {
-				// 				window.location.href = "<?=base_url()?>Cashier/Dashboard/";
-				// 		});
 						toastr["success"](data.message,"", {
 							positionClass: "toast-top-right",
 							progressBar: "toastr-progress-bar",
@@ -3471,7 +3466,7 @@
 							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
 							timeOut: 500
 						});
-						setTimeout(function () { window.location.href = "<?=base_url()?>Cashier/Dashboard/"; }, 500);
+						setTimeout(function () { window.location.href = "<?=base_url()?>Cashier/Dashboard"; }, 500);
           }
           else if (data.success == 'false'){
                         alert(data.message);

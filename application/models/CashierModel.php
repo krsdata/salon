@@ -311,8 +311,9 @@ class CashierModel extends CI_Model {
         $this->db->select('*');
         $this->db->from('mss_customers');
         $this->db->where('customer_mobile',$where['customer_mobile']);
-        $this->db->where('customer_business_admin_id',$where['customer_business_admin_id']);
-        $this->db->where('customer_business_outlet_id',$where['customer_business_outlet_id']);
+        // $this->db->where('customer_business_admin_id',$where['customer_business_admin_id']);
+		// $this->db->where('customer_business_outlet_id',$where['customer_business_outlet_id']);
+		$this->db->where('customer_master_admin_id',$where['customer_master_admin_id']);
         
         $query = $this->db->get();
 
@@ -527,9 +528,9 @@ class CashierModel extends CI_Model {
             4. Update the pending amounts for the customers if any
             5. Last but not least if composition is available then update the stock for the services taken.
         */
-        //$this->PrintArray($data);
+        // $this->PrintArray($data);
         //exit;
-			if($data['cashback']>0)
+				if($data['cashback']>0)
                 {
                     $data_cashback = array(
                         'business_outlet_id' => $outlet_id,
@@ -545,15 +546,9 @@ class CashierModel extends CI_Model {
 						$cashback = ['res_arr'=>''];
 						$cashback = $cashback['res_arr'];
 					}
-                    // print_r($cashback);
-                    // exit;
-                 }
-                    //$cashback_validity = date('Y-m-d', strtotime("+".$cashback[1], strtotime(date("Y-m-d"))));
-                
-                // print_r($cashback_validity);
-                // exit;
+				}
                 //jitesh ends code
-        //end of calculate points
+        		//end of calculate points
         $this->db->trans_start();
 
         $outlet_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();
@@ -584,16 +579,8 @@ class CashierModel extends CI_Model {
 
 				}
 				
-				// $data['txn_data']['txn_business_outlet_id']=$outlet_id;
-				// $this->PrintArray($data['txn_data']);
 				$result_1 = $this->Insert($data['txn_data'],'mss_transactions');
-				$this->db->trans_complete();
-				$this->db->trans_start();
-				// $w=array('txn_id'=>$result_1['res_arr']['insert_id']);
-				// $test= $this->MultiWhereSelect('mss_transactions',$w);
-				// $this->PrintArray($test['res_arr']);
-                // $this->PrintArray($result_1['res_arr']['insert_id']);
-                    // print_r($result_1['res_arr']['insert_id']);
+				
 					$query = "UPDATE mss_business_outlets SET business_outlet_bill_counter = business_outlet_bill_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
 					
 					$this->db->query($query);
@@ -683,6 +670,7 @@ class CashierModel extends CI_Model {
 
 				//5 loyalty wallet payment
 				//jitesh
+				
 				if(!empty($cashback))
 				{
 					if($cashback['rule_type'] == 'Offers Single Rule' || $cashback['rule_type'] == 'Offers Multiple Rule' || $cashback['rule_type'] == 'Offers LTV Rule')
@@ -2133,7 +2121,7 @@ class CashierModel extends CI_Model {
     //Points Calculation
     public function CheckRule($data,$table_name,$where)
     {
-        $sql = "SELECT *
+      	  $sql = "SELECT *
                   FROM
                   $table_name
                   WHERE "
@@ -2144,14 +2132,12 @@ class CashierModel extends CI_Model {
           if($query->num_rows() > 0)
           {
               $result = $query->result_array();
-              // print_r($result);
+							
               foreach ($result as $key=>$value)
               {
-                //   print_r($value);
-                //   exit;
                   if($value['rule_type'] == 'Offers Single Rule')
                   {
-                      $points_generated = ($data['net_amount']*$value['points'])/$value['amount1'];
+											$points_generated = ($data['net_amount']*$value['points'])/$value['amount1'];
                       $points_validity  =  $value['rule_validity'];
                       $data = array(
                           'points_generated' => $points_generated,
@@ -2920,11 +2906,10 @@ mss_transaction_services.txn_service_discount_absolute AS 'disc2',
         $stock = $data['sku_count'];
         $this->db->set('sku_count','sku_count + '.(int)$stock.'',FALSE);
         $this->db->set('expiry',$data['expiry'],FALSE);
-        // $this->db->set('otc_expiry_date',$data['otc_expiry_date']);
-        // $this->db->set('otc_entry_date',$data['otc_entry_date']);
         $this->db->where('service_id', $data['service_id']); 
-        $this->db->update('mss_inventory');
-        if($this->db->affected_rows() === 1){
+		$this->db->update('mss_inventory');
+		// $this->PrintArray($this->db->affected_rows());
+        if($this->db->affected_rows() > 0){
             return $this->ModelHelper(true,false);    
         }
         elseif($this->db->affected_rows() === 0){

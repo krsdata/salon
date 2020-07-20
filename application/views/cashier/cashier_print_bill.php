@@ -313,5 +313,5 @@ class MYPDF extends TCPDF {
 		$pdf->writeHTML($content, true, false, true, false, '');
 		$pdf->writeHTML($footer, true, false, true, false, 'C');
 		//Add a custom size  
-		$pdf->Output('bill.pdf', 'I');
+		$pdf->Output('bill'.time().'.pdf', 'I');
 ?>
