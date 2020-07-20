@@ -3194,6 +3194,7 @@
       this.blur(); // Manually remove focus from clicked link.
 
 			$("#SplitPaymentInfo input[name=total_final_bill]").val(<?php if(isset($actual_bill)){ echo round($actual_bill); } ?>);
+		//	$("#amount_recieved").val(<?php //if(isset($actual_bill)){ echo round($actual_bill); } ?>);
 			$("#SplitPaymentInfo input[name=balance_to_be_paid_back]").val(parseInt(0));
 			$("#SplitPaymentInfo input[name=total_pending_amount]").val(parseInt(0));
 			$("#SplitPaymentInfo input[name=total_amount_received]").val(parseInt(0));

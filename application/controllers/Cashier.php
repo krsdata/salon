@@ -2704,15 +2704,20 @@ class Cashier extends CI_Controller {
 						$data['payment'] = $this->session->userdata['payment'][$customer_id];
 					}
 
-					$outlet_admin_id =$this->session->userdata['logged_in']['business_outlet_id'];
+					$outlet_admin_id = $this->session->userdata['logged_in']['business_outlet_id'];
 					//print_r($result[0]['outlet_admin_id']);die;
 					// print_r($data['cart']);
-					$sql ="SELECT config_value from mss_config where config_key='salon_logo'";
+					$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
 
 					$query = $this->db->query($sql);
 					$result = $query->result_array();
-					$data['logo'] = $result[0]['config_value'];	
-					
+					if(empty($result)){
+						$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
+
+						$query = $this->db->query($sql);
+						$result = $query->result_array();
+					}
+					$data['logo'] = $result[0]['config_value'];						
 					$this->load->view('cashier/cashier_print_bill',$data);
 				}
 				elseif ($check['error'] == 'true'){
@@ -6409,12 +6414,17 @@ public function AddToCartRedeemPoints(){
 					$outlet_admin_id = $result[0]['outlet_admin_id'];
 					//print_r($result[0]['outlet_admin_id']);die;
 					// print_r($data['cart']);
-					$sql ="SELECT config_value from mss_config where config_key='salon_logo'";
+					$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
 
 					$query = $this->db->query($sql);
 					$result = $query->result_array();
-					$data['logo'] = $result[0]['config_value'];					
-					// if(isset($this->session->userdata['payment'])){
+					if(empty($result)){
+						$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
+
+						$query = $this->db->query($sql);
+						$result = $query->result_array();
+					}
+					$data['logo'] = $result[0]['config_value'];						// if(isset($this->session->userdata['payment'])){
 					// 	$data['payment'] = $this->session->userdata['payment'][$customer_id];
 					// }
 					// print_r($data['payment']);
