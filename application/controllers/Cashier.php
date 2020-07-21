@@ -2581,17 +2581,17 @@ class Cashier extends CI_Controller {
 					$this->session->set_userdata('bill_url',$bill_url);
 					if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
 						if($_POST['txn_data']['txn_value']==0){
-						$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url']);
+						$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 						}else{		
-						$this->SendCashbackSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$_POST['cashback'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url']);
+						$this->SendCashbackSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$_POST['cashback'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 						}
 					}
 					//
 					if($_POST['send_sms'] === 'true' && $_POST['cashback']==0){
 						if($_POST['txn_data']['txn_value']==0){
-						$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url']);
+						$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 						}else{		
-						$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url']);
+						$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 						}
 					}
 					//
@@ -2609,7 +2609,7 @@ class Cashier extends CI_Controller {
 			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
-	public function SendSms($sender_id,$api_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url){
+	public function SendSms($sender_id,$api_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
 		if($this->IsLoggedIn('cashier')){
 			$bill_url = $this->session->userdata('bill_url');
 		error_log("URL ============1 ".$bill_url);
@@ -2619,7 +2619,18 @@ class Cashier extends CI_Controller {
 			// $apikey="32kO6tWy5UuN16e3fOQpPg";
 			// $apisender="DSASSH";
 			
-  		$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again!Review us on ".$google_url." to serve you better and Please find the invoice on ".$bill_url;
+  		//$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again!Review us on ".$google_url." to serve you better and Please find the invoice on ".$bill_url;
+  		if(!empty($loyalty)){
+  			if(!empty($google_url)){
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You’ve earned #LoyaltyPoints rewards,on your bill of Rs.$bill_amt. View $bill_url. Review us on Google: $google_url";
+  			}else{
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You’ve earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url.";
+  			}  			
+  		}else if(!empty($google_url)){
+  			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Review us on Google: $google_url";
+  		}else{
+  			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Look forward to serve you again.";
+  		}  		
    		$msg = rawurlencode($msg);   //This for encode your message content                 		
  			
  			// API 
@@ -2640,7 +2651,7 @@ class Cashier extends CI_Controller {
 		}				
 	}
 	//Send acshback SMS
-	public function SendCashbackSms($sender_id,$api_key,$mobile,$bill_amt,$cashback,$outlet_name,$customer_name){
+	public function SendCashbackSms($sender_id,$api_key,$mobile,$bill_amt,$cashback,$outlet_name,$customer_name,$google_url,$loyalty = ''){
 		if($this->IsLoggedIn('cashier')){
 			$bill_url = $this->session->userdata('bill_url');
 		error_log("URL ============2 ".$bill_url);
@@ -2650,7 +2661,20 @@ class Cashier extends CI_Controller {
 			// $apikey="32kO6tWy5UuN16e3fOQpPg";
 			// $apisender="DSASSH";
 			
-  		$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt."/-. Look forward to serving you again! and Please find the invoice on $bill_url . Review us on Google: https://bit.ly/396f8ok";
+  		//$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt."/-. Look forward to serving you again! and Please find the invoice on $bill_url . Review us on Google: https://bit.ly/396f8ok";
+  		if(!empty($loyalty)){
+  			if($google_url){
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You’ve earned #LoyaltyPoints rewards,on your bill of Rs.$bill_amt. View $bill_url.
+Review us on Google: $google_url";
+  			}else{
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You’ve earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url.";
+  			}
+  			$msg = "";
+  		}else if(!empty($google_url)){
+  			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Review us on Google: $google_url";
+  		}else{
+  			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Look forward to serve you again.";
+  		}
    		$msg = rawurlencode($msg);   //This for encode your message content                 		
  			
  			// API 
@@ -3985,7 +4009,7 @@ class Cashier extends CI_Controller {
 			// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
 			// $apisender = "BILLIT";
 			
-			$msg = "Dear ".$customer_name." You've redeemed ".$count." Services from ".$package_name.". Remaining count: ".$service_count.". And Please find the invoice on ".$bill_url.". Review us on Google: https://bit.ly/396f8ok";
+			$msg = "Dear ".$customer_name." You've redeemed ".$count." Services from ".$package_name.". Remaining count: ".$service_count.". And Please find the invoice on ".$bill_url;
 			 $msg = rawurlencode($msg);   //This for encode your message content                 		
 			 
 			 // API 
