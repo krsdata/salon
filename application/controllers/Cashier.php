@@ -2620,11 +2620,11 @@ class Cashier extends CI_Controller {
 			// $apisender="DSASSH";
 			
   		//$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again!Review us on ".$google_url." to serve you better and Please find the invoice on ".$bill_url;
-  		if(!empty($loyalty)){
+  		if(!empty($loyalty) && $loyalty > 0){
   			if(!empty($google_url)){
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You’ve earned #LoyaltyPoints rewards,on your bill of Rs.$bill_amt. View $bill_url. Review us on Google: $google_url";
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You've earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url. Review us on Google: $google_url";
   			}else{
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You’ve earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url.";
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You've earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url.";
   			}  			
   		}else if(!empty($google_url)){
   			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Review us on Google: $google_url";
@@ -2662,14 +2662,13 @@ class Cashier extends CI_Controller {
 			// $apisender="DSASSH";
 			
   		//$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt."/-. Look forward to serving you again! and Please find the invoice on $bill_url . Review us on Google: https://bit.ly/396f8ok";
-  		if(!empty($loyalty)){
+  		if(!empty($loyalty) && $loyalty > 0){
   			if($google_url){
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You’ve earned #LoyaltyPoints rewards,on your bill of Rs.$bill_amt. View $bill_url.
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You’ve earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url.
 Review us on Google: $google_url";
   			}else{
   				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You’ve earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url.";
   			}
-  			$msg = "";
   		}else if(!empty($google_url)){
   			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Review us on Google: $google_url";
   		}else{
