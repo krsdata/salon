@@ -2475,13 +2475,14 @@ class Cashier extends CI_Controller {
 
 				if($result['success'] == 'true'){
 					$transcation_detail = $this->CashierModel->GetBilledServicesByTxnId($result['res_arr']['res_arr']['insert_id']);
-					//print_r($transcation_detail);
+					echo "<pre>";print_r($transcation_detail);die;
 					$cart_data['transaction_id'] = $result['res_arr']['res_arr']['insert_id'];
 					$cart_data['outlet_admin_id'] = $business_admin_id;					
 					$cart_data['transaction_time'] = $transcation_detail['res_arr'][0]['txn_datetime'];
 					$cart_data['cart_data'] = json_encode($_POST['cart_data']);
 					$cart_detail = $this->CashierModel->Insert($cart_data,'mss_transaction_cart');
 					if($cart_detail['success'] == 'true'){
+						$this->session->set_userdata('loyalty_point',$transcation_detail['res_arr'][0]['txn_loyalty_points']);
 						$detail_id = $cart_detail['res_arr']['insert_id'];
 						$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
 						$bill_url = shortUrl($bill_url);
@@ -2612,6 +2613,7 @@ class Cashier extends CI_Controller {
 	public function SendSms($sender_id,$api_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
 		if($this->IsLoggedIn('cashier')){
 			$bill_url = $this->session->userdata('bill_url');
+			$loyalty = $this->session->userdata('loyalty_point');
 		error_log("URL ============1 ".$bill_url);
   		//API key & sender ID
   		// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
@@ -2654,6 +2656,8 @@ class Cashier extends CI_Controller {
 	public function SendCashbackSms($sender_id,$api_key,$mobile,$bill_amt,$cashback,$outlet_name,$customer_name,$google_url,$loyalty = ''){
 		if($this->IsLoggedIn('cashier')){
 			$bill_url = $this->session->userdata('bill_url');
+			$loyalty = $this->session->userdata('loyalty_point');
+			
 		error_log("URL ============2 ".$bill_url);
   		//API key & sender ID
   		// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
