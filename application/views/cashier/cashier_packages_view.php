@@ -618,19 +618,19 @@
 														        			<div class="form-group">
 														        				<label class="form-label">Payment Mode</label>
 															        			<select name="payment_type[]" class="form-control">
-																					<option value="Cash">Cash</option>
-																					<option value="Credit_Card">Credit Card</option>
-																					<option value="Debit_Card">Debit Card</option>
-																					<option value="Paytm">Paytm</option>
-																					<option value="Phonepe">Phonepe</option>
-																					<option value="Google_Pay">Google Pay</option>
-																				</select>
+																							<option value="Cash">Cash</option>
+																							<option value="Credit_Card">Credit Card</option>
+																							<option value="Debit_Card">Debit Card</option>
+																							<option value="Paytm">Paytm</option>
+																							<option value="Phonepe">Phonepe</option>
+																							<option value="Google_Pay">Google Pay</option>
+																						</select>
 														        			</div>
 														        		</td>
 														        		<td>
 														        			<div class="form-group">
 																				<label class="form-label">Amount Received</label>
-																				<input type="number" placeholder="Amount in INR" class="form-control" name="amount_received[]" id="amount_received">
+																				<input type="number" placeholder="Amount in INR" class="form-control" name="amount_received[]" required>
 																			</div>
 														        		</td>
 														       		</tr>
@@ -1397,7 +1397,7 @@
       this.blur(); // Manually remove focus from clicked link.
 
 			$("#SplitPaymentInfo input[name=total_final_bill]").val(<?php if(isset($actual_bill)){ echo $actual_bill; } ?>);
-			$("#amount_received").val(<?php if(isset($actual_bill)){ echo $actual_bill; } ?>);
+			// $("#amount_received").val(<?php if(isset($actual_bill)){ echo $actual_bill; } ?>);
 			$("#SplitPaymentInfo input[name=balance_to_be_paid_back]").val(0);
 			$("#SplitPaymentInfo input[name=pending_amount]").val(0);
 			$("#SplitPaymentInfo input[name=total_amount_received]").val(0);

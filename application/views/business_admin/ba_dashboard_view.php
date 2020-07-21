@@ -154,7 +154,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-2">
+						<div class="col-md-3">
 							<div class="card flex-fill" style="height:144px;">
 								<div class="card-header">
 									<span class="badge badge-success float-right">Today</span>
@@ -181,7 +181,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-2">
+						<!-- <div class="col-md-2">
 							<div class="card flex-fill" style="height:144px;">
 								<div class="card-header">
 									<span class="badge badge-success float-right">Today</span>
@@ -191,28 +191,16 @@
 									<div class="row d-flex align-items-center mb-1">
 										<div class="col-md-12">
 											<table style="width:100%;">
-												<!-- <tr>
-													<td>
-											<div class="d-flex align-items-center mb-0 font-weight-light">
-												<?php
-												if($cards_data['customer_count']['customer_count'] != ''){
-													echo $cards_data['customer_count']['customer_count'];
-												}
-												else{
-													echo "0";
-												}
-												?> -->
 											</div></td></tr>
 											<tr><td>Generated : </td><td><?=$loyalty_points_given?></td></tr>
 											<tr><td>Received : </td><td><?=$loyalty_payment?></td></tr>
-											</table>
-											
+											</table>											
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						<div class="col-md-2">
+						</div> -->
+						<div class="col-md-3">
 							<div class="card flex-fill" style="height:144px;">
 								<div class="card-header">
 									<span class="badge badge-warning float-right">Lifetime</span>
@@ -313,7 +301,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-2">
+						<div class="col-md-3">
 							<div class="card flex-fill" style="height:144px;">
 								<div class="card-header">
 									<span class="badge badge-primary float-right">MTD</span>
@@ -333,7 +321,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-2">
+						<!-- <div class="col-md-2">
 							<div class="card flex-fill" style="height:144px;">
 								<div class="card-header">
 									<span class="badge badge-primary float-right">MTD</span>
@@ -352,8 +340,8 @@
 									</div>
 								</div>
 							</div>
-						</div>
-						<div class="col-md-2">
+						</div> -->
+						<div class="col-md-3">
 							<div class="card flex-fill" style="height:144px;">
 								<div class="card-header">
 									<span class="badge badge-warning float-right">Lifetime</span>
@@ -440,7 +428,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-2">
+						<div class="col-md-3">
 							<div class="card flex-fill" style="height:144px;">
 								<div class="card-header">
 									<span class="badge badge-info float-right">LMTD</span>
@@ -458,7 +446,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-md-2">
+						<!-- <div class="col-md-2">
 							<div class="card flex-fill" style="height:144px;">
 								<div class="card-header">
 									<span class="badge badge-info float-right">LMTD</span>
@@ -475,110 +463,7 @@
 									</div>
 								</div>
 							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-2">
-							<div class="card flex-fill" style="height:144px;">
-								<div class="card-header">
-									<span class="badge badge-info float-right">LMTD</span>
-									<h5 class="card-title mb-0">Sales</h5>
-								</div>
-								<div class="card-body">
-									<div class="row d-flex align-items-center mb-1">
-										<div class="col-md-12">
-											<table style="width:100%;">
-												<tr><td><h5><b>Total</b></h5></td><td><?php echo "<h5><b>".($cards_data['last_month_sales']['last_month_sales']+$last_month_package_sales-($last_month_package_sales_payment_wise['virtual_wallet']+$last_month_sales_payment_wise['last_month_virtual_wallet'])+$cards_data['last_month_product_sales']['last_month_product_sales'])."</h5></b>"?></td></tr>
-												<tr><td>Services : </td><td><?=$cards_data['last_month_sales']['last_month_sales']?></td></tr>
-												<tr><td>Packages : </td><td><?=$last_month_package_sales?></td></tr>
-												<tr><td>Product : </td><td><?=$cards_data['last_month_product_sales']['last_month_product_sales']?></td></tr>
-												<tr style="color: red"><td>VW : </td><td>-<?=$last_month_package_sales_payment_wise['virtual_wallet']+$last_month_sales_payment_wise['last_month_virtual_wallet']?></td></tr>
-											</table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card flex-fill" style="height:144px;">
-								<div class="card-header">
-									<span class="badge badge-info float-right">LMTD</span>
-									<h5 class="card-title mb-0">Collections</h5>
-								</div>
-								<div class="card-body">
-									<div class="row d-flex align-items-center mb-1">
-										<div class="col-md-12">
-										<table style="width:100%;">
-											<tr><td><h5><b>Total</b></h5></td><td>
-												<?php
-													echo "<h5><b>".($last_month_sales_payment_wise['last_month_cash']+$last_month_sales_payment_wise['last_month_credit_card']+$last_month_sales_payment_wise['last_month_debit_card']+$last_month_sales_payment_wise['last_month_google_pay']+$last_month_sales_payment_wise['last_month_phone_pe']+$last_month_sales_payment_wise['last_month_paytm']+$last_month_sales_payment_wise['last_month_others']+$last_month_pending_amount_received)."</h5></b>";
-												?></td>
-											</tr>
-											<tr><td>Cash : </td><td><?=$last_month_sales_payment_wise['last_month_cash']?></td></tr>
-											<tr><td>Cards : </td><td><?=($last_month_sales_payment_wise['last_month_credit_card']+$last_month_sales_payment_wise['last_month_debit_card'])?></td></tr>
-											<tr><td>W+Others : </td><td><?=($last_month_sales_payment_wise['last_month_google_pay']+$last_month_sales_payment_wise['last_month_phone_pe']+$last_month_sales_payment_wise['last_month_paytm']+$last_month_sales_payment_wise['last_month_others']+$last_month_pending_amount_received)?></td></tr>
-										</table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card flex-fill" style="height:144px;">
-								<div class="card-header">
-									<span class="badge badge-info float-right">LMTD</span>
-									<h5 class="card-title mb-0">Expenses</h5>
-								</div>
-								<div class="card-body">
-									<div class="row d-flex align-items-center mb-1">
-										<div class="col-md-12" style="width:100%;">
-										<table style="width:100%;">
-										<tr><td><h5><b>Total</b></h5></td><td>
-										<?php
-											echo "<h5><b>".($cards_data['last_month_expense']['last_month_expense'])."</h5></b>";
-										?></td></tr>
-										</table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card flex-fill" style="height:144px;">
-								<div class="card-header">
-									<span class="badge badge-info float-right">LMTD</span>
-									<h5 class="card-title mb-0">Due Amount</h5>
-								</div>
-								<div class="card-body">
-									<div class="row d-flex align-items-center mb-1">
-										<div class="col-md-12">
-											<table style="width:100%;">													
-												<tr><td>Generated : </td><td><?=$last_month_due_amount?></td></tr>
-												<tr><td>Received : </td><td><?=$last_month_pending_amount_received?></td></tr>
-											</table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card flex-fill" style="height:144px;">
-								<div class="card-header">
-									<span class="badge badge-info float-right">LMTD</span>
-									<h5 class="card-title mb-0">Loyalty Wallet</h5>
-								</div>
-								<div class="card-body">
-									<div class="row d-flex align-items-center mb-1">
-										<div class="col-md-12">
-										<table style="width:100%;">
-											<tr><td>Generated : </td><td><?=$last_month_loyalty_points_given?></td></tr>
-											<tr><td>Redeemed : </td><td><?=$last_month_loyalty_payment?></td></tr>
-										</table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+						</div> -->
 					</div>
 					<div class="row">
 						<div class="col-md-12">
