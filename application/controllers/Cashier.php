@@ -2475,7 +2475,7 @@ class Cashier extends CI_Controller {
 
 				if($result['success'] == 'true'){
 					$transcation_detail = $this->CashierModel->GetBilledServicesByTxnId($result['res_arr']['res_arr']['insert_id']);
-					echo "<pre>";print_r($transcation_detail);die;
+#					echo "<pre>";print_r($transcation_detail);die;
 					$cart_data['transaction_id'] = $result['res_arr']['res_arr']['insert_id'];
 					$cart_data['outlet_admin_id'] = $business_admin_id;					
 					$cart_data['transaction_time'] = $transcation_detail['res_arr'][0]['txn_datetime'];
