@@ -19,7 +19,7 @@
 					</div>
 					<div class="col-6 text-right">
 						<p class="mb-0">
-							&copy; 2019 - <a href="#" class="text-muted">MarkS ReTech</a>
+							&copy; 2019 - <a href="#" class="text-muted"> Powered by INNGROW TECHNOLOGIES PVT. LTD.</a>
 						</p>
 					</div>
 				</div>

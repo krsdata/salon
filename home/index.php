@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-$url = "https://salonfirst.in";
+$url = "https://dev.salonfirst.in/";
 ?>
 <html lang="en">
 
@@ -1079,7 +1079,18 @@ $url = "https://salonfirst.in";
       </div>
     </div> -->
   <!-- </footer>End Footer  -->
+  <!-- Footer -->
+<footer class="page-footer font-small blue">
 
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3">
+    <a href="javascript::void(0);"> Powered by INNGROW TECHNOLOGIES PVT. LTD.</a>
+  </div>
+  <!-- Copyright -->
+
+</footer>
+<!-- Footer -->
+Links
   <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
 
   <!-- Vendor JS Files -->
