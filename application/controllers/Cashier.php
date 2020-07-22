@@ -2470,7 +2470,7 @@ class Cashier extends CI_Controller {
 					}
 				}
 				// end
-				$business_admin_id =  $this->session->userdata['logged_in']['business_admin_id'];
+				$business_admin_id =  $this->session->userdata['logged_in']['business_outlet_id'];
 				$result = $this->CashierModel->BillingTransaction($_POST,$this->session->userdata['logged_in']['business_outlet_id'],$this->session->userdata['logged_in']['business_admin_id']);
 
 				if($result['success'] == 'true'){
@@ -2650,7 +2650,7 @@ class Cashier extends CI_Controller {
 			// $apikey="32kO6tWy5UuN16e3fOQpPg";
 			// $apisender="DSASSH";
 			
-  		$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt."/-. Look forward to serving you again! and Please find the invoice on $bill_url";
+  		$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt."/-. Look forward to serving you again! and Please find the invoice on $bill_url . Review us on Google: https://bit.ly/396f8ok";
    		$msg = rawurlencode($msg);   //This for encode your message content                 		
  			
  			// API 
@@ -3985,7 +3985,7 @@ class Cashier extends CI_Controller {
 			// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
 			// $apisender = "BILLIT";
 			
-			$msg = "Dear ".$customer_name." You've redeemed ".$count." Services from ".$package_name.". Remaining count: ".$service_count.". And Please find the invoice on ".$bill_url;
+			$msg = "Dear ".$customer_name." You've redeemed ".$count." Services from ".$package_name.". Remaining count: ".$service_count.". And Please find the invoice on ".$bill_url.". Review us on Google: https://bit.ly/396f8ok";
 			 $msg = rawurlencode($msg);   //This for encode your message content                 		
 			 
 			 // API 
