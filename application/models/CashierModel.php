@@ -2395,7 +2395,7 @@ class CashierModel extends CI_Model {
         mss_employees.employee_last_name,
 		mss_transactions.txn_value,
 		mss_transaction_services.txn_service_discount_percentage AS 'disc1',
-mss_transaction_services.txn_service_discount_absolute AS 'disc2',
+		mss_transaction_services.txn_service_discount_absolute AS 'disc2',
 		mss_transaction_services.txn_service_service_id AS 'service_id',
 		mss_transaction_services.txn_service_quantity,
 		mss_transaction_services.txn_service_discounted_price,
