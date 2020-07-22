@@ -636,6 +636,7 @@
 							+"' ><i class='fa fa-edit'></i></button></td>";
 							}
 							str_2 += "<td><button class='btn btn-success cancelBtn' data-toggle='Modal' data-target='#ModalCancelBill' txn_id='"+data[i].bill_no+"' ><i class='fa fa-trash'></i></button></td>";
+							str_2 += "<td><button class='btn btn-warning sendSmsBtn'  txn_id='"+data[i].bill_no+"'><i class='fa fa-sms'></i></button></td>";
 						}else{
 							if(edit_bill!=''){
 							str_2 += "<td><button class='btn btn-primary editBtn' data-toggle='Modal' data-target='#ModalEditBill' txn_id='"+data[i].txn_id+"' disabled><i class='fa fa-edit'></i></button></td>";
@@ -749,6 +750,44 @@
 			});
     });
 
+		//ReSend Bill SMS
+		$(document).on('click','.sendSmsBtn',function(event) {
+      event.preventDefault();
+      this.blur(); // Manually remove focus from clicked link.
+			// alert($(this).attr('txn_id'));
+			var parameters={
+				"txn_id" : $(this).attr('txn_id')
+			};
+			$.ajax({
+		        url: "<?=base_url()?>BusinessAdmin/ReSendBill",
+		        data: parameters,
+		        type: "POST",
+		        // crossDomain: true,
+						cache: false,
+		        // dataType : "json",
+		    		success: function(data) {
+	            if(data.success == 'true'){
+		 							toastr["success"](data.message,"", {
+		 							positionClass: "toast-top-right",
+		 							progressBar: "toastr-progress-bar",
+									newestOnTop: "toastr-newest-on-top",
+		 							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+									timeOut: 500
+		 						});
+		 						setTimeout(function () { location.reload(1); }, 500);
+	            }else if (data.success == 'false'){   
+								$("#ModalCancelBill").modal('hide');    
+	            	$("#ErrorModalMessage").html("").html(data.message);            
+	        	    $("#defaultModalDanger").modal('show');
+	            }
+	          },
+	          error: function(data){
+							$("#ModalCancelBill").modal('hide');
+	  					$("#ErrorModalMessage").html("").html(data.message);            
+	        	  $("#defaultModalDanger").modal('show');
+	          }
+					});
+    });
 		//Cancel Bills with remarks
 		$(document).on('click','.cancelBtn',function(event) {
       event.preventDefault();

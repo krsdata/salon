@@ -9448,8 +9448,8 @@ public function GetAttendanceAll($data){
         else{
             return $this->ModelHelper(false,true,"DB error!");   
         }
-    }
-
+	}
+	
     public function GetRawMaterialsIn($where){
         $sql = "SELECT * FROM `mss_services`,mss_categories,mss_sub_categories 
         where 
@@ -9460,6 +9460,37 @@ public function GetAttendanceAll($data){
         AND mss_sub_categories.sub_category_is_active=1
         AND mss_categories.category_business_outlet_id=".$this->db->escape($where['business_outlet_id'])."
         AND mss_categories.category_is_active=".$this->db->escape($where['is_active'])."";
+         $query = $this->db->query($sql);
+         if($query){
+             return $this->ModelHelper(true,false,'',$query->result_array());
+         }
+         else{
+             return $this->ModelHelper(false,true,"DB error!");   
+         }
+	}
+	
+	public function GetCustomerBill($where){
+        $sql = "SELECT mss_transactions.txn_value,
+				date(mss_transactions.txn_datetime) AS 'date',
+				mss_customers.customer_id,
+				mss_customers.customer_name,
+				mss_customers.customer_mobile,
+				mss_business_outlets.business_outlet_sender_id AS 'sender_id',
+                mss_business_outlets.api_key,
+				mss_business_outlets.business_outlet_name,
+				mss_transaction_cart.id 
+
+			FROM
+				mss_transactions,
+				mss_customers,
+				mss_business_outlets,
+				mss_transaction_cart
+			WHERE
+				mss_customers.customer_id=mss_transactions.txn_customer_id AND
+				mss_transaction_cart.transaction_id= mss_transactions.txn_id AND
+				mss_business_outlets.business_outlet_id= ".$this->db->escape($where['business_outlet_id'])." AND 
+				mss_transactions.txn_id= ".$this->db->escape($where['txn_id'])."";
+        
          $query = $this->db->query($sql);
          if($query){
              return $this->ModelHelper(true,false,'',$query->result_array());
