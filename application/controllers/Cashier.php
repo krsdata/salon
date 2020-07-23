@@ -6476,5 +6476,102 @@ public function AddToCartRedeemPoints(){
 		else{
 			$this->LogoutUrl(base_url()."Cashier/");
 		}    	
-    }
+		}
+		
+		//Due Amount SMS
+	public function ReSendBill(){
+		if($this->IsLoggedIn('cashier')){	
+			$this->load->helper('ssl');//loading pdf helper
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('txn_id', 'Transaction Id', 'trim|required');
+				if ($this->form_validation->run() == FALSE){
+					$data = array(
+													'success' => 'false',
+													'error'   => 'true',
+													'message' =>  validation_errors()
+												);
+						header("Content-type: application/json");
+						print(json_encode($data, JSON_PRETTY_PRINT));
+						die;
+				}else{
+						$data=array(
+							'txn_id' => $this->input->post('txn_id'),
+							'business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id']
+						);
+						$result = $this->BusinessAdminModel->GetCustomerBill($data);			
+						// $this->PrettyPrintArray($result);
+						if($result['success'] == 'true'){
+							//ReSend Bill SMS
+							$res =$result['res_arr'][0];
+							
+							$customer_id=$res['customer_id'];
+							$detail_id=$res['id'];
+							$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
+							$bill_url = shortUrl($bill_url);
+							$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+							$this->ReturnJsonArray(true,false,"Message Send.");
+							die;
+						}else{
+							$this->ReturnJsonArray(false,true,$result['message']);
+							die;
+						}
+					}
+				}
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/Login/");
+		}
+	}
+
+	public function ReSendBillSms($customer_name, $mobile, $outlet_name, $bill_amt, $sender_id, $api_key, $bill_url){
+		if($this->IsLoggedIn('cashier')){
+			// $bill_url = $this->session->userdata('bill_url');
+			// error_log("URL ============1 ".$bill_url);
+			
+			$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again! Please find the invoice on ".$bill_url;
+   		$msg = rawurlencode($msg);   //This for encode your message content                 		
+ 			
+ 			// API 
+			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+            log_message('info', $url);
+        
+  		$ch = curl_init($url);
+  		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+  		curl_setopt($ch,CURLOPT_POST,1);
+  		curl_setopt($ch,CURLOPT_POSTFIELDS,"");
+  		curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
+  		
+  		$data = curl_exec($ch);
+  		return json_encode($data);
+		}
+		else{
+			$this->LogoutUrl(base_url()."BusinessAdmin/Login");
+		}				
+	}
+
+	public function RePrintBill(){
+		$this->load->helper('pdfhelper');//loading pdf helper
+		if($this->IsLoggedIn('cashier')){	
+			$txn_id = $this->uri->segment(3);
+			$outlet_admin_id = $this->session->userdata['logged_in']['business_admin_id'];
+			$data['cart']=$this->BusinessAdminModel->GetTransactionDetailByTxnId($txn_id);
+			$data['cart']=$data['cart']['res_arr'];
+			$data['shop_details'] = $this->ShopDetails();
+			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
+
+			$query = $this->db->query($sql);
+			$result = $query->result_array();
+			if(empty($result)){
+				$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
+
+				$query = $this->db->query($sql);
+				$result = $query->result_array();
+			}
+			$data['logo'] = $result[0]['config_value'];						
+			$this->load->view('cashier/cashier_reprint_bill',$data);			
+		}else{
+			$this->LogoutUrl(base_url()."Cashier/Login");
+		}	
+	}
+
 }
