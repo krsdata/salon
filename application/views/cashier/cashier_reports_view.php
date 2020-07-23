@@ -787,7 +787,7 @@
 														<th>Net Amount</th>
 														<th>Total Tax(Rs.)</th>
 														<th>Pending Amount</th>
-														<th>Payment Way</th>
+														<th colspan="2">Action</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -801,26 +801,9 @@
 															<td><?=$txn['net_amt']?></td>
 															<td><?=$txn['total_tax']?></td>
 															<td><?=$txn['pending_amt']?></td>
-															<?php 
-																		if($bill['settlement_way']=='Split Payment'){
-																			$var=$bill['payment_way'];
-																			$var=json_decode($var);
-																			$a=array();	
-																			?>
-																			<td>
-																			<?php										
-																			foreach($var as $v){
-																				echo $v->payment_type.', ';
-																			}
-																			?>
-																			</td>
-																			<?php
-																		}else{?>
-																			<td><?=$bill['payment_way']?></td>
-																		<?php
-
-																		}
-																		?>
+															<td><button class='btn btn-warning sendSmsBtn'  txn_id='<?=$txn['bill_no']?>'><i class='fa fa-sms'></i></button>
+															<a href='<?=base_url()?>Cashier/RePrintBill/<?=$txn['bill_no']?>' target='_blank' class='btn btn-danger' ><i class='fa fa-print'></i></a>
+														</td>
 														</tr>
 													<?php }?>
 												</tbody>
@@ -865,10 +848,11 @@
       $("#load_screen").hide();
     });
   });
-  $(".datatables-basic").DataTable({
-			responsive: true
-		});
+  // $(".datatables-basic").DataTable({
+	// 		responsive: true
+	// 	});
 
+		
 	//
 	$(document).on('click',".showBilledServices",function(event){
 				event.preventDefault();
@@ -904,7 +888,7 @@
 	      var parameters = {
 	        txn_id: $(this).attr('txn_id')
 	      };
-	    //  alert($(this).attr('txn_id'));
+	    	//  alert($(this).attr('txn_id'));
 					$.getJSON("<?=base_url()?>Cashier/GetBilledPackages", parameters)
 					.done(function(data, textStatus, jqXHR) { 
 						var str_2 = "";	
@@ -923,7 +907,47 @@
 					.fail(function(jqXHR, textStatus, errorThrown) {
 						console.log(errorThrown.toString());
 				});
-  		});  
+
+  		}); 
+
+			//ReSend Bill SMS
+		$(document).on('click','.sendSmsBtn',function(event) {
+      event.preventDefault();
+      this.blur(); // Manually remove focus from clicked link.
+			var parameters={
+				"txn_id" : $(this).attr('txn_id')
+			};
+			$.ajax({
+		        url: "<?=base_url()?>Cashier/ReSendBill",
+		        data: parameters,
+		        type: "POST",
+		        // crossDomain: true,
+						cache: false,
+		        // dataType : "json",
+		    		success: function(data) {
+	            if(data.success == 'true'){
+		 							toastr["success"](data.message,"", {
+		 							positionClass: "toast-top-right",
+		 							progressBar: "toastr-progress-bar",
+									newestOnTop: "toastr-newest-on-top",
+		 							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+									timeOut: 500
+		 						});
+		 						setTimeout(function () { location.reload(1); }, 500);
+	            }else if (data.success == 'false'){   
+								$("#ModalCancelBill").modal('hide');    
+	            	$("#ErrorModalMessage").html("").html(data.message);            
+	        	    $("#defaultModalDanger").modal('show');
+	            }
+	          },
+	          error: function(data){
+							$("#ModalCancelBill").modal('hide');
+	  					$("#ErrorModalMessage").html("").html(data.message);            
+	        	  $("#defaultModalDanger").modal('show');
+	          }
+					});
+    });
+
 </script>
 <script>
 	function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
