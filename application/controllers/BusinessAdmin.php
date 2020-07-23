@@ -5561,7 +5561,7 @@ public function GetEmployee(){
 		}
 		
 		
-		//Due Amount SMS
+	//Due Amount SMS
 	public function SendPendingAmountSms(){
 		if($this->IsLoggedIn('business_admin')){	
 			if(isset($_POST) && !empty($_POST)){
@@ -5605,6 +5605,50 @@ public function GetEmployee(){
 		}
 	}
 	
+	//Due Amount SMS
+	public function ReSendBill(){
+		if($this->IsLoggedIn('business_admin')){	
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('txn_id', 'Transaction Id', 'trim|required');
+				if ($this->form_validation->run() == FALSE){
+					$data = array(
+													'success' => 'false',
+													'error'   => 'true',
+													'message' =>  validation_errors()
+												);
+						header("Content-type: application/json");
+						print(json_encode($data, JSON_PRETTY_PRINT));
+						die;
+				}else{
+						$data=array(
+							'txn_id' => $this->input->post('txn_id'),
+							'business_outlet_id' => $this->session->userdata['outlets']['current_outlet']
+						);
+						$result = $this->BusinessAdminModel->GetCustomerBill($data);			
+									
+						if($result['success'] == 'true'){
+							//ReSend Bill SMS
+							$res =$result['res_arr'][0];
+							
+							$customer_id=$res['customer_id'];
+							$detail_id=$res['id'];
+							$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
+							$bill_url = shortUrl($bill_url);
+							$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+							$this->ReturnJsonArray(true,false,"Message Send.");
+							die;
+						}else{
+							$this->ReturnJsonArray(false,true,$result['message']);
+							die;
+						}
+					}
+				}
+		}
+		else{
+			$this->LogoutUrl(base_url()."BusinessAdmin/Login/");
+		}
+	}
+
 	//Send Update Appointment SMS
 	public function SendDueAmountSms($customer_name,$mobile,$pending_amount,$outlet_name,$location,$sender_id,$api_key){
 		if($this->IsLoggedIn('businss_admin')){
@@ -11171,13 +11215,12 @@ public function InsertSalary(){
                              'low_stock_level'  => $row[15],
                              
                         );
-						$result = $this->BusinessAdminModel->Insert($data,'mss_inventory');
-						if($result['success'] == 'true'){
-							$successInserts++;
-                          }
-                          elseif($result['error'] == 'true'){
-                            $errorInserts++;
-                          }
+											$result = $this->BusinessAdminModel->Insert($data,'mss_inventory');
+											if($result['success'] == 'true'){
+												$successInserts++;
+											}elseif($result['error'] == 'true'){
+												$errorInserts++;
+											}
                     }
                     $count++;
                   }
@@ -11195,10 +11238,10 @@ public function InsertSalary(){
                 $this->ReturnJsonArray(false,true,"Please Select Excel File!");  
               die;
             }
-            }
+          }
         }
         else{
-            $this->LogoutUrl(base_url()."BusinessAdmin/");
+            $this->LogoutUrl(base_url()."BusinessAdmin/Login");
         }
 	}
 	//29-05-2020
@@ -11290,8 +11333,35 @@ public function InsertSalary(){
 					}
 			}
 			else{
-					$this->LogoutUrl(base_url()."index.php/BusinessAdmin/");
+					$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}       
 	}
+
+	public function ReSendBillSms($customer_name, $mobile, $outlet_name, $bill_amt, $sender_id, $api_key, $bill_url){
+		if($this->IsLoggedIn('business_admin')){
+			// $bill_url = $this->session->userdata('bill_url');
+			// error_log("URL ============1 ".$bill_url);
+			
+			$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again!Review us on  to serve you better and Please find the invoice on ".$bill_url;
+   		$msg = rawurlencode($msg);   //This for encode your message content                 		
+ 			
+ 			// API 
+			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+            log_message('info', $url);
+        
+  		$ch = curl_init($url);
+  		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+  		curl_setopt($ch,CURLOPT_POST,1);
+  		curl_setopt($ch,CURLOPT_POSTFIELDS,"");
+  		curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
+  		
+  		$data = curl_exec($ch);
+  		return json_encode($data);
+		}
+		else{
+			$this->LogoutUrl(base_url()."BusinessAdmin/Login");
+		}				
+	}
+
 }
 	    
