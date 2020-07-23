@@ -289,7 +289,7 @@
 											<th>MRP Amount</th>
 											<th>Discount</th>
 											<th>Net Amount</th>
-											<th colspan="2	">Action</th>
+											<th colspan="4">Action</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -637,6 +637,7 @@
 							}
 							str_2 += "<td><button class='btn btn-success cancelBtn' data-toggle='Modal' data-target='#ModalCancelBill' txn_id='"+data[i].bill_no+"' ><i class='fa fa-trash'></i></button></td>";
 							str_2 += "<td><button class='btn btn-warning sendSmsBtn'  txn_id='"+data[i].bill_no+"'><i class='fa fa-sms'></i></button></td>";
+							str_2 += "<td><a href='<?=base_url()?>BusinessAdmin/RePrintBill/"+data[i].bill_no+"' target='_blank' class='btn btn-danger' ><i class='fa fa-print'></i></a></td>";
 						}else{
 							if(edit_bill!=''){
 							str_2 += "<td><button class='btn btn-primary editBtn' data-toggle='Modal' data-target='#ModalEditBill' txn_id='"+data[i].txn_id+"' disabled><i class='fa fa-edit'></i></button></td>";
