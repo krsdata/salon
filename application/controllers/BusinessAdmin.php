@@ -5608,6 +5608,7 @@ public function GetEmployee(){
 	//Due Amount SMS
 	public function ReSendBill(){
 		if($this->IsLoggedIn('business_admin')){	
+			$this->load->helper('ssl');//loading pdf helper
 			if(isset($_POST) && !empty($_POST)){
 				$this->form_validation->set_rules('txn_id', 'Transaction Id', 'trim|required');
 				if ($this->form_validation->run() == FALSE){
@@ -11342,7 +11343,7 @@ public function InsertSalary(){
 			// $bill_url = $this->session->userdata('bill_url');
 			// error_log("URL ============1 ".$bill_url);
 			
-			$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again!Review us on  to serve you better and Please find the invoice on ".$bill_url;
+			$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again! Please find the invoice on ".$bill_url;
    		$msg = rawurlencode($msg);   //This for encode your message content                 		
  			
  			// API 
@@ -11361,6 +11362,48 @@ public function InsertSalary(){
 		else{
 			$this->LogoutUrl(base_url()."BusinessAdmin/Login");
 		}				
+	}
+
+	public function RePrintBill(){
+		$this->load->helper('pdfhelper');//loading pdf helper
+		if($this->IsLoggedIn('business_admin')){	
+			$txn_id = $this->uri->segment(3);
+			$outlet_admin_id = $this->session->userdata['outlets']['current_outlet'];
+			$data['cart']=$this->BusinessAdminModel->GetTransactionDetailByTxnId($txn_id);
+			$data['cart']=$data['cart']['res_arr'];
+			$data['shop_details'] = $this->ShopDetails();
+			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
+
+			$query = $this->db->query($sql);
+			$result = $query->result_array();
+			if(empty($result)){
+				$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
+
+				$query = $this->db->query($sql);
+				$result = $query->result_array();
+			}
+			$data['logo'] = $result[0]['config_value'];						
+			$this->load->view('business_admin/ba_print_bill',$data);			
+		}else{
+			$this->LogoutUrl(base_url()."BusinessAdmin/Login");
+		}	
+	}
+
+	private function ShopDetails(){
+		if($this->IsLoggedIn('business_admin')){
+			$where = array(
+				'business_outlet_business_admin' => $this->session->userdata['logged_in']['business_admin_id'],
+				'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet'],
+			);
+
+			$data = $this->CashierModel->DetailsById($where['business_outlet_id'],'mss_business_outlets','business_outlet_id');
+			if($data['success'] == 'true'){	
+				return $data['res_arr'];
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."BusinessAdmin/Login");
+		}		
 	}
 
 }
