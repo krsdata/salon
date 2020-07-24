@@ -2911,7 +2911,7 @@ class Cashier extends CI_Controller {
             }
         }
         else{
-            $this->LogoutUrl(base_url()."Cashier/");
+            $this->LogoutUrl(base_url()."Cashier/Login");
         }   
     }
 
@@ -4150,11 +4150,11 @@ class Cashier extends CI_Controller {
 						$where = array(
 							'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 							'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
+							'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 							'customer_mobile'  => $this->input->post('customer_mobile')
 						);
 					
 						$customerExists = $this->CashierModel->CheckCustomerExists($where);
-					
 						if($customerExists['success'] == 'true' && $customerExists['error'] == 'false' ){
 							//
 							$data = array(
@@ -4171,7 +4171,6 @@ class Cashier extends CI_Controller {
 							$result=$this->CashierModel->insert($data,'mss_customers');
 							$customer_details = $this->CashierModel->MultiWhereSingleSelect('mss_customers',$where);
 							$customer_details = $customer_details['res_arr'];
-							
 							if($result['success']=='true'){
 								$data = array(
 									'customer_id' 		=> $result['res_arr']['insert_id'],
@@ -4185,6 +4184,7 @@ class Cashier extends CI_Controller {
 								$result = $this->CashierModel->AddAppointmentModel($data,$services,$this->input->post('expert_id'));
 						
 								if($result['success'] == 'true'){
+									
 								    $this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
 									
 										$this->ReturnJsonArray(true,false,"Appointment added successfully!");
@@ -4246,6 +4246,7 @@ class Cashier extends CI_Controller {
 									$result = $this->CashierModel->AddAppointmentModel($data,$services,$this->input->post('expert_id'));
 							
 									if($result['success'] == 'true'){
+									
 									$this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
 								    
 										

@@ -101,10 +101,10 @@ class CashierModel extends CI_Model {
         $query = $this->db->get();
         
         if ($query->num_rows() == 1){
-           return $this->ModelHelper(true,false,'',$query->row_array());
+          return $this->ModelHelper(true,false,'',$query->row_array());
         } 
         else{
-           return $this->ModelHelper(false,true,"Duplicate rows found!");
+          return $this->ModelHelper(false,true,"Duplicate rows found!");
         }
     }
     
@@ -117,11 +117,11 @@ class CashierModel extends CI_Model {
         //execute the query
         $query = $this->db->get();
         
-        if ($query->num_rows() == 1){
-           return $this->ModelHelper(true,false,'',$query->row_array());
+        if ($query->num_rows() > 0){
+          return $this->ModelHelper(true,false,'',$query->row_array());
         } 
         else{
-           return $this->ModelHelper(false,true,"Duplicate rows found!");
+          return $this->ModelHelper(false,true,"Duplicate rows found!");
         }
     }
     
@@ -2972,12 +2972,26 @@ class CashierModel extends CI_Model {
         }
     }
     public function InventoryStock(){
-        $sql = "SELECT * FROM mss_inventory,mss_services,mss_sub_categories,mss_categories
-        WHERE mss_inventory.service_id = mss_services.service_id
-        AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-        AND mss_inventory.business_admin_id=".$this->session->userdata['logged_in']['business_admin_id']."
-        AND mss_inventory.outlet_id=".$this->session->userdata['logged_in']['business_outlet_id'];
+        $sql = "SELECT 
+					mss_services.service_name,
+					mss_services.inventory_type,
+					mss_categories.category_name,
+					mss_sub_categories.sub_category_name,
+					mss_services.qty_per_item,
+					mss_services.service_unit,
+					SUM(mss_inventory.sku_count) AS 'Total'
+				FROM 
+					mss_inventory,
+					mss_services,
+					mss_sub_categories,
+					mss_categories
+				WHERE 
+					mss_inventory.service_id = mss_services.service_id AND
+					mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND
+					mss_sub_categories.sub_category_category_id = mss_categories.category_id AND
+					mss_categories.category_business_admin_id= ".$this->session->userdata['logged_in']['business_admin_id']." AND
+					mss_categories.category_business_outlet_id= ".$this->session->userdata['logged_in']['business_outlet_id']." 
+				GROUP BY mss_services.service_id";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());

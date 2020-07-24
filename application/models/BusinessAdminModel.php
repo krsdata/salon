@@ -9511,7 +9511,7 @@ public function GetAttendanceAll($data){
 			mss_transaction_services.txn_service_discounted_price,
 			mss_transactions.txn_discount,
 			mss_transactions.txn_value,
-			mss_transactions.txn_datetime AS 'date',
+			date(mss_transactions.txn_datetime) AS 'date',
 			mss_transactions.txn_unique_serial_id
 		FROM
 			mss_transactions,
