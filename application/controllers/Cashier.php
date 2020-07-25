@@ -6554,13 +6554,14 @@ public function AddToCartRedeemPoints(){
 		$this->load->helper('pdfhelper');//loading pdf helper
 		if($this->IsLoggedIn('cashier')){	
 			$txn_id = $this->uri->segment(3);
-			$outlet_admin_id = $this->session->userdata['logged_in']['business_admin_id'];
+			$outlet_admin_id = $this->session->userdata['logged_in']['business_outlet_id'];
 			$data['cart']=$this->BusinessAdminModel->GetTransactionDetailByTxnId($txn_id);
 			$data['cart']=$data['cart']['res_arr'];
 			$data['shop_details'] = $this->ShopDetails();
 			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
 
 			$query = $this->db->query($sql);
+
 			$result = $query->result_array();
 			if(empty($result)){
 				$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
