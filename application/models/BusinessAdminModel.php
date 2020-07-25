@@ -6369,7 +6369,35 @@ public function GetAttendanceAll($data){
         }
     }
     public function RiskCustomerService($data){
-        $sql="SELECT mss_customers.customer_id
+        $sql = "(SELECT 
+           GROUP_CONCAT(mss_transactions_replica.txn_customer_id) as customer_id
+                                             FROM   mss_transactions_replica, 
+                                                    mss_transaction_settlements, 
+                                                    mss_customers, 
+                                                    mss_business_outlets, 
+                                                    mss_business_admin 
+                                             WHERE 
+           mss_transactions_replica.txn_id = 
+           mss_transaction_settlements.txn_settlement_txn_id 
+           AND mss_transactions_replica.txn_customer_id = 
+               mss_customers.customer_id 
+           AND mss_customers.customer_business_outlet_id = 
+           mss_business_outlets.business_outlet_id 
+           AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." 
+           AND mss_business_outlets.business_outlet_business_admin = 
+           mss_business_admin.business_admin_id 
+           AND mss_business_admin.business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." 
+           AND Date(mss_transactions_replica.txn_datetime) > 
+           CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust'])." day)";
+        $query = $this->db->query($sql);
+        if($query){
+            $result = $query->result_array();
+            $customer_id = $result[0]['customer_id'];
+            $sql = "SELECT mss_customers.customer_id FROM mss_customers WHERE mss_customers.customer_business_outlet_id = 1 AND mss_customers.customer_business_admin_id = 1 AND mss_customers.customer_id NOT IN ($customer_id)";
+            // $query = $this->db->query($sql);            
+            // return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        /*$sql="SELECT mss_customers.customer_id
         FROM
         mss_customers
         WHERE
@@ -6400,7 +6428,7 @@ public function GetAttendanceAll($data){
          AND
              DATE(mss_transactions_replica.txn_datetime) > CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust'])." DAY
         )   
-            ";
+            ";*/
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6448,7 +6476,7 @@ public function GetAttendanceAll($data){
         }
     }
      public function LostCustomerService($data){
-        $sql="SELECT mss_customers.customer_id
+        /*$sql="SELECT mss_customers.customer_id
         FROM
         mss_customers
         WHERE
@@ -6479,10 +6507,41 @@ public function GetAttendanceAll($data){
          AND
              DATE(mss_transactions_replica.txn_datetime) > CURRENT_DATE - INTERVAL ".$this->db->escape($data['lost_customer'])." DAY
         )   
-            ";
+            "; */
+            $sql = "SELECT 
+           GROUP_CONCAT(mss_transactions_replica.txn_customer_id ) as customer_id
+                                             FROM   mss_transactions_replica, 
+                                                    mss_transaction_settlements, 
+                                                    mss_customers, 
+                                                    mss_business_outlets, 
+                                                    mss_business_admin 
+                                             WHERE 
+           mss_transactions_replica.txn_id = 
+           mss_transaction_settlements.txn_settlement_txn_id 
+           AND mss_transactions_replica.txn_customer_id = 
+               mss_customers.customer_id 
+           AND mss_customers.customer_business_outlet_id = 
+           mss_business_outlets.business_outlet_id 
+           AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND mss_business_outlets.business_outlet_business_admin = 
+           mss_business_admin.business_admin_id 
+           AND mss_business_admin.business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." AND Date(mss_transactions_replica.txn_datetime) > 
+           CURRENT_DATE - INTERVAL ".$this->db->escape($data['lost_customer'])." day";
         $query = $this->db->query($sql);
+        #echo $sql;die;
         if($query){
-            return $this->ModelHelper(true,false,'',$query->result_array());
+            $result = $query->result_array();
+            $customer_id = $result[0]['customer_id'];
+            $sql = "SELECT mss_customers.customer_id 
+FROM   mss_customers 
+WHERE  mss_customers.customer_business_outlet_id = 1 
+       AND mss_customers.customer_business_admin_id = 1 
+       AND mss_customers.customer_id NOT IN ($customer_id) ";
+            $query = $this->db->query($sql);
+            if($query){
+                return $this->ModelHelper(true,false,'',$query->result_array());
+            }else{
+                return $this->ModelHelper(false,true,"DB error!");       
+            }
         }
         else{
             return $this->ModelHelper(false,true,"DB error!");   
