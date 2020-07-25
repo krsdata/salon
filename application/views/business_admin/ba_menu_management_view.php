@@ -2093,10 +2093,10 @@
         $("#EditOTCCategory input[name=otc_service_id]").attr('value',data.service_id);
         $("#EditOTCCategory input[name=otc_price_inr]").attr('value',data.service_price_inr);
         $("#EditOTCCategory input[name=otc_gst_percentage]").attr('value',data.service_gst_percentage);
-		$("#EditOTCCategory input[name=sku_size]").attr('value',data.qty_per_item);
-		$("#EditOTCCategory input[name=otc_barcode]").attr('value',data.barcode);
-		$("#EditOTCCategory input[select=otc_inventory_type]").val(data.inventory_type);//select
-	    $("#EditOTCCategory select[name=category_id]").val(data.category_id);
+				$("#EditOTCCategory input[name=sku_size]").attr('value',data.qty_per_item);
+				$("#EditOTCCategory input[name=otc_barcode]").attr('value',data.barcode);
+				$("#EditOTCCategory input[select=otc_inventory_type]").val(data.inventory_type);//select
+	    	$("#EditOTCCategory select[name=category_id]").val(data.category_id);
         // 		$("#EditOTCCategory select[name=otc_sub_category_id]").val(data.service_sub_category_id);
         $("#EditOTCCategory select[name=otc_sub_category_id]").append('<option value='+data.sub_category_category_id+' selected>'+data.sub_category_name+'</option>');
        

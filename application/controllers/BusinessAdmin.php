@@ -8749,7 +8749,8 @@ public function InsertSalary(){
         else{
             $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
-    }
+		}
+		
     public function EditOTCService(){
         if($this->IsLoggedIn('business_admin')){
             if(isset($_POST) && !empty($_POST)){
@@ -11405,6 +11406,55 @@ public function InsertSalary(){
 			$this->LogoutUrl(base_url()."BusinessAdmin/Login");
 		}		
 	}
+
+	public function AddNewInventory(){
+		if($this->IsLoggedIn('business_admin')){
+				if(isset($_POST) && !empty($_POST)){
+						$this->form_validation->set_rules('otc_item_name', 'otc Item Name', 'trim|required|max_length[100]');
+						$this->form_validation->set_rules('otc_brand', 'Otc brand', 'trim|required|max_length[100]');
+						$this->form_validation->set_rules('otc_unit', 'Otc unit', 'trim|required|max_length[50]');
+						$this->form_validation->set_rules('otc_gst_percentage', 'OTC GST Percentage', 'trim|required');
+						$this->form_validation->set_rules('otc_price_inr', 'OTC Gross Price', 'trim|required');
+						$this->form_validation->set_rules('otc_inventory_type', 'Inventory Type', 'trim|required');
+						if ($this->form_validation->run() == FALSE) 
+						{
+								$data = array(
+																'success' => 'false',
+																'error'   => 'true',
+																'message' =>  validation_errors()
+														 );
+								header("Content-type: application/json");
+								print(json_encode($data, JSON_PRETTY_PRINT));
+								die;
+						}
+						else{
+							$service_id= $this->input->post('otc_service_id');
+							$inventory_detail=$this->BusinessAdminModel->GetInventoryDetail($service_id);
+							$inventory_detail=$inventory_detail['res_arr'][0];
+							unset($inventory_detail['id']);
+							$inventory_detail['sku_count']= ($this->input->post('total_stock')-$this->input->post('current_stock'));
+							$inventory_detail['entry_date']= date('Y-m-d');
+							$inventory_detail['stock_level']= $this->input->post('total_stock');
+							// $this->PrettyPrintArray($inventory_detail);
+
+								$result = $this->BusinessAdminModel->Insert($inventory_detail,'mss_inventory');
+								
+								if($result['success'] == 'true'){
+										$this->ReturnJsonArray(true,false,"Inventory updated successfully!");
+										die;
+								}
+								elseif($result['error'] == 'true'){
+									$this->ReturnJsonArray(false,true,$result['message']);
+															die;
+								}
+						}
+				}
+		}
+		else{
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
+		}   
+}
+
 
 }
 	    
