@@ -42,203 +42,201 @@
 													<div class="row">
 														<div class="col-md-12">
 																	<form id="AddOTCInventory" method="POST" action="#">
-                                                                        <div  class="smartwizard-arrows-primary wizard wizard-primary">
-                                                                            <ul>
-                                                                                <li><a href="#arrows-primary-step-1">Inventory<br /></a></li>
-                                                                                <li><a href="#arrows-primary-step-2">Invoice<br /></a></li>
-                                                                            </ul>
-                                                                            <div>
-															                    <div id="arrows-primary-step-1" class="">
-                                                                                    <div class="row">
-                                                                                        <div class="form-group col-md-3">
-                                                                                        <label>Inventory Type</label>
-                                                                                        <select class="form-control" id="otc_inventory_type" name="otc_inventory_type" required>
-                                                                                                <option value="" selected disabled>Select</option>
-                                                                                                <option value="Retail Product">Retail Product</option>
-                                                                                                <option value="Raw Material">Raw Material</option>
-                                                                                        </select>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="row">
-                                                                                        <div class="input-group col-md-6">
-                                                                                            <!-- <label>Search Item</label> -->
-                                                                                            <input type="text" class="form-control" placeholder="Search Item Name" id="SearchServiceByName" name="search">
-                                                                                            <span class="input-group-append">
-                                                                                                    <button class="btn btn-success" type="button" id="SearchServiceButton">Go</button>
-                                                                                            </span>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="row" style="margin-top:8px">
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Category</label>
-                                                                                            <select class="form-control" name="category_id" id="OTC-Category-Id">
-                                                                                                
-                                                                                            </select>
-                                                                                        </div>   
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Sub-Category</label>
-                                                                                            <select class="form-control" name="otc_sub_category_id" id="OTC-Sub-Category-Id">
-                                                                                            </select>
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Item Name</label>
-                                                                                            <select class="form-control" name="service_id" style="width: 100%" id="ServiceOTCId">
-                                                                                            </select>
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>&ensp;</label>
-                                                                                            <span class="input-group-append">
-                                                                                                <button class="btn btn-success" type="button" id="SearchItemButton" >Go</button>
-                                                                                            </span>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <hr>
-                                                                                    <div class='row'>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Category</label>
-                                                                                            <input class="form-control" placeholder="Category" id="category" name="otc_category" readonly>
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Sub-Category</label>
-                                                                                            <input class="form-control" placeholder="Sub-Category" id="sub_category" name="otc_sub_category" readonly>
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Item</label>
-                                                                                            <input class="form-control" placeholder="Item" id="otc_item" name="otc_item" readonly>
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>SKU Size</label>
-                                                                                            <select class="form-control" name="sku_size" style="width: 100%" id="Service_SKU_Size">
-                                                                                                <option value>Select...</option>
-                                                                                            </select>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    
-                                                                                    <div class='row'>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>SKU Count</label>
-                                                                                            <input type="number" name="sku_count" id="sku_count" class="form-control" placeholder="Number of SKU">
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-1" style="padding:0px 0px 0px 0px;margin:0px 0px 0px 12px">
-                                                                                            <!-- <input type="text" name="expiry_date" id="expiry" class="form-control date"> -->
-                                                                                            <label>Expiry Date</label>
-                                                                                            <select name="year" id="year" class="form-control" style="width:60px;padding:0px 0px;margin:0px 0px 0px">
-                                                                                                <option disabled selected>Year</option>
-                                                                                                <?php
-                                                                                                    for($i=date('Y');$i<=date('Y')+3;$i++)
-                                                                                                    {
-                                                                                                ?>
-                                                                                                        <option value="<?=$i?>"><?=$i?></option>
-                                                                                                <?php		
-                                                                                                    }
-                                                                                                ?>
-                                                                                            </select>
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-1" style="float:left;padding:0px 0px 0px 0px;margin:0px 0px 0px 0px">	
-                                                                                            <label>&ensp;</label>
-                                                                                            <select name="month" id="month" class="form-control" style="width:80px;padding:0px 0px 0px 0px;margin:0px 0px 0px 0px;" >
-                                                                                                <option selected disabled>Month</option>
-                                                                                                <option value="01">January</option>
-                                                                                                <option value="02">February</option>
-                                                                                                <option value="03">March</option>
-                                                                                                <option value="04">April</option>
-                                                                                                <option value="05">May</option>
-                                                                                                <option value="06">June</option>
-                                                                                                <option value="07">July</option>
-                                                                                                <option value="08">August</option>
-                                                                                                <option value="09">September</option>
-                                                                                                <option value="10">October</option>
-                                                                                                <option value="11">November</option>
-                                                                                                <option value="12">December</option>
-                                                                                            </select>
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <input type="text" name="barcode" class="form-control" id="barcode" hidden>
-                                                                                            <input type="text" name="unit" class="form-control" id="unit" hidden>
-                                                                                            <input type="text" name="barcode_id" class="form-control" hidden>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div id="arrows-primary-step-2" class="">
-                                                                                    <div class="row">
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Purchase Date</label>
-                                                                                            <input type="text" name="ipurchase_date" value="<?=date('Y-m-d')?>" class="form-control date" placeholder="Purchase Date">
-                                                                                        </div>
-                                                                                
-                                                                                    </div>
-                                                                                    <div class="row">
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Select Vendor</label>
-                                                                                            <select name="ivendors" class="form-control" >
-                                                                                                   
-                                                                                                    <option value="" disabled selected> Select Vendor</option>
-                                                                                                    <?php
-                                                                                                        foreach($vendors as $vendor){
-                                                                                                    ?>
-                                                                																			<option value="<?=$vendor['vendor_id']?>"><?=$vendor['vendor_name']?></option>
-                                                                                                    <?php
-                                                                                                        }
-                                                                                                    ?>
-                                                                                            </select>
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Invoice no.</label>
-                                                                                            <input type="text" name="iinvoice_no" class="form-control" placeholder="Invoice No.">
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="row">
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>HSN Code</label>
-                                                                                            <input type="text" name="ihsn_no" class="form-control" placeholder="HSN Code">
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Product Name</label>
-                                                                                            <input type="text" name="iproduct_name" id="iproduct_name" class="form-control" placeholder="Product Name">
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="row">
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Base Cost</label>
-                                                                                            <input type="text" name="ibase_cost" id="ibase_cost" class="form-control" placeholder="Base Cost Amount"> 
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                             <label>GST</label>
-                                                                                            <input type="text" name="igst" id="igst" class="form-control" placeholder="%GST">
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Total Cost</label>
-                                                                                            <input type="text" name="itotal_cost" id="itotal_cost" class="form-control" placeholder="Total Cost Amount">
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>MRP</label>
-                                                                                            <input type="text" name="imrp" id="imrp" class="form-control" placeholder="MRP/Unit">
-                                                                                            <input type="text" id="imrptemp" class="form-control" hidden>
-                                                                                            <input type="text" id="igsttemp" class="form-control" hidden>
-                                                                                            <input type="text" id="ipricetemp" class="form-control" hidden>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="row">
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Type Of Invoice</label>
-                                                                                            <!-- <input type="text" name="itype_of_invoice" class="form-control" placeholder="Type of Invoice"> -->
-                                                                                            <select name="itype_of_invoice" class="form-control">
-                                                                                                <option value="Tax">Tax</option>
-                                                                                                <option value="Lumpsum">Lumpsum</option>
-                                                                                                <option value="Others">Others</option>
-                                                                                            </select>
-                                                                                        </div>
-                                                                                        <div class="form-group col-md-3">
-                                                                                            <label>Freight Charges</label>
-                                                                                            <input type="text" name="ifreight_charges" class="form-control" placeholder="Freight Charges">
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                                                                </div>
-                                                                            </div>    
-                                                                                
-                                                                        </div>        
-                                                                    </form>
+																		<div  class="smartwizard-arrows-primary wizard wizard-primary">
+																				<ul>
+																						<li><a href="#arrows-primary-step-1">Inventory<br /></a></li>
+																						<li><a href="#arrows-primary-step-2">Invoice<br /></a></li>
+																				</ul>
+																				<div>
+																				<div id="arrows-primary-step-1" class="">
+																					<div class="row">
+																							<div class="form-group col-md-3">
+																							<label>Inventory Type</label>
+																							<select class="form-control" id="otc_inventory_type" name="otc_inventory_type" required>
+																											<option value="" selected disabled>Select</option>
+																											<option value="Retail Product">Retail Product</option>
+																											<option value="Raw Material">Raw Material</option>
+																							</select>
+																							</div>
+																					</div>
+																					<div class="row">
+																							<div class="input-group col-md-6">
+																									<!-- <label>Search Item</label> -->
+																									<input type="text" class="form-control" placeholder="Search Item Name" id="SearchServiceByName" name="search">
+																									<span class="input-group-append">
+																													<button class="btn btn-success" type="button" id="SearchServiceButton">Go</button>
+																									</span>
+																							</div>
+																					</div>
+																					<div class="row" style="margin-top:8px">
+																							<div class="form-group col-md-3">
+																									<label>Category</label>
+																									<select class="form-control" name="category_id" id="OTC-Category-Id">
+																											
+																									</select>
+																							</div>   
+																							<div class="form-group col-md-3">
+																									<label>Sub-Category</label>
+																									<select class="form-control" name="otc_sub_category_id" id="OTC-Sub-Category-Id">
+																									</select>
+																							</div>
+																							<div class="form-group col-md-3">
+																									<label>Item Name</label>
+																									<select class="form-control" name="service_id" style="width: 100%" id="ServiceOTCId">
+																									</select>
+																							</div>
+																							<div class="form-group col-md-3">
+																									<label>&ensp;</label>
+																									<span class="input-group-append">
+																											<button class="btn btn-success" type="button" id="SearchItemButton" >Go</button>
+																									</span>
+																							</div>
+																					</div>
+																					<hr>
+																					<div class='row'>
+																							<div class="form-group col-md-3">
+																									<label>Category</label>
+																									<input class="form-control" placeholder="Category" id="category" name="otc_category" readonly>
+																							</div>
+																							<div class="form-group col-md-3">
+																									<label>Sub-Category</label>
+																									<input class="form-control" placeholder="Sub-Category" id="sub_category" name="otc_sub_category" readonly>
+																							</div>
+																							<div class="form-group col-md-3">
+																									<label>Item</label>
+																									<input class="form-control" placeholder="Item" id="otc_item" name="otc_item" readonly>
+																							</div>
+																							<div class="form-group col-md-3">
+																									<label>SKU Size</label>
+																									<select class="form-control" name="sku_size" style="width: 100%" id="Service_SKU_Size">
+																											<option value>Select...</option>
+																									</select>
+																							</div>
+																					</div>																					
+																					<div class='row'>
+																							<div class="form-group col-md-3">
+																									<label>SKU Count</label>
+																									<input type="number" name="sku_count" id="sku_count" class="form-control" placeholder="Number of SKU">
+																							</div>
+																							<div class="form-group col-md-1" style="padding:0px 0px 0px 0px;margin:0px 0px 0px 12px">
+																									<!-- <input type="text" name="expiry_date" id="expiry" class="form-control date"> -->
+																									<label>Expiry Date</label>
+																									<select name="year" id="year" class="form-control" style="width:60px;padding:0px 0px;margin:0px 0px 0px">
+																											<option disabled selected>Year</option>
+																											<?php
+																													for($i=date('Y');$i<=date('Y')+3;$i++)
+																													{
+																											?>
+																															<option value="<?=$i?>"><?=$i?></option>
+																											<?php		
+																													}
+																											?>
+																									</select>
+																							</div>
+																							<div class="form-group col-md-1" style="float:left;padding:0px 0px 0px 0px;margin:0px 0px 0px 0px">	
+																									<label>&ensp;</label>
+																									<select name="month" id="month" class="form-control" style="width:80px;padding:0px 0px 0px 0px;margin:0px 0px 0px 0px;" >
+																											<option selected disabled>Month</option>
+																											<option value="01">January</option>
+																											<option value="02">February</option>
+																											<option value="03">March</option>
+																											<option value="04">April</option>
+																											<option value="05">May</option>
+																											<option value="06">June</option>
+																											<option value="07">July</option>
+																											<option value="08">August</option>
+																											<option value="09">September</option>
+																											<option value="10">October</option>
+																											<option value="11">November</option>
+																											<option value="12">December</option>
+																									</select>
+																							</div>
+																							<div class="form-group col-md-3">
+																									<input type="text" name="barcode" class="form-control" id="barcode" hidden>
+																									<input type="text" name="unit" class="form-control" id="unit" hidden>
+																									<input type="text" name="barcode_id" class="form-control" hidden>
+																							</div>
+																					</div>
+																				</div>
+																				<div id="arrows-primary-step-2" class="">
+																						<div class="row">
+																								<div class="form-group col-md-3">
+																										<label>Purchase Date</label>
+																										<input type="text" name="ipurchase_date" value="<?=date('Y-m-d')?>" class="form-control date" placeholder="Purchase Date">
+																								</div>
+																				
+																						</div>
+																						<div class="row">
+																								<div class="form-group col-md-3">
+																										<label>Select Vendor</label>
+																										<select name="ivendors" class="form-control" >
+																														
+																														<option value="" disabled selected> Select Vendor</option>
+																														<?php
+																																foreach($vendors as $vendor){
+																														?>
+																															<option value="<?=$vendor['vendor_id']?>"><?=$vendor['vendor_name']?></option>
+																														<?php
+																																}
+																														?>
+																										</select>
+																								</div>
+																								<div class="form-group col-md-3">
+																										<label>Invoice no.</label>
+																										<input type="text" name="iinvoice_no" class="form-control" placeholder="Invoice No.">
+																								</div>
+																						</div>
+																						<div class="row">
+																								<div class="form-group col-md-3">
+																										<label>HSN Code</label>
+																										<input type="text" name="ihsn_no" class="form-control" placeholder="HSN Code">
+																								</div>
+																								<div class="form-group col-md-3">
+																										<label>Product Name</label>
+																										<input type="text" name="iproduct_name" id="iproduct_name" class="form-control" placeholder="Product Name">
+																								</div>
+																						</div>
+																						<div class="row">
+																								<div class="form-group col-md-3">
+																										<label>Base Cost</label>
+																										<input type="text" name="ibase_cost" id="ibase_cost" class="form-control" placeholder="Base Cost Amount"> 
+																								</div>
+																								<div class="form-group col-md-3">
+																											<label>GST</label>
+																										<input type="text" name="igst" id="igst" class="form-control" placeholder="%GST">
+																								</div>
+																								<div class="form-group col-md-3">
+																										<label>Total Cost</label>
+																										<input type="text" name="itotal_cost" id="itotal_cost" class="form-control" placeholder="Total Cost Amount">
+																								</div>
+																								<div class="form-group col-md-3">
+																										<label>MRP</label>
+																										<input type="text" name="imrp" id="imrp" class="form-control" placeholder="MRP/Unit">
+																										<input type="text" id="imrptemp" class="form-control" hidden>
+																										<input type="text" id="igsttemp" class="form-control" hidden>
+																										<input type="text" id="ipricetemp" class="form-control" hidden>
+																								</div>
+																						</div>
+																						<div class="row">
+																								<div class="form-group col-md-3">
+																										<label>Type Of Invoice</label>
+																										<!-- <input type="text" name="itype_of_invoice" class="form-control" placeholder="Type of Invoice"> -->
+																										<select name="itype_of_invoice" class="form-control">
+																												<option value="Tax">Tax</option>
+																												<option value="Lumpsum">Lumpsum</option>
+																												<option value="Others">Others</option>
+																										</select>
+																								</div>
+																								<div class="form-group col-md-3">
+																										<label>Freight Charges</label>
+																										<input type="text" name="ifreight_charges" class="form-control" placeholder="Freight Charges">
+																								</div>
+																						</div>
+																						<button type="submit" class="btn btn-primary">Submit</button>
+																				</div>
+																			</div>																		
+																		</div>        
+																	</form>
 														<div class="alert alert-dismissible feedback" role="alert">
 															<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 															<span aria-hidden="true">&times;</span>
@@ -277,7 +275,7 @@
 														<td><?=$stock['inventory_type']?></td>
 														<td><?=$stock['qty_per_item']?></td>
 														<td><?=$stock['service_unit']?></td>											
-														<td><?=$stock['sku_count']?></td>											
+														<td><?=$stock['Total']?></td>											
 													</tr>	
 													<?php		
 														endforeach;
