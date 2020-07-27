@@ -283,7 +283,7 @@
 							</div>
 						</div>
 					</div> 
-					
+				</div>	
 					<!-- modal area starts-->
 					
 					<?php
