@@ -1057,7 +1057,6 @@ class CashierModel extends CI_Model {
 
             )
         */
-
 		$this->db->trans_start();
 		
 		$outlet_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();

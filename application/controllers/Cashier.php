@@ -1313,7 +1313,7 @@ class Cashier extends CI_Controller {
 				$where = array(
 					'service_sub_category_id'  => $_GET['sub_category_id'],
 					'service_is_active'   => TRUE,
-					'inventory_type'=>'Retail Product'
+					'inventory_type'=>'Retail Product',
 				);
 				
 				$data = $this->BusinessAdminModel->MultiWhereSelect('mss_services',$where);

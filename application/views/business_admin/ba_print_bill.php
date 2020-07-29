@@ -21,21 +21,7 @@ class MYPDF extends TCPDF {
 				$this->SetX($this->original_lMargin);
 			}
 			$this->Cell(($this->w - $this->original_lMargin - $this->original_rMargin), 0, '', 'T', 0, 'C');
-			// Set font
-			//$this->SetFont('helvetica', 'B', 14);
-			// Title
-			//$this->Cell(0, 15,'Invoice', 0, false, 'C', 0, '', 0, false, 'M', 'M');
 	}
-
-	// Page footer
-	// public function Footer() {
-	// 		// Position at 15 mm from bottom
-	// 		$this->SetY(-15);
-	// 		// Set font
-	// 		$this->SetFont('helvetica', 'I', 8);
-	// 		// Page number
-	// 		$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
-	// }
 }
 	
 

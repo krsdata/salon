@@ -4429,6 +4429,13 @@ public function GetEmployee(){
 			$data = $this->GetDataForAdmin("Reports Management");
 			if(!isset($_GET) || empty($_GET)){
 				//Load the default view
+				$where=array(
+					'employee_is_active' => 1,
+					'employee_business_admin' => $this->session->userdata['logged_in']['business_admin_id'],
+					'employee_business_outlet' => $this->session->userdata['outlets']['current_outlet']
+				);
+				$data['expert']=$this->BusinessAdminModel->MultiWhereSelect('mss_employees',$where);
+				$data['expert']=$data['expert']['res_arr'];
 				$this->load->view('business_admin/ba_reports_view',$data);
 			}
 			else if(isset($_GET) && !empty($_GET)){

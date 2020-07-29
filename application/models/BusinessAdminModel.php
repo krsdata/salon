@@ -813,8 +813,6 @@ class BusinessAdminModel extends CI_Model {
                     AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
                     AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
                     AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
-                    AND mss_customers.customer_business_admin_id =  ".$this->db->escape($data['business_admin_id'])."
-                    AND mss_customers.customer_business_outlet_id =  ".$this->db->escape($data['business_outlet_id'])."
                     AND mss_salon_packages.business_admin_id =  ".$this->db->escape($data['business_admin_id'])."
                     AND mss_salon_packages.business_outlet_id =  ".$this->db->escape($data['business_outlet_id'])."
                     AND date(mss_package_transactions.datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
@@ -3751,24 +3749,33 @@ class BusinessAdminModel extends CI_Model {
 	//
 	public function GetFullTransactionDetail($data){
 		$sql="SELECT mss_transactions.txn_id,
+				date(mss_transactions.txn_datetime) AS 'date',
 				mss_services.service_name,
+				mss_customers.customer_name,
+                mss_customers.customer_mobile,
 				mss_transactions.txn_customer_id,
 				mss_transactions.txn_value,
 				mss_transaction_services.txn_service_discount_percentage AS 'disc1',
-        mss_transaction_services.txn_service_discount_absolute AS 'disc2',
+        		mss_transaction_services.txn_service_discount_absolute AS 'disc2',
 				mss_transaction_services.txn_service_service_id AS 'service_id',
 				mss_transaction_services.txn_service_quantity,
 				mss_transaction_services.txn_service_discounted_price,
-				mss_transaction_settlements.txn_settlement_way,
+				mss_transaction_services.txn_service_expert_id,
+				mss_employees.employee_first_name AS  'expert',
 				mss_transaction_settlements.txn_settlement_payment_mode,
 				mss_transaction_settlements.txn_settlement_amount_received
 			FROM
 				mss_transactions,
 				mss_transaction_settlements,
 				mss_transaction_services,
-				mss_services
+				mss_services,
+				mss_customers,
+				mss_employees
+
 			WHERE 
 				mss_transaction_services.txn_service_status=1 AND
+				mss_transactions.txn_customer_id= mss_customers.customer_id AND 
+				mss_employees.employee_id=mss_transaction_services.txn_service_expert_id AND
 				mss_services.service_id= mss_transaction_services.txn_service_service_id AND
 				mss_transaction_settlements.txn_settlement_txn_id=mss_transactions.txn_id AND
 				mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id AND
