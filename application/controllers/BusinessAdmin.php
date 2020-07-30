@@ -4429,6 +4429,13 @@ public function GetEmployee(){
 			$data = $this->GetDataForAdmin("Reports Management");
 			if(!isset($_GET) || empty($_GET)){
 				//Load the default view
+				$where=array(
+					'employee_is_active' => 1,
+					'employee_business_admin' => $this->session->userdata['logged_in']['business_admin_id'],
+					'employee_business_outlet' => $this->session->userdata['outlets']['current_outlet']
+				);
+				$data['expert']=$this->BusinessAdminModel->MultiWhereSelect('mss_employees',$where);
+				$data['expert']=$data['expert']['res_arr'];
 				$this->load->view('business_admin/ba_reports_view',$data);
 			}
 			else if(isset($_GET) && !empty($_GET)){
@@ -5093,6 +5100,34 @@ public function GetEmployee(){
 			$this->LogoutUrl(base_url()."BusinessAdmin/");
 		}
 	}
+
+		//Update bills
+		public function UpdateTransaction(){	
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_POST) && !empty($_POST)){
+					$data=array(	
+						'txn_id'=>$_POST['txn_id'],
+						'txn_datetime'=>$_POST['txn_date']
+					);
+					$data2=array(	
+						'txn_service_id'=>$_POST['txn_service_id'],
+						'txn_service_expert_id'=>$_POST['txn_expert']
+					);	
+						$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');	
+						$result2 = $this->BusinessAdminModel->Update($data2,'mss_transaction_services','txn_service_id');			
+						if($result['success'] == 'true'){	
+							$this->ReturnJsonArray(true,false,"Bill Deleted successfully!");
+							die;
+						}else{
+							$this->ReturnJsonArray(false,true,"Error in Bill Cancellation!");
+							die;
+						}					
+				}
+			}
+			else{
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}
+		}
 
 	//delete bills
 	public function VerifyPassword(){	

@@ -1057,7 +1057,6 @@ class CashierModel extends CI_Model {
 
             )
         */
-
 		$this->db->trans_start();
 		
 		$outlet_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();
@@ -1067,7 +1066,7 @@ class CashierModel extends CI_Model {
         
         //1.unset sender id and api key from array;
 		unset($data['txn_data']['sender_id'],$data['txn_data']['api_key']);
-	        $result_1 = $this->Insert($data['txn_data'],'mss_package_transactions');
+	    $result_1 = $this->Insert($data['txn_data'],'mss_package_transactions');
 
         $query = "UPDATE mss_business_outlets SET business_outlet_bill_counter = business_outlet_bill_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
         $this->db->query($query);
@@ -1095,10 +1094,10 @@ class CashierModel extends CI_Model {
 
         $result_3 = $this->Insert($settlement_data,'mss_package_transaction_settlements');
 
-       
+		// $this->PrintArray($data['customer_pending_data']['pending_amount']);
         //4.
-        $query = "UPDATE mss_customers SET customer_pending_amount = customer_pending_amount + ".(int)$data['customer_pending_data']['pending_amount']." WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";
-        
+		$query = "UPDATE mss_customers SET customer_pending_amount = customer_pending_amount + ".(int)$data['customer_pending_data']['pending_amount']." WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";
+		// $this->PrintArray($query);
         $this->db->query($query);
 
         //5.         

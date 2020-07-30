@@ -1313,7 +1313,7 @@ class Cashier extends CI_Controller {
 				$where = array(
 					'service_sub_category_id'  => $_GET['sub_category_id'],
 					'service_is_active'   => TRUE,
-					'inventory_type'=>'Retail Product'
+					'inventory_type'=>'Retail Product',
 				);
 				
 				$data = $this->BusinessAdminModel->MultiWhereSelect('mss_services',$where);
@@ -3810,7 +3810,7 @@ class Cashier extends CI_Controller {
 						$_POST['txn_data']+=['package_txn_expert'=>$_POST['cart_data']['employee_id']];
 						$data = $this->CashierModel->DetailsById($this->session->userdata['logged_in']['business_admin_id'],'mss_business_outlets','business_outlet_id');
 						$data=$data['res_arr'];
-						// $this->PrettyPrintArray($data);
+						// $this->PrettyPrintArray($_POST);
 						// exit;
 						$result = $this->CashierModel->BillingPackageTransaction($_POST,$this->session->userdata['logged_in']['business_outlet_id'],$this->session->userdata['logged_in']['business_admin_id']);
 						if($result['success'] == 'true'){

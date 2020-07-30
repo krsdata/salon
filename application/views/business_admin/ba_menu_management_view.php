@@ -133,8 +133,10 @@
 													<td><?=$service['sub_category_name']?></td>
 													<td><?=$service['service_price_inr']?></td>
 													<td><?=$service['service_gst_percentage']." %"?></td>
-												    <td><?=round(number_format((($service['service_gst_percentage']*$service['service_price_inr'])/100),2))?></td>
-													<td><?=round(number_format(($service['service_price_inr'] + (($service['service_gst_percentage']/100)*$service['service_price_inr'])),2))?></td>
+												  <td><?=round(number_format((($service['service_gst_percentage']*$service['service_price_inr'])/100),2))?></td>
+													<td>
+														<?=round($service['service_price_inr'] + (($service['service_gst_percentage']*$service['service_price_inr']/100)))?>
+												</td>
 													<td class="table-action">
 														<?php if($permission['service_edit']==1){?>
 														<button type="button" class="btn service-edit-btn" service_id="<?=$service['service_id']?>">
