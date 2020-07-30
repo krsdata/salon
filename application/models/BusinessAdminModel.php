@@ -886,6 +886,7 @@ class BusinessAdminModel extends CI_Model {
                      mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                      AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
                      AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+					 AND mss_transaction_services.txn_service_status = 1
                      AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
                      AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
                      AND mss_transactions.txn_customer_id = mss_customers.customer_id
@@ -2294,11 +2295,11 @@ class BusinessAdminModel extends CI_Model {
         } 
       }
     
-      //Generate Bills
+    //Generate Bills
     public function GenerateBills($data){
     	$sql="SELECT 
           mss_transactions.txn_id AS 'bill_no',
-    	  	mss_transactions.txn_status,
+    	  mss_transactions.txn_status,
           mss_transactions.txn_unique_serial_id AS 'txn_id',
           date(mss_transactions.txn_datetime) AS 'billing_date',
           mss_customers.customer_mobile AS 'mobile',
@@ -3756,6 +3757,7 @@ class BusinessAdminModel extends CI_Model {
 				mss_transactions.txn_customer_id,
 				mss_transactions.txn_value,
 				mss_transaction_services.txn_service_id,
+				ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'mrp',
 				mss_transaction_services.txn_service_discount_percentage AS 'disc1',
         		mss_transaction_services.txn_service_discount_absolute AS 'disc2',
 				mss_transaction_services.txn_service_service_id AS 'service_id',

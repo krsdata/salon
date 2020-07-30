@@ -218,9 +218,10 @@
 															<table id="edit_bill">
 																<thead>
 																	<th>Service</th>
-																	<th>Disc. Amount</th>
+																	<th>Mrp</th>
 																	<th>Discount %</th>
 																	<th>Discount Abs</th>
+																	<th>Net Amount</th>
 																	<th>Txn Date </th>
 																	<th>Expert</th>
 																	<th colspan="2">Action</th>
@@ -687,14 +688,15 @@
 						for(var i=0;i<data.length;i++){						
 							str_2 += "<tr>";
 							str_2 += "<td><div class='form-group'><input type='text' class='form-control editTransaction' name='service_name[]' value='"+data[i].service_name+"'></div></td>";
-							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discounted_price[]' value="+data[i].txn_service_discounted_price+"></div></td>";
+							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discounted_price[]' value="+data[i].mrp+"></div></td>";
 							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discount_percent[]' value="+data[i].disc1+"></div></td>";
 							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discount_abs[]' value="+data[i].disc2+"></div></td>";
+							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discounted_price[]' value="+data[i].txn_service_discounted_price+"></div></td>";
 							str_2 += "<td><div class='form-group'><input type='date' class='form-control serviceTxnDate editTransaction' name='txn_datetime' value="+data[i].date+"></div></td>";
 							str_2 += "<td><div class='form-group'><select class='form-control serviceExpert' name='expert[]'><option value='"+data[i].txn_service_expert_id+"' selected >"+data[i].expert+"</option><?php foreach($expert as $expert){ echo "<option value=".$expert['employee_id'].">".$expert['employee_first_name']."</option>";}?></select></div></td>";
 							str_2 += "<td><div class='form-group'><input type='hidden'  name='txn_id' value="+data[i].txn_id+"></div></td>";
-							str_2 += "<td><button class='btn btn-default Edit_individual_service' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_discounted_price='"+data[i].txn_service_discounted_price+"'> <i class='fa fa-trash'></i></button></td>";
-							str_2 += "<td><button class='btn btn-default updateService' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_id='"+data[i].txn_service_id+"' old_txn_date='"+data[i].date+"' old_txn_expert='"+data[i].txn_service_expert_id+"'> <i class='fa fa-edit'></i></button></td>";
+							str_2 += "<td><button class='btn btn-sm btn-danger  Edit_individual_service' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_discounted_price='"+data[i].txn_service_discounted_price+"'> <i class='fa fa-trash'></i></button></td>";
+							str_2 += "<td><button class='btn btn-sm btn-success updateService' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_id='"+data[i].txn_service_id+"' old_txn_date='"+data[i].date+"' old_txn_expert='"+data[i].txn_service_expert_id+"'>Save</button></td>";
 
 						str_2 += "</tr>";
 						}				
@@ -716,9 +718,6 @@
 			$(document).on('click',".updateService",function(event){
 				event.preventDefault();
 				this.blur();
-
-				// alert($(this).attr('txn_date'));
-				//
 				var parameters = {
         "txn_id" : $(this).attr('txn_id'),
         "txn_expert" : $(this).attr('txn_expert'),
