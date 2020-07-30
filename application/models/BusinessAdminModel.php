@@ -3755,6 +3755,7 @@ class BusinessAdminModel extends CI_Model {
                 mss_customers.customer_mobile,
 				mss_transactions.txn_customer_id,
 				mss_transactions.txn_value,
+				mss_transaction_services.txn_service_id,
 				mss_transaction_services.txn_service_discount_percentage AS 'disc1',
         		mss_transaction_services.txn_service_discount_absolute AS 'disc2',
 				mss_transaction_services.txn_service_service_id AS 'service_id',
