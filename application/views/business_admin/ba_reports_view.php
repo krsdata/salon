@@ -694,7 +694,7 @@
 							str_2 += "<td><div class='form-group'><select class='form-control serviceExpert' name='expert[]'><option value='"+data[i].txn_service_expert_id+"' selected >"+data[i].expert+"</option><?php foreach($expert as $expert){ echo "<option value=".$expert['employee_id'].">".$expert['employee_first_name']."</option>";}?></select></div></td>";
 							str_2 += "<td><div class='form-group'><input type='hidden'  name='txn_id' value="+data[i].txn_id+"></div></td>";
 							str_2 += "<td><button class='btn btn-default Edit_individual_service' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_discounted_price='"+data[i].txn_service_discounted_price+"'> <i class='fa fa-trash'></i></button></td>";
-							str_2 += "<td><button class='btn btn-default updateService' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_id='"+data[i].txn_service_id+"'> <i class='fa fa-edit'></i></button></td>";
+							str_2 += "<td><button class='btn btn-default updateService' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_id='"+data[i].txn_service_id+"' old_txn_date='"+data[i].date+"' old_txn_expert='"+data[i].txn_service_expert_id+"'> <i class='fa fa-edit'></i></button></td>";
 
 						str_2 += "</tr>";
 						}				
@@ -723,7 +723,9 @@
         "txn_id" : $(this).attr('txn_id'),
         "txn_expert" : $(this).attr('txn_expert'),
         "txn_date" : $(this).attr('txn_date'),
-				"txn_service_id" : $(this).attr('txn_service_id')
+				"txn_service_id" : $(this).attr('txn_service_id'),
+				"old_txn_date"	: $(this).attr('old_txn_date'),
+				"old_txn_expert" : $(this).attr('old_txn_expert')
       };
       $.ajax({
         url: "<?=base_url()?>BusinessAdmin/UpdateTransaction",
