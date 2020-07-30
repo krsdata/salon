@@ -5104,22 +5104,38 @@ public function GetEmployee(){
 		//Update bills
 		public function UpdateTransaction(){	
 			if($this->IsLoggedIn('business_admin')){
+				// $this->PrettyPrintArray($_POST);
 				if(isset($_POST) && !empty($_POST)){
-					$data=array(	
-						'txn_id'=>$_POST['txn_id'],
-						'txn_datetime'=>$_POST['txn_date']
-					);
-					$data2=array(	
-						'txn_service_id'=>$_POST['txn_service_id'],
-						'txn_service_expert_id'=>$_POST['txn_expert']
-					);	
+					if(empty($_POST['txn_date'])){
+						$data=array(	
+							'txn_id'=>$_POST['txn_id'],
+							'txn_datetime'=>$_POST['old_txn_date']
+						);
+					}else{
+						$data=array(	
+							'txn_id'=>$_POST['txn_id'],
+							'txn_datetime'=>$_POST['txn_date']
+						);
+					}
+					if(empty($_POST['txn_expert'])){
+						$data2=array(	
+							'txn_service_id'=>$_POST['txn_service_id'],
+							'txn_service_expert_id'=>$_POST['old_txn_expert']
+						);
+					}else{
+						$data2=array(	
+							'txn_service_id'=>$_POST['txn_service_id'],
+							'txn_service_expert_id'=>$_POST['txn_expert']
+						);
+					}
+						
 						$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');	
 						$result2 = $this->BusinessAdminModel->Update($data2,'mss_transaction_services','txn_service_id');			
-						if($result['success'] == 'true'){	
-							$this->ReturnJsonArray(true,false,"Bill Deleted successfully!");
+						if($result['success'] == 'true' || $result2['success'] == 'true'){	
+							$this->ReturnJsonArray(true,false,"Bill Updated successfully!");
 							die;
 						}else{
-							$this->ReturnJsonArray(false,true,"Error in Bill Cancellation!");
+							$this->ReturnJsonArray(false,true,"Error in Bill Update!");
 							die;
 						}					
 				}
