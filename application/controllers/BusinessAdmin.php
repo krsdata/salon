@@ -5135,7 +5135,7 @@ public function GetEmployee(){
 							$this->ReturnJsonArray(true,false,"Bill Updated successfully!");
 							die;
 						}else{
-							$this->ReturnJsonArray(false,true,"Error in Bill Update!");
+							$this->ReturnJsonArray(false,true,"No Bill Updated!");
 							die;
 						}					
 				}
