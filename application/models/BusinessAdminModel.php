@@ -1662,14 +1662,16 @@ class BusinessAdminModel extends CI_Model {
                 FROM 
                     mss_transactions, 
                     mss_transaction_settlements, 
-                    mss_customers 
+                    mss_customers,
+					mss_employees 
                 WHERE 
                     mss_transactions.txn_customer_id = mss_customers.customer_id 
                     AND mss_transactions.txn_status=1
+					AND mss_transactions.txn_cashier =mss_employees.employee_id 
                     AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
                     AND mss_transaction_settlements.txn_settlement_way = 'Split Payment'
-                    AND mss_customers.customer_business_admin_id = ".$this->db->escape($where['business_admin_id'])."
-                    AND mss_customers.customer_business_outlet_id = ".$this->db->escape($where['business_outlet_id'])."
+                    AND mss_employees.employee_business_admin = ".$this->db->escape($where['business_admin_id'])."
+                    AND mss_employees.employee_business_outlet = ".$this->db->escape($where['business_outlet_id'])."
                     AND date(mss_transactions.txn_datetime) = date(now())";
 
         $query2 = $this->db->query($sql2);

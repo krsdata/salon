@@ -334,35 +334,7 @@
 													</div>
 												</div>
 										<!-- modal -->
-										<div class="modal" id="BillModal" tabindex="-1" role="dialog" aria-hidden="true">	
-											<div class="modal-dialog modal-dialog-centered modal-md" role="document">
-												<div class="modal-content">
-													<div class="modal-header">
-														<h5 class="modal-title text-white">Bill Details</h5>
-														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-																<span aria-hidden="true">&times;</span>
-														</button>
-													</div>
-													<div class="modal-body">
-													<table id="show_Bill" style="width:100%;text-align:center">
-														<thead>
-															<tr>
-																<th>Service</th>
-																<th>Price</th>
-																<th>Discount %</th>
-																<th>Discount abs</th>
-																<th>Quantity</th>
-																<th>Expert</th>
-															</tr>
-														</thead>
-														<tbody id="tabid">
-															
-														</tbody>
-													</table>
-													</div>
-												</div>
-											</div>
-										</div>
+										
 										<div class="modal" id="PackageBillModal" tabindex="-1" role="dialog" aria-hidden="true">	
 											<div class="modal-dialog modal-dialog-centered modal-md" role="document">
 												<div class="modal-content">
@@ -704,7 +676,7 @@
 										</div>
 									</div>
 									<div class="tab-pane" id="tab-5" role="tabpanel">
-									<button type="button" style="float:right" onclick="exportTableToExcel('producttable','ProductTable')" class="btn btn-primary" id="productdownload">Download</button>
+										<button type="button" style="float:right" onclick="exportTableToExcel('producttable','ProductTable')" class="btn btn-primary" id="productdownload">Download</button>
 										<table class="table table-hover" id="producttable" style="width:100%;">
 											<thead>
 												<tr>
@@ -765,8 +737,7 @@
 											</tbody>
 												
 										</table>
-									</div>
-									
+									</div>									
 									<div class="tab-pane" id="tab-6" role="tabpanel">
 										<div class="card">
 											<div class="card-header">
@@ -775,11 +746,12 @@
 												</h5>
 											</div>
 											<div class="card-body" style="margin-right:10px;">
-												<table class="table table-striped datatables-basic" style="width:100%;text-align:center">
-												
+												<table class="table table-striped datatables-basic " style="width:100%;text-align:center">	
 												<thead>
 													<tr>
+														
 														<th>Bill No.</th>
+														<th>Date</th>
 														<th>Mobile No.</th>
 														<th>Name</th>
 														<th>MRP Amount</th>
@@ -787,13 +759,14 @@
 														<th>Net Amount</th>
 														<th>Total Tax(Rs.)</th>
 														<th>Pending Amount</th>
-														<th colspan="2">Action</th>
+														<th>Action</th>
 													</tr>
 												</thead>
 												<tbody>
 													<?php foreach($last_txn as $txn){?>
-														<tr>
-															<td><?=$txn['txn_id']?></td>
+														<tr>															
+															<td data-target="#BillModal" data-toggle="modal" class="showBilledServices" txn_id="<?=$txn['bill_no']?>" style="color:blue;"><?=$txn['txn_id']?></td>
+															<td><?=$txn['billing_date']?></td>
 															<td><?=$txn['mobile']?></td>
 															<td><?=$txn['name']?></td>
 															<td><?=$txn['mrp_amt']?></td>
@@ -810,10 +783,40 @@
 												</table>
 											</div>
 										</div>								
-									</div>
-									
+									</div>									
 								</div>
 							</div>
+							<!-- common modal start-->
+								<div class="modal" id="BillModal" tabindex="-1" role="dialog" aria-hidden="true">	
+									<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title text-white">Bill Details</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">
+											<table id="show_Bill" style="width:100%;text-align:center">
+												<thead>
+													<tr>
+														<th>Service</th>
+														<th>Price</th>
+														<th>Discount %</th>
+														<th>Discount abs</th>
+														<th>Quantity</th>
+														<th>Expert</th>
+													</tr>
+												</thead>
+												<tbody id="tabid">
+													
+												</tbody>
+											</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							<!-- end -->
 						</div>
 					</div>
 				</div>			
@@ -848,9 +851,9 @@
       $("#load_screen").hide();
     });
   });
-  // $(".datatables-basic").DataTable({
-	// 		responsive: true
-	// 	});
+  $(".datatables-basic").DataTable({
+			responsive: true
+		});
 
 		
 	//
