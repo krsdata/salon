@@ -199,11 +199,13 @@
 									</div>
 								</div>
 							</div>
-							<div class="modal" id="ModalEditBill" tabindex="-1" role="dialog" aria-hidden="true">
+							<div class="modal fade show" id="ModalEditBill" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 									<div class="modal-content">
 										<div class="modal-header">
-											<h5 class="modal-title text-white">Edit Bill</h5>
+											<h5 class="modal-title text-white">
+												Edit Bill
+											</h5>
 											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 											<span aria-hidden="true">&times;</span>
 											</button>
@@ -213,16 +215,15 @@
 												<div class="col-md-12">
 													<form id="edit_bill" method="POST" action="#">
 														<div class="form-row">
-															<table>
+															<table id="edit_bill">
 																<thead>
 																	<th>Service</th>
-																	<!-- <th>Customer ID</th> -->
-																	<th>Price</th>
+																	<th>Mrp</th>
 																	<th>Discount %</th>
-																	<th>Discount abs</th>
-																	<th>Quantity</th>
-																	<!-- <th>Payment Type</th>
-																	<th>Payment Mode</th> -->
+																	<th>Discount Abs</th>
+																	<th>Net Amount</th>
+																	<th>Txn Date </th>
+																	<th>Expert</th>
 																	<th colspan="2">Action</th>
 																</thead>
 																<tbody id="edit_bill">
@@ -230,15 +231,15 @@
 																</tbody>		
 															</table>												
 														</div>
-														<!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+														<button type="button" id="close_edit_btn" class="btn btn-primary float-right" data-dismiss="modal">Close</button>
 													</form>
-													<div class="alert alert-dismissible feedback1" style="margin:0px;" role="alert">
+													<!-- <div class="alert alert-dismissible feedback1" style="margin:0px;" role="alert">
 														<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 															<span aria-hidden="true">&times;</span>
 														</button>
 														<div class="alert-message">
 														</div>
-													</div>
+													</div> -->
 												</div>
 											</div>
 										</div>
@@ -279,6 +280,18 @@
               </form>
 							</div>
 							<div class="card-body">
+							<?php
+				$temp = array();
+				$i=0;
+				foreach($expert as $expert1){ 
+					$temp[$i]['id'] = $expert1['employee_id'];
+					$temp[$i]['name'] = $expert1['employee_first_name'];
+					$i++;
+				
+					}
+					$temp = json_encode($temp);
+					?>
+					<div style="display:none;" id="emp_data"><?php echo $temp;?></div>
 								<table class="table datatables-basic table-hover" id="bill_data" style="width:100%;">
 									<thead>
 										<tr>
@@ -299,9 +312,11 @@
 							</div>
 						</div>
 				</div>
-			
+				
 			</div>
 		</main>
+
+		
 <?php
 	$this->load->view('business_admin/ba_footer_view');
 ?>
@@ -669,29 +684,23 @@
 					.done(function(data, textStatus, jqXHR) { 
 						$("#ModalVerifyPassword").modal('hide');
 						var str_2 = "";		
-						for(var i=0;i<data.length;i++){
-						
+								
+						for(var i=0;i<data.length;i++){						
 							str_2 += "<tr>";
-							str_2 += "<td><div class='form-group'><input type='text' class='editTransaction' name='service_name[]' value='"+data[i].service_name+"' disabled></div></td>";
-							str_2 += "<td><div class='form-group'><input type='number' class='editTransaction' name='txn_discounted_price[]' value="+data[i].txn_service_discounted_price+" disabled></div></td>";
-							// str_2 += "<td>"+data[i].txn_customer_id+"</td>";
-							str_2 += "<td><div class='form-group'><input type='number' class='editTransaction' name='txn_discount_percent[]' value="+data[i].disc1+" disabled></div></td>";
-
-							str_2 += "<td><div class='form-group'><input type='number' class='editTransaction' name='txn_discount_abs[]' value="+data[i].disc2+" disabled></div></td>";
-
-							str_2 += "<td><div class='form-group'><input type='number' class='editTransaction' name='txn_qty[]' value="+data[i].txn_service_quantity+" disabled></div></td>";
-							
-
-							// str_2 += "<td><div class='form-group'><input type='text' class='editTransaction' name='payment_type' value='"+data[i].txn_settlement_way+"'></div></td>";						
-							// str_2 += "<td class='form-group'><input type='text' class='editTransaction' name='txn_mode[]' value="+data[i].txn_settlement_payment_mode+"></div></td>";
+							str_2 += "<td><div class='form-group'><input type='text' class='form-control editTransaction' name='service_name[]' value='"+data[i].service_name+"' readonly></div></td>";
+							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discounted_price[]' value="+data[i].mrp+" readonly></div></td>";
+							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discount_percent[]' value="+data[i].disc1+" readonly></div></td>";
+							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discount_abs[]' value="+data[i].disc2+" readonly></div></td>";
+							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discounted_price[]' value="+data[i].txn_service_discounted_price+" readonly></div></td>";
+							str_2 += "<td><div class='form-group'><input type='date' class='form-control serviceTxnDate editTransaction' name='txn_datetime' value="+data[i].date+"></div></td>";
+							str_2 += "<td><div class='form-group'><select class='form-control serviceExpert' name='expert[]'><option value='"+data[i].txn_service_expert_id+"' selected >"+data[i].expert+"</option><?php foreach($expert as $expert){ echo "<option value=".$expert['employee_id'].">".$expert['employee_first_name']."</option>";}?></select></div></td>";
 							str_2 += "<td><div class='form-group'><input type='hidden'  name='txn_id' value="+data[i].txn_id+"></div></td>";
-							// str_2 += "<td>"+data[i].settlement_way+"</td>";
-							// str_2 += "<td><div class='form-group'>Delete : </i><input type='checkbox'  name='delete_status[]' value="+data[i].service_id+" ></td>";
-							str_2 += "<td><button class='btn btn-primary Edit_individual_service' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_discounted_price='"+data[i].txn_service_discounted_price+"'> <i class='fa fa-trash'></i></button></td>";
+							// str_2 += "<td><button class='btn btn-sm btn-danger  Edit_individual_service' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_discounted_price='"+data[i].txn_service_discounted_price+"'> <i class='fa fa-trash'></i></button></td>";
+							str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-success updateService' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_id='"+data[i].txn_service_id+"' old_txn_date='"+data[i].date+"' old_txn_expert='"+data[i].txn_service_expert_id+"'>Save</button></td>";
 
 						str_2 += "</tr>";
 						}				
-						
+			
 						$("#edit_bill tbody tr").remove();
 						$("#edit_bill tbody").append(str_2);
 						$("#ModalEditBill").modal('show');
@@ -700,18 +709,75 @@
 						console.log(errorThrown.toString());
 				});
   		});
+			$(document).on('change','.serviceExpert',function(event){
+				$('.updateService').attr('txn_expert',$(this).val());
+			});
+			$(document).on('change','.serviceTxnDate',function(event){
+				$('.updateService').attr('txn_date',$(this).val());
+			});
 
+			$(document).on('click','#close_edit_btn',function(event){
+				window.location.reload();
+			});
+			$(document).on('click',".updateService",function(event){
+				event.preventDefault();
+				this.blur();
+				var parameters = {
+        "txn_id" : $(this).attr('txn_id'),
+        "txn_expert" : $(this).attr('txn_expert'),
+        "txn_date" : $(this).attr('txn_date'),
+				"txn_service_id" : $(this).attr('txn_service_id'),
+				"old_txn_date"	: $(this).attr('old_txn_date'),
+				"old_txn_expert" : $(this).attr('old_txn_expert')
+      };
+      $.ajax({
+        url: "<?=base_url()?>BusinessAdmin/UpdateTransaction",
+        data: parameters,
+        type: "POST",
+        // crossDomain: true,
+				cache: false,
+        // dataType : "json",
+    		success: function(data) {
+          if(data.success == 'true'){
+						// $("#ModalEditBill").modal('hide');
+						// 		toastr["success"](data.message,"", {
+						// 		positionClass: "toast-top-right",
+						// 		progressBar: "toastr-progress-bar",
+						// 		newestOnTop: "toastr-newest-on-top",
+						// 		rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+						// 		timeOut: 500
+						// 	});
+						// 	setTimeout(function () { location.reload(1); }, 500);
+          }
+          else if (data.success == 'false'){  
+						$("#ModalEditBill").modal('hide');                 
+      	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
+							$("#ErrorModalMessage").html("").html(data.message);
+						})
+          }
+        }
+			});
+				//
+				// var rowno = $("#edit_bill tr").length;				
+				// rowno = rowno+1;
+
+				// var emp_data = JSON.parse($('#emp_data').text());
+				// var drp = '<select  class="form-control" name="expert[]">';
+				// $(emp_data).each(function(index,value){
+				// 	drp += "<option value='"+value.id+"'>"+value.name+"</option>";
+				
+				// });
+				// drp += "</select>";
+				
+				// $("#edit_bill tr:last").after("<tr><td><div class=\"form-group\"><input type=\"text\" name=\"service_name\" class=\"form-control\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"txn_service_discounted_price[]\" temp=\"Count\" ></div><td><div class=\"form-group\"><input type=\"number\" name=\"service_name\" class=\"form-control\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"txn_service_discounted_price[]\" temp=\"Count\" ></div></td><td><div class=\"form-group\">"+drp+"</div></td></tr>");
+			});
+			
 		//EDIT Bills with remarks
 		$(document).on('click','.editBtn',function(event) {
       event.preventDefault();
       this.blur(); // Manually remove focus from clicked link.
-			// alert($(this).attr('txn_id'));
-			if($(this).attr('settlement_way')=='Full Payment'){
 				$("#verify_password input[name=txn_id]").val($(this).attr('txn_id'));
-      	$("#ModalVerifyPassword").modal('show');
-			}else{
-				alert("Bill Can be edited only on  Full Payment.");
-			}		      
+      	$("#ModalVerifyPassword").modal('show');		      
     });
 		//delete individual service
 		$(document).on('click','.Edit_individual_service',function(event) {

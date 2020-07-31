@@ -138,7 +138,7 @@
 											</div>
 											<div class="form-group col-md-6">
 												<label class="form-label">Select Employee</label>
-												<select name="emp_id" class="form-control">
+												<select name="emp_id" class="form-control" required>
 													<option selected disabled>Select Employee</option>
 													<?php
 														foreach($expert as $expert)
@@ -1532,6 +1532,7 @@
 
     $(document).on('click','#Settle-Final-Order',function(event){
     	event.preventDefault();
+			this.disabled=true;
     	this.blur();
 
     	var txn_data = {

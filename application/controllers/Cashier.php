@@ -1313,7 +1313,7 @@ class Cashier extends CI_Controller {
 				$where = array(
 					'service_sub_category_id'  => $_GET['sub_category_id'],
 					'service_is_active'   => TRUE,
-					'inventory_type'=>'Retail Product'
+					'inventory_type'=>'Retail Product',
 				);
 				
 				$data = $this->BusinessAdminModel->MultiWhereSelect('mss_services',$where);
@@ -2298,10 +2298,10 @@ class Cashier extends CI_Controller {
             // exit;
             $data['package_transaction']=$this->CashierModel->GetTodaysPackageTransaction($where);
             $data['package_transaction']=$data['package_transaction']['res_arr'];
-           
+          
             $data['last_txn']= $this->CashierModel->LastFiftyTransaction();
-			$data['last_txn']=$data['last_txn']['res_arr'];
-             
+						$data['last_txn']=$data['last_txn']['res_arr'];
+						// $this->PrettyPrintArray($data['last_txn']);
             $data['service']= $this->CashierModel->ServiceWiseSale($where);
             $data['service']= $data['service']['res_arr'];
             $data['expert']= $this->CashierModel->ExpertWiseSale($where);
@@ -2767,7 +2767,7 @@ class Cashier extends CI_Controller {
 		}	
 	}
 
-		public function PrintBillPackage(){
+	public function PrintBillPackage(){
 		$this->load->helper('pdfhelper');
 		if($this->IsLoggedIn('cashier')){   
 				$customer_id = $this->uri->segment(3);
@@ -2780,8 +2780,9 @@ class Cashier extends CI_Controller {
 								'customer_id'       => $customer_id
 						);
 						$check = $this->CashierModel->VerifyCustomer($where);
+
 						if($check['success'] == 'true'){    
-								$data['title'] = "Your Bill";
+								$data['title'] = "Invoice";
 								$data['shop_details'] = $this->ShopDetails();
 								$data['individual_customer'] = $this->GetCustomerBilling($customer_id);
 								if(isset($this->session->userdata['package_cart'])){
@@ -2790,8 +2791,24 @@ class Cashier extends CI_Controller {
 								if(isset($this->session->userdata['package_payment'])){
 										$data['package_payment'] = $this->session->userdata['package_payment'][$customer_id];
 								}
+
+								$outlet_admin_id = $this->session->userdata['logged_in']['business_outlet_id'];
+								//print_r($result[0]['outlet_admin_id']);die;
+								// print_r($data['cart']);
+								$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
+
+								$query = $this->db->query($sql);
+								$result = $query->result_array();
+								if(empty($result)){
+									$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
+
+									$query = $this->db->query($sql);
+									$result = $query->result_array();
+								}
+								$data['logo'] = $result[0]['config_value'];
 								// $this->PrettyPrintArray($data['shop_details']);
 								// die;
+
 								$this->load->view('cashier/cashier_package_print_bill',$data);
 						}
 						elseif ($check['error'] == 'true'){
@@ -3810,7 +3827,7 @@ class Cashier extends CI_Controller {
 						$_POST['txn_data']+=['package_txn_expert'=>$_POST['cart_data']['employee_id']];
 						$data = $this->CashierModel->DetailsById($this->session->userdata['logged_in']['business_admin_id'],'mss_business_outlets','business_outlet_id');
 						$data=$data['res_arr'];
-						// $this->PrettyPrintArray($data);
+						// $this->PrettyPrintArray($_POST);
 						// exit;
 						$result = $this->CashierModel->BillingPackageTransaction($_POST,$this->session->userdata['logged_in']['business_outlet_id'],$this->session->userdata['logged_in']['business_admin_id']);
 						if($result['success'] == 'true'){

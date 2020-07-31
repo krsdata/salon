@@ -1885,7 +1885,7 @@
 													  <?php } ?>
 													</div>
 													<?php if(!empty($payment['full_payment_info']) || !empty($payment['split_payment_info'])){?>
-													<button class="btn  btn-danger" id="Settle-Final-Order">Settle Order</button>
+													<button class="btn  btn-danger" id="Settle-Final-Order" >Settle Order</button>
 													<?php 
 														}
 														else{
@@ -3352,8 +3352,8 @@
     
     $(document).on('click','#Settle-Final-Order',function(event){
     	event.preventDefault();
-    	this.blur();
-
+			this.disabled=true;
+    	this.blur();			
     	var txn_data = {};
     	var cart_data = {};
     	var txn_settlement = {};
