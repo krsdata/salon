@@ -1532,6 +1532,7 @@
 
     $(document).on('click','#Settle-Final-Order',function(event){
     	event.preventDefault();
+			this.disabled=true;
     	this.blur();
 
     	var txn_data = {
