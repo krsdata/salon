@@ -1,33 +1,36 @@
 <?php
+	tcpdf();
 
-	// $this->load->view('universal/header_view');
-	tcpdf2();
-	
+	//$variable = $logo;
+	define('SALON_LOGO_IMG',base_url('public/images/').$logo);
 	// Extend the TCPDF class to create custom Header and Footer
-// class MYPDF extends TCPDF {
+class MYPDF extends TCPDF {
+	    
+	//Page header
+	public function Header() {		
+		
+        //echo SALON_LOGO_IMG;die;
+		$image_file = SALON_LOGO_IMG;//K_PATH_IMAGES.'logo_example.jpg';
+		$ext = pathinfo(SALON_LOGO_IMG, PATHINFO_EXTENSION);
+        $this->Image($image_file, 24, 10, 25, 10, strtoupper($ext), '', 'T', false, 300, '', false, false, 0, false, false, false);
+        $this->SetLineStyle(array('width' => 0.85 / $this->k, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $headerdata['line_color']));
+			$this->SetY((32.835 / $this->k) + max($imgy, $this->y));
+			if ($this->rtl) {
+				$this->SetX($this->original_rMargin);
+			} else {
+				$this->SetX($this->original_lMargin);
+			}
+			$this->Cell(($this->w - $this->original_lMargin - $this->original_rMargin), 0, '', 'T', 0, 'C');
+	}
+}
+	
 
-// 	//Page header
-// 	public function Header() {
-// 			// Set font
-// 			$this->SetFont('helvetica', 'B', 14);
-// 			// Title
-// 			$this->Cell(0, 15,'Invoice', 0, false, 'C', 0, '', 0, false, 'M', 'M');
-// 	}
-
-// 	// Page footer
-// 	public function Footer() {
-// 			// Position at 15 mm from bottom
-// 			$this->SetY(-15);
-// 			// Set font
-// 			$this->SetFont('helvetica', 'I', 8);
-// 			// Page number
-// 			$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
-// 	}
-// }
-$pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+	$pdf = new MYPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 	$pdf->SetCreator(PDF_CREATOR);
 	$pdf->SetTitle($shop_details['business_outlet_name']);
-	$pdf->SetHeaderData(PDF_HEADER_LOGO,10, $shop_details['business_outlet_bill_header_msg'], PDF_HEADER_STRING);
+	//$pdf->SetHeaderData(PDF_HEADER_LOGO,10, $shop_details['business_outlet_bill_header_msg'], PDF_HEADER_STRING);
+	$pdf->SetHeaderData(PDF_HEADER_LOGO,18, '', '');
+
 	$pdf->SetTitle($shop_details['business_outlet_name']);
 	$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
 	$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
@@ -35,11 +38,12 @@ $pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 	$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 	// $pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-20, PDF_MARGIN_RIGHT-10);
 	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-	$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-	$pdf->SetFont('helvetica', '', 9);
+	$pdf->SetMargins(PDF_MARGIN_LEFT-4, PDF_MARGIN_TOP-4, PDF_MARGIN_RIGHT);
+	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM-40);
+	$pdf->SetFont('helvetica', '', 6.5);
 	$pdf->setFontSubsetting(false);
-	$pdf->AddPage();
+	$pdf->AddPage('P','A7');
+	//
 	ob_start();
 			// we can have any view part here like HTML, PHP etc
 			

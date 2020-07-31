@@ -3237,8 +3237,7 @@ class CashierModel extends CI_Model {
 		AND mss_employees.employee_business_admin = ".$this->session->userdata['logged_in']['business_admin_id']."
 		AND mss_employees.employee_business_outlet = ".$this->session->userdata['logged_in']['business_outlet_id']."		
 		ORDER BY 
-        date(mss_transactions.txn_datetime) DESC
-        LIMIT 50 ";
+        mss_transactions.txn_id DESC LIMIT 50 ";
 
         $query = $this->db->query($sql);
         
