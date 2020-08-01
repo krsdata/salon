@@ -981,10 +981,12 @@ class Cashier extends CI_Controller {
 					$data['active_packages_categories'] = $this->PurchasedPackages($customer_id);
 					$data['otc_category']=$this->CashierModel->OtcCategory($this->session->userdata['logged_in']['business_outlet_id']);
 					$data['otc_category']=$data['otc_category']['res_arr'];
+
+					// $this->PrettyPrintArray($data['categories_products']);
+
 					//Coupon
 					$data['coupon'] = $this->CashierModel->GetCustomerCoupon($customer_id);
-				// 	$this->PrettyPrintArray($data['coupon']);
-
+				
 					if($data['coupon']['success'] == 'false')
 					{
 						$data['coupon']=['res_arr'=>''];
@@ -2338,7 +2340,8 @@ class Cashier extends CI_Controller {
             $data['cards_data']['payment_wise']=$data['cards_data']['payment_wise']['res_arr'];
             $data['package_payment_wise'] = $this->BusinessAdminModel->GetPackageSalesPaymentWiseData($where);
             $data['package_payment_wise']=$data['package_payment_wise']['res_arr'];
-            
+						$data['paid_back']=$this->BusinessAdminModel->GetDailyAmountPaidBack($where);
+						$data['paid_back']=$data['paid_back']['res_arr'][0]['paid_back'];
             $data['loyalty_payment']=$this->BusinessAdminModel->GetLoyaltyAmountReceived($where);
             $data['loyalty_payment']=$data['loyalty_payment']['res_arr'][0]['loyalty_wallet'];
             $data['loyalty_points_given']=$this->BusinessAdminModel->GetLoyaltyPointsGiven($where);
