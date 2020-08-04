@@ -973,14 +973,14 @@ class Cashier extends CI_Controller {
 					$data['individual_customer'] = $this->GetCustomerBilling($customer_id);
 					
 					$data['categories']  = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Service');
-					$data['categories_products'] = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Products');
+					// $data['categories_products'] = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Products');
 
 					
 					$data['experts'] = $this->GetExperts();
 
 					$data['active_packages_categories'] = $this->PurchasedPackages($customer_id);
-					$data['otc_category']=$this->CashierModel->OtcCategory($this->session->userdata['logged_in']['business_outlet_id']);
-					$data['otc_category']=$data['otc_category']['res_arr'];
+					$data['categories_products']=$this->CashierModel->OtcCategory($this->session->userdata['logged_in']['business_outlet_id']);
+					$data['categories_products']=$data['categories_products']['res_arr'];
 
 					// $this->PrettyPrintArray($data['categories_products']);
 

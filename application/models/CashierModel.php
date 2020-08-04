@@ -2071,7 +2071,8 @@ class CashierModel extends CI_Model {
 						FROM 
 							mss_categories
 						WHERE 
-							 mss_categories.category_name='OTC' AND
+							mss_categories.category_type='Products' AND
+							mss_categories.category_for !=1 AND
 							mss_categories.category_business_outlet_id=".$this->db->escape($data)." ";
                 
                   $query = $this->db->query($sql);
