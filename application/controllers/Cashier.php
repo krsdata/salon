@@ -1032,6 +1032,7 @@ class Cashier extends CI_Controller {
 					if(isset($this->session->userdata['payment'])){
 						$data['payment'] = $this->session->userdata['payment'][$customer_id];
 					}
+					$data['txn_remarks']= $this->session->userdata['txn_remarks'];
 					//cashback conversion ratio
 					$data['loyalty']=$this->CashierModel->GetConversionRatio($this->session->userdata['logged_in']['business_admin_id']);
 					$data['loyalty']=$data['loyalty']['res_arr'];
@@ -1072,7 +1073,7 @@ class Cashier extends CI_Controller {
 						}
 					}
 				
-                    // $this->PrettyPrintArray($data);
+          // $this->PrettyPrintArray($data);
 					$this->load->view('cashier/cashier_do_billing_view',$data);
 				}
 				elseif ($check['error'] == 'true'){
@@ -1562,7 +1563,8 @@ class Cashier extends CI_Controller {
 							'service_add_on_price'       => $this->input->post('service_add_on_price'),
 							'service_gst_percentage'     => $this->input->post('service_gst_percentage'),
 							'service_est_time'  => $this->input->post('service_est_time'),
-							'customer_package_profile_id' => $this->input->post('customer_package_profile_id')
+							'customer_package_profile_id' => $this->input->post('customer_package_profile_id'),
+							'service_remarks'							=> $this->input->post('service_remarks')
 						);
 
 				
@@ -6592,6 +6594,45 @@ public function AddToCartRedeemPoints(){
 			$data['logo'] = $result[0]['config_value'];						
 			$this->load->view('cashier/cashier_reprint_bill',$data);			
 		}else{
+			$this->LogoutUrl(base_url()."Cashier/Login");
+		}	
+	}
+
+	public function AddTxnRemarks(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('txn_remarks', 'Transaction Remarks', 'trim|required');
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								 );
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{							
+					if(!isset($this->session->userdata['txn_remarks'])){
+						$txn_remarks = array(
+														'txn_remarks'=> $this->input->post('txn_remarks')
+												 	);
+						$this->session->set_userdata('txn_remarks', $txn_remarks);
+						$this->ReturnJsonArray(true,false,"Remarks applied successfully!");
+						die;
+					}
+					else{
+						
+						$txn_remarks = $this->session->userdata['txn_remarks'];						
+						$this->session->set_userdata('txn_remarks', $txn_remarks);
+						$this->ReturnJsonArray(true,false,"Remarks applied successfully!");
+						die;
+					}
+				}
+			}
+		}
+		else{
 			$this->LogoutUrl(base_url()."Cashier/Login");
 		}	
 	}

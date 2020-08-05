@@ -324,7 +324,12 @@
 																		</select>
 																	</div>
 																	</div>
-																	
+																	<div class="form-row">
+																		<div class="form-group col-md-12">
+																			<label>Remarks</label>
+																			<textarea class="form-control" name="service_remarks"></textarea>
+																		</div>
+																	</div>
 																	<div class="form-group">
 																		<input class="form-control" type="hidden" name="service_id" readonly="true">
 																		</div>
@@ -1146,8 +1151,7 @@
 															<div class="form-group col-md-3">
 																<label class="form-label">Total Value</label>
 																<input type="number" class="form-control" name="service_total_value" readonly>
-															</div>
-														
+															</div>														
 														</div>
 														<div class="form-row">
 															<div class="form-group col-md-4">
@@ -1157,22 +1161,26 @@
 															<div class="form-group col-md-4">
 																<label class="form-label">Discount %</label>
 																<input type="number" class="form-control" name="service_discount_percentage" placeholder="Only % value" value="0">
-															</div>
-															
+															</div>															
 															<div class="form-group col-md-4">
-															<label>Expert Name</label>
-															<select class="form-control" name="service_expert_id">
-																<?php
-																	foreach ($experts as $expert):
-																?>
-																		<option value="<?=$expert['employee_id']?>"><?=$expert['employee_nick_name']?></option>
-																<?php		
-																	endforeach;
-																?>
-															</select>
+																<label>Expert Name</label>
+																<select class="form-control" name="service_expert_id">
+																	<?php
+																		foreach ($experts as $expert):
+																	?>
+																			<option value="<?=$expert['employee_id']?>"><?=$expert['employee_nick_name']?></option>
+																	<?php		
+																		endforeach;
+																	?>
+																</select>
+															</div>
 														</div>
+														<div class="form-row">
+															<div class="form-group">
+																<label>Remarks</label>
+																<textarea class="form-control" name="service_remarks"></textarea>
+															</div>
 														</div>
-														
 														<div class="form-group">
 															<input class="form-control" type="hidden" name="service_id" readonly="true">
 														</div>
@@ -1747,7 +1755,35 @@
 															</div>
 														</div>
 													</div>
-
+													<div id="ModalApplyRemarks" tabindex="-1" role="dialog" aria-hidden="true" class="modal">
+														<div role="document" class="modal-dialog modal-md">
+															<div class="modal-content">
+																<div class="modal-header">
+																	<h5 class="modal-title text-white">Transaction Over All Remarks</h5>
+																	<button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+																</div>
+																<div class="modal-body m-3">
+																	<form action="#" method="POST" id="Apply_remarks">
+																		<div class="form-group">
+																			<label class="form-label">Enter Remarks</label>
+																			<textarea class="form-control" name="txn_remarks" placeholder="Transaction Remarks"></textarea>
+																		</div>
+								                    <div class="form-group">
+																			<input class="form-control" type="hidden" name="customer_id" readonly="true" value="<?=$individual_customer['customer_id']?>">
+																			<input type="hidden" name="total_bill" value="<?=$total_service_value?>" readonly="true" />
+								                    </div>
+																		<button type="submit" class="btn btn-primary">Submit</button>	
+																	</form>
+																	<div class="alert alert-dismissible feedback mt-0 mb-0" role="alert">
+																		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+																			<span aria-hidden="true">&times;</span>
+												            </button>
+																			<div class="alert-message"></div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
 												<!---------MODAL Section Ends---------->
 												<?php
 													if(isset($cart) && !empty($cart)):
@@ -1859,11 +1895,10 @@
 													</table>
 												</div>
 												<div class="mb-3 ml-2">
-													<!-- <button class="btn btn-info" data-toggle="modal" data-target="#ModalApplyExtraDiscount">Discount</button> -->
-													<?php if($individual_customer['customer_business_admin_id']==1){?>
+													<?php if(array_search('Deals&Discount', $business_admin_packages) !== false){?>
 													<button class="btn btn-info" data-toggle="modal" data-target="#ModalApplyCode">Apply Code</button>
 													<?php }?>
-													<a href="<?=base_url()?>Cashier/JobOrder/<?=$individual_customer['customer_id']?>/" class="btn btn-warning" target="_blank">Job Order</a>
+													<!-- <a href="<?=base_url()?>Cashier/JobOrder/<?=$individual_customer['customer_id']?>/" class="btn btn-warning" target="_blank">Job Order</a> -->
 													<a href="<?=base_url()?>Cashier/PrintBill/<?=$individual_customer['customer_id']?>/" class="btn btn-success" id="Print-Bill" target="_blank">Print Bill</a>
 													<div class="btn-group">
 														<?php if(!empty($payment['full_payment_info']) || !empty($payment['split_payment_info'])){ ?>
@@ -1877,11 +1912,6 @@
 															else{
 														?>
 														<button type="button" class="btn btn-danger split-payment-btn">Pay</button>
-														<!--<button type="button" class="btn  btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pay</button>-->
-														<!--<div class="dropdown-menu">-->
-														<!--	<a class="dropdown-item full-payment-btn" href="#">Full Payment</a>-->
-														<!--	<a class="dropdown-item split-payment-btn" href="#">Split Payment</a>-->
-														<!--</div>-->
 													  <?php } ?>
 													</div>
 													<?php if(!empty($payment['full_payment_info']) || !empty($payment['split_payment_info'])){?>
@@ -1894,6 +1924,7 @@
 													<?php
 														}
 													?>
+													<button class="btn btn-info" data-toggle="modal" data-target="#ModalApplyRemarks">Remarks</button>
 												</div>
 												<?php
 													endif;
@@ -2751,6 +2782,61 @@
 			},
 		}); 
 		//
+		//Apply Remarks
+		$("#Apply_remarks").validate({
+	  	errorElement: "div",
+	    rules: {
+	        "txn_remarks" : {
+            required : true
+	        },
+	        "customer_id" : {
+            required : true
+	        },
+					"total_bill" :{
+						required : true
+					}
+	    },
+	    submitHandler: function(form) {
+				var formData = $("#Apply_remarks").serialize(); 
+				$.ajax({
+	        url: "<?=base_url()?>Cashier/AddTxnRemarks",
+	        data: formData,
+	        type: "POST",
+	        // crossDomain: true,
+					cache: false,
+	        // dataType : "json",
+	    		success: function(data) {
+            if(data.success == 'true'){
+            	$("#ModalApplyRemarks").modal('hide'); 
+							toastr["success"](data.message,"", {
+							positionClass: "toast-top-right",
+							progressBar: "toastr-progress-bar",
+							newestOnTop: "toastr-newest-on-top",
+							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+							timeOut: 1000
+						});
+						setTimeout(function () { location.reload(1); }, 1000);
+            }
+            else if (data.success == 'false'){                   
+        	    $("#ModalApplyRemarks").modal('hide'); 
+							toastr["error"](data.message,"", {
+							positionClass: "toast-top-right",
+							progressBar: "toastr-progress-bar",
+							newestOnTop: "toastr-newest-on-top",
+							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+							timeOut: 1000
+						});
+						setTimeout(function () { location.reload(1); }, 1000);
+            }
+          },
+          error: function(data){
+  					$('.feedback').addClass('alert-danger');
+  					$('.alert-message').html("").html(data.message); 
+          }
+				});
+			},
+		}); 
+		//
 		
 		$("#ServiceEditDetails").validate({
 	  	errorElement: "div",
@@ -3375,7 +3461,8 @@
     		'txn_cashier': <?php echo $cashier_details['employee_id']; ?>,
     		'sender_id'	:	'<?php echo $cashier_details['business_outlet_sender_id']; ?>',
 				'api_key'	:   '<?php echo $cashier_details['api_key']?>',
-				'txn_pending_amount' : <?=$payment['full_payment_info']['pending_amount']?>
+				'txn_pending_amount' : <?=$payment['full_payment_info']['pending_amount']?>,
+				'txn_remarks'			:	<?=$txn_remarks?>
     	};
 
     	txn_settlement = {
@@ -3406,7 +3493,8 @@
     		'txn_cashier': <?php echo $cashier_details['employee_id']; ?>,
     		'sender_id'	:	'<?php echo $cashier_details['business_outlet_sender_id']; ?>',
 				'api_key'	:   '<?php echo $cashier_details['api_key']?>',
-				'txn_pending_amount' : <?=$payment['split_payment_info']['total_pending_amount']?>
+				'txn_pending_amount' : <?=$payment['split_payment_info']['total_pending_amount']?>,
+				'txn_remarks'			:	'<?=$txn_remarks?>'
     	};
 
     	txn_settlement = {
