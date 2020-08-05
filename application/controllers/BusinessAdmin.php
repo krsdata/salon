@@ -274,7 +274,10 @@ class BusinessAdmin extends CI_Controller {
                 
                 $data['yesterday_sales']=$this->TopCardsData('yesterday_sales');
                 $data['bill']= $this->BusinessAdminModel->GetTodaysBill($where);
-                $data['bill']= $data['bill']['res_arr'];
+								$data['bill']= $data['bill']['res_arr'];
+								
+								$data['paid_back']=$this->BusinessAdminModel->GetDailyAmountPaidBack($where);
+								$data['paid_back']=$data['paid_back']['res_arr'][0]['paid_back'];
                 // $this->PrettyPrintArray($data['bill']);
                 $data['card_data']= $this->BusinessAdminModel->TodayPackageSales($where);
                 $data['card_data']=$data['card_data']['res_arr'];
@@ -1118,7 +1121,10 @@ class BusinessAdmin extends CI_Controller {
                 
                 $data['yesterday_sales']=$this->TopCardsData('yesterday_sales');
                 $data['bill']= $this->BusinessAdminModel->GetTodaysBill($where);
-                $data['bill']= $data['bill']['res_arr'];
+								$data['bill']= $data['bill']['res_arr'];
+								
+								$data['paid_back']=$this->BusinessAdminModel->GetDailyAmountPaidBack($where);
+								$data['paid_back']=$data['paid_back']['res_arr'][0]['paid_back'];
                 // $this->PrettyPrintArray($data['bill']);
                 $data['card_data']= $this->BusinessAdminModel->TodayPackageSales($where);
                 $data['card_data']=$data['card_data']['res_arr'];

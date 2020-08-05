@@ -528,7 +528,7 @@ class CashierModel extends CI_Model {
             4. Update the pending amounts for the customers if any
             5. Last but not least if composition is available then update the stock for the services taken.
         */
-        // $this->PrintArray($data);
+        // $this->PrintArray($_POST);
         //exit;
 				if($data['cashback']>0)
                 {
@@ -609,8 +609,10 @@ class CashierModel extends CI_Model {
 							'txn_service_txn_id'     => $result_1['res_arr']['insert_id'],
 							'txn_service_quantity'   => $data['cart_data'][$i]['service_quantity'],
 							'txn_service_discount_percentage' => $data['cart_data'][$i]['service_discount_percentage'],
-							'txn_service_discount_absolute'   => $data['cart_data'][$i]['service_discount_absolute']
+							'txn_service_discount_absolute'   => $data['cart_data'][$i]['service_discount_absolute'],
+							'txn_service_remarks'		=> $data['cart_data'][$i]['service_remarks']
 						);
+
 						//for percentage discount
 						if($data['cart_data'][$i]['service_discount_percentage'] > 0){
 							$services_data+=['txn_service_discounted_price' => (int)($data['cart_data'][$i]['service_total_value']-($data['cart_data'][$i]['service_total_value']*$data['cart_data'][$i]['service_discount_percentage'])/100)];
@@ -2071,7 +2073,8 @@ class CashierModel extends CI_Model {
 						FROM 
 							mss_categories
 						WHERE 
-							 mss_categories.category_name='OTC' AND
+							mss_categories.category_type='Products' AND
+							mss_categories.category_for !=1 AND
 							mss_categories.category_business_outlet_id=".$this->db->escape($data)." ";
                 
                   $query = $this->db->query($sql);

@@ -595,10 +595,10 @@
 																<table style="width:100%;">
 																<tr><td><h5><b>Total</h5></b></td><td>
 																	<?php												
-																		echo "<h5><b>".($cards_data['payment_wise']['cash']+$package_payment_wise['cash']+$cards_data['payment_wise']['credit_card']+$package_payment_wise['credit_card']+$cards_data['payment_wise']['debit_card']+$package_payment_wise['debit_card']+$cards_data['payment_wise']['paytm']+$package_payment_wise['paytm']+$cards_data['payment_wise']['phone_pe']+$package_payment_wise['phone_pe']+$cards_data['payment_wise']['google_pay']+$package_payment_wise['google_pay']+$package_payment_wise['virtual_wallet']-$loyalty_payment+$cards_data['payment_wise']['others']+$pending_amount_received)."</h5></b>";
+																		echo "<h5><b>".($cards_data['payment_wise']['cash']+$package_payment_wise['cash']+$cards_data['payment_wise']['credit_card']+$package_payment_wise['credit_card']+$cards_data['payment_wise']['debit_card']+$package_payment_wise['debit_card']+$cards_data['payment_wise']['paytm']+$package_payment_wise['paytm']+$cards_data['payment_wise']['phone_pe']+$package_payment_wise['phone_pe']+$cards_data['payment_wise']['google_pay']+$package_payment_wise['google_pay']+$package_payment_wise['virtual_wallet']-$loyalty_payment+$cards_data['payment_wise']['others']+$pending_amount_received-$paid_back)."</h5></b>";
 																	?>
 																</td></tr>
-																<tr><td>Cash : </td><td><?=($cards_data['payment_wise']['cash']+$package_payment_wise['cash'])?></td></tr>
+																<tr><td>Cash : </td><td><?=($cards_data['payment_wise']['cash']+$package_payment_wise['cash']-$paid_back)?></td></tr>
 																<tr><td>Cards : </td><td><?=($cards_data['payment_wise']['credit_card']+$package_payment_wise['credit_card']+$cards_data['payment_wise']['debit_card']+$package_payment_wise['debit_card'])?></td></tr>
 																<tr><td>W+Others : </td><td><?=($cards_data['payment_wise']['paytm']+$package_payment_wise['paytm']+$cards_data['payment_wise']['phone_pe']+$package_payment_wise['phone_pe']+$cards_data['payment_wise']['google_pay']+$package_payment_wise['google_pay']+$cards_data['payment_wise']['others']+$pending_amount_received)?></td></tr>
 																
