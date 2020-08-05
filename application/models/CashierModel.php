@@ -622,17 +622,22 @@ class CashierModel extends CI_Model {
 							$services_data+=['txn_service_discounted_price' => $data['cart_data'][$i]['service_total_value']];
 						}
 						
-            $result_2 = $this->Insert($services_data,'mss_transaction_services');
+					$result_2 = $this->Insert($services_data,'mss_transaction_services');
 
-            if((int)$data['cart_data'][$i]['customer_package_profile_id'] != -999){
+						if((int)$data['cart_data'][$i]['customer_package_profile_id'] != -999){
 							if((int)$data['cart_data'][$i]['customer_package_profile_id'] != -9999)
 							{
 								$customer_package_profile_id = $data['cart_data'][$i]['customer_package_profile_id'];
-
-								$update_query = "UPDATE mss_customer_package_profile SET service_count = service_count - ".(int)$data['cart_data'][$i]['service_quantity']." WHERE customer_package_profile_id = ".$customer_package_profile_id."";
-						
-								$this->db->query($update_query);
-
+								$where=array('customer_package_profile_id'=> $customer_package_profile_id);
+								$total_count=$this->MultiWhereSelect('mss_customer_package_profile',$where);
+								$total_count=$total_count['res_arr'][0]['service_count'];
+								if($total_count >= $data['cart_data'][$i]['service_quantity']){
+									$update_query = "UPDATE mss_customer_package_profile SET service_count = service_count - ".(int)$data['cart_data'][$i]['service_quantity']." WHERE customer_package_profile_id = ".$customer_package_profile_id." ";
+									$this->db->query($update_query);
+								}else{
+									return $this->ModelHelper(false,true,"You can't redeem more than the available services for redemption. Please select lesser count of Services");
+									die;
+								}
 								$package_redemption_data = array(
 									'customer_package_profile_id' => $data['cart_data'][$i]['customer_package_profile_id'],
 									'redemption_date' => date('Y-m-d'),
