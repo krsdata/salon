@@ -1313,7 +1313,7 @@
 														  //  print_r($recommended);
 															foreach ($recommended as $data) { ?>
 																<div class="col-md-2 col-sm-4" style="margin-right:0px">
-																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'] ?>">
+																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'].', '.round($data['service_price_inr'])?>">
 																		<div class="card customized-category-card border-dark">
 																			<div class="card-body" style="text-align: center;padding:.5rem!important;background-color:white;border-radius:5px;">
 																				<p class="card-text" style="color: black;" ><?= $data['service_name'] ?></p>
@@ -1339,7 +1339,7 @@
 														if ($recommended != 0) {
 															foreach ($recommended as $data) { ?>
 																<div class="col-md-2 col-sm-4">
-																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'] ?>">
+																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'].',  '.round($data['service_price_inr']) ?>">
 																		<div class="card customized-category-card border-dark" style="width:100%">
 																			<div class="card-body" style="text-align: center;padding:.5rem!important;background-color:white;  border-radius:5px;">
 																				<p class="card-text" style="color: black;" ><?= $data['service_name'] ?></p>
@@ -1648,8 +1648,8 @@
 															        		<td>
 															        			<div class="form-group">
 															        				<label class="form-label">Payment Mode</label>
-																        			<select name="payment_type[]" class="form-control" id="split_pay_type">
-																		
+																        			<select name="payment_type[]" class="form-control" id="split_pay_type" required>
+																								<option value="" selected disabled>Select Mode</option>
 																								<option value="Cash">Cash</option>
 																								<option value="Credit_Card">Credit Card</option>
 																								<option value="Debit_Card">Debit Card</option>
@@ -1889,6 +1889,34 @@
 																<td><strong>Final Payable Amount</strong></td>
 																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
 																	<?= round($actual_bill=$total_service_value)?>
+																</td>
+															</tr>
+															<tr>
+																<td><strong>Amount Received</strong></td>
+																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
+																	<?= round($payment['split_payment_info']['total_amount_received'])?>
+																</td>
+															</tr>
+															<tr>
+																<td><strong>Tender Details </strong></td>
+																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
+																	<?php 
+																	foreach($payment['split_payment_info']['multiple_payments'] as $key=>$val){
+																		echo $val['payment_type']." : ".$val['amount_received'];
+																	}
+																	?>
+																</td>
+															</tr>
+															<tr>
+																<td><strong>Due Amount</strong></td>
+																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
+																	<?= round($payment['split_payment_info']['total_pending_amount'])?>
+																</td>
+															</tr>
+															<tr>
+																<td><strong>Balance to be paid back</strong></td>
+																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
+																	<?= round($payment['split_payment_info']['balance_to_be_paid_back'])?>
 																</td>
 															</tr>
 														</tbody>
@@ -2153,7 +2181,7 @@
     		for(var i=0;i<data.length;i++){
     			
     			str += "<div class=\"col-md-2 col-sm-4\">\
-										<a class=\"ProvideServiceDetails\" service-id=\""+data[i].service_id+"\" service-name=\""+data[i].service_name+"\" service-price-inr=\""+data[i].service_price_inr+"\" service-gst-percentage=\""+data[i].service_gst_percentage+"\" service-est-time=\""+data[i].service_est_time+"\" title=\""+data[i].service_name+"\">\
+										<a class=\"ProvideServiceDetails\" service-id=\""+data[i].service_id+"\" service-name=\""+data[i].service_name+"\" service-price-inr=\""+data[i].service_price_inr+"\" service-gst-percentage=\""+data[i].service_gst_percentage+"\" service-est-time=\""+data[i].service_est_time+"\" title=\""+data[i].service_name+","+Math.round(data[i].service_price_inr)+"\">\
 											<div class=\"card customized-category-card\">\
 												<div class=\"card-body\" style=\"text-align: center;padding:.25rem!important;background-color:#009925;border-radius:5px;\">\
 													<p class=\"card-text\">"+data[i].qty_per_item+" "+data[i].service_unit+"</p>\
@@ -2181,7 +2209,7 @@
     		for(var i=0;i<data.length;i++){
     			
     			str += "<div class=\"col-md-2 col-sm-4\">\
-										<a class=\"ProvideServiceDetails\" service-id=\""+data[i].service_id+"\" service-name=\""+data[i].service_name+"\" service-price-inr=\""+data[i].service_price_inr+"\" service-gst-percentage=\""+data[i].service_gst_percentage+"\" service-est-time=\""+data[i].service_est_time+"\" title=\""+data[i].service_name+"\">\
+										<a class=\"ProvideServiceDetails\" service-id=\""+data[i].service_id+"\" service-name=\""+data[i].service_name+"\" service-price-inr=\""+data[i].service_price_inr+"\" service-gst-percentage=\""+data[i].service_gst_percentage+"\" service-est-time=\""+data[i].service_est_time+"\" title=\""+data[i].service_name+","+Math.round(data[i].service_price_inr)+"\">\
 											<div class=\"card customized-category-card\">\
 												<div class=\"card-body\" style=\"text-align: center;padding:.25rem!important;background-color:#009925;border-radius:5px;\">\
 													<p class=\"card-text\">"+data[i].service_name+"</p>\
@@ -3332,7 +3360,7 @@
 
       rowno = rowno+1;
       
-      $("#Split-Payment-Info-Table tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><label class=\"form-label\">Payment Mode</label><select name=\"payment_type[]\" class=\"form-control\"><option>Select Payment Method</option><option value=\"Cash\">Cash</option><option value=\"Credit_Card\">Credit Card</option><option value=\"Debit_Card\">Debit Card</option><option value=\"Paytm\">Paytm</option><option value=\"Phonepe\">Phonepe</option><option value=\"Google_Pay\">Google Pay</option><option value=\"Virtual_Wallet\" disabled>Virtual Wallet</option><option value=\"loyalty_wallet\" >Loyalty Wallet</option></select></div></td><td><div class=\"form-group\"><label class=\"form-label\">Amount Received</label><input type=\"number\" placeholder=\"Amount in INR\" class=\"form-control\" name=\"amount_received[]\"></div></td></tr>");
+      $("#Split-Payment-Info-Table tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><label class=\"form-label\">Payment Mode</label><select name=\"payment_type[]\" class=\"form-control\" required><option disabled>Select Payment Method</option><option value=\"Cash\">Cash</option><option value=\"Credit_Card\">Credit Card</option><option value=\"Debit_Card\">Debit Card</option><option value=\"Paytm\">Paytm</option><option value=\"Phonepe\">Phonepe</option><option value=\"Google_Pay\">Google Pay</option><option value=\"Virtual_Wallet\" disabled>Virtual Wallet</option><option value=\"loyalty_wallet\" >Loyalty Wallet</option></select></div></td><td><div class=\"form-group\"><label class=\"form-label\">Amount Received</label><input type=\"number\" placeholder=\"Amount in INR\" class=\"form-control\" name=\"amount_received[]\"></div></td></tr>");
 
 				
 			
@@ -3557,7 +3585,7 @@
 						setTimeout(function () { window.location.href = "<?=base_url()?>Cashier/Dashboard"; }, 500);
           }
           else if (data.success == 'false'){
-                        alert(data.message);
+            alert(data.message);
 						window.location.reload();
       	     //   $('#centeredModalDanger').modal('show').on('shown.bs.modal', function (e){
     // 			$("#ErrorModalMessage").html("").html(data.message);
