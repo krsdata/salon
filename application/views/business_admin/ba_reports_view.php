@@ -246,7 +246,7 @@
 									</div>
 								</div>
 							</div>
-							<!--Modal Area Ends--->
+							<!--Modal Area Ends-->
             </div>
 					</div>
 					<?php
@@ -430,6 +430,10 @@
   $(document).ready(function() {
 		
 		var Sales = [
+			{
+				display: "OverAll Bill Wise Sales Report",
+				value: "OBWSR"
+			},
 			{
 				display: "Bill Wise Sales Report",
 				value: "BWSR"
