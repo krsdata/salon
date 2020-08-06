@@ -2748,7 +2748,8 @@ class Cashier extends CI_Controller {
 						$query = $this->db->query($sql);
 						$result = $query->result_array();
 					}
-					$data['logo'] = $result[0]['config_value'];						
+					$data['logo'] = $result[0]['config_value'];		
+					// $this->PrettyPrintArray($data['payment']);				
 					$this->load->view('cashier/cashier_print_bill',$data);
 				}
 				elseif ($check['error'] == 'true'){
