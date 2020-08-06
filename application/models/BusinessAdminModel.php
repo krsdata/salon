@@ -1677,7 +1677,6 @@ class BusinessAdminModel extends CI_Model {
         $query2 = $this->db->query($sql2);
 
         $data_split_payment = $query2->result_array();
-
         foreach ($data_split_payment as $k) {
             $str = $k["Payment Mode"];
                     
@@ -1714,7 +1713,7 @@ class BusinessAdminModel extends CI_Model {
                 }
             }
         }
-
+        $data['paid_back']=$data_split_payment[0]['paid_back'];
         return $this->ModelHelper(true,false,'',$data);
     }
 
@@ -9634,5 +9633,31 @@ WHERE  mss_customers.customer_business_outlet_id = ".$this->session->userdata['o
 		}
     }
 
+	public function GetDailyAmountPaidBAck($where){
+        $sql = "SELECT 
+		SUM(mss_transaction_settlements.txn_settlement_balance_paid) AS 'paid_back'
+	FROM 
+		mss_transactions, 
+		mss_transaction_settlements, 
+		mss_customers,
+		mss_employees 
+	WHERE 
+		mss_transactions.txn_customer_id = mss_customers.customer_id 
+		AND mss_transactions.txn_status=1
+		AND mss_transactions.txn_cashier =mss_employees.employee_id 
+		AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+		AND mss_transaction_settlements.txn_settlement_way = 'Split Payment'
+		AND mss_employees.employee_business_admin = ".$this->db->escape($where['business_admin_id'])."
+		AND mss_employees.employee_business_outlet = ".$this->db->escape($where['business_outlet_id'])."
+		AND date(mss_transactions.txn_datetime) = date(now())";
+        
+		$query = $this->db->query($sql);
+		if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());
+		}
+		else{
+			return $this->ModelHelper(false,true,"DB error!");   
+		}
+    }
 
 }

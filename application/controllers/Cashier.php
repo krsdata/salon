@@ -973,18 +973,20 @@ class Cashier extends CI_Controller {
 					$data['individual_customer'] = $this->GetCustomerBilling($customer_id);
 					
 					$data['categories']  = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Service');
-					$data['categories_products'] = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Products');
+					// $data['categories_products'] = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Products');
 
 					
 					$data['experts'] = $this->GetExperts();
 
 					$data['active_packages_categories'] = $this->PurchasedPackages($customer_id);
-					$data['otc_category']=$this->CashierModel->OtcCategory($this->session->userdata['logged_in']['business_outlet_id']);
-					$data['otc_category']=$data['otc_category']['res_arr'];
+					$data['categories_products']=$this->CashierModel->OtcCategory($this->session->userdata['logged_in']['business_outlet_id']);
+					$data['categories_products']=$data['categories_products']['res_arr'];
+
+					// $this->PrettyPrintArray($data['categories_products']);
+
 					//Coupon
 					$data['coupon'] = $this->CashierModel->GetCustomerCoupon($customer_id);
-				// 	$this->PrettyPrintArray($data['coupon']);
-
+				
 					if($data['coupon']['success'] == 'false')
 					{
 						$data['coupon']=['res_arr'=>''];
@@ -1030,6 +1032,7 @@ class Cashier extends CI_Controller {
 					if(isset($this->session->userdata['payment'])){
 						$data['payment'] = $this->session->userdata['payment'][$customer_id];
 					}
+					$data['txn_remarks']= $this->session->userdata['txn_remarks'];
 					//cashback conversion ratio
 					$data['loyalty']=$this->CashierModel->GetConversionRatio($this->session->userdata['logged_in']['business_admin_id']);
 					$data['loyalty']=$data['loyalty']['res_arr'];
@@ -1070,7 +1073,7 @@ class Cashier extends CI_Controller {
 						}
 					}
 				
-                    // $this->PrettyPrintArray($data);
+          // $this->PrettyPrintArray($data);
 					$this->load->view('cashier/cashier_do_billing_view',$data);
 				}
 				elseif ($check['error'] == 'true'){
@@ -1560,7 +1563,8 @@ class Cashier extends CI_Controller {
 							'service_add_on_price'       => $this->input->post('service_add_on_price'),
 							'service_gst_percentage'     => $this->input->post('service_gst_percentage'),
 							'service_est_time'  => $this->input->post('service_est_time'),
-							'customer_package_profile_id' => $this->input->post('customer_package_profile_id')
+							'customer_package_profile_id' => $this->input->post('customer_package_profile_id'),
+							'service_remarks'							=> $this->input->post('service_remarks')
 						);
 
 				
@@ -2338,7 +2342,8 @@ class Cashier extends CI_Controller {
             $data['cards_data']['payment_wise']=$data['cards_data']['payment_wise']['res_arr'];
             $data['package_payment_wise'] = $this->BusinessAdminModel->GetPackageSalesPaymentWiseData($where);
             $data['package_payment_wise']=$data['package_payment_wise']['res_arr'];
-            
+						$data['paid_back']=$this->BusinessAdminModel->GetDailyAmountPaidBack($where);
+						$data['paid_back']=$data['paid_back']['res_arr'][0]['paid_back'];
             $data['loyalty_payment']=$this->BusinessAdminModel->GetLoyaltyAmountReceived($where);
             $data['loyalty_payment']=$data['loyalty_payment']['res_arr'][0]['loyalty_wallet'];
             $data['loyalty_points_given']=$this->BusinessAdminModel->GetLoyaltyPointsGiven($where);
@@ -2475,7 +2480,7 @@ class Cashier extends CI_Controller {
 
 				if($result['success'] == 'true'){
 					$transcation_detail = $this->CashierModel->GetBilledServicesByTxnId($result['res_arr']['res_arr']['insert_id']);
-#					echo "<pre>";print_r($transcation_detail);die;
+					
 					$cart_data['transaction_id'] = $result['res_arr']['res_arr']['insert_id'];
 					$cart_data['outlet_admin_id'] = $business_admin_id;					
 					$cart_data['transaction_time'] = $transcation_detail['res_arr'][0]['txn_datetime'];
@@ -2743,7 +2748,8 @@ class Cashier extends CI_Controller {
 						$query = $this->db->query($sql);
 						$result = $query->result_array();
 					}
-					$data['logo'] = $result[0]['config_value'];						
+					$data['logo'] = $result[0]['config_value'];		
+					// $this->PrettyPrintArray($data['payment']);				
 					$this->load->view('cashier/cashier_print_bill',$data);
 				}
 				elseif ($check['error'] == 'true'){
@@ -6589,6 +6595,45 @@ public function AddToCartRedeemPoints(){
 			$data['logo'] = $result[0]['config_value'];						
 			$this->load->view('cashier/cashier_reprint_bill',$data);			
 		}else{
+			$this->LogoutUrl(base_url()."Cashier/Login");
+		}	
+	}
+
+	public function AddTxnRemarks(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('txn_remarks', 'Transaction Remarks', 'trim|required');
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								 );
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{							
+					if(!isset($this->session->userdata['txn_remarks'])){
+						$txn_remarks = array(
+														'txn_remarks'=> $this->input->post('txn_remarks')
+												 	);
+						$this->session->set_userdata('txn_remarks', $txn_remarks);
+						$this->ReturnJsonArray(true,false,"Remarks applied successfully!");
+						die;
+					}
+					else{
+						
+						$txn_remarks = $this->session->userdata['txn_remarks'];						
+						$this->session->set_userdata('txn_remarks', $txn_remarks);
+						$this->ReturnJsonArray(true,false,"Remarks applied successfully!");
+						die;
+					}
+				}
+			}
+		}
+		else{
 			$this->LogoutUrl(base_url()."Cashier/Login");
 		}	
 	}

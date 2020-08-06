@@ -273,10 +273,7 @@ class MYPDF extends TCPDF {
 								}
 								else{
 							?>
-							<tr>
-								<td>Payment Type</td>
-								<td>Split Payment</td>
-							</tr>
+							
 							<tr>
 								<td>Amount Received</td>
 								<td><i class="fas fa-fw fa-rupee-sign " aria-hidden="true"></i><?=$payment['split_payment_info']['total_amount_received']?></td>
@@ -289,6 +286,17 @@ class MYPDF extends TCPDF {
 								<td>Pending Amount</td>
 								<td><i class="fas fa-fw fa-rupee-sign " aria-hidden="true"></i><?=$payment['split_payment_info']['total_pending_amount']?></td>
 							</tr>	
+							<tr>
+								<td>Payment Type</td>
+								<td>
+									<small>
+								<?php 
+									foreach($payment['split_payment_info']['multiple_payments'] as $key=>$val){
+										echo $val['payment_type']." : ".$val['amount_received']." ";
+									}
+									?></small>
+								</td>
+							</tr>
 							<?php
 								}
 								}
