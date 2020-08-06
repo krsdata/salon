@@ -1792,16 +1792,16 @@
 													<table class="table table-hover table-sm" style="max-height: 200px;">
 														<tbody>
 														<tr>
-																<td>
+																<td colspan="2">
 																<label class="custom-control custom-checkbox">
 								              		<input type="checkbox" class="custom-control-input" checked="true" id="SendSMS">
 								              		<span class="custom-control-label">Send SMS</span>
 																</label>
 																</td>
-																<td>
+																<td colspan="2">
 																<label class="custom-control custom-checkbox">
 								              		<input type="checkbox" class="custom-control-input" checked="true" id="cashback">
-								              		<span class="custom-control-label">Credit Cashback</span>
+								              		<span class="custom-control-label">Credit Rewards</span>
 																</label>
 																</td>
 															</tr>
@@ -1871,11 +1871,31 @@
 																echo round($gross_price);
 																?>
 																</td>
+																<td>Final Amount</td>
+																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
+																	<?= round($actual_bill=$total_service_value)?>
+																</td>
 															</tr>
 															<tr>
-																<td>GST</td>
+																<td>SGST</td>
 																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
-																	<?php echo abs(round($total_gst));?>
+																	<?php echo abs(round($total_gst/2));?>
+																</td>
+																<td>Amount Received</td>
+																<td>
+																<i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
+																	<?= round($payment['split_payment_info']['total_amount_received'])?>
+																</td>
+															</tr>
+															<tr>
+																<td>CGST</td>
+																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
+																<?php echo abs(round($total_gst/2));?>
+																</td>
+																<td>Paid Back</td>
+																<td>
+																<i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
+																	<?= round($payment['split_payment_info']['balance_to_be_paid_back'])?>
 																</td>
 															</tr>
 															<tr>
@@ -1883,40 +1903,20 @@
 																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
 																	<?=round($total_discount)?>
 																</td>
-															</tr>
-														
-															<tr>
-																<td><strong>Final Payable Amount</strong></td>
-																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
-																	<?= round($actual_bill=$total_service_value)?>
-																</td>
-															</tr>
-															<tr>
-																<td><strong>Amount Received</strong></td>
-																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
-																	<?= round($payment['split_payment_info']['total_amount_received'])?>
-																</td>
-															</tr>
-															<tr>
-																<td><strong>Tender Details </strong></td>
-																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
-																	<?php 
-																	foreach($payment['split_payment_info']['multiple_payments'] as $key=>$val){
-																		echo $val['payment_type']." : ".$val['amount_received'];
-																	}
-																	?>
-																</td>
-															</tr>
-															<tr>
-																<td><strong>Due Amount</strong></td>
-																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
+																<td>Due Amount</td>
+																<td>
+																<i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
 																	<?= round($payment['split_payment_info']['total_pending_amount'])?>
 																</td>
 															</tr>
 															<tr>
-																<td><strong>Balance to be paid back</strong></td>
-																<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
-																	<?= round($payment['split_payment_info']['balance_to_be_paid_back'])?>
+																<td><strong>Tender Details </strong></td>
+																<td colspan="3">
+																	<?php 
+																	foreach($payment['split_payment_info']['multiple_payments'] as $key=>$val){
+																		echo $val['payment_type']." : ".$val['amount_received']." ";
+																	}
+																	?>
 																</td>
 															</tr>
 														</tbody>

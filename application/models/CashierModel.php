@@ -534,7 +534,7 @@ class CashierModel extends CI_Model {
                 {
                     $data_cashback = array(
                         'business_outlet_id' => $outlet_id,
-                        'net_amount' => $data['txn_settlement']['txn_settlement_amount_received']
+                        'net_amount' => $data['txn_data']['txn_value']
                     );
                     $cashback = $this->CheckRule($data_cashback,'mss_loyalty_rules','business_outlet_id');
 					if($cashback['success'] == 'true')
