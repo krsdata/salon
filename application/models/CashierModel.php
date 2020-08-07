@@ -528,13 +528,13 @@ class CashierModel extends CI_Model {
             4. Update the pending amounts for the customers if any
             5. Last but not least if composition is available then update the stock for the services taken.
         */
-        // $this->PrintArray($data);
+        // $this->PrintArray($_POST);
         //exit;
 				if($data['cashback']>0)
                 {
                     $data_cashback = array(
                         'business_outlet_id' => $outlet_id,
-                        'net_amount' => $data['txn_settlement']['txn_settlement_amount_received']
+                        'net_amount' => $data['txn_data']['txn_value']
                     );
                     $cashback = $this->CheckRule($data_cashback,'mss_loyalty_rules','business_outlet_id');
 					if($cashback['success'] == 'true')
@@ -609,8 +609,10 @@ class CashierModel extends CI_Model {
 							'txn_service_txn_id'     => $result_1['res_arr']['insert_id'],
 							'txn_service_quantity'   => $data['cart_data'][$i]['service_quantity'],
 							'txn_service_discount_percentage' => $data['cart_data'][$i]['service_discount_percentage'],
-							'txn_service_discount_absolute'   => $data['cart_data'][$i]['service_discount_absolute']
+							'txn_service_discount_absolute'   => $data['cart_data'][$i]['service_discount_absolute'],
+							'txn_service_remarks'		=> $data['cart_data'][$i]['service_remarks']
 						);
+
 						//for percentage discount
 						if($data['cart_data'][$i]['service_discount_percentage'] > 0){
 							$services_data+=['txn_service_discounted_price' => (int)($data['cart_data'][$i]['service_total_value']-($data['cart_data'][$i]['service_total_value']*$data['cart_data'][$i]['service_discount_percentage'])/100)];
@@ -620,17 +622,22 @@ class CashierModel extends CI_Model {
 							$services_data+=['txn_service_discounted_price' => $data['cart_data'][$i]['service_total_value']];
 						}
 						
-            $result_2 = $this->Insert($services_data,'mss_transaction_services');
+					$result_2 = $this->Insert($services_data,'mss_transaction_services');
 
-            if((int)$data['cart_data'][$i]['customer_package_profile_id'] != -999){
+						if((int)$data['cart_data'][$i]['customer_package_profile_id'] != -999){
 							if((int)$data['cart_data'][$i]['customer_package_profile_id'] != -9999)
 							{
 								$customer_package_profile_id = $data['cart_data'][$i]['customer_package_profile_id'];
-
-								$update_query = "UPDATE mss_customer_package_profile SET service_count = service_count - ".(int)$data['cart_data'][$i]['service_quantity']." WHERE customer_package_profile_id = ".$customer_package_profile_id."";
-						
-								$this->db->query($update_query);
-
+								$where=array('customer_package_profile_id'=> $customer_package_profile_id);
+								$total_count=$this->MultiWhereSelect('mss_customer_package_profile',$where);
+								$total_count=$total_count['res_arr'][0]['service_count'];
+								if($total_count >= $data['cart_data'][$i]['service_quantity']){
+									$update_query = "UPDATE mss_customer_package_profile SET service_count = service_count - ".(int)$data['cart_data'][$i]['service_quantity']." WHERE customer_package_profile_id = ".$customer_package_profile_id." ";
+									$this->db->query($update_query);
+								}else{
+									return $this->ModelHelper(false,true,"You can't redeem more than the available services for redemption. Please select lesser count of Services");
+									die;
+								}
 								$package_redemption_data = array(
 									'customer_package_profile_id' => $data['cart_data'][$i]['customer_package_profile_id'],
 									'redemption_date' => date('Y-m-d'),
@@ -2071,7 +2078,8 @@ class CashierModel extends CI_Model {
 						FROM 
 							mss_categories
 						WHERE 
-							 mss_categories.category_name='OTC' AND
+							mss_categories.category_type='Products' AND
+							mss_categories.category_for !=1 AND
 							mss_categories.category_business_outlet_id=".$this->db->escape($data)." ";
                 
                   $query = $this->db->query($sql);
