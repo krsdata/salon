@@ -741,7 +741,7 @@ class BusinessAdminModel extends CI_Model {
         -- mss_transactions.txn_remarks AS 'Remarks',
         -- mss_transactions.txn_total_tax AS 'Total Tax (Rs.)',
         -- mss_transactions.txn_pending_amount AS 'Pending Amount',
-        mss_transaction_settlements.txn_settlement_way AS 'Settlement Way',
+        --  mss_transaction_settlements.txn_settlement_way AS 'Settlement Way',
         mss_transaction_settlements.txn_settlement_payment_mode AS 'Payment Mode'
         
     FROM 
@@ -802,7 +802,7 @@ class BusinessAdminModel extends CI_Model {
                 $arr[$i]['MRP Amt'] = $pck['Bill Amount'];
                 $arr[$i]['Discount'] = $pck['Discount Given'];
                 $arr[$i]['Net Amount'] = $pck['Bill Amount'] - $pck['Discount Given'];
-                $arr[$i]['Settlement Way'] = $pck['Settlement Way'];
+  //              $arr[$i]['Settlement Way'] = $pck['Settlement Way'];
                 $arr[$i]['Payment Mode'] = $pck['Payment Mode'];                
                 $arr[$i]["Service Type"] =  "Package";
                 $i++;
