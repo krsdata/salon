@@ -726,11 +726,101 @@ class BusinessAdminModel extends CI_Model {
         }
     }
 
-    public function GenerateReports($data){
-        if($data['report_name'] == 'BWSR'){
-            return $this->GetBillWiseSalesReport($data);
+    public function GetOverAllBillWiseSalesReport($data){
+        $data['result'] = [];
+        $sql = "SELECT 
+        mss_transactions.txn_unique_serial_id AS 'Txn Unique Serial Id',
+        date(mss_transactions.txn_datetime) AS 'Billing Date',
+        mss_customers.customer_mobile AS 'Mobile No',
+        mss_customers.customer_name AS 'Customer Name',
+        (mss_transactions.txn_discount+mss_transactions.txn_value) AS 'MRP Amt',
+        mss_transactions.txn_discount AS 'Discount',
+        ((mss_transactions.txn_discount+mss_transactions.txn_value) - mss_transactions.txn_discount) AS 'Net Amount',
+        -- mss_transactions.txn_value AS 'Net Amount',
+        -- mss_transactions.txn_status AS 'billed=1/canceled=0',
+        -- mss_transactions.txn_remarks AS 'Remarks',
+        -- mss_transactions.txn_total_tax AS 'Total Tax (Rs.)',
+        -- mss_transactions.txn_pending_amount AS 'Pending Amount',
+        mss_transaction_settlements.txn_settlement_way AS 'Settlement Way',
+        mss_transaction_settlements.txn_settlement_payment_mode AS 'Payment Mode'
+        
+    FROM 
+        mss_customers,
+        mss_transactions,
+        mss_transaction_settlements,
+        mss_employees
+    WHERE 
+        mss_transactions.txn_customer_id = mss_customers.customer_id
+        AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+        AND mss_transactions.txn_cashier= mss_employees.employee_id
+        AND mss_transactions.txn_status=1
+        AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
+        AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." 
+        AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])." GROUP BY mss_transactions.txn_id ";
+        
+
+        $query = $this->db->query($sql);
+        
+        if($query){
+            $result = $query->result_array();
+            $result_to_send = array();
+
+            for($i=0;$i<count($result);$i++){                
+                $result[$i]["Service Type"] =  "Service";
+                array_push($result_to_send, $result[$i]);
+                if($result[$i]["Settlement Way"] == "Split Payment" && $result[$i]["Payment Mode"] != "Split"){
+                    $str = $result[$i]["Payment Mode"];
+                    $someArray = json_decode($str, true);
+                    $simpler_string = "{";
+                    $len = count($someArray);
+                    for($j=0;$j<$len;$j++){
+                        if($j == ($len-1)){
+                            $simpler_string .= $someArray[$j]["payment_type"] ." : ". $someArray[$j]["amount_received"];    
+                        }
+                        else{
+                            $simpler_string .= $someArray[$j]["payment_type"] ." : ". $someArray[$j]["amount_received"] .",";
+                        }
+                    }
+                    $simpler_string .= "}";
+                    $result_to_send[$i]["Payment Mode"] =  $simpler_string;                    
+                }             
+            }
+
+            $data['result'] = $this->ModelHelper(true,false,'',$result_to_send);
         }
-        elseif ($data['report_name'] == 'DWCSR') {
+
+        $package = $this->GetPackageReport($data);
+        if($package['success'] == true){
+            $arr = [];
+            $package = $package['res_arr'];
+            $i = 0;
+            foreach ($package as $key => $pck) {
+                $arr[$i]['Txn Unique Serial Id'] = $pck['Serial Id'];
+                $arr[$i]['Billing Date'] = $pck['Purchase Date'];
+                $arr[$i]['Mobile No'] = $pck['Customer Mobile'];
+                $arr[$i]['Customer Name'] = $pck['Customer Name'];
+                $arr[$i]['MRP Amt'] = $pck['Bill Amount'];
+                $arr[$i]['Discount'] = $pck['Discount Given'];
+                $arr[$i]['Net Amount'] = $pck['Bill Amount'] - $pck['Discount Given'];
+                $arr[$i]['Settlement Way'] = $pck['Settlement Way'];
+                $arr[$i]['Payment Mode'] = $pck['Payment Mode'];                
+                $arr[$i]["Service Type"] =  "Package";
+                $i++;
+            }
+
+            if(!empty($arr)){
+                $data['result']['res_arr'] = array_merge($data['result']['res_arr'],$arr);
+            }            
+        }        
+        return $this->ModelHelper(true,false,'',$data['result']['res_arr']);
+    }
+    public function GenerateReports($data){
+        if($data['report_name'] == 'OBWSR'){
+            return $this->GetOverAllBillWiseSalesReport($data);
+        }
+        elseif($data['report_name'] == 'BWSR'){
+            return $this->GetBillWiseSalesReport($data);
+        }elseif ($data['report_name'] == 'DWCSR') {
             return $this->GetDateWiseCategorySalesReport($data);
         } 
        elseif ($data['report_name'] == 'SCWSR') {
