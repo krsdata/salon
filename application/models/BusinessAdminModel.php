@@ -735,6 +735,7 @@ class BusinessAdminModel extends CI_Model {
         mss_customers.customer_name AS 'Customer Name',
         (mss_transactions.txn_discount+mss_transactions.txn_value) AS 'MRP Amt',
         mss_transactions.txn_discount AS 'Discount',
+        ((mss_transactions.txn_discount+mss_transactions.txn_value) - mss_transactions.txn_discount) AS 'Net Amount',
         -- mss_transactions.txn_value AS 'Net Amount',
         -- mss_transactions.txn_status AS 'billed=1/canceled=0',
         -- mss_transactions.txn_remarks AS 'Remarks',
@@ -800,6 +801,7 @@ class BusinessAdminModel extends CI_Model {
                 $arr[$i]['Customer Name'] = $pck['Customer Name'];
                 $arr[$i]['MRP Amt'] = $pck['Bill Amount'];
                 $arr[$i]['Discount'] = $pck['Discount Given'];
+                $arr[$i]['Net Amount'] = $pck['Bill Amount'] - $pck['Discount Given'];
                 $arr[$i]['Settlement Way'] = $pck['Settlement Way'];
                 $arr[$i]['Payment Mode'] = $pck['Payment Mode'];                
                 $arr[$i]["Service Type"] =  "Package";
@@ -809,11 +811,8 @@ class BusinessAdminModel extends CI_Model {
             if(!empty($arr)){
                 $data['result']['res_arr'] = array_merge($data['result']['res_arr'],$arr);
             }            
-        }
-
-    
-            
-                return $this->ModelHelper(true,false,'',$data['result']['res_arr']);
+        }        
+        return $this->ModelHelper(true,false,'',$data['result']['res_arr']);
     }
     public function GenerateReports($data){
         if($data['report_name'] == 'OBWSR'){
