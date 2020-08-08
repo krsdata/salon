@@ -695,8 +695,8 @@
 							str_2 += "<td><div class='form-group'><input type='date' class='form-control serviceTxnDate editTransaction' name='txn_datetime' value="+data[i].date+"></div></td>";
 							str_2 += "<td><div class='form-group'><select class='form-control serviceExpert' name='expert[]'><option value='"+data[i].txn_service_expert_id+"' selected >"+data[i].expert+"</option><?php foreach($expert as $expert){ echo "<option value=".$expert['employee_id'].">".$expert['employee_first_name']."</option>";}?></select></div></td>";
 							str_2 += "<td><div class='form-group'><input type='hidden'  name='txn_id' value="+data[i].txn_id+"></div></td>";
-							// str_2 += "<td><button class='btn btn-sm btn-danger  Edit_individual_service' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_discounted_price='"+data[i].txn_service_discounted_price+"'> <i class='fa fa-trash'></i></button></td>";
-							str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-success updateService' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_id='"+data[i].txn_service_id+"' old_txn_date='"+data[i].date+"' old_txn_expert='"+data[i].txn_service_expert_id+"'>Save</button></td>";
+							str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-danger  Edit_individual_service' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_discounted_price='"+data[i].txn_service_discounted_price+"'> <i class='fa fa-trash'></i></button><div></td>";
+							str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-success updateService' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_id='"+data[i].txn_service_id+"' old_txn_date='"+data[i].date+"' old_txn_expert='"+data[i].txn_service_expert_id+"'>Save</button></div></td>";
 
 						str_2 += "</tr>";
 						}				
