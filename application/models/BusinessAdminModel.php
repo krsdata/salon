@@ -249,7 +249,7 @@ class BusinessAdminModel extends CI_Model {
         $sql = "SELECT mss_services.service_name,
 					mss_services.service_unit,
 					mss_services.service_brand,
-					mss_raw_composition.conjumption_quantity
+					mss_raw_composition.consumption_quantity
 				FROM 
 					mss_raw_composition,
 					mss_categories,
