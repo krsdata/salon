@@ -1522,6 +1522,7 @@ class BusinessAdminModel extends CI_Model {
 						AND mss_transactions.txn_cashier= mss_employees.employee_id
 						AND mss_transaction_services.txn_service_txn_id= mss_transaction_settlements.txn_settlement_txn_id
 						AND mss_transaction_services.txn_service_service_id=mss_services.service_id
+						AND mss_transaction_services.txn_service_status= 1
 						AND mss_services.service_type= 'service'
 						AND date(mss_transactions.txn_datetime) = date(now())
 						AND mss_transactions.txn_status=1				
@@ -3827,10 +3828,16 @@ class BusinessAdminModel extends CI_Model {
 	//Update transaction status
 	public function UpdateTransactionService($data){
 		$sql="UPDATE 
-				mss_transaction_services, mss_transactions, mss_transaction_settlements SET mss_transaction_services.txn_service_status=0,	mss_transaction_settlements.txn_settlement_amount_received=(mss_transaction_settlements.txn_settlement_amount_received- ".$this->db->escape($data['txn_service_discounted_price'])."),	mss_transactions.txn_value=(mss_transactions.txn_value- ".$this->db->escape($data['txn_service_discounted_price']).") WHERE mss_transaction_services.txn_service_service_id=".$this->db->escape($data['txn_service_service_id'])." AND mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." AND mss_transaction_settlements.txn_settlement_txn_id=".$this->db->escape($data['txn_id'])." ";
+				mss_transaction_services, 
+				mss_transactions, mss_transaction_settlements 
+				SET mss_transaction_services.txn_service_status=0,	
+				mss_transaction_settlements.txn_settlement_amount_received=(mss_transaction_settlements.txn_settlement_amount_received- ".$this->db->escape($data['txn_service_discounted_price'])."),	mss_transactions.txn_value=(mss_transactions.txn_value- ".$this->db->escape($data['txn_service_discounted_price'])."),
+				mss_transaction_settlements.txn_settlement_amount_received=(mss_transaction_settlements.txn_settlement_amount_received-".$this->db->escape($data['txn_service_discounted_price']).")
+				WHERE mss_transaction_services.txn_service_service_id=".$this->db->escape($data['txn_service_service_id'])." AND
+				mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." AND 
+				mss_transaction_settlements.txn_settlement_txn_id=".$this->db->escape($data['txn_id'])." ";
 				
 			$query = $this->db->query($sql);
-
 			if($query){
 				return $this->ModelHelper(true,false,'');
 			}
@@ -6471,25 +6478,25 @@ public function GetAttendanceAll($data){
     }
     public function RiskCustomerService($data){
         $sql = "(SELECT 
-           GROUP_CONCAT(mss_transactions_replica.txn_customer_id) as customer_id
-                                             FROM   mss_transactions_replica, 
-                                                    mss_transaction_settlements, 
-                                                    mss_customers, 
-                                                    mss_business_outlets, 
-                                                    mss_business_admin 
-                                             WHERE 
-           mss_transactions_replica.txn_id = 
-           mss_transaction_settlements.txn_settlement_txn_id 
-           AND mss_transactions_replica.txn_customer_id = 
-               mss_customers.customer_id 
-           AND mss_customers.customer_business_outlet_id = 
-           mss_business_outlets.business_outlet_id 
-           AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." 
-           AND mss_business_outlets.business_outlet_business_admin = 
-           mss_business_admin.business_admin_id 
-           AND mss_business_admin.business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." 
-           AND Date(mss_transactions_replica.txn_datetime) > 
-           CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust'])." day)";
+           	GROUP_CONCAT(mss_transactions_replica.txn_customer_id) as customer_id
+			FROM   mss_transactions_replica, 
+				mss_transaction_settlements, 
+				mss_customers, 
+				mss_business_outlets, 
+				mss_business_admin 
+			WHERE 
+			mss_transactions_replica.txn_id = 
+			mss_transaction_settlements.txn_settlement_txn_id 
+			AND mss_transactions_replica.txn_customer_id = 
+            mss_customers.customer_id 
+			AND mss_customers.customer_business_outlet_id = 
+			mss_business_outlets.business_outlet_id 
+			AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." 
+			AND mss_business_outlets.business_outlet_business_admin = 
+			mss_business_admin.business_admin_id 
+			AND mss_business_admin.business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." 
+			AND Date(mss_transactions_replica.txn_datetime) > 
+			CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust'])." day)";
         $query = $this->db->query($sql);
         if($query){
             $result = $query->result_array();
@@ -6500,38 +6507,6 @@ AND mss_customers.customer_business_admin_id = ".$this->session->userdata['logge
             // $query = $this->db->query($sql);            
             // return $this->ModelHelper(true,false,'',$query->result_array());
         }
-        /*$sql="SELECT mss_customers.customer_id
-        FROM
-        mss_customers
-        WHERE
-        mss_customers.customer_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
-        AND
-        mss_customers.customer_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
-        AND
-        mss_customers.customer_id NOT IN
-        (SELECT mss_transactions_replica.txn_customer_id
-         FROM
-            mss_transactions_replica,
-             mss_transaction_settlements,
-             mss_customers,
-             mss_business_outlets,
-             mss_business_admin
-         WHERE
-             mss_transactions_replica.txn_id = mss_transaction_settlements.txn_settlement_txn_id
-         AND
-             mss_transactions_replica.txn_customer_id = mss_customers.customer_id
-         AND
-             mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
-         AND
-             mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
-         AND
-             mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
-         AND
-             mss_business_admin.business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
-         AND
-             DATE(mss_transactions_replica.txn_datetime) > CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust'])." DAY
-        )   
-            ";*/
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6579,46 +6554,14 @@ AND mss_customers.customer_business_admin_id = ".$this->session->userdata['logge
         }
     }
      public function LostCustomerService($data){
-        /*$sql="SELECT mss_customers.customer_id
-        FROM
-        mss_customers
-        WHERE
-        mss_customers.customer_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
-        AND
-        mss_customers.customer_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
-        AND
-        mss_customers.customer_id NOT IN
-        (SELECT mss_transactions_replica.txn_customer_id
-         FROM
-            mss_transactions_replica,
-             mss_transaction_settlements,
-             mss_customers,
-             mss_business_outlets,
-             mss_business_admin
-         WHERE
-             mss_transactions_replica.txn_id = mss_transaction_settlements.txn_settlement_txn_id
-         AND
-             mss_transactions_replica.txn_customer_id = mss_customers.customer_id
-         AND
-             mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
-         AND
-             mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
-         AND
-             mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
-         AND
-             mss_business_admin.business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
-         AND
-             DATE(mss_transactions_replica.txn_datetime) > CURRENT_DATE - INTERVAL ".$this->db->escape($data['lost_customer'])." DAY
-        )   
-            "; */
             $sql = "SELECT 
            GROUP_CONCAT(mss_transactions_replica.txn_customer_id ) as customer_id
-                                             FROM   mss_transactions_replica, 
-                                                    mss_transaction_settlements, 
-                                                    mss_customers, 
-                                                    mss_business_outlets, 
-                                                    mss_business_admin 
-                                             WHERE 
+			FROM   mss_transactions_replica, 
+				mss_transaction_settlements, 
+				mss_customers, 
+				mss_business_outlets, 
+				mss_business_admin 
+			WHERE 
            mss_transactions_replica.txn_id = 
            mss_transaction_settlements.txn_settlement_txn_id 
            AND mss_transactions_replica.txn_customer_id = 
