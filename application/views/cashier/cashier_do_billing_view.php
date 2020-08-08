@@ -2145,9 +2145,9 @@
      		 .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row' style='margin-right:10px;'>";
     		for(var i=0;i<data.length;i++){
-    			
+					var mrp=Math.round(Number(data[i].service_price_inr)+Number(data[i].service_price_inr)*Number(data[i].service_gst_percentage)*(.01));
     			str += "<div class=\"col-md-2 col-sm-4\">\
-										<a class=\"ProvideService\" service-id=\""+data[i].service_id+"\" service-name=\""+data[i].service_name+"\" service-price-inr=\""+data[i].service_price_inr+"\" service-gst-percentage=\""+data[i].service_gst_percentage+"\" service-est-time=\""+data[i].service_est_time+"\" title=\""+data[i].service_name+"\">\
+										<a class=\"ProvideService\" service-id=\""+data[i].service_id+"\" service-name=\""+data[i].service_name+"\" service-price-inr=\""+data[i].service_price_inr+"\" service-gst-percentage=\""+data[i].service_gst_percentage+"\" service-est-time=\""+data[i].service_est_time+"\" title=\""+data[i].service_name+","+mrp+"\">\
 											<div class=\"card customized-category-card\">\
 												<div class=\"card-body\" style=\"text-align: center;padding:.25rem!important;background-color:#009925;border-radius:5px;\">\
 													<p class=\"card-text\">"+data[i].service_name+"<br> Size:"+data[i].qty_per_item+"</p>\
@@ -2179,9 +2179,9 @@
      		 .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row' style='margin-right:10px;'>";
     		for(var i=0;i<data.length;i++){
-    			
+					var mrp=Math.round(Number(data[i].service_price_inr)+Number(data[i].service_price_inr)*Number(data[i].service_gst_percentage)*(.01));
     			str += "<div class=\"col-md-2 col-sm-4\">\
-										<a class=\"ProvideServiceDetails\" service-id=\""+data[i].service_id+"\" service-name=\""+data[i].service_name+"\" service-price-inr=\""+data[i].service_price_inr+"\" service-gst-percentage=\""+data[i].service_gst_percentage+"\" service-est-time=\""+data[i].service_est_time+"\" title=\""+data[i].service_name+","+Math.round(data[i].service_price_inr)+"\">\
+										<a class=\"ProvideServiceDetails\" service-id=\""+data[i].service_id+"\" service-name=\""+data[i].service_name+"\" service-price-inr=\""+data[i].service_price_inr+"\" service-gst-percentage=\""+data[i].service_gst_percentage+"\" service-est-time=\""+data[i].service_est_time+"\" title=\""+data[i].service_name+","+mrp+"\">\
 											<div class=\"card customized-category-card\">\
 												<div class=\"card-body\" style=\"text-align: center;padding:.25rem!important;background-color:#009925;border-radius:5px;\">\
 													<p class=\"card-text\">"+data[i].qty_per_item+" "+data[i].service_unit+"</p>\
@@ -2207,9 +2207,9 @@
       .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row' style='margin-right:10px;'>";
     		for(var i=0;i<data.length;i++){
-    			
+    			var mrp=Math.round(Number(data[i].service_price_inr)+Number(data[i].service_price_inr)*Number(data[i].service_gst_percentage)*(.01));
     			str += "<div class=\"col-md-2 col-sm-4\">\
-										<a class=\"ProvideServiceDetails\" service-id=\""+data[i].service_id+"\" service-name=\""+data[i].service_name+"\" service-price-inr=\""+data[i].service_price_inr+"\" service-gst-percentage=\""+data[i].service_gst_percentage+"\" service-est-time=\""+data[i].service_est_time+"\" title=\""+data[i].service_name+","+Math.round(data[i].service_price_inr)+"\">\
+										<a class=\"ProvideServiceDetails\" service-id=\""+data[i].service_id+"\" service-name=\""+data[i].service_name+"\" service-price-inr=\""+data[i].service_price_inr+"\" service-gst-percentage=\""+data[i].service_gst_percentage+"\" service-est-time=\""+data[i].service_est_time+"\" title=\""+data[i].service_name+","+mrp+"\">\
 											<div class=\"card customized-category-card\">\
 												<div class=\"card-body\" style=\"text-align: center;padding:.25rem!important;background-color:#009925;border-radius:5px;\">\
 													<p class=\"card-text\">"+data[i].service_name+"</p>\
