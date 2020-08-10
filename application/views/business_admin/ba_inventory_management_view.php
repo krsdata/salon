@@ -28,7 +28,6 @@
 						</div>
 					<?php
 						}
-
 						if(!isset($selected_outlet)){
 					?>
 						<div class="col-md-12">
@@ -51,7 +50,6 @@
 								<h5 class="card-title">Add Composition</h5>
 							</div>
 							<div class="card-body">
-
 								<div class="modal fade" id="defaultModalSuccess" tabindex="-1" role="dialog" aria-hidden="true">
 									<div class="modal-dialog" role="document">
 										<div class="modal-content">
@@ -70,7 +68,6 @@
 										</div>
 									</div>
 								</div>
-
 								<div class="modal fade" id="defaultModalDanger" tabindex="-1" role="dialog" aria-hidden="true">
 									<div class="modal-dialog" role="document">
 										<div class="modal-content">
@@ -88,8 +85,7 @@
 											</div>
 										</div>
 									</div>
-								</div>
-								
+								</div>								
 								<form id="AddComposition" method="POST" action="#">
 									<div class="form-row">
 										<div class="form-group col-md-4">
@@ -121,7 +117,7 @@
 						        		<td>
 						        			<div class="form-group">
 							        			<select class="form-control Raw-Material-ID" name="raw_material_id[]" required>
-							        				<option value="" selected></option>
+							        				<option value="" selected disabled>Raw Category</option>
 							        				<?php
 							 									foreach ($raw_materials as $rm) {
 							 										echo "<option value=".$rm['service_id'].">".$rm['service_name']."</option>";
@@ -207,7 +203,7 @@
 									</div>
 								</div>
 								<!--MODAL AREA END---------------------------------->
-								<table class="table table-hover mt-3" style="width: 100%;">
+								<table class="table table-hover datatables-basic mt-3" style="width: 100%;">
 									<thead>
 										<tr>
 											<th>Composition</th>
@@ -265,9 +261,9 @@
 			$("#load_screen").hide();
 		});
 		
-		
-
-    
+		$(".datatables-basic").DataTable({
+			responsive: true
+		});    
 
     $("#AddRow").click(function(event){
     	event.preventDefault();
@@ -275,7 +271,7 @@
       var rowno = $("#Inventory-Composition-Table tr").length;
       rowno = rowno+1;
       
-      $("#Inventory-Composition-Table tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><select class=\"form-control Raw-Material-ID\" name=\"raw_material_id[]\"><option value=\"\" selected required></option><?php foreach ($raw_materials as $rm) { echo "<option value=".$rm['raw_material_category_id'].">".$rm['raw_material_name']."</option>"; } ?></select></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control Raw-Material-Name\" name=\"raw_material_name[]\" readonly required /></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control Raw-Material-Unit\" name=\"raw_material_unit[]\" readonly required /></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control Raw-Material-Brand\" name=\"raw_material_brand[]\" readonly required /></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control Consumption-Quantity\" name=\"consumption_quantity[]\" required /></div></td></tr>");
+      $("#Inventory-Composition-Table tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><select class=\"form-control Raw-Material-ID\" name=\"raw_material_id[]\"><option value=\"\" selected required></option><?php foreach ($raw_materials as $rm) { echo "<option value=".$rm['service_id'].">".$rm['service_name']."</option>"; } ?></select></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control Raw-Material-Name\" name=\"raw_material_name[]\" readonly required /></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control Raw-Material-Unit\" name=\"raw_material_unit[]\" readonly required /></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control Raw-Material-Brand\" name=\"raw_material_brand[]\" readonly required /></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control Consumption-Quantity\" name=\"consumption_quantity[]\" required /></div></td></tr>");
     });
 
     $("#DeleteRow").click(function(event){
@@ -455,9 +451,9 @@
        		temp += "<tr>\
        							<td>"+(i+1)+"</td>\
        							<td>"+data[i].service_name+"</td>\
-       							<td>"+data[i].raw_material_name+"</td>\
-       							<td>"+data[i].raw_material_brand+"</td>\
-       							<td>"+data[i].raw_material_unit+"</td>\
+       							<td>"+data[i].service_name+"</td>\
+       							<td>"+data[i].service_brand+"</td>\
+       							<td>"+data[i].service_unit+"</td>\
        							<td>"+data[i].consumption_quantity+"</td>\
        						</tr>";
        	}

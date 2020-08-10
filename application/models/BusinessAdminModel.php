@@ -246,7 +246,21 @@ class BusinessAdminModel extends CI_Model {
     }
 
     public function ViewComposition($where){
-        $sql = "SELECT * FROM mss_raw_composition,mss_raw_material_categories,mss_services WHERE mss_raw_composition.rmc_id = mss_raw_material_categories.raw_material_category_id AND mss_raw_material_categories.raw_material_business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND mss_raw_material_categories.raw_material_business_outlet_id = ".$this->db->escape($where['business_outlet_id'])." AND mss_raw_composition.service_id = ".$this->db->escape($where['service_id'])."  AND mss_raw_composition.service_id = mss_services.service_id";
+        $sql = "SELECT mss_services.service_name,
+					mss_services.service_unit,
+					mss_services.service_brand,
+					mss_raw_composition.consumption_quantity
+				FROM 
+					mss_raw_composition,
+					mss_categories,
+					mss_sub_categories,
+					mss_services 
+				WHERE 
+					mss_services.service_id =mss_raw_composition.service_id AND
+					mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND 
+					mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
+					mss_categories.category_business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND
+					mss_services.service_id= ".$this->db->escape($where['service_id'])." ";
 
         $query = $this->db->query($sql);
         
@@ -9583,15 +9597,23 @@ WHERE  mss_customers.customer_business_outlet_id = ".$this->session->userdata['o
 	}
 	
     public function GetRawMaterialsIn($where){
-        $sql = "SELECT * FROM `mss_services`,mss_categories,mss_sub_categories 
-        where 
-        mss_services.inventory_type_id=1
-        AND mss_services.service_is_active=1
-        AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id=mss_categories.category_id
-        AND mss_sub_categories.sub_category_is_active=1
-        AND mss_categories.category_business_outlet_id=".$this->db->escape($where['business_outlet_id'])."
-        AND mss_categories.category_is_active=".$this->db->escape($where['is_active'])."";
+        $sql = "SELECT 
+		mss_services.*
+	FROM 
+		mss_services,
+		mss_sub_categories,
+		mss_categories
+	WHERE 
+		mss_services.inventory_type='Raw Material' AND
+		mss_services.service_is_active=1 AND
+		mss_services.inventory_type_id=1 AND
+		mss_services.service_sub_category_id =mss_sub_categories.sub_category_id AND
+		mss_sub_categories.sub_category_category_id = mss_categories.category_id AND
+		mss_categories.category_is_active=1 AND 
+		mss_categories.category_is_active=1 AND 
+		mss_categories.category_for=1 AND  
+		mss_categories.category_business_outlet_id=".$this->db->escape($where['business_outlet_id'])."  AND
+		mss_categories.category_business_admin_id=".$this->db->escape($where['business_admin_id'])."";
          $query = $this->db->query($sql);
          if($query){
              return $this->ModelHelper(true,false,'',$query->result_array());
