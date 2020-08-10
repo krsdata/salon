@@ -142,8 +142,8 @@ class MYPDF extends TCPDF {
 									$gst=$item['service_price_inr']*$item['service_gst_percentage']/100;
 									$mrp=$price+$gst;
 									$total_value=$mrp*$item['txn_service_quantity'];
-									if($item['service_add_on_price'] >0){
-										$total_value+=$item['service_add_on_price'];
+									if($item['txn_add_on_amount'] > 0){
+										$total_value+=$item['txn_add_on_amount'];
 
 									}
 									$discount=$total_value*$discount/100;																
@@ -160,8 +160,8 @@ class MYPDF extends TCPDF {
 									if($discount >0){
 										$total_value-=$discount;
 									}
-									if($item['service_add_on_price'] >0){
-										$total_value+=$item['service_add_on_price'];
+									if($item['txn_add_on_amount'] >0){
+										$total_value+=$item['txn_add_on_amount'];
 									}
 									$total_service_value+=$total_value;
 									$gst=($total_value*($item['service_gst_percentage']/100)/(1+($item['service_gst_percentage'])/100));
