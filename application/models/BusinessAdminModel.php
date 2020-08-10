@@ -9569,6 +9569,7 @@ WHERE  mss_customers.customer_business_outlet_id = 1
     		mss_transaction_services.txn_service_discount_absolute,
 			mss_transaction_services.txn_service_quantity,
 			mss_transaction_services.txn_service_discounted_price,
+			mss_transaction_services.txn_add_on_amount,
 			mss_transactions.txn_discount,
 			mss_transactions.txn_value,
 			date(mss_transactions.txn_datetime) AS 'date',
