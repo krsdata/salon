@@ -610,7 +610,8 @@ class CashierModel extends CI_Model {
 							'txn_service_quantity'   => $data['cart_data'][$i]['service_quantity'],
 							'txn_service_discount_percentage' => $data['cart_data'][$i]['service_discount_percentage'],
 							'txn_service_discount_absolute'   => $data['cart_data'][$i]['service_discount_absolute'],
-							'txn_service_remarks'		=> $data['cart_data'][$i]['service_remarks']
+							'txn_service_remarks'		=> $data['cart_data'][$i]['service_remarks'],
+							'txn_add_on_amount'		=> $data['cart_data'][$i]['service_add_on_price']
 						);
 
 						//for percentage discount

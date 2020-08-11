@@ -278,7 +278,7 @@ class BusinessAdmin extends CI_Controller {
 								
 								$data['paid_back']=$this->BusinessAdminModel->GetDailyAmountPaidBack($where);
 								$data['paid_back']=$data['paid_back']['res_arr'][0]['paid_back'];
-                // $this->PrettyPrintArray($data['bill']);
+                // $this->PrettyPrintArray($data['paid_back']);
                 $data['card_data']= $this->BusinessAdminModel->TodayPackageSales($where);
                 $data['card_data']=$data['card_data']['res_arr'];
                 $data['virtual_wallet_sales']= $this->BusinessAdminModel->TodayVirtualWalletSales($where);
@@ -11384,7 +11384,8 @@ public function InsertSalary(){
 					$where = array(
 							'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 							'is_active'         => TRUE,
-							'business_outlet_id'=> $outlet_id
+							'business_outlet_id'=> $outlet_id,
+							'category_for'			=> 1
 					);
 					$data = $this->BusinessAdminModel->GetRawMaterialsIn($where);
 					if($data['success'] == 'true'){ 
