@@ -1419,7 +1419,7 @@
 																	$gst=$item['service_price_inr']*$item['service_gst_percentage']/100;
 																	$mrp=$price+$gst;
 																	$total_value=$mrp*$item['service_quantity'];
-																	$gross_price+=$total_value;
+																	$gross_price+=$total_value+$item['service_add_on_price'];
 																	if($item['service_add_on_price'] >0){
 																		$total_value+=$item['service_add_on_price'];
 
@@ -1434,7 +1434,7 @@
 																	$gst=$item['service_price_inr']*$item['service_gst_percentage']/100;
 																	$mrp=$price+$gst;
 																	$total_value=$mrp*$item['service_quantity'];
-																	$gross_price+=$total_value;
+																	$gross_price+=$total_value+$item['service_add_on_price'];
 																	if($discount >0){
 																		$total_value-=$discount;
 																	}
@@ -1559,18 +1559,18 @@
 																				<?php 
 																				echo $actual_bill;
 																				 if(!empty($rules))
-                                                                                {
-                                                                                  if($rules['rule_type'] == 'Cashback Single Rule' || $rules['rule_type'] == 'Cashback Multiple Rule' || $rules['rule_type'] == 'Cashback LTV Rule')
-                                                                                  {
-                                                                                    if($individual_customer['customer_rewards'] >$actual_bill){?>
-                                                                                      <option value="loyalty_wallet">Loyalty Wallet : <?=$individual_customer['customer_rewards']?> </option>
-                                                                                      <?php
-                                                                                    }
-                                                                                    else{?>
-                                                                                        <option value="loyalty_wallet" disabled>Loyalty Wallet : <?=$individual_customer['customer_rewards']?></option>
-                                                                                      <?php
-                                                                                    }
-                                                                                  }
+																					{
+																						if($rules['rule_type'] == 'Cashback Single Rule' || $rules['rule_type'] == 'Cashback Multiple Rule' || $rules['rule_type'] == 'Cashback LTV Rule')
+																						{
+																							if($individual_customer['customer_rewards'] >$actual_bill){?>
+																								<option value="loyalty_wallet">Loyalty Wallet : <?=$individual_customer['customer_rewards']?> </option>
+																								<?php
+																							}
+																							else{?>
+																									<option value="loyalty_wallet" disabled>Loyalty Wallet : <?=$individual_customer['customer_rewards']?></option>
+																								<?php
+																							}
+																						}
 																				}
 																			    ?>
 																				<!--  -->
