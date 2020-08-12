@@ -3846,7 +3846,8 @@ class BusinessAdminModel extends CI_Model {
 				mss_transactions, mss_transaction_settlements 
 				SET mss_transaction_services.txn_service_status=0,	
 				mss_transaction_settlements.txn_settlement_amount_received=(mss_transaction_settlements.txn_settlement_amount_received- ".$this->db->escape($data['txn_service_discounted_price'])."),	mss_transactions.txn_value=(mss_transactions.txn_value- ".$this->db->escape($data['txn_service_discounted_price'])."),
-				mss_transaction_settlements.txn_settlement_amount_received=(mss_transaction_settlements.txn_settlement_amount_received-".$this->db->escape($data['txn_service_discounted_price']).")
+				mss_transaction_settlements.txn_settlement_amount_received=(mss_transaction_settlements.txn_settlement_amount_received-".$this->db->escape($data['txn_service_discounted_price'])."),
+				mss_transaction_settlements.txn_settlement_reversed=".$this->db->escape($data['txn_service_discounted_price'])."
 				WHERE mss_transaction_services.txn_service_service_id=".$this->db->escape($data['txn_service_service_id'])." AND
 				mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." AND 
 				mss_transaction_settlements.txn_settlement_txn_id=".$this->db->escape($data['txn_id'])." ";
@@ -9714,6 +9715,22 @@ WHERE  mss_customers.customer_business_outlet_id = ".$this->session->userdata['o
 		else{
 			return $this->ModelHelper(false,true,"DB error!");   
 		}
-    }
+	}
 
+	public function UpdateAbsDiscount($data){
+        $sql = "UPDATE 
+		mss_transaction_services
+		SET mss_transaction_services.txn_service_discount_absolute= ".$this->db->escape($data['txn_service_discount_absolute'])." ,
+		mss_transaction_services.txn_service_discounted_price=(mss_transaction_services.txn_service_discounted_price+".$this->db->escape($data['txn_discounted_result']).")	
+		WHERE mss_transaction_services.txn_service_id=".$this->db->escape($data['txn_service_id'])." ";
+        
+		$query = $this->db->query($sql);
+		if($query){
+			return $this->ModelHelper(true,false,'');
+		}
+		else{
+			return $this->ModelHelper(false,true,"DB error!");   
+		}
+	}
+	
 }
