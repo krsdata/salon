@@ -77,6 +77,7 @@ class MYPDF extends TCPDF {
 					$shop=$shop_details['business_outlet_address'];
 					$cust=$individual_customer['customer_name'].' '.date('d-M-Y h:i A');
 					$pdf->MultiCell(45,	0,$shop, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					
 					$pdf->Ln(6);
 					// $pdf->Cell(30, 25,'Date : '.date('d-M-Y h:i A') , 0, 0, 'L', 0, '', 0, false, 'T', 'C');
 					// $pdf->MultiCell(40,0,$shop, 0, 'R', 0, 0, '', '', true, 0, false, true, 0, 'T');
@@ -137,43 +138,38 @@ class MYPDF extends TCPDF {
 							$new_gst=0;
 							$discount=0;	
 							$total_value=0;
+							$gross_price=0;
 							foreach ($cart as $item){
 								if($item['service_discount_percentage']>0){
 									$discount=$item['service_discount_percentage'];
 									$price= $item['service_price_inr'];
 									$gst=$item['service_price_inr']*$item['service_gst_percentage']/100;
 									$mrp=$price+$gst;
-									$total_value=$mrp*$item['service_quantity'];
-									if($item['service_add_on_price'] >0){
-										$total_value+=$item['service_add_on_price'];
-
-									}
+									$total_value=($mrp+$item['service_add_on_price'])*$item['service_quantity'];
+									$gross_price+=$total_value;
+									// if($item['service_add_on_price'] >0){
+									// 	$total_value+=$item['service_add_on_price'];
+									// }
 									$discount=$total_value*$discount/100;																
 									$total_value-=$discount;
 									$total_service_value+=$total_value;
 									$gst=($total_value*($item['service_gst_percentage']/100)/(1+($item['service_gst_percentage']/100)));
-									// $base_price=$item['service_price_inr']*$item['service_quantity'];
-									// $gst=$item['service_total_value']-$item['service_price_inr']*$item['service_quantity'];
-									// $discount=$item['service_total_value']*$item['service_discount_percentage']/100;
-									// $x=$discount/(1+($item['service_gst_percentage']/100));
-									// $y=$discount-$x;
-									// $new_base_price=$base_price-$x;
-									// $new_gst=$gst-$y;
-									// $final_anmount=$new_base_price_price+$new_gst;
-									// echo $discount;
+
 									
 								}else{
 									$discount=$item['service_discount_absolute'];
 									$price= $item['service_price_inr'];
 									$gst=$item['service_price_inr']*$item['service_gst_percentage']/100;
 									$mrp=$price+$gst;
-									$total_value=$mrp*$item['service_quantity'];
+									$total_value=($mrp+$item['service_add_on_price'])*$item['service_quantity'];
+									$gross_price+= $total_value;
+									// if($item['service_add_on_price'] >0){
+									// 	$total_value+=$item['service_add_on_price'];										
+									// }
 									if($discount >0){
 										$total_value-=$discount;
 									}
-									if($item['service_add_on_price'] >0){
-										$total_value+=$item['service_add_on_price'];
-									}
+									
 									$total_service_value+=$total_value;
 									$gst=($total_value*($item['service_gst_percentage']/100)/(1+($item['service_gst_percentage'])/100));
 									// echo $item['service_discount_absolute'];
@@ -220,7 +216,7 @@ class MYPDF extends TCPDF {
 								<!-- <td style="width:70%;">Total Bill</td> -->
 								<td style="width:66%;">Total Bill</td>
 								<td style="width:30%;"><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
-								<?=round($total_service_value)?>
+								<?=round($gross_price)?>
 								</td>
 								
 							</tr>
@@ -234,7 +230,7 @@ class MYPDF extends TCPDF {
 								}?></td>
 							</tr>
 							<tr>
-								<td>Discount</td>
+								<td>Total Discount</td>
 								<td><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
 									<?=round($total_discount)?>
 								</td>
