@@ -139,6 +139,7 @@ class MYPDF extends TCPDF {
 							$discount=0;	
 							$total_value=0;
 							$gross_price=0;
+							$final_mrp=0;
 							foreach ($cart as $item){
 								if($item['service_discount_percentage']>0){
 									$discount=$item['service_discount_percentage'];
@@ -146,6 +147,7 @@ class MYPDF extends TCPDF {
 									$gst=$item['service_price_inr']*$item['service_gst_percentage']/100;
 									$mrp=$price+$gst;
 									$total_value=($mrp+$item['service_add_on_price'])*$item['service_quantity'];
+									$final_mrp= ($mrp+$item['service_add_on_price'])*$item['service_quantity'];
 									$gross_price+=$total_value;
 									// if($item['service_add_on_price'] >0){
 									// 	$total_value+=$item['service_add_on_price'];
@@ -162,6 +164,7 @@ class MYPDF extends TCPDF {
 									$gst=$item['service_price_inr']*$item['service_gst_percentage']/100;
 									$mrp=$price+$gst;
 									$total_value=($mrp+$item['service_add_on_price'])*$item['service_quantity'];
+									$final_mrp= ($mrp+$item['service_add_on_price'])*$item['service_quantity'];
 									$gross_price+= $total_value;
 									// if($item['service_add_on_price'] >0){
 									// 	$total_value+=$item['service_add_on_price'];										
@@ -172,22 +175,13 @@ class MYPDF extends TCPDF {
 									
 									$total_service_value+=$total_value;
 									$gst=($total_value*($item['service_gst_percentage']/100)/(1+($item['service_gst_percentage'])/100));
-									// echo $item['service_discount_absolute'];
-								// 	$discount=$item['service_discount_absolute'];
-								// 	$base_price=$item['service_price_inr']*$item['service_quantity'];
-								// 	$gst=$item['service_total_value']-$item['service_price_inr']*$item['service_quantity'];
-								// 	$x=$discount/(1+($item['service_gst_percentage']/100));
-								// 	$y=$discount-$x;
-								// 	$new_base_price=$base_price-$x;
-								// 	$new_gst=$gst-$y;
+									
 								}
-								// $total_base_price+=$new_base_price;
-								// $total_gst+=$new_gst;
 								$total_discount+=$discount;
 						?>
 						<tr>
 							<td style="width:40%;"><?=$item['service_name']?></td>
-							<td  style="width:20%;text-align:center;"><?=round($mrp)?></td>
+							<td  style="width:20%;text-align:center;"><?=round($final_mrp)?></td>
 							<td  style="width:15%;text-align:center;"><?=$item['service_quantity']?></td>
 							<!-- <td style="width:10%;text-align:center;"><?=abs(round($new_gst))?></td> -->
 							<!-- <td style="width:15%;"><?=round($total_discount)?></td> -->
