@@ -651,8 +651,7 @@
 						if(data[i].txn_status==1 && data[i].net_amt > 0){
 							// alert(edit_bill);
 							if(edit_bill!=''){
-							str_2 += "<td><button class='btn btn-primary editBtn' data-toggle='Modal' data-target='#ModalVerifyPassword' txn_id='"+data[i].bill_no+"' settlement_way='"+data[i].settlement_way
-							+"' ><i class='fa fa-edit'></i></button></td>";
+							str_2 += "<td><button class='btn btn-primary editBtn' data-toggle='Modal' data-target='#ModalEditBill' txn_id='"+data[i].bill_no+"'><i class='fa fa-edit'></i></button></td>";
 							}
 							str_2 += "<td><button class='btn btn-success cancelBtn' data-toggle='Modal' data-target='#ModalCancelBill' txn_id='"+data[i].bill_no+"' ><i class='fa fa-trash'></i></button></td>";
 							str_2 += "<td><button class='btn btn-warning sendSmsBtn'  txn_id='"+data[i].bill_no+"'><i class='fa fa-sms'></i></button></td>";
@@ -694,13 +693,13 @@
 							str_2 += "<td><div class='form-group'><input type='text' class='form-control editTransaction' name='service_name[]' value='"+data[i].service_name+"' readonly></div></td>";
 							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discounted_price[]' value="+data[i].mrp+" readonly></div></td>";
 							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discount_percent[]' value="+data[i].disc1+" readonly></div></td>";
-							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discount_abs[]' value="+data[i].disc2+" readonly></div></td>";
+							str_2 += "<td><div class='form-group'><input type='number' min='0' class='form-control serviceAbsDisc editTransaction' name='txn_discount_abs[]' value="+data[i].disc2+"></div></td>";
 							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discounted_price[]' value="+data[i].txn_service_discounted_price+" readonly></div></td>";
 							str_2 += "<td><div class='form-group'><input type='date' class='form-control serviceTxnDate editTransaction' name='txn_datetime' value="+data[i].date+"></div></td>";
 							str_2 += "<td><div class='form-group'><select class='form-control serviceExpert' name='expert[]'><option value='"+data[i].txn_service_expert_id+"' selected >"+data[i].expert+"</option><?php foreach($expert as $expert){ echo "<option value=".$expert['employee_id'].">".$expert['employee_first_name']."</option>";}?></select></div></td>";
 							str_2 += "<td><div class='form-group'><input type='hidden'  name='txn_id' value="+data[i].txn_id+"></div></td>";
-							// str_2 += "<td><button class='btn btn-sm btn-danger  Edit_individual_service' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_discounted_price='"+data[i].txn_service_discounted_price+"'> <i class='fa fa-trash'></i></button></td>";
-							str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-success updateService' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_id='"+data[i].txn_service_id+"' old_txn_date='"+data[i].date+"' old_txn_expert='"+data[i].txn_service_expert_id+"'>Save</button></td>";
+							str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-danger  Edit_individual_service' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_discounted_price='"+data[i].txn_service_discounted_price+"'> <i class='fa fa-trash'></i></button><div></td>";
+							str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-success updateService' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_id='"+data[i].txn_service_id+"' old_txn_date='"+data[i].date+"' old_txn_expert='"+data[i].txn_service_expert_id+"'  old_abs_disc='"+data[i].disc2+"'>Save</button></div></td>";
 
 						str_2 += "</tr>";
 						}				
@@ -719,6 +718,9 @@
 			$(document).on('change','.serviceTxnDate',function(event){
 				$('.updateService').attr('txn_date',$(this).val());
 			});
+			$(document).on('change','.serviceAbsDisc',function(event){
+				$('.updateService').attr('txn_abs_disc',$(this).val());
+			});
 
 			$(document).on('click','#close_edit_btn',function(event){
 				window.location.reload();
@@ -732,8 +734,11 @@
         "txn_date" : $(this).attr('txn_date'),
 				"txn_service_id" : $(this).attr('txn_service_id'),
 				"old_txn_date"	: $(this).attr('old_txn_date'),
-				"old_txn_expert" : $(this).attr('old_txn_expert')
+				"old_txn_expert" : $(this).attr('old_txn_expert'),
+				"txn_abs_disc"	: $(this).attr('txn_abs_disc'),
+				"old_txn_disc"	: $(this).attr('old_abs_disc')
       };
+			
       $.ajax({
         url: "<?=base_url()?>BusinessAdmin/UpdateTransaction",
         data: parameters,

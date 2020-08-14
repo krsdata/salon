@@ -278,7 +278,7 @@ class BusinessAdmin extends CI_Controller {
 								
 								$data['paid_back']=$this->BusinessAdminModel->GetDailyAmountPaidBack($where);
 								$data['paid_back']=$data['paid_back']['res_arr'][0]['paid_back'];
-                // $this->PrettyPrintArray($data['bill']);
+                // $this->PrettyPrintArray($data['paid_back']);
                 $data['card_data']= $this->BusinessAdminModel->TodayPackageSales($where);
                 $data['card_data']=$data['card_data']['res_arr'];
                 $data['virtual_wallet_sales']= $this->BusinessAdminModel->TodayVirtualWalletSales($where);
@@ -5134,10 +5134,23 @@ public function GetEmployee(){
 							'txn_service_expert_id'=>$_POST['txn_expert']
 						);
 					}
+					if(empty($_POST['txn_abs_disc'])){
+						$data3=array(	
+							'txn_service_id'=>$_POST['txn_service_id'],
+							'txn_service_discount_absolute'=>$_POST['old_txn_disc']
+						);
+					}else{
+						$data3=array(	
+							'txn_service_id'=>$_POST['txn_service_id'],
+							'txn_service_discount_absolute'=>$_POST['txn_abs_disc'],
+							'txn_discounted_result'	=>($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
+						);
+					}
 						
 						$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');	
-						$result2 = $this->BusinessAdminModel->Update($data2,'mss_transaction_services','txn_service_id');			
-						if($result['success'] == 'true' || $result2['success'] == 'true'){	
+						$result2 = $this->BusinessAdminModel->Update($data2,'mss_transaction_services','txn_service_id');	
+						$result3 = $this->BusinessAdminModel->UpdateAbsDiscount($data3);			
+						if($result['success'] == 'true' || $result2['success'] == 'true' || $result3['success']){	
 							$this->ReturnJsonArray(true,false,"Bill Updated successfully!");
 							die;
 						}else{
@@ -5187,10 +5200,8 @@ public function GetEmployee(){
 					'txn_service_service_id'=>$_POST['txn_service_service_id'],
 					'txn_service_discounted_price'=>$_POST['txn_service_discounted_price'],
 					'txn_service_status'=>0
-				);
-				
-				$update_txn_services=$this->BusinessAdminModel->UpdateTransactionService($data);
-	
+				);		
+				$update_txn_services=$this->BusinessAdminModel->UpdateTransactionService($data);	
 				if($update_txn_services['success']=='true'){
 						$this->ReturnJsonArray(true,false,"Bill Deleted Successfully!");
 						die;				
@@ -11384,7 +11395,8 @@ public function InsertSalary(){
 					$where = array(
 							'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 							'is_active'         => TRUE,
-							'business_outlet_id'=> $outlet_id
+							'business_outlet_id'=> $outlet_id,
+							'category_for'			=> 1
 					);
 					$data = $this->BusinessAdminModel->GetRawMaterialsIn($where);
 					if($data['success'] == 'true'){ 
@@ -11622,9 +11634,6 @@ public function expenses(){
             $this->LogoutUrl(base_url()."BusinessAdmin/");
         }
     }
-
-
-
 
 }
 	    
