@@ -9750,4 +9750,35 @@ WHERE  mss_customers.customer_business_outlet_id = ".$this->session->userdata['o
 		}
     }
 
+
+    public function GetExpenseRecord($date){
+        $sql = "SELECT payment_mode, SUM(total_amount) as total_amount FROM `mss_expenses` WHERE `expense_date` = '$date' GROUP BY payment_mode";
+
+        $query = $this->db->query($sql);
+        $data['expenses'] = $query->result_array();
+
+
+        $sql = "SELECT payment_type, SUM(pending_amount_submitted) as total_amount FROM `mss_pending_amount_tracker` WHERE DATE(`date_time`)  = '$date' GROUP BY payment_type";
+
+        $query = $this->db->query($sql);
+        $data['pending_amount'] = $query->result_array();
+
+        $sql = "SELECT t2.txn_settlement_payment_mode,t2.txn_settlement_amount_received as total_price FROM `mss_transactions` t1
+LEFT JOIN mss_transaction_settlements t2
+ON t1.`txn_id` = t2.txn_settlement_txn_id
+WHERE DATE(t1.txn_datetime)  = '$date' GROUP BY t2.txn_settlement_txn_id
+
+";
+
+        $query = $this->db->query($sql);
+        $data['transaction'] = $query->result_array();
+
+        if($data){
+            return $this->ModelHelper(true,false,'',$data);
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
+
 }
