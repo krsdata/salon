@@ -11543,8 +11543,7 @@ public function expenses(){
                 $pending_amount = $result['res_arr']['pending_amount'];
                 $temp = [];
                 $transaction_data = [];
-                $json_data = [];
-                #echo "<pre>";
+                $json_data = [];                
                 //transaction data
                 $key_info = [];
                 
@@ -11606,10 +11605,8 @@ public function expenses(){
                         }
                     }                        
                 }
-                $key_info['keys'][2] = $temp;
-               // print_r($key_info); 
+                $key_info['keys'][2] = $temp;               
                 $p_mode = [];
-                //print_r($key_info[0]);
                 foreach ($key_info as $key => $k) {
                     foreach ($k as $key => $keys) {
                         if(!in_array($keys, $p_mode)){
@@ -11617,7 +11614,6 @@ public function expenses(){
                         }
                     }                                    
                 }
-
 
             }
 //  

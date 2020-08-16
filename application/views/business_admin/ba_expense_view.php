@@ -17,7 +17,7 @@
 				<div  class="col-md-12">
 						<div class="card flex-fill w-100">
 							<div class="card-header">								
-							<form action="<?php echo base_url('BusinessAdmin/expenses')?>" method="POST" id="GetBills1">
+							<form action="<?php echo base_url('welcome/daybook')?>" method="POST" id="GetBills1">
                 <div class="form-row"> 
 									<div class="col-md-3">
 									<h3></h3>
@@ -50,6 +50,7 @@
 									</thead>
 									<tbody>
 										<?php
+										$total_o = 0;
 										$total_t = 0;
 										$total_p = 0;
 										$total_e = 0;
@@ -57,7 +58,13 @@
 											?>
 											<tr <?php if($p == "virtual_wallet"){ ?> style='background-color: red;' <?php } ?>>
 												<td><?php echo ucfirst(str_replace("_", " ", $p));?></td>
-												<td></td>
+												<td><?php echo $opening_balance_data[$p];
+												if($p == "virtual_wallet"){
+													$total_o = $total_o-$opening_balance_data[$p];
+												}else{
+													$total_o = $total_o+$opening_balance_data[$p];
+												}												
+												?></td>
 												<td><?php echo $transaction_data[$p];
 												if($p == "virtual_wallet"){
 													$total_t = $total_t-$transaction_data[$p];
@@ -79,18 +86,18 @@
 													$total_e = $total_e+$expenses_data[$p];
 												}												
 												?></td>
-												<td><?php echo ($transaction_data[$p]+$pending_amount_data[$p]-$expenses_data[$p]);?></td>
+												<td><?php echo abs($opening_balance_data[$p]+$transaction_data[$p]+$pending_amount_data[$p]-$expenses_data[$p]);?></td>
 											</tr>
 											<?php
 										}
 										?>
 										<tr>
 												<td><strong>Total</strong></td>
-												<td></td>
+												<td><strong><?php echo $total_o;?></strong></td>
 												<td><strong><?php echo $total_t;?></strong></td>
 												<td><strong><?php echo $total_p;?></strong></td>
 												<td><strong><?php echo $total_e;?></strong></td>
-												<td><strong><?php echo ($total_t+$total_p+$total_e);?></strong></td>
+												<td><strong><?php echo abs($total_t+$total_p+$total_o-$total_e);?></strong></td>
 											</tr>
 									</tbody>
 								</table>
