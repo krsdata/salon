@@ -29,6 +29,7 @@
 			        <!--<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/AddOutlet"><i data-feather="home" style="color:#eeb211;"></i>Outlets</a></li>
 			    		<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/Inventory"><i data-feather="grid" style="color:#009925;"></i>Composition</a></li>-->
 			    		<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/MenuManagement"><i data-feather="menu" style="color:#d50f25;"></i>Menu Management</a></li>
+						<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/MenuManagementNew"><i data-feather="menu" style="color:#d50f25;"></i>Menu Management New</a></li>
 			    		<!--<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/BusinessAdminAddPackage/"><i data-feather="gift" style="color:#0070c0;"></i>Packages</a></li>
 			    		<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/AddEmployee"><i data-feather="users" style="color:d50f25;"></i>Employee</a></li>
 						<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/ConfigExpense"><i data-feather="file-text" style="color:#eeb211;"></i>Expense</a></li>

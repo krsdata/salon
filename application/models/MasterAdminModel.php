@@ -132,8 +132,21 @@ class MasterAdminModel extends CI_Model
   //Generic function
   public function Insert($data, $table_name)
   {
+	$data = $this->db->insert($table_name, $data);
 
-    $data = $this->db->insert($table_name, $data);
+    if ($data) {
+      // $data = array('insert_id' => $this->db->insert_id());
+      return $this->ModelHelper(true, false, '', $data);
+    } else {
+      return $this->ModelHelper(false, true, "Check your inserted query!", $data);
+    }
+  }
+  
+  //Generic function
+  public function InsertBatch($data, $table_name)
+  {
+
+    $data = $this->db->insert_batch($table_name, $data);
 
     if ($data) {
       // $data = array('insert_id' => $this->db->insert_id());
@@ -184,7 +197,25 @@ class MasterAdminModel extends CI_Model
       return $this->ModelHelper(false, true, "DB error!");
     }
   }
-
+  
+   public function MasterSubCategories($data,$getSubCategoryById=0)
+  {
+	
+    $sql = "SELECT sub_category_id,sub_category_category_id,sub_category_name,sub_category_is_active,sub_category_description,category_name,category_type FROM master_sub_categories AS A,master_categories AS B WHERE A.sub_category_category_id = B.category_id AND B.master_id = " . $this->db->escape($data['master_id']) . " AND A.sub_category_is_active = " . $this->db->escape($data['sub_category_is_active']) . " ";
+    
+	if($getSubCategoryById>0){
+		$sql .= "  AND A.sub_category_id = " . $this->db->escape($getSubCategoryById) . " ";
+	
+	}
+	$query = $this->db->query($sql);
+	
+    if ($query) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, "DB error!");
+    }
+  }
+  
   public function Services($where)
   {
     $sql = "SELECT * FROM mss_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.category_business_admin_id = " . $this->db->escape($where['category_business_admin_id']) . " AND C.service_is_active = " . $this->db->escape($where['service_is_active']) . " AND A.category_business_outlet_id = " . $this->db->escape($where['category_business_outlet_id']) . " AND C.service_type = " . $this->db->escape($where['service_type']) . "";
@@ -197,7 +228,22 @@ class MasterAdminModel extends CI_Model
       return $this->ModelHelper(false, true, "DB error!");
     }
   }
-
+ 
+   public function MasterServices($where,$service_id=0)
+  {
+    $sql = "SELECT * FROM master_categories AS A,master_sub_categories AS B,master_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.master_id = " . $this->db->escape($where['master_id']) . " AND C.service_is_active = " . $this->db->escape($where['service_is_active']) . "  AND C.service_type = " . $this->db->escape($where['service_type']) . "";
+    if($service_id>0){
+		$sql .= " AND C.service_id = ".$service_id."";
+	}
+    $query = $this->db->query($sql);
+    
+    if ($query) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, "DB error!");
+    }
+  }
+ 
 
   public function DeactiveCategory($category_id)
   {
@@ -213,6 +259,33 @@ class MasterAdminModel extends CI_Model
     }
   }
 
+ public function DeactiveMasterCategory($category_id){
+   	  
+    /*$sql = "UPDATE master_services,master_sub_categories,master_categories SET master_services.service_is_active = FALSE,master_sub_categories.sub_category_is_active = FALSE,master_categories.category_is_active = FALSE WHERE 
+				master_sub_categories.sub_category_id = master_services.service_sub_category_id AND master_sub_categories.sub_category_category_id = master_categories.category_id  AND master_categories.category_id =" . $this->db->escape($category_id) . "";
+ 
+    */
+	
+	$sql = "UPDATE master_categories SET category_is_active = FALSE WHERE category_id =" . $this->db->escape($category_id) . "";
+	$query = $this->db->query($sql);
+    
+    if ($this->db->affected_rows() > 0) {
+		
+	  // Deactivated all which belong to this category like Sub category/Service/  	
+	  $sql = "UPDATE master_sub_categories SET sub_category_is_active = FALSE WHERE sub_category_category_id =" . $this->db->escape($category_id) . "";
+	  $this->db->query($sql);
+	  
+	 
+	  $sql = "UPDATE master_services,master_sub_categories SET master_services.service_is_active = FALSE WHERE 
+				master_sub_categories.sub_category_id = master_services.service_sub_category_id AND master_sub_categories.sub_category_category_id =" . $this->db->escape($category_id) . "";
+	  $this->db->query($sql);	
+	 	  
+      return $this->ModelHelper(true, false);
+    } else {
+      return $this->ModelHelper(false, true, "No row updated!");
+    }
+  }  
+  
   public function DeactiveSubCategory($sub_category_id)
   {
     $sql = "UPDATE mss_sub_categories,mss_services SET mss_sub_categories.sub_category_is_active = FALSE,mss_services.service_is_active = FALSE WHERE mss_sub_categories.sub_category_id = mss_services.service_sub_category_id AND mss_sub_categories.sub_category_id = " . $this->db->escape($sub_category_id) . "";
@@ -225,7 +298,26 @@ class MasterAdminModel extends CI_Model
       return $this->ModelHelper(false, true, "No row updated!");
     }
   }
+ 
+  public function MasterDeactiveSubCategory($sub_category_id)
+  {
+    //$sql = "UPDATE master_sub_categories,master_services SET master_sub_categories.sub_category_is_active = FALSE,master_services.service_is_active = FALSE WHERE master_sub_categories.sub_category_id = master_services.service_sub_category_id AND master_sub_categories.sub_category_id = " . $this->db->escape($sub_category_id) . "";
+    
+	$sql = "UPDATE master_sub_categories SET sub_category_is_active = FALSE WHERE sub_category_id =" . $this->db->escape($sub_category_id) . "";
+	
+    $query = $this->db->query($sql);
 
+    if ($this->db->affected_rows() > 0) {
+	  // Deactivated all which belong to this sub category like Sub category/Service/  	
+	  $sql = "UPDATE master_services SET service_is_active = FALSE WHERE service_sub_category_id =" . $this->db->escape($sub_category_id) . "";
+	  $this->db->query($sql);	
+		
+      return $this->ModelHelper(true, false);
+    } else {
+      return $this->ModelHelper(false, true, "No row updated!");
+    }
+  }
+  
   public function ViewCompositionBasic($where)
   {
     $sql = "SELECT * FROM mss_raw_composition,mss_services,mss_sub_categories,mss_categories WHERE mss_raw_composition.service_id = mss_services.service_id AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND mss_sub_categories.sub_category_category_id = mss_categories.category_id AND mss_categories.category_business_admin_id = " . $this->db->escape($where['business_admin_id']) . " AND mss_categories.category_business_outlet_id =" . $this->db->escape($where['business_outlet_id']) . " GROUP BY mss_raw_composition.service_id";

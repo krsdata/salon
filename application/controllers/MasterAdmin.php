@@ -1047,7 +1047,7 @@ class MasterAdmin extends CI_Controller {
 		$this->LogoutUrl(base_url() . "MasterAdmin");
 		}
 	}
-
+    
 	//Inventory & Stock
 	public function Inventory(){
 		if($this->IsLoggedIn('master_admin')){
@@ -2208,6 +2208,72 @@ class MasterAdmin extends CI_Controller {
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		}		
 	}
+	
+	/* Get Master categories */
+	private function GetMasterCategories($masterId){
+		if($this->IsLoggedIn('master_admin')){	
+			$where = array(
+				'master_id' => $masterId,
+				'category_is_active'         => TRUE
+			);	
+			$data = $this->MasterAdminModel->MultiWhereSelect('master_categories',$where);
+			if($data['success'] == 'true'){	
+				return $data['res_arr'];
+			}
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+		
+	}
+	/* Get Master Sub categories */
+	private function GetMasterSubCategories($masterId){
+		if($this->IsLoggedIn('master_admin')){	
+			$data = array(
+				'master_id' 		      => $masterId,
+				'sub_category_is_active'  => TRUE
+			);	
+			$data = $this->MasterAdminModel->MasterSubCategories($data);
+			if($data['success'] == 'true'){	
+				return $data['res_arr'];
+			}
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+	/* Get Master Services */
+	private function GetMasterServices($masterId){
+		if($this->IsLoggedIn('master_admin')){	
+			$data = array(
+				'master_id' 		      => $masterId,
+				'service_is_active'       => TRUE,
+				'service_type' 			  => 'service'	
+			);	
+			$data = $this->MasterAdminModel->MasterServices($data);
+			if($data['success'] == 'true'){	
+				return $data['res_arr'];
+			}
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+    
+	/* Get Master Products/OTC */
+	private function GetMasterProducts($masterId){
+		if($this->IsLoggedIn('master_admin')){	
+			$data = array(
+				'master_id' 		      => $masterId,
+				'service_is_active'       => TRUE,
+				'service_type' 			  => 'otc'	
+			);	
+			$data = $this->MasterAdminModel->MasterServices($data);
+			if($data['success'] == 'true'){	
+				return $data['res_arr'];
+			}
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+	
 	public function GetSubCategoriesPublic(){
 		if($this->IsLoggedIn('master_admin')){
 			// $this->PrettyPrintArray($_POST['outlet_id']);
@@ -2476,7 +2542,718 @@ class MasterAdmin extends CI_Controller {
 			die;
 		}
 		else{
+			$this->LogoutUrl(base_url()."");
+		}	
+	}
+
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Add category in master category table 
+	*/
+
+	public function AddCategory(){
+			if($this->IsLoggedIn('master_admin')){
+				if(isset($_POST) && !empty($_POST)){
+					//$categoryBusinessDetails = json_decode($this->input->post('categoryBusinessDetails'));
+					
+					$this->form_validation->set_rules('category_name', 'Category Name', 'trim|required|max_length[100]');
+					$this->form_validation->set_rules('category_description', 'Category Description', 'trim');
+					$this->form_validation->set_rules('category_type','Category Type','required');
+					if ($this->form_validation->run() == FALSE) 
+					{
+						$data = array(
+										'success' => 'false',
+										'error'   => 'true',
+										'message' =>  validation_errors()
+									 );
+						header("Content-type: application/json");
+						print(json_encode($data, JSON_PRETTY_PRINT));
+						die;
+					}
+					else{
+					
+					$data= array(
+						'master_id'						=> $this->session->userdata['logged_in']['master_admin_id'],
+						'category_name' 				=> $this->input->post('category_name'),
+						'category_description' 			=> $this->input->post('category_description'),
+						'category_business_admin_id' 	=> 0,
+						'category_business_outlet_id' 	=> 0,
+						'category_type'         		=> $this->input->post('category_type')
+					);
+						
+					$result = $this->MasterAdminModel->Insert($data,'master_categories');
+						
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Category added successfully!");
+						die;
+			  }
+			  elseif($result['error'] == 'true'){
+				$this->ReturnJsonArray(false,true,$result['message']);
+							die;
+			  }
+					}
+				}
+			}
+			else{
+				$this->LogoutUrl(base_url()."MasterAdmin/");
+			}
+		}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Delete Category as Temporary 
+	*/	
+	public function DeactivateCategory(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				if($this->input->post('activate') == 'false' && $this->input->post('deactivate') == 'true'){
+					//Activate the Employee
+					$data = array(
+					  "category_id"          => $this->input->post('category_id'),
+					"category_is_active"   => 0
+					);
+					
+					$status = $this->MasterAdminModel->DeactiveMasterCategory($data['category_id']);
+					if($status['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Deleted successfully!");
+						die;
+					}
+					elseif($status['error'] == 'true'){
+						$this->ReturnJsonArray(false,true,$status['message']);
+						die;
+					}
+				}	    
+	    }
+	    else{
+				$this->ReturnJsonArray(false,true,'Not a POST Request !');
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Edit Category 
+	*/	
+	public function EditCategory(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('category_name', 'Category Name', 'trim|required|max_length[100]');
+				$this->form_validation->set_rules('category_description', 'Category Description', 'trim');
+				
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								 );
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{
+					$data = array(
+						'category_id'           => $this->input->post('category_id'),
+						'category_name' 		=> $this->input->post('category_name'),
+						'category_description' 	=> $this->input->post('category_description'),
+						'category_type' 	=> $this->input->post('category_type')
+					);
+
+					$result = $this->MasterAdminModel->Update($data,'master_categories','category_id');
+						
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Category updated successfully!");
+						die;
+          }
+          elseif($result['error'] == 'true'){
+          	$this->ReturnJsonArray(false,true,$result['message']);
+						die;
+          }
+				}
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Get Category details based on cat Id
+	*/	
+	public function GetCategory(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$data = $this->MasterAdminModel->DetailsById($_GET['category_id'],'master_categories','category_id');
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}	
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Add Sub category in master Sub category table 
+	*/	
+	public function AddSubCategory(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('sub_category_name', 'Sub-Category Name', 'trim|required|max_length[100]');
+				$this->form_validation->set_rules('sub_category_description', 'Sub-Category Description', 'trim');
+				$this->form_validation->set_rules('category_id', 'Category Name', 'trim|required');
+				
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								 );
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{
+					$data = array(
+						'sub_category_name' 		=> $this->input->post('sub_category_name'),
+						'sub_category_description' 	=> $this->input->post('sub_category_description'),
+						'sub_category_category_id'  => $this->input->post('category_id')
+					);
+
+					$result = $this->MasterAdminModel->Insert($data,'master_sub_categories');
+						
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Sub-Category added successfully!");
+						die;
+          }
+          elseif($result['error'] == 'true'){
+          	$this->ReturnJsonArray(false,true,$result['message']);
+						die;
+          }
+				}
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Add Sub category in master Sub category table 
+	*/	
+	public function GetSubCategoriesByCategoryType(){
+    
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$where = array(
+					  'category_type'        => $_GET['category_type'],
+					  'master_id' 			 => $this->session->userdata['logged_in']['master_admin_id'],
+					  'category_is_active'   => TRUE
+				);
+				
+				$data = $this->MasterAdminModel->MultiWhereSelect('master_categories',$where);
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Get Sub category from master Sub category table 
+	*/	
+	public function GetSubCategory(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$data = array(
+					'master_id' 		      => $this->session->userdata['logged_in']['master_admin_id'],
+					'sub_category_is_active'  => TRUE
+				);	
+				
+				$data = $this->MasterAdminModel->MasterSubCategories($data,$_GET['sub_category_id']);
+				
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'][0], JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+    
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Update Sub Category
+	*/	
+	public function EditSubCategory(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('sub_category_name', 'Sub-Category Name', 'trim|required|max_length[100]');
+				$this->form_validation->set_rules('sub_category_description', 'Sub-Category Description', 'trim');
+				$this->form_validation->set_rules('category_id', 'Category Name', 'trim');
+				
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								 );
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{
+					$data = array(
+						'sub_category_id'           => $this->input->post('sub_category_id'),
+						'sub_category_name' 		=> $this->input->post('sub_category_name'),
+						'sub_category_description' 	=> $this->input->post('sub_category_description'),
+						'sub_category_category_id'  => $this->input->post('category_id')
+					);
+
+					$result = $this->MasterAdminModel->Update($data,'master_sub_categories','sub_category_id');
+						
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Sub-Category updated successfully!");
+						die;
+          }
+          elseif($result['error'] == 'true'){
+          	$this->ReturnJsonArray(false,true,$result['message']);
+						die;
+          }
+				}
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+    /**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Delete Sub Category as Temporary 
+	*/	
+	public function DeactivateSubCategory(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				if($this->input->post('activate') == 'false' && $this->input->post('deactivate') == 'true'){
+					//Activate the Employee
+					$data = array(
+					  "sub_category_id"          => $this->input->post('sub_category_id'),
+					  "sub_category_is_active"   => FALSE
+					);
+
+					$status = $this->MasterAdminModel->MasterDeactiveSubCategory($data['sub_category_id']);
+					if($status['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Deleted successfully!");
+						die;
+					}
+					elseif($status['error'] == 'true'){
+						$this->ReturnJsonArray(false,true,$status['message']);
+						die;
+					}
+				}	    
+	    }
+	    else{
+				$this->ReturnJsonArray(false,true,'Not a POST Request !');
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+ 
+    /**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Get Sub categories based on category Id
+	*/	
+    public function GetSubCategoriesByCatId(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$where = array(
+					'sub_category_category_id' => $_GET['category_id'],
+					'sub_category_is_active'   => TRUE
+				);
+				
+				$data = $this->MasterAdminModel->MultiWhereSelect('master_sub_categories',$where);
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+		
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Service Tab : Add New Service in master service table
+	*/
+	public function AddService(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('service_name', 'Service Name', 'trim|required|max_length[100]');
+				$this->form_validation->set_rules('service_price_inr', 'Service Gross Price', 'trim|required');
+				$this->form_validation->set_rules('service_est_time', 'Service Estimated Time', 'trim|required|max_length[50]');
+				$this->form_validation->set_rules('service_description', 'Service Description', 'trim');
+				$this->form_validation->set_rules('service_gst_percentage', 'Service GST Percentage', 'trim|is_natural|required');
+				$this->form_validation->set_rules('service_sub_category_id', 'Service Sub-Category Name', 'trim|required');
+
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								 );
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{
+					$data = array(
+						'service_name' 			=> $this->input->post('service_name'),
+						'service_price_inr' 	=> $this->input->post('service_price_inr'),
+						'service_est_time' 		=> $this->input->post('service_est_time'),
+						'service_description' 	=> $this->input->post('service_description'),
+						'service_gst_percentage' 	=> $this->input->post('service_gst_percentage'),
+						'service_sub_category_id' 	=> $this->input->post('service_sub_category_id'),
+						'service_type'				=> 'service',	
+						'created_by'				=> $this->session->userdata['logged_in']['master_admin_id'],	
+					);
+
+					$result = $this->MasterAdminModel->Insert($data,'master_services');
+						
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Service added successfully!");
+						die;
+          }
+          elseif($result['error'] == 'true'){
+          	$this->ReturnJsonArray(false,true,$result['message']);
+						die;
+          }
+				}
+			}
+		}
+		else{
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		}	
 	}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Service Tab : Edit Service
+	*/
+	public function EditService(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('service_name', 'Service Name', 'trim|required|max_length[100]');
+				$this->form_validation->set_rules('service_price_inr', 'Service Gross Price', 'trim|required');
+				$this->form_validation->set_rules('service_est_time', 'Service Estimated Time', 'trim|required|max_length[50]');
+				$this->form_validation->set_rules('service_description', 'Service Description', 'trim');
+				$this->form_validation->set_rules('service_gst_percentage', 'Service GST Percentage', 'trim|is_natural|required');
+				$this->form_validation->set_rules('service_sub_category_id', 'Service Sub-Category Name', 'trim|required');
+				
+
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								 );
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{
+					$data = array(
+						'service_id'    => $this->input->post('service_id'),
+						'service_name' 	=> $this->input->post('service_name'),
+						'service_price_inr' 	=> $this->input->post('service_price_inr'),
+						'service_est_time' 	=> $this->input->post('service_est_time'),
+						'service_description' 	=> $this->input->post('service_description'),
+						'service_gst_percentage' 	=> $this->input->post('service_gst_percentage'),
+						'service_sub_category_id' 	=> $this->input->post('service_sub_category_id'),
+						'service_type'				=> 'service',	
+						'created_by'				=> $this->session->userdata['logged_in']['master_admin_id'],
+					);
+
+					$result = $this->MasterAdminModel->Update($data,'master_services','service_id');
+						
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Service updated successfully!");
+						die;
+          }
+          elseif($result['error'] == 'true'){
+          	$this->ReturnJsonArray(false,true,$result['message']);
+						die;
+          }
+				}
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+    
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Service Tab : Delete Service as Temporary
+	*/
+	public function DeactivateService(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				if($this->input->post('activate') == 'false' && $this->input->post('deactivate') == 'true'){
+					$data = array(
+					  "service_id"          => $this->input->post('service_id'),
+					  "service_is_active"   => FALSE
+					);
+
+					$status = $this->MasterAdminModel->Update($data,'master_services','service_id');
+					if($status['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Deleted successfully!");
+						die;
+					}
+					elseif($status['error'] == 'true'){
+						$this->ReturnJsonArray(false,true,$status['message']);
+						die;
+					}
+				}	    
+	    }
+	    else{
+				$this->ReturnJsonArray(false,true,'Not a POST Request !');
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Service Tab : get Service data from master service table
+	*/
+	public function GetService(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$data = array(
+					'master_id' 		      => $this->session->userdata['logged_in']['master_admin_id'],
+					'service_is_active'       => TRUE,
+					'service_type' 			  => $_GET['service_type']	
+				);	
+				$data = $this->MasterAdminModel->MasterServices($data,$_GET['service_id']);
+				 //$this->PrettyPrintArray($data);
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'][0], JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Product Tab : Add New product data into master service table
+	*/
+	public function AddOTCService(){
+        if($this->IsLoggedIn('master_admin')){
+            if(isset($_POST) && !empty($_POST)){
+                $this->form_validation->set_rules('otc_item_name', 'otc Item Name', 'trim|required|max_length[100]');
+                $this->form_validation->set_rules('otc_brand', 'Otc brand', 'trim|required|max_length[100]');
+                $this->form_validation->set_rules('otc_unit', 'Otc unit', 'trim|required|max_length[50]');
+                $this->form_validation->set_rules('otc_sub_category_id', 'Otc Sub-Category Name', 'trim|required');
+                $this->form_validation->set_rules('otc_gst_percentage', 'OTC GST Percentage', 'trim|required');
+                $this->form_validation->set_rules('otc_price_inr', 'OTC Gross Price', 'trim|required');
+                if ($this->form_validation->run() == FALSE) 
+                {
+				    $data = array(
+                                    'success' => 'false',
+                                    'error'   => 'true',
+                                    'message' =>  validation_errors()
+                                 );
+                    header("Content-type: application/json");
+                    print(json_encode($data, JSON_PRETTY_PRINT));
+                    die;
+                }
+                else{
+					
+                        //$barcode_id = $this->MasterAdminModel->DetailsById($_POST['otc_barcode'],'master_services','barcode');
+                        //$barcode_id = $barcode_id['res_arr']; 
+						//$barcode_id=count($barcode_id)-3;
+												
+						$inv=0;
+						if($_POST['otc_inventory_type'] == 'Raw Material'){
+							$inv=1;
+						}else{
+							$inv=2;
+						}
+						/*
+                        foreach($_POST['qty_per_item'] as $key=>$value){
+                            $data = array(
+                                'inventory_type'                => $this->input->post('otc_inventory_type'),
+                                'service_name'                  => $this->input->post('otc_item_name'),
+                                'service_sub_category_id'  		=> $this->input->post('otc_sub_category_id'),
+                                'service_brand'                 => $this->input->post('otc_brand'),
+                                'barcode'      					=> $this->input->post('otc_barcode'),
+                                'barcode_id'    				=>$this->input->post('otc_barcode')."-".$barcode_id,
+                                'qty_per_item'                  => $_POST['qty_per_item'][$key],
+                                'service_price_inr'              => $_POST['otc_price_inr'][$key],
+                                'service_gst_percentage'        => $_POST['otc_gst_percentage'][$key],
+                                'service_unit'                  => $_POST['otc_unit'][$key],
+                                'service_type'                  => "otc"
+                            );
+                            // $this->PrettyPrintArray($data);
+                            $result = $this->MasterAdminModel->Insert($data,'master_services');
+                        }   */
+						
+						$data = array(
+                                'inventory_type'                => $this->input->post('otc_inventory_type'),
+                                'service_name'                  => $this->input->post('otc_item_name'),
+                                'service_sub_category_id'  		=> $this->input->post('otc_sub_category_id'),
+                                'service_brand'                 => $this->input->post('otc_brand'),
+                                //'barcode'      					=> $this->input->post('otc_barcode'),
+                                //'barcode_id'    				=> $this->input->post('otc_barcode')."-".$barcode_id,
+                                'qty_per_item'                  => $_POST['qty_per_item'],
+                                'service_price_inr'              =>$_POST['otc_price_inr'],
+                                'service_gst_percentage'        => $_POST['otc_gst_percentage'],
+                                'service_unit'                  => $_POST['otc_unit'],
+                                'service_type'                  => "otc"
+                            );
+                            // $this->PrettyPrintArray($data);
+                            $result = $this->MasterAdminModel->Insert($data,'master_services');
+							
+                    if($result['success'] == 'true'){
+                        $this->ReturnJsonArray(true,false,"OTC item added successfully!");
+                        die;
+          }
+          elseif($result['error'] == 'true'){
+            $this->ReturnJsonArray(false,true,$result['message']);
+                        die;
+          }
+                }
+            }
+        }
+        else{
+            $this->LogoutUrl(base_url()."MasterAdmin");
+        }   
+    }
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Product Tab : Edit product data 
+	*/
+	 public function EditOTCService(){
+        if($this->IsLoggedIn('master_admin')){
+            if(isset($_POST) && !empty($_POST)){
+                $this->form_validation->set_rules('otc_item_name', 'otc Item Name', 'trim|required|max_length[100]');
+                $this->form_validation->set_rules('otc_brand', 'Otc brand', 'trim|required|max_length[100]');
+                $this->form_validation->set_rules('otc_unit', 'Otc unit', 'trim|required|max_length[50]');
+                $this->form_validation->set_rules('otc_gst_percentage', 'OTC GST Percentage', 'trim|required');
+				$this->form_validation->set_rules('otc_sub_category_id', 'Otc Sub-Category Name', 'trim|required');
+                $this->form_validation->set_rules('otc_price_inr', 'OTC Gross Price', 'trim|required');
+                //$this->form_validation->set_rules('otc_inventory_type', 'Inventory Type', 'trim|required');
+                //$this->form_validation->set_rules('otc_barcode', 'Barcode', 'trim|required');
+                if ($this->form_validation->run() == FALSE) 
+                {
+                    $data = array(
+                                    'success' => 'false',
+                                    'error'   => 'true',
+                                    'message' =>  validation_errors()
+                                 );
+                    header("Content-type: application/json");
+                    print(json_encode($data, JSON_PRETTY_PRINT));
+                    die;
+                }
+                else{
+                    $data = array(
+                        'service_name'          => $this->input->post('otc_item_name'),
+                        'service_brand'         => $this->input->post('otc_brand'),
+                        'service_sub_category_id'=>$this->input->post('otc_sub_category_id'),
+                        'service_unit'          => $this->input->post('otc_unit'),
+                        'service_id'          	=> $this->input->post('otc_service_id'),
+                        //'barcode'   			=>  $this->input->post('otc_barcode'),
+                        //'inventory_type'    	=>  $this->input->post('otc_inventory_type'),
+                        'service_price_inr'     => $this->input->post('otc_price_inr'),
+                        'service_gst_percentage'        => $this->input->post('otc_gst_percentage'),
+                        'qty_per_item'      => $this->input->post('sku_size')
+                    );
+                    $result = $this->MasterAdminModel->Update($data,'master_services','service_id');
+                    if($result['success'] == 'true'){
+                        $this->ReturnJsonArray(true,false,"OTC item updated successfully!");
+                        die;
+          }
+          elseif($result['error'] == 'true'){
+            $this->ReturnJsonArray(false,true,$result['message']);
+                        die;
+          }
+                }
+            }
+        }
+        else{
+            $this->LogoutUrl(base_url()."MasterAdmin");
+        }   
+    }
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Master Admin menu management
+	*/
+	public function MenuManagementNew(){
+		if ($this->IsLoggedIn('master_admin')) {
+		$data = $this->GetDataForMasterAdmin("Menu Management");
+		
+		$data['categories']    = $this->GetMasterCategories($this->session->userdata['logged_in']['master_admin_id']);
+		$data['subCategories'] = $this->GetMasterSubCategories($this->session->userdata['logged_in']['master_admin_id']);
+		$data['services']      = $this->GetMasterServices($this->session->userdata['logged_in']['master_admin_id']);
+		$data['products']      = $this->GetMasterProducts($this->session->userdata['logged_in']['master_admin_id']);
+		
+		
+		$data['business_admin_details'] = $this->MasterAdminModel->GetBusinessDetails($this->session->userdata['logged_in']['master_admin_id']);
+		$data['business_admin_details'] = $data['business_admin_details']['res_arr'];
+		//$this->PrettyPrintArray($data['services']);
+		
+		$this->load->view('master_admin/ma_menu_management_view_new', $data);
+		} else {
+		$this->LogoutUrl(base_url() . "MasterAdmin");
+		}
+	}
+
 }
