@@ -9798,8 +9798,11 @@ WHERE  Date(t1.txn_datetime) = "'.$date.'" GROUP  BY t2.txn_settlement_txn_id';
         }elseif(!empty($this->session->userdata['logged_in']['business_outlet_id'])){
             $outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
         }
-        $sql = "select * from mss_opening_balance where opening_date='".$date."' and business_outlet_id = ".$outlet_id;
-        $query = $this->db->query($sql);
+	if(!empty($outlet_id)){
+            $sql = "select * from mss_opening_balance where opening_date='".$date."' and business_outlet_id = ".$outlet_id;
+        }else{
+            $sql = "select * from mss_opening_balance where opening_date='".$date."'";
+        }        $query = $this->db->query($sql);
         $data['opening_balance'] = $query->result_array();
         if($data){
             return $this->ModelHelper(true,false,'',$data);

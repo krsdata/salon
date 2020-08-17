@@ -22,7 +22,7 @@ class Welcome extends CI_Controller {
 		        $date = date('Y-m-d');    
 		        $one_day_before = date('Y-m-d',strtotime("-1 days"));
 		    }		 	
-		   // $one_day_before = "2020-07-16";
+			 #$one_day_before = "2020-07-16";
 		    $result = $this->BusinessAdminModel->GetCronExpenseRecord($one_day_before);
 		}		
 
@@ -110,6 +110,7 @@ class Welcome extends CI_Controller {
 		    //get opening record		
 		    $one_day_before1 = date('Y-m-d', strtotime($one_day_before. ' - 1 days'));
 			$result = $this->BusinessAdminModel->getOpeningRecord($one_day_before1);
+#echo $this->db->last_query();die;
 			$opening_balance = $result['res_arr']['opening_balance'];		
 			$temp = [];
 		    $opening_balance_data = [];          
@@ -191,8 +192,9 @@ class Welcome extends CI_Controller {
 				$i++;
 			}			
 		}
-		// print_r($json_data);die;		
-		// die;
+		# print_r($payment);die;		
+		 #die;
+		if(!empty($payment))
 		$this->db->insert_batch('mss_opening_balance', $payment); 		
     }
 }

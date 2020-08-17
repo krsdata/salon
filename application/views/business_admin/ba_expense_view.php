@@ -52,11 +52,11 @@
 									<thead>
 										<tr>
 											<th>Tender type</th>
-											<th>Opening Cash</th>
+											<th>Opening Balance</th>
 											<th>Collection (From Sales)</th>
 											<th>Due Amount 	Reced</th>
 											<th>Expenses Paid</th>
-											<th>Closing Cash</th>											
+											<th>Closing Balance</th>											
 										</tr>
 									</thead>
 									<tbody>
