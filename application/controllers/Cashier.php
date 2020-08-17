@@ -6638,4 +6638,130 @@ public function AddToCartRedeemPoints(){
 		}	
 	}
 
+	public function daybook(){        
+        $this->load->model('BusinessAdminModel');
+        if(!isset($_GET) || empty($_GET)){
+            if(!empty($_REQUEST['to_date'])){
+                $date = $_REQUEST['to_date'];
+                $one_day_before = date('Y-m-d', strtotime($date. ' - 1 days'));                    
+            }else{
+                $date = date('Y-m-d');    
+                $one_day_before = date('Y-m-d',strtotime("-1 days"));
+            }
+           
+            $result = $this->BusinessAdminModel->GetExpenseRecord($date);
+        }            
+        if($result['success']){
+            $transaction = $result['res_arr']['transaction'];
+            $expenses = $result['res_arr']['expenses'];
+            $pending_amount = $result['res_arr']['pending_amount'];
+            $temp = [];
+            $transaction_data = [];
+            $json_data = [];                
+            //transaction data
+            $key_info = [];
+            
+            foreach ($transaction as $key => $value) {
+                if(!empty($value['txn_settlement_payment_mode'])){                        
+                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
+                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
+                    }else{
+                        $result = json_decode($value['txn_settlement_payment_mode']);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
+                        }else{
+                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
+                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
+                        }                            
+                    }
+                }                        
+            }                
+            if(!empty($json_data)){                    
+                foreach ($json_data as $key => $j) {
+                    foreach ($j as $key => $t) {
+                      if(in_array(strtolower($t['payment_type']), $temp)){
+                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
+                        }else{
+                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
+                            $temp[] = strtolower($t['payment_type']);
+                        }  
+                    }                       
+                }
+            }
+            $key_info['keys'][0] = $temp;                
+            // expenses
+
+            $temp = [];
+            $expenses_data = [];          
+            //transaction data                
+            foreach ($expenses as $key => $value) {
+                if(!empty($value['payment_mode'])){                        
+                    if(in_array(strtolower($value['payment_mode']), $temp)){
+                        $expenses_data[strtolower($value['payment_mode'])] += $value['total_amount'];
+                    }else{                            
+                            $expenses_data[strtolower($value['payment_mode'])] = $value['total_amount'];
+                            $temp[] = strtolower($value['payment_mode']);
+                    }
+                }                        
+            }
+            $key_info['keys'][1] = $temp;
+            // pending tracker
+            $temp = [];
+            $pending_amount_data = [];          
+            //transaction data                        
+            foreach ($pending_amount as $key => $value) {
+                if(!empty($value['payment_type'])){                        
+                    if(in_array(strtolower($value['payment_type']), $temp)){
+                        $pending_amount_data[strtolower($value['payment_type'])] += $value['total_amount'];
+                    }else{                            
+                            $pending_amount_data[strtolower($value['payment_type'])] = $value['total_amount'];
+                            $temp[] = strtolower($value['payment_type']);
+                    }
+                }                        
+            }
+            $key_info['keys'][2] = $temp;
+
+            //get opening record        
+            $result = $this->BusinessAdminModel->getOpeningRecord($one_day_before);
+            $opening_balance = $result['res_arr']['opening_balance'];       
+            $temp = [];
+                $opening_balance_data = [];          
+                //transaction data                        
+                foreach ($opening_balance as $key => $value) {
+                    if(!empty($value['payment_mode'])){                        
+                        if(in_array(strtolower($value['payment_mode']), $temp)){
+                            $opening_balance_data[strtolower($value['payment_mode'])] += $value['amount'];
+                        }else{                            
+                                $opening_balance_data[strtolower($value['payment_mode'])] = $value['amount'];
+                                $temp[] = strtolower($value['payment_mode']);
+                        }
+                    }                        
+                }
+                $key_info['keys'][3] = $temp;
+
+
+                $p_mode = [];
+                foreach ($key_info as $key => $k) {
+                    foreach ($k as $key => $keys) {
+                        if(!in_array($keys, $p_mode)){
+                            $p_mode[] = $keys;
+                        }
+                    }                                    
+                }
+
+        }
+        
+        $p_mode = array_filter($p_mode);        
+        $p_mode = call_user_func_array('array_merge', $p_mode);
+        $p_mode = array_unique($p_mode);
+        $p_mode = array_values($p_mode);        
+        $data['p_mode'] = $p_mode;
+        $data['opening_balance_data'] = $opening_balance_data;
+        $data['pending_amount_data'] = $pending_amount_data;
+        $data['expenses_data'] = $expenses_data;
+        $data['transaction_data'] = $transaction_data;
+        $data['date'] = $date;
+        $this->load->view('business_admin/ba_expense_view',$data);
+    }
+
 }

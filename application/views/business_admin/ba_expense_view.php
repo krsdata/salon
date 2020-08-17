@@ -16,8 +16,19 @@
 					
 				<div  class="col-md-12">
 						<div class="card flex-fill w-100">
-							<div class="card-header">								
-							<form action="<?php echo base_url('welcome/daybook')?>" method="POST" id="GetBills1">
+							<div class="card-header">
+							<?php
+								if(!empty($this->session->userdata['outlets']['current_outlet'])){
+						            ?>
+						            	<form action="<?php echo base_url('BusinessAdmin/daybook')?>" method="POST" id="GetBills1">
+						            <?php
+						        }elseif(!empty($this->session->userdata['logged_in']['business_outlet_id'])){
+						            ?>
+						            <form action="<?php echo base_url('Cashier/daybook')?>" method="POST" id="GetBills1">
+						            <?php
+						        }
+							?>								
+							
                 <div class="form-row"> 
 									<div class="col-md-3">
 									<h3></h3>
