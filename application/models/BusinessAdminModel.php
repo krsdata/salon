@@ -9628,11 +9628,15 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 
 	public function UpdateAbsDiscount($data){
         $sql = "UPDATE 
-		mss_transaction_services
+		mss_transaction_services,
+		mss_transactions
 		SET mss_transaction_services.txn_service_discount_absolute= ".$this->db->escape($data['txn_service_discount_absolute'])." ,
-		mss_transaction_services.txn_service_discounted_price=(mss_transaction_services.txn_service_discounted_price+".$this->db->escape($data['txn_discounted_result']).")	
-		WHERE mss_transaction_services.txn_service_id=".$this->db->escape($data['txn_service_id'])." ";
-        
+		mss_transaction_services.txn_service_discounted_price=(mss_transaction_services.txn_service_discounted_price+".$this->db->escape($data['txn_discounted_result'])."),
+		mss_transactions.txn_discount= (mss_transactions.txn_discount-".$this->db->escape($data['txn_discounted_result'])."),
+		mss_transactions.txn_value= (mss_transactions.txn_value+".$this->db->escape($data['txn_discounted_result']).")	
+		WHERE mss_transaction_services.txn_service_id=".$this->db->escape($data['txn_service_id'])."AND 
+		mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." ";
+
 		$query = $this->db->query($sql);
 		if($query){
 			return $this->ModelHelper(true,false,'');
