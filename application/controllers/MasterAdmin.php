@@ -19,18 +19,19 @@ class MasterAdmin extends CI_Controller {
 				}
     }
     private function GetDataForMasterAdmin($title){
-        $data = array();
+		$data = array();
         $data['title'] = $title;
-        // $data['business_admin_packages'] = $this->GetMasterAdminPackages();
-        // $data['master_admin_details']  = $this->GetMAsterAdminDetails();
-        // $data['business_outlet_details'] = $this->GetMasterOutlets();
+         $data['business_master_admin_packages'] = $this->GetMasterAdminPackages();
+         $data['master_admin_details'] 			 = $this->GetMasterAdminDetails();
+         $data['business_outlet_details'] 		 = $this->GetMasterOutlets();
         // if(isset($this->session->userdata['outlets'])){
         //  $data['selected_outlet']      = $this->GetCurrentOutlet($this->session->userdata['outlets']['current_outlet']);
         // }
         return $data;
     }
-    //constructor of the Alumni Controller
-    public function __construct(){
+	
+  //constructor of the Alumni Controller
+  public function __construct(){
        parent::__construct();
        date_default_timezone_set('Asia/Kolkata');
        $this->load->model('AnalyticsModel');
@@ -65,7 +66,86 @@ class MasterAdmin extends CI_Controller {
     print("<pre>".print_r($data,true)."</pre>");
     die;
 	}
-	 //Default Page for Masster Admin
+  
+  private function GetMasterAdminPackages(){
+		if($this->IsLoggedIn('master_admin')){
+			$data = $this->MasterAdminModel->MasterAdminPackages($this->session->userdata['logged_in']['master_admin_id']);
+			if($data['success'] == 'true'){
+				$temp = array();
+				
+				foreach ($data['res_arr'] as $d) {
+					if($d['package_expiry_date'] >= date('Y-m-d')){
+						array_push($temp,$d['package_name']);
+					}
+				}
+				
+				return $temp;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+
+  private function GetMasterAdminDetails(){
+		if($this->IsLoggedIn('master_admin')){
+			$data = $this->MasterAdminModel->DetailsById($this->session->userdata['logged_in']['master_admin_id'],'mss_master_admin','master_admin_id');
+			if($data['success'] == 'true'){	
+				return $data['res_arr'];
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+
+	private function GetCurrentOutlet($outlet_id){
+		if($this->IsLoggedIn('master_admin')){
+			$data = $this->MasterAdminModel->DetailsById($outlet_id,'mss_business_outlets_new','business_outlet_id');
+			if($data['success'] == 'true'){	
+				return $data['res_arr'];
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+	
+	private function GetMasterOutlets(){
+		if($this->IsLoggedIn('master_admin')){
+			$where = array(
+				'master_id' 						=> $this->session->userdata['logged_in']['master_admin_id'],
+				'business_outlet_status'			=>1
+			);
+			$data = $this->MasterAdminModel->MultiWhereSelect('mss_business_outlets_new',$where);
+			if($data['success'] == 'true' ){	
+				return $data['res_arr'];
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+	
+	private function ActivePackages($outlet_id){
+		if($this->IsLoggedIn('master_admin')){
+			$where = array(
+				'master_id'  => $this->session->userdata['logged_in']['master_admin_id'],
+				'business_outlet_id' => $outlet_id
+			);
+
+			$data = $this->MasterAdminModel->GetAllPackages($where);
+			
+			if($data['success'] == 'true'){	
+				return $data['res_arr'];
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}		
+	}
+  
+  //Default Page for Masster Admin
    public function index(){
 		if($this->IsLoggedIn('master_admin')){
 			$data = $this->GetDataForMasterAdmin("Dashboard");
@@ -2546,6 +2626,32 @@ class MasterAdmin extends CI_Controller {
 		}	
 	}
 
+    /**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Master Admin menu management
+	*/
+	public function MenuManagementNew(){
+		if ($this->IsLoggedIn('master_admin')) {
+		$data = $this->GetDataForMasterAdmin("Menu Management");
+		
+		$data['categories']    = $this->GetMasterCategories($this->session->userdata['logged_in']['master_admin_id']);
+		$data['subCategories'] = $this->GetMasterSubCategories($this->session->userdata['logged_in']['master_admin_id']);
+		$data['services']      = $this->GetMasterServices($this->session->userdata['logged_in']['master_admin_id']);
+		$data['products']      = $this->GetMasterProducts($this->session->userdata['logged_in']['master_admin_id']);
+		
+		
+		$data['business_admin_details'] = $this->MasterAdminModel->GetBusinessDetails($this->session->userdata['logged_in']['master_admin_id']);
+		$data['business_admin_details'] = $data['business_admin_details']['res_arr'];
+		//$this->PrettyPrintArray($data['services']);
+		
+		$this->load->view('master_admin/ma_menu_management_view_new', $data);
+		} else {
+		$this->LogoutUrl(base_url() . "MasterAdmin");
+		}
+	}
+	
+	
 	/**
 	 *
 	 * @author	: Pinky Sahukar
@@ -2911,6 +3017,30 @@ class MasterAdmin extends CI_Controller {
 		}
 	}
 	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Get Services Based on Sub category Id
+	*/	
+	public function GetServicesBySubCatId(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$where = array(
+					'service_sub_category_id'  => $_GET['sub_category_id'],
+					'service_is_active'   => TRUE
+				);
+				
+				$data = $this->MasterAdminModel->MultiWhereSelect('master_services',$where);
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
 		
 	/**
 	 *
@@ -3234,25 +3364,555 @@ class MasterAdmin extends CI_Controller {
 	/**
 	 *
 	 * @author	: Pinky Sahukar
-	 * @Function : Master Admin menu management
+	 * @Function : Outlet Management & Add new outlet
 	*/
-	public function MenuManagementNew(){
-		if ($this->IsLoggedIn('master_admin')) {
-		$data = $this->GetDataForMasterAdmin("Menu Management");
-		
-		$data['categories']    = $this->GetMasterCategories($this->session->userdata['logged_in']['master_admin_id']);
-		$data['subCategories'] = $this->GetMasterSubCategories($this->session->userdata['logged_in']['master_admin_id']);
-		$data['services']      = $this->GetMasterServices($this->session->userdata['logged_in']['master_admin_id']);
-		$data['products']      = $this->GetMasterProducts($this->session->userdata['logged_in']['master_admin_id']);
-		
-		
-		$data['business_admin_details'] = $this->MasterAdminModel->GetBusinessDetails($this->session->userdata['logged_in']['master_admin_id']);
-		$data['business_admin_details'] = $data['business_admin_details']['res_arr'];
-		//$this->PrettyPrintArray($data['services']);
-		
-		$this->load->view('master_admin/ma_menu_management_view_new', $data);
-		} else {
-		$this->LogoutUrl(base_url() . "MasterAdmin");
+	public function AddOutlet(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){ 
+				$this->form_validation->set_rules('business_outlet_name', 'Business Outlet Name', 'trim|required|max_length[100]');
+				$this->form_validation->set_rules('business_outlet_gst_in', 'Business Outlet GST IN', 'trim|max_length[15]|min_length[15]');
+				$this->form_validation->set_rules('business_outlet_address', 'Business Outlet Address', 'trim|required');
+				$this->form_validation->set_rules('business_outlet_city', 'Business Outlet City', 'trim|required|max_length[100]');
+				$this->form_validation->set_rules('business_outlet_state', 'Business Outlet State', 'trim|required|max_length[100]');
+				$this->form_validation->set_rules('business_outlet_pincode', 'Business Outlet Pincode', 'trim|required|max_length[10]');
+				$this->form_validation->set_rules('business_outlet_mobile', 'Business Outlet Mobile', 'trim|max_length[15]');
+				$this->form_validation->set_rules('business_outlet_landline', 'Business Outlet Landline', 'trim|max_length[15]');
+				$this->form_validation->set_rules('business_outlet_email', 'Business Outlet Email', 'trim|max_length[100]');
+				$this->form_validation->set_rules('business_outlet_bill_header_msg', 'Business Outlet Bill Header message', 'trim');
+				$this->form_validation->set_rules('business_outlet_bill_footer_msg', 'Business Outlet Bill Footer message', 'trim');
+				$this->form_validation->set_rules('business_outlet_facebook_url', 'Business Outlet FB URL', 'trim');
+				$this->form_validation->set_rules('business_outlet_instagram_url', 'Business Outlet Instagram URL', 'trim');
+				$this->form_validation->set_rules('business_outlet_latitude', 'Business Outlet Latitude', 'trim');
+				$this->form_validation->set_rules('business_outlet_longitude', 'Business Outlet Longitude', 'trim');
+
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								 );
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{
+					$data = array(
+						'business_outlet_name' 	=> $this->input->post('business_outlet_name'),
+						'business_outlet_gst_in' 	=> $this->input->post('business_outlet_gst_in'),
+						'business_outlet_mobile' 	=> $this->input->post('business_outlet_mobile'),
+						'business_outlet_landline' 	=> $this->input->post('business_outlet_landline'),
+						'business_outlet_address' 	=> $this->input->post('business_outlet_address'),
+						'business_outlet_pincode' 	=> $this->input->post('business_outlet_pincode'),
+						'business_outlet_state' 	=> $this->input->post('business_outlet_state'),
+						'business_outlet_city' 		=> $this->input->post('business_outlet_city'),
+						'business_outlet_country' 	=> "India",
+						'business_outlet_email' 	=> $this->input->post('business_outlet_email'),
+						'business_outlet_bill_header_msg' 	=> $this->input->post('business_outlet_bill_header_msg'),
+						'business_outlet_bill_footer_msg' 	=> $this->input->post('business_outlet_bill_footer_msg'),
+						'business_outlet_facebook_url' 		=> $this->input->post('business_outlet_facebook_url'),
+						'business_outlet_instagram_url' 	=> $this->input->post('business_outlet_instagram_url'),
+						'business_outlet_latitude' 		=> $this->input->post('business_outlet_latitude'),
+						'business_outlet_longitude' 	=> $this->input->post('business_outlet_longitude'),
+						'business_outlet_sender_id'		=>$this->input->post('business_outlet_sender_id'),
+						'business_outlet_google_my_business_url'=>strtolower($this->input->post('business_outlet_google_my_business_url')),
+						'api_key'=>$this->input->post('api_key'),
+						'master_id' 						=> $this->session->userdata['logged_in']['master_admin_id'],
+						'business_outlet_business_admin' 	=> 0
+					);
+					$result = $this->MasterAdminModel->Insert($data,'mss_business_outlets_new');
+						
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Outlet added successfully!");
+						die;
+          }
+          elseif($result['error'] == 'true'){
+          	$this->ReturnJsonArray(false,true,$result['message']);
+						die;
+          }
+				}
+			}
+			else{
+				$data = $this->GetDataForMasterAdmin("Add Outlet");
+				$this->load->view('master_admin/ma_add_outlet_view',$data);
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Outlet Management : Get outlet detail for the given Id
+	*/
+	public function GetMasterBusinessOutlet(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$data = $this->MasterAdminModel->DetailsById($_GET['business_outlet_id'],'mss_business_outlets_new','business_outlet_id');
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Outlet Management : Update outlet
+	*/
+	public function EditOutlet(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('business_outlet_name', 'Business Outlet Name', 'trim|required|max_length[100]');
+				$this->form_validation->set_rules('business_outlet_gst_in', 'Business Outlet GST IN', 'trim|max_length[15]|min_length[15]');
+				$this->form_validation->set_rules('business_outlet_address', 'Business Outlet Address', 'trim|required');
+				$this->form_validation->set_rules('business_outlet_city', 'Business Outlet City', 'trim|required|max_length[100]');
+				$this->form_validation->set_rules('business_outlet_state', 'Business Outlet State', 'trim|required|max_length[100]');
+				$this->form_validation->set_rules('business_outlet_pincode', 'Business Outlet Pincode', 'trim|required|max_length[10]');
+				$this->form_validation->set_rules('business_outlet_mobile', 'Business Outlet Mobile', 'trim|max_length[15]');
+				$this->form_validation->set_rules('business_outlet_landline', 'Business Outlet Landline', 'trim|max_length[15]');
+				$this->form_validation->set_rules('business_outlet_email', 'Business Outlet Email', 'trim|max_length[100]');
+				$this->form_validation->set_rules('business_outlet_bill_header_msg', 'Business Outlet Bill Header message', 'trim');
+				$this->form_validation->set_rules('business_outlet_bill_footer_msg', 'Business Outlet Bill Footer message', 'trim');
+				$this->form_validation->set_rules('business_outlet_facebook_url', 'Business Outlet FB URL', 'trim');
+				$this->form_validation->set_rules('business_outlet_instagram_url', 'Business Outlet Instagram URL', 'trim');
+				$this->form_validation->set_rules('business_outlet_latitude', 'Business Outlet Latitude', 'trim');
+				$this->form_validation->set_rules('business_outlet_longitude', 'Business Outlet Longitude', 'trim');
+
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								 );
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{
+					$data = array(
+						'business_outlet_id'    => $this->input->post('business_outlet_id'),
+						'business_outlet_name' 	=> $this->input->post('business_outlet_name'),
+						'business_outlet_gst_in' 	=> $this->input->post('business_outlet_gst_in'),
+						'business_outlet_mobile' 	=> $this->input->post('business_outlet_mobile'),
+						'business_outlet_landline' 	=> $this->input->post('business_outlet_landline'),
+						'business_outlet_address' 	=> $this->input->post('business_outlet_address'),
+						'business_outlet_pincode' 	=> $this->input->post('business_outlet_pincode'),
+						'business_outlet_state' 	=> $this->input->post('business_outlet_state'),
+						'business_outlet_city' 	=> $this->input->post('business_outlet_city'),
+						'business_outlet_country' 	=> "India",
+						'business_outlet_email' 	=> $this->input->post('business_outlet_email'),
+						'business_outlet_bill_header_msg' 	=> $this->input->post('business_outlet_bill_header_msg'),
+						'business_outlet_bill_footer_msg' 	=> $this->input->post('business_outlet_bill_footer_msg'),
+						'business_outlet_facebook_url' 	=> $this->input->post('business_outlet_facebook_url'),
+						'business_outlet_instagram_url' 	=> $this->input->post('business_outlet_instagram_url'),
+						'business_outlet_latitude' 	=> $this->input->post('business_outlet_latitude'),
+						'business_outlet_longitude' 	=> $this->input->post('business_outlet_longitude'),
+						'business_outlet_business_admin' 	=> $this->session->userdata['logged_in']['business_admin_id']
+					);
+					
+					$result = $this->MasterAdminModel->Update($data,'mss_business_outlets_new','business_outlet_id');
+						
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Outlet details updated successfully!");
+						die;
+          }
+          elseif($result['error'] == 'true'){
+          	$this->ReturnJsonArray(false,true,$result['message']);
+						die;
+          }
+				}
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+
+    public function GetCategoriesByCategoryType(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$where = array(
+					'category_type' 		=> $_GET['category_type'],
+					'category_is_active'   => TRUE,
+					'master_id' 			=>  $this->session->userdata['logged_in']['master_admin_id']
+				);
+				$data = $this->MasterAdminModel->MultiWhereSelect('master_categories',$where);
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Package Management & Add new Package into Master Table 
+	*/
+	public function MasterAdminAddPackage(){
+		if($this->IsLoggedIn('master_admin')){
+			// $this->PrettyPrintArray($_POST);
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('salon_package_name', 'Package Name', 'trim|required|max_length[50]');
+				$this->form_validation->set_rules('salon_package_price', 'Package Price', 'trim|required');
+				$this->form_validation->set_rules('salon_package_gst', 'Package GST', 'trim|required');
+				$this->form_validation->set_rules('salon_package_upfront_amt', 'Upfront Amount', 'trim|required');
+				$this->form_validation->set_rules('salon_package_validity', 'Validity', 'trim|required|is_natural_no_zero');
+				$this->form_validation->set_rules('salon_package_type', 'Package Type', 'trim|required|max_length[50]');
+				$this->form_validation->set_rules('virtual_wallet_money_absolute', 'Wallet money loaded', 'trim');
+				$this->form_validation->set_rules('virtual_wallet_money_percentage', 'Wallet money loaded', 'trim');
+				$this->form_validation->set_rules('salon_package_outlet', 'Outlet', 'trim');
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								);
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{
+			
+					$data = array(
+						'salon_package_name'        => $this->input->post('salon_package_name'),
+						'salon_package_price'       => $this->input->post('salon_package_price'),
+						'service_gst_percentage'    => $this->input->post('salon_package_gst'),
+						'salon_package_upfront_amt' => $this->input->post('salon_package_upfront_amt'),
+						'salon_package_validity'    => $this->input->post('salon_package_validity'),
+						'salon_package_type' 	    => $this->input->post('salon_package_type'),
+						'business_admin_id'         => 0,
+						'master_id'				    => $this->session->userdata['logged_in']['master_admin_id'],
+						'business_outlet_id' 	    => $this->input->post('salon_package_outlet'),
+						'salon_package_date' 		=> date('Y-m-d')
+					);
+					
+					
+					if($data['salon_package_type'] == "Wallet"){
+							//Only one insert required
+						if(empty($this->input->post("virtual_wallet_money_absolute")) && empty($this->input->post("virtual_wallet_money_percentage"))){
+							$this->ReturnJsonArray(false,true,"Please fill virtual money value!");
+							die;
+						}
+						else{
+							
+							if(!empty($this->input->post("virtual_wallet_money_absolute"))){
+								$data['virtual_wallet_money'] = $this->input->post("virtual_wallet_money_absolute");
+								
+								$result = $this->MasterAdminModel->Insert($data,'mss_salon_packages_master_new');
+								
+								if($result['success'] == 'true'){
+									$this->ReturnJsonArray(true,false,"Package added successfully!");
+									die;
+								}
+								elseif($result['error'] == 'true'){
+									$this->ReturnJsonArray(false,true,$result['message']);
+									die;
+								}
+							}
+
+							if(!empty($this->input->post("virtual_wallet_money_percentage"))){
+								$data['virtual_wallet_money'] = (($this->input->post("virtual_wallet_money_percentage")/100) * $data['salon_package_upfront_amt']) ;
+								
+								$result = $this->MasterAdminModel->Insert($data,'mss_salon_packages_master_new');
+								
+								if($result['success'] == 'true'){
+									$this->ReturnJsonArray(true,false,"Package added successfully!");
+									die;
+								}
+								elseif($result['error'] == 'true'){
+									$this->ReturnJsonArray(false,true,$result['message']);
+									die;
+								}
+							}
+						}
+					}
+					elseif($data['salon_package_type'] == "Services"){
+						$services = $this->input->post('service_id');
+						$counts   = $this->input->post('count_service');
+						if(!empty($services) && !empty($counts) && (count($services) == count($counts))){
+							$result = $this->MasterAdminModel->AddServicePackageForSalon($data,$services,$counts);
+							
+							if($result['success'] == 'true'){
+								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								die;
+							}
+							elseif($result['error'] == 'true'){
+								$this->ReturnJsonArray(false,true,$result['message']);
+								die;
+							}
+						}
+						else{
+							$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
+							die;
+						}
+					}
+					elseif($data['salon_package_type'] == "Discount"){
+
+						$services = $this->input->post('service_id');
+						$discounts =  $this->input->post('discount');
+						$counts = $this->input->post('count_discount');
+						
+						if(!empty($services) && !empty($discounts) && !empty($counts) && (count($services) == count($counts)) && (count($counts) == count($discounts))){
+							$result = $this->MasterAdminModel->AddDiscountPackageForSalon($data,$services,$discounts,$counts);
+							if($result['success'] == 'true'){
+								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								die;
+							}
+							elseif($result['error'] == 'true'){
+								$this->ReturnJsonArray(false,true,$result['message']);
+								die;
+							}
+						}
+						else{
+							$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
+							die;
+						}
+					}
+					elseif ($data['salon_package_type'] == "Service_SubCategory_Bulk") {
+						$data['salon_package_type'] = 'Services';
+						$sub_categories = $this->input->post('service_sub_category_bulk'); 
+						$counts = $this->input->post('count_service_subcategory_bulk');
+						if(!empty($sub_categories) && !empty($counts) && (count($sub_categories) == count($counts))){
+							
+							$result = $this->MasterAdminModel->AddServiceSubCategoryBulkPackage($data,$sub_categories,$counts);
+							
+							if($result['success'] == 'true'){
+								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								die;
+							}
+							elseif($result['error'] == 'true'){
+								$this->ReturnJsonArray(false,true,$result['message']);
+								die;
+							}
+						}
+						else{
+							$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
+							die;
+						}	
+					}
+					elseif($data['salon_package_type'] == "Discount_SubCategory_Bulk"){
+						$data['salon_package_type'] = 'Discount';
+						$sub_categories = $this->input->post('service_sub_category_bulk');
+						$discounts =  $this->input->post('discount_subcategory_bulk');
+						$counts = $this->input->post('count_discount_subcategory_bulk');
+						
+						if(!empty($sub_categories) && !empty($discounts) && !empty($counts) && (count($sub_categories) == count($counts)) && (count($counts) == count($discounts))){
+							$result = $this->MasterAdminModel->AddDiscountSubCategoryBulkPackage($data,$sub_categories,$discounts,$counts);
+							if($result['success'] == 'true'){
+								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								die;
+							}
+							elseif($result['error'] == 'true'){
+								$this->ReturnJsonArray(false,true,$result['message']);
+								die;
+							}
+						}
+						else{
+							$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
+							die;
+						}
+					}
+					elseif ($data['salon_package_type'] == "Service_Category_Bulk") {
+						$data['salon_package_type'] = 'Services';
+						$categories = $this->input->post('service_category_bulk'); 
+						$counts = $this->input->post('count_service_category_bulk');
+						if(!empty($categories) && !empty($counts) && (count($categories) == count($counts))){
+							// $this->PrettyPrintArray($categories);
+							$result = $this->MasterAdminModel->AddServiceCategoryBulkPackage($data,$categories,$counts);
+							
+							if($result['success'] == 'true'){
+								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								die;
+							}
+							elseif($result['error'] == 'true'){
+								$this->ReturnJsonArray(false,true,$result['message']);
+								die;
+							}
+						}
+						else{
+							$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
+							die;
+						}	
+					}
+					elseif($data['salon_package_type'] == "Discount_Category_Bulk"){
+						$data['salon_package_type'] = 'Discount';
+						$categories = $this->input->post('discount_service_category_bulk');
+						$cat_price = $this->input->post('service_price_greater_than');
+						$discounts =  $this->input->post('discount_category_bulk');
+						$counts = $this->input->post('count_discount_category_bulk');
+					
+						if(!empty($categories) && !empty($discounts) && !empty($counts) && (count($categories) == count($counts)) && (count($counts) == count($discounts))){
+							$result = $this->MasterAdminModel->AddDiscountCategoryBulkPackage($data,$categories, $cat_price, $discounts,$counts);
+							if($result['success'] == 'true'){
+								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								die;
+							}
+							elseif($result['error'] == 'true'){
+								$this->ReturnJsonArray(false,true,$result['message']);
+								die;
+							}
+						}
+						else{
+							$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
+							die;
+						}
+					}
+					elseif($data['salon_package_type'] == "special_membership"){
+						// $this->PrettyPrintArray($_POST);
+						$where=array(
+							// 'category_type'=> $_POST['category_type'],
+							// 'service_price_inr' 	=> $_POST['price_greater_than'],
+							'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+							'business_outlet_id' => $this->session->userdata['outlets']['current_outlet']
+						);
+						// $discounts =  $this->input->post('special_discount');
+						$counts = 100;
+					
+						if(!empty($counts)){
+							$result = $this->MasterAdminModel->AddDiscountServicePackage($_POST,$data,$counts,$where);
+							if($result['success'] == 'true'){
+								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								die;
+							}
+							elseif($result['error'] == 'true'){
+								$this->ReturnJsonArray(false,true,$result['message']);
+								die;
+							}
+						}
+						else{
+							$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
+							die;
+						}
+					}
+				}
+			}
+			else{
+				$data = $this->GetDataForMasterAdmin("Create Packages");
+					
+				$data['selectedOutlets'] =  "";
+				if(!empty($data['business_outlet_details'])){
+					$data['selectedOutlets'] = $data['business_outlet_details'][0]['business_outlet_id'];
+				}
+					
+				$data['categories']     = $this->GetMasterCategories($this->session->userdata['logged_in']['master_admin_id']);
+				$data['sub_categories'] = $this->GetMasterSubCategories($this->session->userdata['logged_in']['master_admin_id']);
+				$data['services']       = $this->GetMasterServices($this->session->userdata['logged_in']['master_admin_id']);
+				$data['packages']       = $this->ActivePackages($data['selectedOutlets']);
+				
+										
+				/*if(isset($data['selected_outlet']) || !empty($data['selected_outlet'])){
+					$data['services']        = $this->GetServices($this->session->userdata['outlets']['current_outlet']);
+					$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['outlets']['current_outlet']); 
+					$data['categories']      = $this->GetCategories($this->session->userdata['outlets']['current_outlet']);	
+					$data['packages']        = $this->ActivePackages($this->session->userdata['outlets']['current_outlet']);
+				} */
+				$this->load->view('master_admin/ma_add_packages_view',$data);
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	// get service by id
+	public function GetServicePriceById(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$where = array(
+					'service_id'  => $_GET['service_id'],
+					'service_is_active'   => TRUE
+				);
+				
+				$data = $this->MasterAdminModel->MultiWhereSelect('master_services',$where);
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Package Management : Delete Package as temprory
+	*/
+	public function ChangePackageStatus(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				if($this->input->post('activate') == 'true' && $this->input->post('deactivate') == 'false'){
+					//Activate
+					$data = array(
+					  "salon_package_id"          => $this->input->post('salon_package_id'),
+						"is_active"   => TRUE
+					);
+
+					$status = $this->MasterAdminModel->Update($data,'mss_salon_packages_master_new','salon_package_id');
+					if($status['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Activated successfully!");
+						die;
+					}
+					elseif($status['error'] == 'true'){
+						$this->ReturnJsonArray(false,true,$status['message']);
+						die;
+					}
+				}	
+				elseif($this->input->post('activate') == 'false' && $this->input->post('deactivate') == 'true'){
+					//Deactivate the Employee
+					$data = array(
+						"salon_package_id" => $this->input->post('salon_package_id'),	
+						"is_active"   => FALSE
+					);
+
+					$status = $this->MasterAdminModel->Update($data,'mss_salon_packages_master_new','salon_package_id');
+					
+					if($status['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Deactivated successfully!");
+						die;
+					}
+					elseif($status['error'] == 'true'){
+						$this->ReturnJsonArray(false,true,$status['message']);
+						die;
+					}
+				}		       
+	    }
+	    else{
+				$this->ReturnJsonArray(false,true,'Not a POST Request !');
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Package Management & Add new Package into Master Table 
+	*/
+	public function GetMasterPackages(){
+	
+		if($this->IsLoggedIn('master_admin')){
+			$data['packages']        = $this->ActivePackages($_GET['outlet_id']);
+			header("Content-type: application/json");
+			print(json_encode($data['packages'], JSON_PRETTY_PRINT));
+			die;
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
 
