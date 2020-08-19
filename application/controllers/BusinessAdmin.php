@@ -5110,7 +5110,6 @@ public function GetEmployee(){
 		//Update bills
 		public function UpdateTransaction(){	
 			if($this->IsLoggedIn('business_admin')){
-				// $this->PrettyPrintArray($_POST);
 				if(isset($_POST) && !empty($_POST)){
 					if(empty($_POST['txn_date'])){
 						$data=array(	
@@ -5134,19 +5133,29 @@ public function GetEmployee(){
 							'txn_service_expert_id'=>$_POST['txn_expert']
 						);
 					}
-					if(empty($_POST['txn_abs_disc'])){
+					if(empty($_POST['txn_abs_disc'] )){
 						$data3=array(	
+							'txn_id'=>$_POST['txn_id'],
 							'txn_service_id'=>$_POST['txn_service_id'],
-							'txn_service_discount_absolute'=>$_POST['old_txn_disc']
+							'txn_service_discount_absolute'=>$_POST['old_txn_disc'],
+							'txn_discounted_result'	=>($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
 						);
+						if($_POST['txn_abs_disc']==0){
+							$data3=array(	
+								'txn_id'=>$_POST['txn_id'],
+								'txn_service_id'=>$_POST['txn_service_id'],
+								'txn_service_discount_absolute'=>$_POST['txn_abs_disc'],
+								'txn_discounted_result'	=>($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
+							);
+						}
 					}else{
 						$data3=array(	
+							'txn_id'=>$_POST['txn_id'],
 							'txn_service_id'=>$_POST['txn_service_id'],
 							'txn_service_discount_absolute'=>$_POST['txn_abs_disc'],
 							'txn_discounted_result'	=>($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
 						);
 					}
-						
 						$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');	
 						$result2 = $this->BusinessAdminModel->Update($data2,'mss_transaction_services','txn_service_id');	
 						$result3 = $this->BusinessAdminModel->UpdateAbsDiscount($data3);			
@@ -5169,11 +5178,9 @@ public function GetEmployee(){
 		if($this->IsLoggedIn('business_admin')){
 			if(isset($_GET) && !empty($_GET)){
 				$data=array('business_admin_password'=>$_GET['admin_password']);		
-				// $data = $this->BusinessAdminModel->CancelBills($data);	
 				$result = $this->BusinessAdminModel->BusinessAdminByEmail($this->session->userdata['logged_in']['business_admin_email']);	
 				$result1=$this->BusinessAdminModel->GetFullTransactionDetail($_GET['txn_id']);
-				// $this->PrettyPrintArray($result1);
-				// exit;	
+					
 				if(password_verify($data['business_admin_password'],$result['res_arr']['business_admin_password']))	{
 						header("Content-type: application/json" && $result1['res_arr']!=null);
 						print(json_encode($result1['res_arr'], JSON_PRETTY_PRINT));
@@ -11651,4 +11658,4 @@ public function daybook(){
     }
 
 }
-	    
+
