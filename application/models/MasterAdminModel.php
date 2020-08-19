@@ -147,7 +147,7 @@ class MasterAdminModel extends CI_Model
   {
 
     $data = $this->db->insert_batch($table_name, $data);
-
+  
     if ($data) {
       // $data = array('insert_id' => $this->db->insert_id());
       return $this->ModelHelper(true, false, '', $data);
@@ -377,6 +377,17 @@ class MasterAdminModel extends CI_Model
     return $this->ModelHelper(true, false);
   }
   
+   public function AssignPackageToMultipleOutlet($data,$outletIds){
+		$records = array();
+		if(!empty($outletIds)){
+			foreach($outletIds as $key=>$outlet_id){
+				$records[] = array('package_id'=>$data['package_id'],'outlet_id'=>$outlet_id,'master_id'=>$data['master_id']);
+			}
+			
+			$this->InsertBatch($records,'mss_package_outlet_association');
+		}
+	}
+  
    // Add category packages for salon
     public function AddServiceCategoryBulkPackage($data,$categories,$count){   
 
@@ -451,8 +462,8 @@ class MasterAdminModel extends CI_Model
                     'category_type'=>$_POST['category_type1'][$i],
                     'min_price'=>$_POST['min_price1'][$i],
                     'max_price'=>$_POST['max_price1'][$i],
-                    'business_admin_id'=>$where['business_admin_id'],
-                    'business_outlet_id'=>$where['business_outlet_id']
+                    'business_admin_id'=>$where['business_admin_id']
+                    //'business_outlet_id'=>$where['business_outlet_id']
                 );
                 // $categories=$this->ServiceByPrice($co);
                 $result_2=$this->ServiceBetweenPrice($filter);
@@ -682,9 +693,11 @@ class MasterAdminModel extends CI_Model
 
   public function GetAllPackages($where)
   {
-    $sql = "SELECT * FROM mss_salon_packages_master_new WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
-
-    $query = $this->db->query($sql);
+    //$sql = "SELECT * FROM mss_salon_packages_master_new WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
+    $sql = "SELECT * FROM mss_salon_packages_master_new WHERE salon_package_id IN (SELECT package_id FROM `mss_package_outlet_association` WHERE `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `master_id`=" . $this->db->escape($where['master_id']) . ")";
+	
+	$query = $this->db->query($sql);
+	
 
     if ($query) {
       return $this->ModelHelper(true, false, '', $query->result_array());

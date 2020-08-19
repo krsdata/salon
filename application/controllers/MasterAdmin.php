@@ -3554,6 +3554,8 @@ class MasterAdmin extends CI_Controller {
 		}
 	}
 	
+	
+	
 	/**
 	 *
 	 * @author	: Pinky Sahukar
@@ -3571,7 +3573,7 @@ class MasterAdmin extends CI_Controller {
 				$this->form_validation->set_rules('salon_package_type', 'Package Type', 'trim|required|max_length[50]');
 				$this->form_validation->set_rules('virtual_wallet_money_absolute', 'Wallet money loaded', 'trim');
 				$this->form_validation->set_rules('virtual_wallet_money_percentage', 'Wallet money loaded', 'trim');
-				$this->form_validation->set_rules('salon_package_outlet', 'Outlet', 'trim');
+				$this->form_validation->set_rules('salon_package_outlet[]', 'Outlet', 'trim');
 				if ($this->form_validation->run() == FALSE) 
 				{
 					$data = array(
@@ -3594,10 +3596,11 @@ class MasterAdmin extends CI_Controller {
 						'salon_package_type' 	    => $this->input->post('salon_package_type'),
 						'business_admin_id'         => 0,
 						'master_id'				    => $this->session->userdata['logged_in']['master_admin_id'],
-						'business_outlet_id' 	    => $this->input->post('salon_package_outlet'),
+						'business_outlet_id' 	    => 0,
 						'salon_package_date' 		=> date('Y-m-d')
 					);
 					
+					$outletIds = $this->input->post('salon_package_outlet');
 					
 					if($data['salon_package_type'] == "Wallet"){
 							//Only one insert required
@@ -3611,6 +3614,11 @@ class MasterAdmin extends CI_Controller {
 								$data['virtual_wallet_money'] = $this->input->post("virtual_wallet_money_absolute");
 								
 								$result = $this->MasterAdminModel->Insert($data,'mss_salon_packages_master_new');
+								
+								/* Associate Package with multiple outlet*/ 
+								$packageId = $result['res_arr']['insert_id'];
+								
+								$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
 								
 								if($result['success'] == 'true'){
 									$this->ReturnJsonArray(true,false,"Package added successfully!");

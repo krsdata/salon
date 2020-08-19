@@ -115,7 +115,7 @@
 																	<div class="row">
 																		 <div class="form-group col-md-6">
 																			<label >Outlets</label>
-																				<select  name="salon_package_outlet" <?php // multiple ?> class="form-control" temp="Outlet">
+																				<select  name="salon_package_outlet[]"  multiple class="form-control" temp="Outlet">
 																					
 																					 <?php foreach($business_outlet_details as  $key => $outletDetails): ?>
 																					  <option value="<?php echo $outletDetails['business_outlet_id']; ?>" <?php echo $selected; ?>><?php echo $outletDetails['business_outlet_name']; ?></option>
@@ -844,7 +844,7 @@
 						required : true
 					},
 					
-					"salon_package_outlet" : {
+					"salon_package_outlet[]" : {
 						required : true
 					},
 					
