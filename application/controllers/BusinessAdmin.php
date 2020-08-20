@@ -11532,6 +11532,9 @@ public function InsertSalary(){
 }
 
 public function daybook(){        
+    if(!$this->IsLoggedIn('business_admin')){
+        $this->LogoutUrl(base_url()."BusinessAdmin/");
+    }
         $this->load->model('BusinessAdminModel');
         if(!isset($_GET) || empty($_GET)){
             if(!empty($_REQUEST['to_date'])){
@@ -11657,7 +11660,10 @@ public function daybook(){
         $this->load->view('business_admin/ba_expense_view',$data);
     }
 
-    public function cashbook(){        
+    public function cashbook(){  
+        if(!$this->IsLoggedIn('business_admin')){
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
+        }      
         $this->load->model('BusinessAdminModel');
         if(!isset($_GET) || empty($_GET)){
             if(!empty($_REQUEST['to_date'])){
