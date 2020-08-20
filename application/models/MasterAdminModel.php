@@ -691,21 +691,56 @@ class MasterAdminModel extends CI_Model
     }
   }
 
-  public function GetAllPackages($where)
+  public function GetAllPackages($where,$filter=array())
   {
     //$sql = "SELECT * FROM mss_salon_packages_master_new WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
     $sql = "SELECT * FROM mss_salon_packages_master_new WHERE salon_package_id IN (SELECT package_id FROM `mss_package_outlet_association` WHERE `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `master_id`=" . $this->db->escape($where['master_id']) . ")";
+	if(!empty($filter)){
+			if(isset($filter['searchValue']) && $filter['searchValue']!=""){
+			 $sql .= " AND  (salon_package_name like '%".$filter['searchValue']."%' or salon_package_type like '%".$filter['searchValue']."%' )";
+			}
+			
+			$sql .= "  order by ".$filter['columnName']." ".$filter['columnSortOrder']." limit ".$filter['row'].",".$filter['rowperpage'];
+	}
 	
 	$query = $this->db->query($sql);
 	
-
     if ($query) {
       return $this->ModelHelper(true, false, '', $query->result_array());
     } else {
       return $this->ModelHelper(false, true, "DB error!");
     }
   }
-
+  
+  public function GetAllPackagesCountWithFilter($where,$filter=array())
+  {
+    //$sql = "SELECT * FROM mss_salon_packages_master_new WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
+    $sql = "SELECT * FROM mss_salon_packages_master_new WHERE salon_package_id IN (SELECT package_id FROM `mss_package_outlet_association` WHERE `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `master_id`=" . $this->db->escape($where['master_id']) . ")";
+	if(!empty($filter)){
+			if(isset($filter['searchValue']) && $filter['searchValue']!=""){
+			 $sql .= " AND  (salon_package_name like '%".$filter['searchValue']."%' or salon_package_type like '%".$filter['searchValue']."%' )";
+			}
+	}
+	
+	$query = $this->db->query($sql);
+    if ($query) {
+      return $this->ModelHelper(true, false, '', $query->num_rows());
+    } else {
+      return $this->ModelHelper(false, true, "DB error!");
+    }
+  }
+  
+   public function GetAllPackagesCount($where){
+        $sql = "SELECT * FROM mss_salon_packages_master_new WHERE salon_package_id IN (SELECT package_id FROM `mss_package_outlet_association` WHERE `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `master_id`=" . $this->db->escape($where['master_id']) . ")";
+		$query = $this->db->query($sql);
+        
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->num_rows());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
 
  public function GenerateReports($data)
   {

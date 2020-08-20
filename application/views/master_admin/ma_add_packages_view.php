@@ -750,14 +750,14 @@
 					"data" : {'outletId' : outletId}
 				},
 				"columns": [
-				    { "data": "s_no" },
+				    { "data": "salon_package_id" },
 				 	{ "data": "salon_package_name" },
 					{ "data": "salon_package_type" },
 					{ "data": "salon_package_date" },
 					{ "data": "salon_package_price" },
-					{ "data": "GST" },
+					{ "data": "service_gst_percentage" },
 					{ "data": "total" },
-					{ "data": "validity" },
+					{ "data": "salon_package_validity" },
 					{ "data": "action" }
 				]
 		});

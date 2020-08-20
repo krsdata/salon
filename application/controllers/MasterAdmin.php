@@ -3915,46 +3915,78 @@ class MasterAdmin extends CI_Controller {
 	public function GetMasterPackages(){
 	
 		if($this->IsLoggedIn('master_admin')){
-			$draw 					 = $_POST['draw'];
-			$data['packages']        = $this->ActivePackages($_POST['outletId']);
+			
 					
 			$records = array();
-			foreach($data['packages'] as $key=>$package){
-				
 			
-			if($package['is_active'] == 1){
-				    $action = "";
-					$action .='<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'.$package['salon_package_id'].'">';
-					$action .='<i class="align-middle" data-feather="package"></i>';
-					$action .='</button>';
+			## Read value
+			$draw = $_POST['draw'];
+			$row = ($_POST['start']+1);
+			$rowperpage = $_POST['length']; // Rows display per page
+			$columnIndex = $_POST['order'][0]['column']; // Column index
+			$columnName = $_POST['columns'][$columnIndex]['data']; // Column name
+			$columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
+			$searchValue = $_POST['search']['value']; // Search value
+			
+			$where = array(
+				'master_id'  => $this->session->userdata['logged_in']['master_admin_id'],
+				'business_outlet_id' => $_POST['outletId']
+			);
+			/* Get total records count */
+			$totalRecords     = $this->MasterAdminModel->GetAllPackagesCount($where);
+			
+            $filterData = array('columnName'=>$columnName,
+								'columnSortOrder'=>$columnSortOrder,
+								'searchValue' => $searchValue,
+								'rowperpage'=>$rowperpage,
+								//'offset'=>(($row - 1) * $rowperpage + 1)
+								'row' => $row
+								);
+			
+			
+			$data['packages'] = $this->MasterAdminModel->GetAllPackages($where,$filterData);
+			
+			if(!empty($searchValue)){
+				$totalRecordwithFilter     = $this->MasterAdminModel->GetAllPackagesCountWithFilter($where,$filterData);
+			}else{
+				$totalRecordwithFilter     = (!empty($data['packages'])) ? count($data['packages']) : 0;
 			}
-			else{
-						$action = "";
-						$action .='<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'.$package['salon_package_id'].'">';
-						$action .='<i class="align-middle" data-feather="package"></i>';
-						$action .='</button>';
-			}
+			if(!empty($data['packages']['res_arr'])){
 				
-				
-			   $records[] = array( 
-			            's_no'				   => $key+1,
-						'salon_package_name'   => $package['salon_package_name'],    
-						'salon_package_type'   => $package['salon_package_type'],    
-						'salon_package_date'   => $package['salon_package_date'],   
-						'salon_package_price'  => $package['salon_package_price'],    
-						'GST'  				   => ($package['service_gst_percentage']*$package['salon_package_price']/100),
-						'total'  			   => ($package['salon_package_price']+($package['service_gst_percentage']*$package['salon_package_price']/100)),
-						'validity'			   => $package['salon_package_validity'],
-						'action' 			   => $action
-						
-			   );
+			    foreach($data['packages']['res_arr'] as $key=>$package){
+					if($package['is_active'] == 1){
+							$action = "";
+							$action .='<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'.$package['salon_package_id'].'">';
+							$action .='<i class="align-middle" data-feather="package"></i>';
+							$action .='</button>';
+					}
+					else{
+								$action = "";
+								$action .='<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'.$package['salon_package_id'].'">';
+								$action .='<i class="align-middle" data-feather="package"></i>';
+								$action .='</button>';
+					}
+				  $records[] = array( 
+							'salon_package_id'	    => $key+1,
+							'salon_package_name'    => $package['salon_package_name'],    
+							'salon_package_type'    => $package['salon_package_type'],    
+							'salon_package_date'    => $package['salon_package_date'],   
+							'salon_package_price'   => $package['salon_package_price'],    
+							'service_gst_percentage'=> ($package['service_gst_percentage']*$package['salon_package_price']/100),
+							'total'  			    => ($package['salon_package_price']+($package['service_gst_percentage']*$package['salon_package_price']/100)),
+							'salon_package_validity'=> $package['salon_package_validity'],
+							'action' 			    => $action
+							
+				   );
+				}
+			}else{
+				$totalRecords = $totalRecordwithFilter = 0;
 			}
-
 			## Response
 			$response = array(
 			  "draw" => intval($draw),
-			  "iTotalRecords" => count($data['packages']),
-			  "iTotalDisplayRecords" => 9,
+			  "iTotalRecords" => $totalRecords['res_arr'],
+			  "iTotalDisplayRecords" => $totalRecordwithFilter['res_arr'],
 			  "aaData" => $records
 			);
 
