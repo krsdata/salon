@@ -1793,16 +1793,21 @@
 														<tbody>
 														<tr>
 																<td colspan="2">
-																<label class="custom-control custom-checkbox">
+												<label class="custom-control custom-checkbox">
+								              		<input type="checkbox" class="custom-control-input" checked="true" id="cashback">
+								              		<span class="custom-control-label">Credit Rewards</span>
+																</label>																
+
+																<label style="display:none;" class="custom-control custom-checkbox">
 								              		<input type="checkbox" class="custom-control-input" checked="true" id="SendSMS">
 								              		<span class="custom-control-label">Send SMS</span>
 																</label>
 																</td>
 																<td colspan="2">
-																<label class="custom-control custom-checkbox">
+															<!--	<label style="display:none;" class="custom-control custom-checkbox">
 								              		<input type="checkbox" class="custom-control-input" checked="true" id="cashback">
 								              		<span class="custom-control-label">Credit Rewards</span>
-																</label>
+																</label>-->
 																</td>
 															</tr>
 															<tr>
