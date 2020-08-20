@@ -6638,7 +6638,10 @@ public function AddToCartRedeemPoints(){
 		}	
 	}
 
-	public function daybook(){        
+	public function daybook(){        		
+		if(!$this->IsLoggedIn('cashier')){
+			$this->LogoutUrl(base_url()."Cashier/Login");
+		}
         $this->load->model('BusinessAdminModel');
         if(!isset($_GET) || empty($_GET)){
             if(!empty($_REQUEST['to_date'])){
@@ -6765,7 +6768,10 @@ public function AddToCartRedeemPoints(){
     }
 
 
-    public function cashbook(){        
+    public function cashbook(){       
+    	if(!$this->IsLoggedIn('cashier')){
+			$this->LogoutUrl(base_url()."Cashier/Login");
+		} 
         $this->load->model('BusinessAdminModel');
         if(!isset($_GET) || empty($_GET)){
             if(!empty($_REQUEST['to_date'])){
