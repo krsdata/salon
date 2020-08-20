@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-$url = "https://dev.salonfirst.in/";
+$url = "https://salonfirst.in/";
 ?>
 <html lang="en">
 
