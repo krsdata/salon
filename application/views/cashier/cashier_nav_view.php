@@ -88,6 +88,8 @@
 				endif;
 			?>
 			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/ReportsManagement"><i data-feather="book" style="color:#009925;"></i>Reports</a></li>	
+			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/daybook"><i data-feather="clipboard" style="color:#009925;"></i>Day Book</a></li>	
+			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/cashbook"><i data-feather="clipboard" style="color:#009925;"></i>Cash Book</a></li>	
 			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Video"><i data-feather="video"></i>Demo Videos</a></li>
 			<li class="sidebar-header">
 				Other Options
