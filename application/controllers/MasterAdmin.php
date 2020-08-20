@@ -3915,10 +3915,51 @@ class MasterAdmin extends CI_Controller {
 	public function GetMasterPackages(){
 	
 		if($this->IsLoggedIn('master_admin')){
-			$data['packages']        = $this->ActivePackages($_GET['outlet_id']);
-			header("Content-type: application/json");
-			print(json_encode($data['packages'], JSON_PRETTY_PRINT));
-			die;
+			$draw 					 = $_POST['draw'];
+			$data['packages']        = $this->ActivePackages($_POST['outletId']);
+					
+			$records = array();
+			foreach($data['packages'] as $key=>$package){
+				
+			
+			if($package['is_active'] == 1){
+				    $action = "";
+					$action .='<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'.$package['salon_package_id'].'">';
+					$action .='<i class="align-middle" data-feather="package"></i>';
+					$action .='</button>';
+			}
+			else{
+						$action = "";
+						$action .='<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'.$package['salon_package_id'].'">';
+						$action .='<i class="align-middle" data-feather="package"></i>';
+						$action .='</button>';
+			}
+				
+				
+			   $records[] = array( 
+			            's_no'				   => $key+1,
+						'salon_package_name'   => $package['salon_package_name'],    
+						'salon_package_type'   => $package['salon_package_type'],    
+						'salon_package_date'   => $package['salon_package_date'],   
+						'salon_package_price'  => $package['salon_package_price'],    
+						'GST'  				   => ($package['service_gst_percentage']*$package['salon_package_price']/100),
+						'total'  			   => ($package['salon_package_price']+($package['service_gst_percentage']*$package['salon_package_price']/100)),
+						'validity'			   => $package['salon_package_validity'],
+						'action' 			   => $action
+						
+			   );
+			}
+
+			## Response
+			$response = array(
+			  "draw" => intval($draw),
+			  "iTotalRecords" => count($data['packages']),
+			  "iTotalDisplayRecords" => 9,
+			  "aaData" => $records
+			);
+
+			echo json_encode($response);
+			
 		}else{
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		}

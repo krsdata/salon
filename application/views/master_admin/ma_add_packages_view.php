@@ -660,44 +660,7 @@
 													<th>Actions</th>
 												</tr>
 											</thead>
-											<tbody id="package-content">
-											<?php
-												$count = 0; 
-												foreach($packages as $package):
-												$count = $count + 1;
-											?>
-											<tr>
-												<td><?=$count?></td>
-												<td><?=$package['salon_package_name']?></td>
-												<td><?=$package['salon_package_type']?></td>
-												<td><?=$package['salon_package_date']?></td>
-												<td><?=$package['salon_package_price']?></td>
-												<td><?=$package['service_gst_percentage']*$package['salon_package_price']/100?></td>
-												<td><?=($package['salon_package_price']+($package['service_gst_percentage']*$package['salon_package_price']/100))?></td>
-												<td><?=$package['salon_package_validity']?></td>
-												<td class="table-action">
-												<?php
-													if($package['is_active'] == 1){
-												?>
-													<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="<?=$package['salon_package_id']?>">
-														<i class="align-middle" data-feather="package"></i>
-													</button>
-												<?php
-													}
-													else{
-												?>
-													<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="<?=$package['salon_package_id']?>">
-														<i class="align-middle" data-feather="package"></i>
-													</button>
-												<?php
-													}
-												?>
-												</td>
-											</tr>
-											<?php
-												endforeach;
-											?>
-												</tbody>
+											<tbody id="package-content"></tbody>
 										</table>										
 									</div>					
 								</div>
@@ -761,16 +724,94 @@
 
 <script type="text/javascript">
 	$(document).ready(function(){
-		$(document).ajaxStart(function() {		
-			$("#load_screen").show();
-		});
+	
+	$(document).ajaxStart(function() {		
+		$("#load_screen").show();
+	});
 
     $(document).ajaxStop(function() {
       $("#load_screen").hide();
     });
 	
-		$(".datatables-basic").DataTable({
-			responsive: true
+	/*$(".datatables-basic").DataTable({
+		responsive: true
+	}); */
+	
+	
+	function initiateTable(outletId=0){
+		
+		$("#customers-table").DataTable().destroy();
+		$('#customers-table').DataTable({
+				"processing": true,
+				"serverSide": true,
+				"ajax": {
+					"url": "<?=base_url()?>MasterAdmin/GetMasterPackages",
+					"type": "POST", 
+					"data" : {'outletId' : outletId}
+				},
+				"columns": [
+				    { "data": "s_no" },
+				 	{ "data": "salon_package_name" },
+					{ "data": "salon_package_type" },
+					{ "data": "salon_package_date" },
+					{ "data": "salon_package_price" },
+					{ "data": "GST" },
+					{ "data": "total" },
+					{ "data": "validity" },
+					{ "data": "action" }
+				]
+		});
+	}
+			
+			
+			
+	$(document).on('change',"#Outlets-select", function(e){
+				
+				initiateTable($(this).val());
+				 /*var parameters = {
+					'outlet_id' :  $(this).val()
+				};
+				var htmlContent="";
+				$.getJSON("<?=base_url()?>MasterAdmin/GetMasterPackages", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					 if(data.length>0){	
+						for(var i=0;i<data.length;i++){
+							
+							 htmlContent += '<tr>';
+							 htmlContent += '<td>'+(i+1)+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_name+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_type+'</td>';
+							 
+							 htmlContent += '<td>'+data[i].salon_package_date+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_price+'</td>';
+							 htmlContent += '<td>'+(data[i].service_gst_percentage*data[i].salon_package_price/100)+'</td>';
+							 htmlContent += '<td>'+(data[i].salon_package_price+(data[i].service_gst_percentage*data[i].salon_package_price/100))+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_validity+'</td>';
+							
+							 htmlContent += '<td class="table-action">';
+							if(data[i].is_active==1){
+								 htmlContent += '<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
+							}else{
+								 htmlContent += '<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
+							}
+							 htmlContent += '</td></tr>';				
+						}
+					 }else{
+						 htmlContent +='<tr class="odd"><td valign="top" colspan="9" class="dataTables_empty">No data available in table</td>d></tr>';
+					 }
+					
+				    $("#package-content").html(htmlContent);
+					//var json = JSON.stringify(data);
+					//initiateTable("customers-table", json);
+				})
+
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				}); */
+		});
+		
+		$(document).ready(function() {
+			initiateTable($("#Outlets-select option:selected").val());
 		});
 
 		$("#Wallet").show();
@@ -919,64 +960,6 @@
 				}
 			});
 			
-			function initiateTable(tableId, source) {
-                var table = $("#" + tableId).DataTable({
-                    "ajax": source,
-                    order: [],
-                    columnDefs: [{
-                        orderable: false,
-                        targets: [0]
-                    }],
-                    "destroy": true,
-                    "bFilter": true,
-                    "bLengthChange": false,
-                    "bPaginate": false
-                });
-            }
-			
-			$(document).on('change',"#Outlets-select", function(e){
-				
-				var parameters = {
-					'outlet_id' :  $(this).val()
-				};
-				var htmlContent="";
-				$.getJSON("<?=base_url()?>MasterAdmin/GetMasterPackages", parameters)
-				.done(function(data, textStatus, jqXHR) {
-					 if(data.length>0){	
-						for(var i=0;i<data.length;i++){
-							
-							 htmlContent += '<tr>';
-							 htmlContent += '<td>'+(i+1)+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_name+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_type+'</td>';
-							 
-							 htmlContent += '<td>'+data[i].salon_package_date+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_price+'</td>';
-							 htmlContent += '<td>'+(data[i].service_gst_percentage*data[i].salon_package_price/100)+'</td>';
-							 htmlContent += '<td>'+(data[i].salon_package_price+(data[i].service_gst_percentage*data[i].salon_package_price/100))+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_validity+'</td>';
-							
-							 htmlContent += '<td class="table-action">';
-							if(data[i].is_active==1){
-								 htmlContent += '<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
-							}else{
-								 htmlContent += '<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
-							}
-							 htmlContent += '</td></tr>';				
-						}
-					 }else{
-						 htmlContent +='<tr class="odd"><td valign="top" colspan="9" class="dataTables_empty">No data available in table</td>d></tr>';
-					 }
-					
-				    $("#package-content").html(htmlContent);
-					//var json = JSON.stringify(data);
-					//initiateTable("customers-table", json);
-				})
-
-				.fail(function(jqXHR, textStatus, errorThrown) {
-					console.log(errorThrown.toString());
-				}); 
-			});
 			// table2
 			$(document).on('change',"#specialMembershipTable2 tr:last select[name=category_type2]", function(e){
 				var parameters = {
