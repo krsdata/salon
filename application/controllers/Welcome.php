@@ -22,7 +22,7 @@ class Welcome extends CI_Controller {
 		        $date = date('Y-m-d');    
 		        $one_day_before = date('Y-m-d',strtotime("-1 days"));
 		    }		 	
-			 #$one_day_before = "2020-07-16";
+#			 $one_day_before = "2020-08-19";
 		    $result = $this->BusinessAdminModel->GetCronExpenseRecord($one_day_before);
 		}		
 
@@ -147,8 +147,8 @@ class Welcome extends CI_Controller {
 		$data['expenses_data'] = $expenses_data;
 		$data['transaction_data'] = $transaction_data;
 		$data['date'] = $date;
-
-
+echo "<pre>";
+#print_r($data);die;
 		$total_t = [];
 		$total_p = [];
 		$total_e = [];
@@ -181,7 +181,8 @@ class Welcome extends CI_Controller {
 			$total_o[$p1[0]][$p1[1]] = abs($opening_balance_data[$p]+$transaction_data[$p]+$pending_amount_data[$p]-$expenses_data[$p]);
 		}
 		echo "<pre>";
-		
+#print_r($total_o);
+#die;
 		foreach ($total_o as $key => $t) {
 			//$i = 0;
 			foreach ($t as $k => $v) {
@@ -192,8 +193,8 @@ class Welcome extends CI_Controller {
 				$i++;
 			}			
 		}
-		# print_r($payment);die;		
-		 #die;
+#		print_r($payment);die;		
+#		die;
 		if(!empty($payment))
 		$this->db->insert_batch('mss_opening_balance', $payment); 		
     }
