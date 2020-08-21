@@ -135,6 +135,8 @@ class MYPDF extends TCPDF {
 							$new_gst=0;
 							$discount=0;	
 							$total_value=0;
+							$gross_price=0;
+							$final_mrp=0;
 							foreach ($cart as $item){
 								if($item['txn_service_discount_percentage']>0){
 									$discount=$item['txn_service_discount_percentage'];
@@ -142,10 +144,11 @@ class MYPDF extends TCPDF {
 									$gst=$item['service_price_inr']*$item['service_gst_percentage']/100;
 									$mrp=$price+$gst;
 									$total_value=$mrp*$item['txn_service_quantity'];
-									if($item['txn_add_on_amount'] > 0){
-										$total_value+=$item['txn_add_on_amount'];
-
-									}
+									$final_mrp= ($mrp+$item['txn_add_on_amount'])*$item['txn_service_quantity'];
+									$gross_price+=$final_mrp;
+									// if($item['txn_add_on_amount'] > 0){
+									// 	$total_value+=$item['txn_add_on_amount'];
+									// }
 									$discount=$total_value*$discount/100;																
 									$total_value-=$discount;
 									$total_service_value+=$total_value;
@@ -157,6 +160,8 @@ class MYPDF extends TCPDF {
 									$gst=$item['service_price_inr']*$item['service_gst_percentage']/100;
 									$mrp=$price+$gst;
 									$total_value=$mrp*$item['txn_service_quantity'];
+									$final_mrp= ($mrp+$item['txn_add_on_amount'])*$item['txn_service_quantity'];
+									$gross_price+= $final_mrp;
 									if($discount >0){
 										$total_value-=$discount;
 									}
@@ -171,7 +176,7 @@ class MYPDF extends TCPDF {
 						?>
 						<tr>
 							<td style="width:40%;"><?=$item['service_name']?></td>
-							<td  style="width:20%;text-align:center;"><?=round($mrp)?></td>
+							<td  style="width:20%;text-align:center;"><?=round($final_mrp)?></td>
 							<td  style="width:15%;text-align:center;"><?=$item['txn_service_quantity']?></td>
 							<!-- <td style="width:10%;text-align:center;"><?=abs(round($new_gst))?></td> -->
 							<!-- <td style="width:15%;"><?=round($total_discount)?></td> -->
@@ -200,7 +205,7 @@ class MYPDF extends TCPDF {
 								<!-- <td style="width:70%;">Total Bill</td> -->
 								<td style="width:66%;">Total Bill</td>
 								<td style="width:30%;"><i class="fas fa-fw fa-rupee-sign" aria-hidden="true"></i>
-								<?=round($total_service_value)?>
+								<?=round($gross_price)?>
 								</td>
 								
 							</tr>
