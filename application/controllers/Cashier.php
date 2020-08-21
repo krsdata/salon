@@ -3770,7 +3770,8 @@ class Cashier extends CI_Controller {
 						"customer_id" => $this->input->post('customer_id'),
 						"pending_amount_submitted" => (int)$this->input->post('amount_paid_now'),
 						"pending_amount_outstanding" => (int)$this->input->post('due_amount') - (int)$this->input->post('amount_paid_now'),
-						'payment_type'=>$this->input->post('payment_type')
+						'payment_type'=>$this->input->post('payment_type'),
+						'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
 					);
 					
 					$result = $this->CashierModel->Update($data,'mss_customers','customer_id');
