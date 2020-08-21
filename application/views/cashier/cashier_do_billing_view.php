@@ -317,7 +317,7 @@
 																			<?php
 																				foreach ($experts as $expert):
 																			?>
-																					<option value="<?=$expert['employee_id']?>"><?=$expert['employee_nick_name']?></option>
+																					<option value="<?=$expert['employee_id']?>"><?=$expert['employee_first_name']?></option>
 																			<?php		
 																				endforeach;
 																			?>
@@ -1491,7 +1491,7 @@
                                     <?php
                                         foreach ($experts as $expert):
                                       ?>
-                                          <option value="<?=$expert['employee_id']?>"><?=$expert['employee_nick_name']?></option>
+                                          <option value="<?=$expert['employee_id']?>"><?=$expert['employee_first_name']?></option>
                                       <?php   
                                         endforeach;
                                       ?>
