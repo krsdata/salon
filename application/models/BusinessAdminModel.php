@@ -826,7 +826,7 @@ class BusinessAdminModel extends CI_Model {
                     AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_txn_id
                     AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
                     AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
-                    AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+					AND mss_package_transactions.package_txn_expert= mss_employees.employee_id
                     AND mss_salon_packages.business_admin_id =  ".$this->db->escape($data['business_admin_id'])."
                     AND mss_salon_packages.business_outlet_id =  ".$this->db->escape($data['business_outlet_id'])."
                     AND date(mss_package_transactions.datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
@@ -898,6 +898,7 @@ class BusinessAdminModel extends CI_Model {
                      mss_services
                 WHERE
                      mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+					 AND mss_transactions.txn_status=1
                      AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
                      AND mss_transaction_services.txn_service_service_id = mss_services.service_id
 					 AND mss_transaction_services.txn_service_status = 1
@@ -9646,4 +9647,22 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 		}
 	}
 	
+
+	public function UpdateCustomerPendingAmount($cust_id,$pending_amount){
+        $sql = "UPDATE 
+		mss_customers
+		SET mss_customers.customer_pending_amount=(mss_customers.customer_pending_amount- $pending_amount)	
+		WHERE mss_customers.customer_id=$cust_id ";
+
+		$query = $this->db->query($sql);
+		if($query){
+			return $this->ModelHelper(true,false,'');
+		}
+		else{
+			return $this->ModelHelper(false,true,"DB error!");   
+		}
+	}
+
+
+
 }

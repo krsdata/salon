@@ -5084,8 +5084,11 @@ public function GetEmployee(){
 										);		
 				// $data = $this->BusinessAdminModel->CancelBills($data);	
 				$result = $this->BusinessAdminModel->BusinessAdminByEmail($this->session->userdata['logged_in']['business_admin_email']);	
-				// $this->PrettyPrintArray($result);
-				// exit;
+				$txn_details=$this->BusinessAdminModel->DetailsById($_POST['txn_id'],'mss_transactions','txn_id');
+				$cust_id=$txn_details['res_arr']['txn_customer_id'];
+				$pending_amount= $txn_details['res_arr']['txn_pending_amount'];
+				$result2= $this->BusinessAdminModel->UpdateCustomerPendingAmount($cust_id,$pending_amount);
+
 				if(password_verify($_POST['password'],$result['res_arr']['business_admin_password']))	{
 					$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');			
 					if($result['success'] == 'true'){	
