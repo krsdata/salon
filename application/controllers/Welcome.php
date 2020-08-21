@@ -178,7 +178,7 @@ echo "<pre>";
 			// 	$total_p[$p1[0]][$p1[1]] = $total_p[$p1[0]][$p1[1]]+$pending_amount_data[$p];
 			// 	$total_e[$p1[0]][$p1[1]] = $total_e[$p1[0]][$p1[1]]+$expenses_data[$p];
 			// }	
-			$total_o[$p1[0]][$p1[1]] = abs($opening_balance_data[$p]+$transaction_data[$p]+$pending_amount_data[$p]-$expenses_data[$p]);
+			$total_o[$p1[0]][$p1[1]] = ($opening_balance_data[$p]+$transaction_data[$p]+$pending_amount_data[$p]-$expenses_data[$p]);
 		}
 		echo "<pre>";
 #print_r($total_o);
