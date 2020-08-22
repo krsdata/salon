@@ -22,16 +22,16 @@ $this->load->view('master_admin/ma_header_view');
 							<div class="card-header" style="margin-left:10px;">
 								<ul class="nav nav-pills card-header-pills pull-right" role="tablist">
 									<li class="nav-item">
-										<a class="nav-link active" data-toggle="tab" href="#tab-1">Service</a>
+										<a class="nav-link <?php echo ((isset($_GET['tab']) && $_GET['tab']=='1') or !isset($_GET['tab'])) ? 'active' : ''; ?>" data-toggle="tab" href="#tab-1">Service</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#tab-2">Product</a>
+										<a class="nav-link <?php echo (isset($_GET['tab']) && $_GET['tab']=='2') ? 'active' : ''; ?>" data-toggle="tab" href="#tab-2">Product</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#tab-3">Category</a>
+										<a class="nav-link <?php echo (isset($_GET['tab']) && $_GET['tab']=='3') ? 'active' : ''; ?>" data-toggle="tab" href="#tab-3">Category</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#tab-4">Sub-Category</a>
+										<a class="nav-link <?php echo (isset($_GET['tab']) && $_GET['tab']=='4') ? 'active' : ''; ?>" data-toggle="tab" href="#tab-4">Sub-Category</a>
 									</li>
 									<!--<li class="nav-item">
 										<a class="nav-link" data-toggle="tab" href="#tab-5">Raw Material</a>
@@ -40,12 +40,13 @@ $this->load->view('master_admin/ma_header_view');
 							</div>
 							<div class="card-body">
 								<div class="tab-content">
-									<div class="tab-pane show active" id="tab-1" role="tabpanel">
+									<div class="tab-pane <?php echo ((isset($_GET['tab']) && $_GET['tab']=='1') or !isset($_GET['tab'])) ? ' show active' : ''; ?>" id="tab-1" role="tabpanel">
 										<!-- upload service -->
 											 <div class="row">
 												 <div class="col-md-2">
 													<button class="btn btn-primary" data-toggle="modal" data-target="#ModalAddService"><i class="fas fa-fw fa-plus"></i> Add Service</button>
 												</div>
+												
 												<!--<div class="col-md-2">
 														<button class="btn btn-primary" onclick="exportTableToExcel('servicMenu','Menu')"><i class="fa fa-file-export"></i>Export</button>
 												</div>
@@ -68,6 +69,7 @@ $this->load->view('master_admin/ma_header_view');
 												</div>
 												-->	
 											</div> 
+											<br/>
 										<!-- end -->
 										
                     <table class="table table-striped datatables-basic" style="width: 100%;">
@@ -132,7 +134,7 @@ $this->load->view('master_admin/ma_header_view');
 											</tbody>
 										</table>
 									</div>
-									<div class="tab-pane" id="tab-2" role="tabpanel">
+									<div class="tab-pane <?php echo (isset($_GET['tab']) && $_GET['tab']=='2') ? 'active' : ''; ?>" id="tab-2" role="tabpanel">
 										<!-- upload -->
 											<div class="row">
 												 <div class="col-md-2">
@@ -160,6 +162,7 @@ $this->load->view('master_admin/ma_header_view');
 												</div>
 												<?php */ ?>
 											</div>
+											<br/>
 										<!-- end -->
                     <table class="table table-striped datatables-basic" style="width: 100%;">
 											<thead>
@@ -222,7 +225,7 @@ $this->load->view('master_admin/ma_header_view');
 											</tbody>
 										</table>
 									</div>
-									<div class="tab-pane" id="tab-3" role="tabpanel">
+									<div class="tab-pane <?php echo (isset($_GET['tab']) && $_GET['tab']=='3') ? 'active' : ''; ?>" id="tab-3" role="tabpanel">
 										<!-- upload -->
 										 
 											<div class="row">
@@ -247,6 +250,7 @@ $this->load->view('master_admin/ma_header_view');
 												</div>*/ ?>
 											
 											</div> 
+											<br/>
 										<!-- end -->
 										<table class="table table-striped datatables-basic" style="width: 100%;" id="outletTableForCategory">
 											<thead>
@@ -297,7 +301,7 @@ $this->load->view('master_admin/ma_header_view');
 											</tbody>
 										</table>
 									</div>
-									<div class="tab-pane" id="tab-4" role="tabpanel">
+									<div class="tab-pane <?php echo (isset($_GET['tab']) && $_GET['tab']=='4') ? 'active' : ''; ?>" id="tab-4" role="tabpanel">
 										<!-- upload -->
 											<div class="row">
 												 <div class="col-md-3">
@@ -322,6 +326,7 @@ $this->load->view('master_admin/ma_header_view');
 												</div>
 												-->
 											</div>
+											<br/>
 										<!-- end -->
 										<table class="table table-striped datatables-basic" style="width: 100%;" >
 											<thead>
@@ -403,6 +408,7 @@ $this->load->view('master_admin/ma_header_view');
 												</div>
 													
 											</div>
+											<br/>
 										<!-- end -->
                     <table class="table table-striped datatables-basic" style="width: 100%;">
 											<thead>
@@ -1342,7 +1348,7 @@ $this->load->view('master_admin/ma_header_view');
 }
 </script>
 <script type="text/javascript">
-
+ var basePath = '<?php echo base_url() ?>';
  var business_details_For_Category=[];
  /* Get business details for the category */
  $('.outletActionForCategory').on('change', function() {
@@ -1381,7 +1387,7 @@ $(document).ready(function(){
 	});
 		
 	$("#AddCategory").validate({
-	  	errorElement: "div",
+		errorElement: "div",
 	    rules: {
 	        "category_name" : {
             required : true,
@@ -1413,14 +1419,17 @@ $(document).ready(function(){
 		        // crossDomain: true,
 						cache: false,
 		        // dataType : "json",
-		    		success: function(data) {
-              if(data.success == 'true'){ 
+		    success: function(data){
+		    var message = data.message;
+			 
+			  if(data.success == 'true'){ 
               	$("#ModalAddCategory").modal('hide');
-								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-									$("#SuccessModalMessage").html("").html(data.message);
-								}).on('hidden.bs.modal', function (e) {
-										window.location.reload();
-								});
+				$("#SuccessModalMessage").html("").html(message);
+				$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
+				}).on('hidden.bs.modal', function (e) {
+						//window.location.reload();
+						 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=3";
+				});
               }
               else if (data.success == 'false'){                   
           	    if($('.feedback').hasClass('alert-success')){
@@ -1429,7 +1438,7 @@ $(document).ready(function(){
                 else{
                   $('.feedback').addClass('alert-danger');
                 }
-                $('.alert-message').html("").html(data.message); 
+                $('.alert-message').html("").html(message); 
               }
             },
             error: function(data){
@@ -1464,10 +1473,12 @@ $(document).ready(function(){
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalAddSubCategory").modal('hide');
+								$("#SuccessModalMessage").html("").html(data.message);
 								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-									$("#SuccessModalMessage").html("").html(data.message);
+									
 								}).on('hidden.bs.modal', function (e) {
-										window.location.reload();
+										//window.location.reload();
+										 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=4";
 								});
               }
               else if (data.success == 'false'){                   
@@ -1521,10 +1532,12 @@ $(document).ready(function(){
 		      success: function(data) {
 			  if(data.success == 'true'){ 
               	$("#ModalAddService").modal('hide');
+								$("#SuccessModalMessage").html("").html(data.message);
 								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-									$("#SuccessModalMessage").html("").html(data.message);
+									
 								}).on('hidden.bs.modal', function (e) {
-										window.location.reload();
+										//window.location.reload();
+										 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=1";
 								});
               }
               else if (data.success == 'false'){                   
@@ -1583,10 +1596,12 @@ $(document).ready(function(){
             success: function(data) {
               if(data.success == 'true'){ 
                 $("#ModalAddOTC").modal('hide');
+				 $("#SuccessModalMessage").html("").html(data.message);
                 $('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-                  $("#SuccessModalMessage").html("").html(data.message);
+                 
                 }).on('hidden.bs.modal', function (e) {
-                    window.location.reload();
+                    //window.location.reload();
+					 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=2";
                 });
               }
               else if (data.success == 'false'){                   
@@ -1635,8 +1650,9 @@ $(document).ready(function(){
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalAddRawMaterial").modal('hide');
+								$("#SuccessModalMessage").html("").html(data.message);
 								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-									$("#SuccessModalMessage").html("").html(data.message);
+									
 								}).on('hidden.bs.modal', function (e) {
 										window.location.reload();
 								});
@@ -1679,10 +1695,12 @@ $(document).ready(function(){
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalEditCategory").modal('hide');
+								$("#SuccessModalMessage").html("").html(data.message);
 								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-									$("#SuccessModalMessage").html("").html(data.message);
+									
 								}).on('hidden.bs.modal', function (e) {
-										window.location.reload();
+										//window.location.reload();
+										 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=3";
 								});
               }
               else if (data.success == 'false'){                   
@@ -1726,10 +1744,12 @@ $(document).ready(function(){
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalEditSubCategory").modal('hide');
+								$("#SuccessModalMessage").html("").html(data.message);
 								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-									$("#SuccessModalMessage").html("").html(data.message);
+									
 								}).on('hidden.bs.modal', function (e) {
-										window.location.reload();
+										//window.location.reload();
+										 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=4";
 								});
               }
               else if (data.success == 'false'){                   
@@ -1783,10 +1803,12 @@ $(document).ready(function(){
 		    		success: function(data) {
               if(data.success == 'true'){
               	$("#ModalEditService").modal('hide');
+								$("#SuccessModalMessage").html("").html(data.message);
 								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-									$("#SuccessModalMessage").html("").html(data.message);
+									
 								}).on('hidden.bs.modal', function (e) {
-										window.location.reload();
+										//window.location.reload();
+										 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=1";
 								});
               }
               else if (data.success == 'false'){                   
@@ -1841,10 +1863,12 @@ $(document).ready(function(){
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalEditOTC").modal('hide');
+								$("#SuccessModalMessage").html("").html(data.message);
 								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-									$("#SuccessModalMessage").html("").html(data.message);
+									
 								}).on('hidden.bs.modal', function (e) {
-										window.location.reload();
+										//window.location.reload();
+										 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=2";
 								});
               }
               else if (data.success == 'false'){                   
@@ -1892,8 +1916,9 @@ $(document).ready(function(){
 		    		success: function(data) {
               if(data.success == 'true'){ 
               	$("#ModalEditRawMaterial").modal('hide');
+								$("#SuccessModalMessage").html("").html(data.message);
 								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-									$("#SuccessModalMessage").html("").html(data.message);
+									
 								}).on('hidden.bs.modal', function (e) {
 										window.location.reload();
 								});
@@ -2098,15 +2123,18 @@ $(document).ready(function(){
         // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
+						$("#SuccessModalMessage").html("").html(data.message);
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
+							
 						}).on('hidden.bs.modal', function (e) {
-								window.location.reload();
+								//window.location.reload();
+								 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=1";
 						});
           }
-          else if (data.success == 'false'){                   
-      	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
-							$("#ErrorModalMessage").html("").html(data.message);
+          else if (data.success == 'false'){          
+						$("#ErrorModalMessage").html("").html(data.message);
+						$('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
+							
 						})
           }
         }
@@ -2131,15 +2159,18 @@ $(document).ready(function(){
         // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
+			           $("#SuccessModalMessage").html("").html(data.message);
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
+							
 						}).on('hidden.bs.modal', function (e) {
-								window.location.reload();
+								//window.location.reload();
+								 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=3";
 						});
           }
-          else if (data.success == 'false'){                   
+          else if (data.success == 'false'){    
+			$("#ErrorModalMessage").html("").html(data.message);		  
       	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
-							$("#ErrorModalMessage").html("").html(data.message);
+							
 						})
           }
         }
@@ -2163,15 +2194,18 @@ $(document).ready(function(){
         // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
+						$("#SuccessModalMessage").html("").html(data.message);
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
+							
 						}).on('hidden.bs.modal', function (e) {
-								window.location.reload();
+								//window.location.reload();
+								 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=4";
 						});
           }
-          else if (data.success == 'false'){                   
+          else if (data.success == 'false'){    
+            $("#ErrorModalMessage").html("").html(data.message);		  
       	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
-							$("#ErrorModalMessage").html("").html(data.message);
+							
 						})
           }
         }
@@ -2195,15 +2229,18 @@ $(document).ready(function(){
         // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
+			            $("#SuccessModalMessage").html("").html(data.message);
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
+							
 						}).on('hidden.bs.modal', function (e) {
-								window.location.reload();
+								//window.location.reload();
+								 window.location.href = basePath+'MasterAdmin/MenuManagementNew' + "?tab=2";
 						});
           }
-          else if (data.success == 'false'){                   
+          else if (data.success == 'false'){  
+			$("#ErrorModalMessage").html("").html(data.message);		  
       	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
-							$("#ErrorModalMessage").html("").html(data.message);
+							
 						})
           }
         }
@@ -2227,15 +2264,17 @@ $(document).ready(function(){
         // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
+			            $("#SuccessModalMessage").html("").html(data.message);
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
+							
 						}).on('hidden.bs.modal', function (e) {
 								window.location.reload();
 						});
           }
-         	else if (data.success == 'false'){                   
+         	else if (data.success == 'false'){    
+			$("#ErrorModalMessage").html("").html(data.message);			
       	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
-							$("#ErrorModalMessage").html("").html(data.message);
+							
 						})
           }
         }
@@ -2410,15 +2449,17 @@ $(document).ready(function(){
         // dataType : "json", 
         success: function(data) {
           if(data.success == 'true'){
+						$("#SuccessModalMessage").html("").html(data.message);
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
+							
 						}).on('hidden.bs.modal', function (e) {
 								window.location.reload();
 						});
           }
-         	else if (data.success == 'false'){                   
+         	else if (data.success == 'false'){       
+			$("#ErrorModalMessage").html("").html(data.message);            
       	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
-							$("#ErrorModalMessage").html("").html(data.message);
+							
 						})
           }
         },
@@ -2443,15 +2484,17 @@ $(document).ready(function(){
         // dataType : "json",
         success: function(data) {
           if(data.success == 'true'){
+						$("#SuccessModalMessage").html("").html(data.message);
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
+							
 						}).on('hidden.bs.modal', function (e) {
 								window.location.reload();
 						});
           }
-         	else if (data.success == 'false'){                   
+         	else if (data.success == 'false'){   
+			$("#ErrorModalMessage").html("").html(data.message);			
       	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
-							$("#ErrorModalMessage").html("").html(data.message);
+							
 						})
           }
         },
@@ -2496,15 +2539,17 @@ $(document).ready(function(){
         // dataType : "json",
         success: function(data) {
           if(data.success == 'true'){
+						$("#SuccessModalMessage").html("").html(data.message);
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
+							
 						}).on('hidden.bs.modal', function (e) {
 								window.location.reload();
 						});
           }
-         	else if (data.success == 'false'){                   
+         	else if (data.success == 'false'){      
+			$("#ErrorModalMessage").html("").html(data.message);			
       	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
-							$("#ErrorModalMessage").html("").html(data.message);
+							
 						})
           }
         },
@@ -2543,15 +2588,17 @@ $(document).ready(function(){
         // dataType : "json",
         success: function(data) {
           if(data.success == 'true'){
+						$("#SuccessModalMessage").html("").html(data.message);
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
+							
 						}).on('hidden.bs.modal', function (e) {
 								window.location.reload();
 						});
           }
-         	else if (data.success == 'false'){                   
+         	else if (data.success == 'false'){  
+			$("#ErrorModalMessage").html("").html(data.message);			
       	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
-							$("#ErrorModalMessage").html("").html(data.message);
+							
 						})
           }
         },
@@ -2596,15 +2643,17 @@ $(document).ready(function(){
         // dataType : "json",
         success: function(data) {
           if(data.success == 'true'){
+			            $("#SuccessModalMessage").html("").html(data.message);
 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
+							
 						}).on('hidden.bs.modal', function (e) {
 								window.location.href = "<?=base_url()?>MasterAdmin/MenuManagement/";
 						});
           }
-         	else if (data.success == 'false'){                   
+         	else if (data.success == 'false'){  
+			$("#ErrorModalMessage").html("").html(data.message);			
       	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
-							$("#ErrorModalMessage").html("").html(data.message);
+							
 						})
           }
         },

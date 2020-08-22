@@ -3635,6 +3635,12 @@ class MasterAdmin extends CI_Controller {
 								
 								$result = $this->MasterAdminModel->Insert($data,'mss_salon_packages_master_new');
 								
+								/* Associate Package with multiple outlet*/ 
+								$packageId = $result['res_arr']['insert_id'];
+								
+								$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+								 	
+								
 								if($result['success'] == 'true'){
 									$this->ReturnJsonArray(true,false,"Package added successfully!");
 									die;
@@ -3650,7 +3656,12 @@ class MasterAdmin extends CI_Controller {
 						$services = $this->input->post('service_id');
 						$counts   = $this->input->post('count_service');
 						if(!empty($services) && !empty($counts) && (count($services) == count($counts))){
-							$result = $this->MasterAdminModel->AddServicePackageForSalon($data,$services,$counts);
+							$result = $this->MasterAdminModel->AddServicePackageForSalon($data,$services,$counts,$outletIds);
+							/* Associate Package with multiple outlet*/ 
+							$packageId = $result['res_arr']['insert_id'];
+							
+							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+							 
 							
 							if($result['success'] == 'true'){
 								$this->ReturnJsonArray(true,false,"Package added successfully!");
@@ -3673,7 +3684,12 @@ class MasterAdmin extends CI_Controller {
 						$counts = $this->input->post('count_discount');
 						
 						if(!empty($services) && !empty($discounts) && !empty($counts) && (count($services) == count($counts)) && (count($counts) == count($discounts))){
-							$result = $this->MasterAdminModel->AddDiscountPackageForSalon($data,$services,$discounts,$counts);
+							$result = $this->MasterAdminModel->AddDiscountPackageForSalon($data,$services,$discounts,$counts,$outletIds);
+							/* Associate Package with multiple outlet*/ 
+							$packageId = $result['res_arr']['insert_id'];
+							
+							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+							
 							if($result['success'] == 'true'){
 								$this->ReturnJsonArray(true,false,"Package added successfully!");
 								die;
@@ -3694,7 +3710,11 @@ class MasterAdmin extends CI_Controller {
 						$counts = $this->input->post('count_service_subcategory_bulk');
 						if(!empty($sub_categories) && !empty($counts) && (count($sub_categories) == count($counts))){
 							
-							$result = $this->MasterAdminModel->AddServiceSubCategoryBulkPackage($data,$sub_categories,$counts);
+							$result = $this->MasterAdminModel->AddServiceSubCategoryBulkPackage($data,$sub_categories,$counts,$outletIds);
+							/* Associate Package with multiple outlet*/ 
+							$packageId = $result['res_arr']['insert_id'];
+							
+							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
 							
 							if($result['success'] == 'true'){
 								$this->ReturnJsonArray(true,false,"Package added successfully!");
@@ -3717,7 +3737,14 @@ class MasterAdmin extends CI_Controller {
 						$counts = $this->input->post('count_discount_subcategory_bulk');
 						
 						if(!empty($sub_categories) && !empty($discounts) && !empty($counts) && (count($sub_categories) == count($counts)) && (count($counts) == count($discounts))){
-							$result = $this->MasterAdminModel->AddDiscountSubCategoryBulkPackage($data,$sub_categories,$discounts,$counts);
+							$result = $this->MasterAdminModel->AddDiscountSubCategoryBulkPackage($data,$sub_categories,$discounts,$counts,$outletIds);
+							
+							/* Associate Package with multiple outlet*/ 
+							$packageId = $result['res_arr']['insert_id'];
+							
+							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+							
+							
 							if($result['success'] == 'true'){
 								$this->ReturnJsonArray(true,false,"Package added successfully!");
 								die;
@@ -3738,7 +3765,11 @@ class MasterAdmin extends CI_Controller {
 						$counts = $this->input->post('count_service_category_bulk');
 						if(!empty($categories) && !empty($counts) && (count($categories) == count($counts))){
 							// $this->PrettyPrintArray($categories);
-							$result = $this->MasterAdminModel->AddServiceCategoryBulkPackage($data,$categories,$counts);
+							$result = $this->MasterAdminModel->AddServiceCategoryBulkPackage($data,$categories,$counts,$outletIds);
+							/* Associate Package with multiple outlet*/ 
+							$packageId = $result['res_arr']['insert_id'];
+							
+							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
 							
 							if($result['success'] == 'true'){
 								$this->ReturnJsonArray(true,false,"Package added successfully!");
@@ -3762,7 +3793,12 @@ class MasterAdmin extends CI_Controller {
 						$counts = $this->input->post('count_discount_category_bulk');
 					
 						if(!empty($categories) && !empty($discounts) && !empty($counts) && (count($categories) == count($counts)) && (count($counts) == count($discounts))){
-							$result = $this->MasterAdminModel->AddDiscountCategoryBulkPackage($data,$categories, $cat_price, $discounts,$counts);
+							$result = $this->MasterAdminModel->AddDiscountCategoryBulkPackage($data,$categories, $cat_price, $discounts,$counts,$outletIds);
+							/* Associate Package with multiple outlet*/ 
+							$packageId = $result['res_arr']['insert_id'];
+							
+							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+							
 							if($result['success'] == 'true'){
 								$this->ReturnJsonArray(true,false,"Package added successfully!");
 								die;
@@ -3789,7 +3825,12 @@ class MasterAdmin extends CI_Controller {
 						$counts = 100;
 					
 						if(!empty($counts)){
-							$result = $this->MasterAdminModel->AddDiscountServicePackage($_POST,$data,$counts,$where);
+							$result = $this->MasterAdminModel->AddDiscountServicePackage($_POST,$data,$counts,$where,$outletIds);
+							/* Associate Package with multiple outlet*/ 
+							$packageId = $result['res_arr']['insert_id'];
+							
+							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+							
 							if($result['success'] == 'true'){
 								$this->ReturnJsonArray(true,false,"Package added successfully!");
 								die;
@@ -3865,11 +3906,11 @@ class MasterAdmin extends CI_Controller {
 				if($this->input->post('activate') == 'true' && $this->input->post('deactivate') == 'false'){
 					//Activate
 					$data = array(
-					  "salon_package_id"          => $this->input->post('salon_package_id'),
-						"is_active"   => TRUE
+					  "association_id"          => $this->input->post('salon_package_association_id'),
+					  "is_active"   => TRUE
 					);
 
-					$status = $this->MasterAdminModel->Update($data,'mss_salon_packages_master_new','salon_package_id');
+					$status = $this->MasterAdminModel->Update($data,'mss_package_outlet_association','association_id');
 					if($status['success'] == 'true'){
 						$this->ReturnJsonArray(true,false,"Activated successfully!");
 						die;
@@ -3882,11 +3923,11 @@ class MasterAdmin extends CI_Controller {
 				elseif($this->input->post('activate') == 'false' && $this->input->post('deactivate') == 'true'){
 					//Deactivate the Employee
 					$data = array(
-						"salon_package_id" => $this->input->post('salon_package_id'),	
+						"association_id" => $this->input->post('salon_package_association_id'),	
 						"is_active"   => FALSE
 					);
 
-					$status = $this->MasterAdminModel->Update($data,'mss_salon_packages_master_new','salon_package_id');
+					$status = $this->MasterAdminModel->Update($data,'mss_package_outlet_association','association_id');
 					
 					if($status['success'] == 'true'){
 						$this->ReturnJsonArray(true,false,"Deactivated successfully!");
@@ -3921,7 +3962,7 @@ class MasterAdmin extends CI_Controller {
 			
 			## Read value
 			$draw = $_POST['draw'];
-			$row = ($_POST['start']+1);
+			$row = $_POST['start'];
 			$rowperpage = $_POST['length']; // Rows display per page
 			$columnIndex = $_POST['order'][0]['column']; // Column index
 			$columnName = $_POST['columns'][$columnIndex]['data']; // Column name
@@ -3932,8 +3973,6 @@ class MasterAdmin extends CI_Controller {
 				'master_id'  => $this->session->userdata['logged_in']['master_admin_id'],
 				'business_outlet_id' => $_POST['outletId']
 			);
-			/* Get total records count */
-			$totalRecords     = $this->MasterAdminModel->GetAllPackagesCount($where);
 			
             $filterData = array('columnName'=>$columnName,
 								'columnSortOrder'=>$columnSortOrder,
@@ -3943,26 +3982,25 @@ class MasterAdmin extends CI_Controller {
 								'row' => $row
 								);
 			
+			/* Get total records count */
+			$totalRecords     = $this->MasterAdminModel->GetAllPackagesCount($where,$filterData);
+			$totalRecords     = (!empty($totalRecords['res_arr'])) ? $totalRecords['res_arr'] : 0;
 			
 			$data['packages'] = $this->MasterAdminModel->GetAllPackages($where,$filterData);
 			
-			if(!empty($searchValue)){
-				$totalRecordwithFilter     = $this->MasterAdminModel->GetAllPackagesCountWithFilter($where,$filterData);
-			}else{
-				$totalRecordwithFilter     = (!empty($data['packages'])) ? count($data['packages']) : 0;
-			}
+			
 			if(!empty($data['packages']['res_arr'])){
 				
 			    foreach($data['packages']['res_arr'] as $key=>$package){
-					if($package['is_active'] == 1){
+					if($package['package_active_status'] == 1){
 							$action = "";
-							$action .='<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'.$package['salon_package_id'].'">';
+							$action .='<button type="button" class="btn btn-success package-deactivate-btn" salon_package_association_id="'.$package['association_id'].'">';
 							$action .='<i class="align-middle" data-feather="package"></i>';
 							$action .='</button>';
 					}
 					else{
 								$action = "";
-								$action .='<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'.$package['salon_package_id'].'">';
+								$action .='<button type="button" class="btn btn-danger package-activate-btn" salon_package_association_id="'.$package['association_id'].'">';
 								$action .='<i class="align-middle" data-feather="package"></i>';
 								$action .='</button>';
 					}
@@ -3975,18 +4013,16 @@ class MasterAdmin extends CI_Controller {
 							'service_gst_percentage'=> ($package['service_gst_percentage']*$package['salon_package_price']/100),
 							'total'  			    => ($package['salon_package_price']+($package['service_gst_percentage']*$package['salon_package_price']/100)),
 							'salon_package_validity'=> $package['salon_package_validity'],
-							'action' 			    => $action
+							'package_active_status'  => $action
 							
 				   );
 				}
-			}else{
-				$totalRecords = $totalRecordwithFilter = 0;
 			}
 			## Response
 			$response = array(
 			  "draw" => intval($draw),
-			  "iTotalRecords" => $totalRecords['res_arr'],
-			  "iTotalDisplayRecords" => $totalRecordwithFilter['res_arr'],
+			  "iTotalRecords" => $totalRecords,
+			  "iTotalDisplayRecords" => $totalRecords,
 			  "aaData" => $records
 			);
 

@@ -758,7 +758,7 @@
 					{ "data": "service_gst_percentage" },
 					{ "data": "total" },
 					{ "data": "salon_package_validity" },
-					{ "data": "action" }
+					{ "data": "package_active_status" }
 				]
 		});
 	}
@@ -1377,7 +1377,7 @@
 				event.preventDefault();
 				this.blur(); // Manually remove focus from clicked link.
 				var parameters = {
-					"salon_package_id" : $(this).attr('salon_package_id'),
+					"salon_package_association_id" : $(this).attr('salon_package_association_id'),
 					"activate" : 'false',
 					"deactivate" : 'true'
 				};
@@ -1405,7 +1405,7 @@
 				event.preventDefault();
 				this.blur(); // Manually remove focus from clicked link.
 				var parameters = {
-					"salon_package_id" : $(this).attr('salon_package_id'),
+					"salon_package_association_id" : $(this).attr('salon_package_association_id'),
 					"activate" : 'true',
 					"deactivate" : 'false'
 				};
