@@ -50,10 +50,13 @@
 																				</select>
 																		</div> 
 																
-																<div class="form-group col-md-3">
+																<div class="form-group col-md-2">
 																	<button type="submit" class="btn btn-success addAttendanceInTime"><i class="fa fa-plus"></i>In-time</button>&nbsp;
 
 																	<button class="btn btn-success addAttendanceOutTime"><i class="fa fa-plus"></i>Out-Time</button>
+																</div>
+																<div class="form-group col-md-1" style="text-align: right">
+																	<input type="submit" class="btn btn-primary" id="button2" onclick="exportTableToExcel('FillTxnDetails','Attendance')" value="Download" disabled>
 																</div>
 															</div>
 														</form>
@@ -69,14 +72,14 @@
 									<div class="card-title"><?php echo "Today : ".date("d-m-Y"); ?></div>
 									</div>
 									<div class="col-md-6">
-									
+										
 									</div>
 								</div>
 								
 								
 							</div>
 							<div class="card-body">
-							<table id="" class="table table-striped datatables-buttons" style="width:100%;text-align:center;">
+							<table id="FillTxnDetails" class="table table-striped datatables-buttons" style="width:100%;text-align:center;">
 													<thead>
 														<tr>
 															<th>Employee Name</th>
@@ -298,4 +301,36 @@
 				document.getElementById(btn.id).disabled = true;
 				alert("Button has been disabled.");
 			}
+
+			function exportTableToExcel(tableID, filename = ''){
+				document.getElementById("button2").disabled = true;
+			      var downloadLink;
+			      var dataType = 'application/vnd.ms-excel';
+			      var tableSelect = document.getElementById(tableID);
+			      var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+			      
+			      // Specify file name
+			      filename = filename?filename+'.xls':'excel_data.xls';
+			      
+			      // Create download link element
+			      downloadLink = document.createElement("a");
+			      
+			      document.body.appendChild(downloadLink);
+			      
+			      if(navigator.msSaveOrOpenBlob){
+			          var blob = new Blob(['\ufeff', tableHTML], {
+			              type: dataType
+			          });
+			          navigator.msSaveOrOpenBlob( blob, filename);
+			      }else{
+			          // Create a link to the file
+			          downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+			      
+			          // Setting the file name
+			          downloadLink.download = filename;
+			          
+			          //triggering the function
+			          downloadLink.click();
+			      }
+			  }
 		</script>
