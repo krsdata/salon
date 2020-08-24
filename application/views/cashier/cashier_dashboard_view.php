@@ -45,8 +45,8 @@
 												<div class="form-group col-md-6">
 													<label>Title</label>
 													<select class="form-control" name="customer_title">
-														<option value="Mr.">Mr.</option>
 														<option value="Ms.">Ms.</option>
+														<option value="Mr.">Mr.</option>														
 													</select>
 												</div>
 												<div class="form-group col-md-6">

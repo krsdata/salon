@@ -39,7 +39,10 @@ class MYPDF extends TCPDF {
 	// $pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-20, PDF_MARGIN_RIGHT-10);
 	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 	$pdf->SetMargins(PDF_MARGIN_LEFT-4, PDF_MARGIN_TOP-4, PDF_MARGIN_RIGHT);
-	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM-40);
+	if(count($cart) <= 4)
+		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM-40);
+	else
+		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 	$pdf->SetFont('helvetica', '', 6.5);
 	$pdf->setFontSubsetting(false);
 	$pdf->AddPage('P','A7');
