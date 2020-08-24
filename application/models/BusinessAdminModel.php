@@ -9663,6 +9663,96 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 		}
 	}
 
+    public function GetExpenseRecord($date){
 
+        if(!empty($this->session->userdata['outlets']['current_outlet'])){
+            $outlet_id = $this->session->userdata['outlets']['current_outlet'];
+        }elseif(!empty($this->session->userdata['logged_in']['business_outlet_id'])){
+            $outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
+        }        
+
+        $sql = "SELECT payment_mode, SUM(total_amount) as total_amount FROM `mss_expenses` WHERE `expense_date` = '$date' and bussiness_outlet_id = ".$outlet_id." GROUP BY payment_mode";
+        
+        $query = $this->db->query($sql);
+        $data['expenses'] = $query->result_array();
+
+
+        $sql = "SELECT payment_type, SUM(pending_amount_submitted) as total_amount FROM `mss_pending_amount_tracker` WHERE DATE(`date_time`)  = '$date' and business_outlet_id = ".$outlet_id." GROUP BY payment_type";
+
+        $query = $this->db->query($sql);
+        $data['pending_amount'] = $query->result_array();
+
+        $sql = 'SELECT t2.txn_settlement_payment_mode, 
+       t2.txn_settlement_amount_received AS total_price 
+FROM   `mss_transactions` t1 
+       LEFT JOIN mss_transaction_settlements t2 
+              ON t1.`txn_id` = t2.txn_settlement_txn_id 
+       LEFT JOIN mss_employees t3 on t1.`txn_cashier` = t3.employee_id
+WHERE  Date(t1.txn_datetime) = "'.$date.'" and t3.employee_business_outlet = '.$outlet_id.' GROUP  BY t2.txn_settlement_txn_id';
+    // $sql = 'SELECT t2.txn_settlement_payment_mode, t2.txn_settlement_amount_received AS total_price FROM `mss_transactions` t1 LEFT JOIN mss_transaction_settlements t2 ON t1.`txn_id` = t2.txn_settlement_txn_id WHERE Date(t1.txn_datetime) = "2020-07-12" GROUP BY t2.txn_settlement_txn_id';
+
+    // echo $sql;die;
+        $query = $this->db->query($sql);
+        $data['transaction'] = $query->result_array();
+
+        if($data){
+            return $this->ModelHelper(true,false,'',$data);
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
+
+    public function GetCronExpenseRecord($date){
+        $sql = "SELECT payment_mode, (total_amount) as total_amount,bussiness_outlet_id FROM `mss_expenses` WHERE `expense_date` = '$date'";
+        #\\echo $sql;die;
+        $query = $this->db->query($sql);
+        $data['expenses'] = $query->result_array();
+
+
+        $sql = "SELECT payment_type, (pending_amount_submitted) as total_amount,business_outlet_id as bussiness_outlet_id FROM `mss_pending_amount_tracker` WHERE DATE(`date_time`)  = '$date'";
+        //echo $sql;die;  
+        $query = $this->db->query($sql);
+        $data['pending_amount'] = $query->result_array();
+
+        $sql = 'SELECT t2.txn_settlement_payment_mode, 
+       t2.txn_settlement_amount_received AS total_price ,t3.employee_business_outlet as bussiness_outlet_id
+FROM   `mss_transactions` t1 
+       LEFT JOIN mss_transaction_settlements t2 
+              ON t1.`txn_id` = t2.txn_settlement_txn_id 
+       LEFT JOIN mss_employees t3 on t1.`txn_cashier` = t3.employee_id
+WHERE  Date(t1.txn_datetime) = "'.$date.'" GROUP  BY t2.txn_settlement_txn_id';
+
+
+        $query = $this->db->query($sql);
+        $data['transaction'] = $query->result_array();
+
+        if($data){
+            return $this->ModelHelper(true,false,'',$data);
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
+
+     public function getOpeningRecord($date){
+        if(!empty($this->session->userdata['outlets']['current_outlet'])){
+            $outlet_id = $this->session->userdata['outlets']['current_outlet'];
+        }elseif(!empty($this->session->userdata['logged_in']['business_outlet_id'])){
+            $outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
+        }
+    if(!empty($outlet_id)){
+            $sql = "select * from mss_opening_balance where opening_date='".$date."' and business_outlet_id = ".$outlet_id;
+        }else{
+            $sql = "select * from mss_opening_balance where opening_date='".$date."'";
+        }        $query = $this->db->query($sql);
+        $data['opening_balance'] = $query->result_array();
+        if($data){
+            return $this->ModelHelper(true,false,'',$data);
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
 
 }
