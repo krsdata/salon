@@ -254,6 +254,17 @@ class MasterAdminModel extends CI_Model
 		  return $this->ModelHelper(false, true, "DB error!");
 		}
   }
+  
+   public function getSalonPackageDataByIds($servicesIds=""){
+	   $sql = "SELECT * FROM `mss_salon_package_data` WHERE `service_id` IN (".$servicesIds.")";
+	   $query = $this->db->query($sql);
+ 	   
+		if ($query) {
+		  return $this->ModelHelper(true, false, '', $query->result_array());
+		} else {
+		  return $this->ModelHelper(false, true, "DB error!");
+		}
+  }
  
 
   public function DeactiveCategory($category_id)

@@ -31,5 +31,9 @@
 <script src="<?=base_url()?>public/app_stack/js/validation.js"></script>
 <script src="<?=base_url()?>public/app_stack/js/underscore-min.js"></script>
 <script src="<?=base_url()?>public/app_stack/js/typeahead.jquery.min.js"></script>
+
+<script src="<?=base_url()?>public/app_stack/js/multiselect/jquery.multi-select.js"></script>
+<link rel="stylesheet" type="text/css" href="<?=base_url()?>public/app_stack/css/multiselect/example-styles.css">
+
 </body>
 </html>

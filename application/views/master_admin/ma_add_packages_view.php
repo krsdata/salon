@@ -48,13 +48,18 @@
 								
 						<div class="card">
 							<div class="card-header">
+							  
 								<div class="row">
 									<div class="col-md-6">
 										<h5 class="card-title">Active Packages</h5>
-									</div>								
+									</div>	
 									<div class="col-md-6">
-										<button class="btn btn-success float-right" data-toggle="modal" data-target="#ModalAddPackage" style="margin-left:10vw;"><i class="fas fa-fw fa-plus"></i>Create New Package</button>
+										 <button class="btn btn-success float-right"  id="openAssignPackages" style="margin-left:1vw;"><i class="fas fa-caret-square-right"></i> Assign Package</button>
+										<button class="btn btn-success float-right"  id="openAddPackageWindow" ><i class="fas fa-fw fa-plus"></i>Create New Package</button>
+									
+										
 									</div>
+								
 								</div>
 								
 							</div>
@@ -80,6 +85,59 @@
 												</div>
 											</div>
 										</div>
+										
+										<div class="modal" id="ModalAssignPackage" tabindex="-1" role="dialog" aria-hidden="true">
+											 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title text-white font-weight-bold">Assign Packages</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span class="text-white" aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body m-3">
+														    <div class="row">
+																<div class="col-md-12">
+																	<form id="AssignPackageToOutlet" method="POST" action="#">
+																		 
+																		   <div class="row">
+																			<div class="form-group col-md-12">
+																				<label >Packages</label>
+																				<select id="assign-package-select" name="assign_package_select[]" multiple="multiple" class="form-control float-right">
+																					<option value="">Select Packages</option>
+																				</select>
+																			</div>
+
+																		  </div>
+																		   <div class="row">
+																			<div class="form-group col-md-12">
+																				<label >Outlets</label>
+																				<select id="assign-Outlets-select" name="assign_Outlets_select[]" multiple="multiple" class="form-control float-right">
+																					 <?php foreach($business_outlet_details as  $key => $outletDetails): 
+																					 ?>
+																					  <option value="<?php echo $outletDetails['business_outlet_id']; ?>" <?php echo $selected; ?>><?php echo $outletDetails['business_outlet_name']; ?></option>
+																					  <?php endforeach; ?>
+																				</select>
+																			</div>
+
+																		  </div>
+																		  <button type="submit" class="btn btn-primary mt-2">Submit</button>
+																	</form>
+																	<div class="alert alert-dismissible feedback" style="margin:0px;" role="alert">
+																		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+																			<span aria-hidden="true">&times;</span>
+																		</button>
+																		<div class="alert-message">
+																		</div>
+																	</div>
+																</div>
+															</div>	
+														</div>
+												   </div>			
+											</div>
+										</div>
+										
+										
 										<div class="modal" id="ModalAddPackage" tabindex="-1" role="dialog" aria-hidden="true">
 											<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 												<div class="modal-content">
@@ -113,16 +171,14 @@
 																		</div>
 																	</div>
 																	<div class="row">
-																		 <div class="form-group col-md-6">
-																			<label >Outlets</label>
-																				<select  name="salon_package_outlet[]"  multiple class="form-control" temp="Outlet">
-																					
-																					 <?php foreach($business_outlet_details as  $key => $outletDetails): ?>
-																					  <option value="<?php echo $outletDetails['business_outlet_id']; ?>" <?php echo $selected; ?>><?php echo $outletDetails['business_outlet_name']; ?></option>
-																					  <?php endforeach; ?>
-																				</select>
-																			
-																		 </div>	
+																	 <div class="form-group col-md-12">
+																		<label >Outlets</label>
+																			<select  name="salon_package_outlet[]" id="salon_package_outlet_ids"  multiple="multiple" >
+																				 <?php foreach($business_outlet_details as  $key => $outletDetails): ?>
+																				  <option value="<?php echo $outletDetails['business_outlet_id']; ?>" <?php echo $selected; ?>><?php echo $outletDetails['business_outlet_name']; ?></option>
+																				  <?php endforeach; ?>
+																			</select>
+																	 </div>	
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-6">
@@ -674,9 +730,66 @@
 			</div>
 		</main>
 <?php
-	$this->load->view('business_admin/ba_footer_view');
+	$this->load->view('master_admin/ma_footer_view');
 ?>
-<script>
+<script type="text/javascript">
+    $(document).ready(function() {  
+	   
+		 $('#salon_package_outlet_ids').multiSelect();
+		 $('#assign-Outlets-select').multiSelect();
+		
+	
+		$("#openAddPackageWindow").on('click', function () {
+			 $('#ModalAddPackage').modal({ show: true });
+		});
+		$("#openAssignPackages").on('click', function () {
+			 
+			 var parameters = {};
+			
+				$.getJSON("<?=base_url()?>MasterAdmin/GetALLMasterPackages", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					 if(data.length>0){	
+							var options = ""; 
+								for(var i=0;i<data.length;i++){
+									options += "<option value="+data[i].salon_package_id+">"+data[i].salon_package_name+"</option>";
+								}
+								
+								$('#assign-package-select').html("").html(options);
+								$('#assign-package-select').multiSelect();
+							/*
+							 htmlContent += '<tr>';
+							 htmlContent += '<td>'+(i+1)+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_name+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_type+'</td>';
+							 
+							 htmlContent += '<td>'+data[i].salon_package_date+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_price+'</td>';
+							 htmlContent += '<td>'+(data[i].service_gst_percentage*data[i].salon_package_price/100)+'</td>';
+							 htmlContent += '<td>'+(data[i].salon_package_price+(data[i].service_gst_percentage*data[i].salon_package_price/100))+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_validity+'</td>';
+							
+							 htmlContent += '<td class="table-action">';
+							if(data[i].is_active==1){
+								 htmlContent += '<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
+							}else{
+								 htmlContent += '<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
+							}
+							 htmlContent += '</td></tr>';	 */			
+					
+					 }
+				})
+
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				}); 
+			 
+		});
+		
+		$("#openAssignPackages").on('click', function () {
+			 $('#ModalAssignPackage').modal({ show: true });
+		});
+	 });
+	
 	function togglePackage(){
 		var selectedElement=$('#packageType option:selected').val();
 		
@@ -863,7 +976,59 @@
 					$("#AddPackage input[name=virtual_wallet_money_absolute]").val(0);
 				}
 			});
-	//
+			
+			
+			//AssignPackageToOutlet
+			
+			$("#AssignPackageToOutlet").validate({
+				errorElement: "div",
+				rules: {
+					"assign_package_select[]" : {
+						required : true
+					},
+					"assign_Outlets_select[]" : {
+						required : true
+					}
+				},
+				submitHandler: function(form) {
+					var formData = $("#AssignPackageToOutlet").serialize(); 
+					$.ajax({
+						url: "<?=base_url()?>MasterAdmin/MasterAdminAssignPackage",
+						data: formData,
+						type: "POST",
+						// crossDomain: true,
+						cache: false,
+						// dataType : "json",
+						success: function(data) {
+							if(data.success == 'true'){ 
+								$("#AssignPackageToOutlet").modal('hide');
+									toastr["success"](data.message,"", {
+									positionClass: "toast-top-right",
+									progressBar: "toastr-progress-bar",
+									newestOnTop: "toastr-newest-on-top",
+									rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+									timeOut: 1500
+								});
+								setTimeout(function () { location.reload(1); }, 1000);
+							}
+							else if (data.success == 'false'){                   
+								if($('.feedback').hasClass('alert-success')){
+									$('.feedback').removeClass('alert-success').addClass('alert-danger');
+								}
+								else{
+									$('.feedback').addClass('alert-danger');
+								}
+								$('.alert-message').html("").html(data.message); 
+							}
+						},
+						error: function(data){
+							$('.feedback').addClass('alert-danger');
+							$('.alert-message').html("").html(data.message); 
+						}
+					});
+				},
+			});	
+			
 			$("#AddPackage").validate({
 				errorElement: "div",
 				rules: {

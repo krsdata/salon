@@ -43,8 +43,9 @@ $this->load->view('master_admin/ma_header_view');
 									<div class="tab-pane <?php echo ((isset($_GET['tab']) && $_GET['tab']=='1') or !isset($_GET['tab'])) ? ' show active' : ''; ?>" id="tab-1" role="tabpanel">
 										<!-- upload service -->
 											 <div class="row">
-												 <div class="col-md-2">
+												 <div class="col-md-6">
 													<button class="btn btn-primary" data-toggle="modal" data-target="#ModalAddService"><i class="fas fa-fw fa-plus"></i> Add Service</button>
+													<button class="btn btn-primary" id="openAssignServices"><i class="fas fa-caret-square-right"></i> Assign Service</button>
 												</div>
 												
 												<!--<div class="col-md-2">
@@ -1261,6 +1262,58 @@ $this->load->view('master_admin/ma_header_view');
 								</div>
 							</div>
 						</div>
+						
+							<div class="modal" id="ModalAssignService" tabindex="-1" role="dialog" aria-hidden="true">
+											 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title text-white font-weight-bold">Assign Services</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span class="text-white" aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body m-3">
+														    <div class="row">
+																<div class="col-md-12">
+																	<form id="AssignServicesToPackages" method="POST" action="#">
+																		<div class="row">
+																			<div class="form-group col-md-12">
+																				<label >Packages</label>
+																				<select id="assign-package-select" name="assign_package_select[]" multiple="multiple" class="form-control float-right">
+																					<option value="">Select Packages</option>
+																				</select>
+																			</div>
+
+																		  </div>
+																		   <div class="row">
+																			<div class="form-group col-md-12">
+																				<label >Services</label>
+																				<select id="assign-services-select" name="assign_Services_select[]" multiple="multiple" class="form-control float-right">
+																				    <?php
+																						foreach($services as $service):
+																					?>
+																					  <option value="<?php echo $service['service_id']; ?>" ><?php echo $service['service_name']; ?></option>
+																					<?php endforeach; ?>
+																				</select>
+																			</div>
+
+																		  </div>
+																		  <button type="submit" class="btn btn-primary mt-2">Submit</button>
+																	</form>
+																	<div class="alert alert-dismissible feedback" style="margin:0px;" role="alert">
+																		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+																			<span aria-hidden="true">&times;</span>
+																		</button>
+																		<div class="alert-message">
+																		</div>
+																	</div>
+																</div>
+															</div>	
+														</div>
+												   </div>			
+											</div>
+										</div>
+										
 						<!-----END------>
           </div>
         
@@ -1378,13 +1431,119 @@ $(document).ready(function(){
 	});
 	  
     
-	
+	 $(document).ready(function() {  
+	   
+		$('#assign-services-select').multiSelect();
+		$("#openAssignServices").on('click', function () {
+			 var parameters = {};
+				var htmlContent="";
+				$.getJSON("<?=base_url()?>MasterAdmin/GetALLMasterPackages", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					 if(data.length>0){	
+							var options = ""; 
+								for(var i=0;i<data.length;i++){
+									options += "<option value="+data[i].salon_package_id+">"+data[i].salon_package_name+"</option>";
+								}
+								
+								$('#assign-package-select').html("").html(options);
+								$('#assign-package-select').multiSelect();
+							/*
+							 htmlContent += '<tr>';
+							 htmlContent += '<td>'+(i+1)+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_name+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_type+'</td>';
+							 
+							 htmlContent += '<td>'+data[i].salon_package_date+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_price+'</td>';
+							 htmlContent += '<td>'+(data[i].service_gst_percentage*data[i].salon_package_price/100)+'</td>';
+							 htmlContent += '<td>'+(data[i].salon_package_price+(data[i].service_gst_percentage*data[i].salon_package_price/100))+'</td>';
+							 htmlContent += '<td>'+data[i].salon_package_validity+'</td>';
+							
+							 htmlContent += '<td class="table-action">';
+							if(data[i].is_active==1){
+								 htmlContent += '<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
+							}else{
+								 htmlContent += '<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
+							}
+							 htmlContent += '</td></tr>';	 */			
+					
+					 }else{
+						 htmlContent +='<tr class="odd"><td valign="top" colspan="9" class="dataTables_empty">No data available in table</td>d></tr>';
+					 }
+					
+				    $("#package-content").html(htmlContent);
+					//var json = JSON.stringify(data);
+					//initiateTable("customers-table", json);
+				})
+
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				}); 
+			 
+		});
+		
+		$("#openAssignServices").on('click', function () {
+			 $('#ModalAssignService').modal({ show: true });
+		});
+	 });
+	 
 	$(document).ready(function(){
 		$("#ModalAddCategory").on('shown.bs.modal', function(){
 			 $("#categoryBusinessDetails").val(JSON.stringify(business_details_For_Category));
 		});
 		
 	});
+	
+																 
+	$("#AssignServicesToPackages").validate({
+		errorElement: "div",
+		rules: {
+			"assign_package_select[]" : {
+				required : true
+			},
+			"assign_Services_select[]" : {
+				required : true
+			}
+		},
+		submitHandler: function(form) {
+			var formData = $("#AssignServicesToPackages").serialize(); 
+			$.ajax({
+				url: "<?=base_url()?>MasterAdmin/MasterAdminAssignServices",
+				data: formData,
+				type: "POST",
+				// crossDomain: true,
+				cache: false,
+				// dataType : "json",
+				success: function(data) {
+					if(data.success == 'true'){ 
+						$("#ModalAddPackage").modal('hide');
+							toastr["success"](data.message,"", {
+							positionClass: "toast-top-right",
+							progressBar: "toastr-progress-bar",
+							newestOnTop: "toastr-newest-on-top",
+							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+							timeOut: 1500
+						});
+						setTimeout(function () { location.reload(1); }, 1000);
+					}
+					else if (data.success == 'false'){                   
+						if($('.feedback').hasClass('alert-success')){
+							$('.feedback').removeClass('alert-success').addClass('alert-danger');
+						}
+						else{
+							$('.feedback').addClass('alert-danger');
+						}
+						$('.alert-message').html("").html(data.message); 
+					}
+				},
+				error: function(data){
+					$('.feedback').addClass('alert-danger');
+					$('.alert-message').html("").html(data.message); 
+				}
+			});
+		},
+	 });	
+								
 		
 	$("#AddCategory").validate({
 		errorElement: "div",
@@ -1393,7 +1552,7 @@ $(document).ready(function(){
             required : true,
             maxlength : 100
 	        },
-					 "category_type" : {
+			"category_type" : {
             required : true
           }   
 	    },

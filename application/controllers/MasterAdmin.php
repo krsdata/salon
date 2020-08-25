@@ -3573,7 +3573,7 @@ class MasterAdmin extends CI_Controller {
 				$this->form_validation->set_rules('salon_package_type', 'Package Type', 'trim|required|max_length[50]');
 				$this->form_validation->set_rules('virtual_wallet_money_absolute', 'Wallet money loaded', 'trim');
 				$this->form_validation->set_rules('virtual_wallet_money_percentage', 'Wallet money loaded', 'trim');
-				$this->form_validation->set_rules('salon_package_outlet[]', 'Outlet', 'trim');
+				$this->form_validation->set_rules('salon_package_outlet[]', 'Outlet', 'trim|required');
 				if ($this->form_validation->run() == FALSE) 
 				{
 					$data = array(
@@ -3945,6 +3945,168 @@ class MasterAdmin extends CI_Controller {
 			}
 		}
 		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	
+	
+	// get all active packages
+	public function GetALLMasterPackages(){
+		if($this->IsLoggedIn('master_admin')){
+			
+				$where = array(
+					'master_id'  => $this->session->userdata['logged_in']['master_admin_id'],
+					'is_active'   => TRUE
+				);
+				
+				$data = $this->MasterAdminModel->MultiWhereSelect('mss_salon_packages_master_new',$where);
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
+				die;
+			
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	public function MasterAdminAssignPackage(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('assign_package_select[]', 'Packages', 'trim|required');
+				$this->form_validation->set_rules('assign_Outlets_select[]', 'Outlet', 'trim|required');
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								);
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{
+					$data = array();
+					$packages = $this->input->post('assign_package_select');
+					$outlets  = $this->input->post('assign_Outlets_select');
+					foreach($packages as $packageId){
+					  foreach($outlets as $outletId){	
+						
+						/* Check this id exist or not, if already exist then skip else assign */
+						$where = array(
+							'master_id'  => $this->session->userdata['logged_in']['master_admin_id'],
+							'is_active'   => TRUE,
+							'package_id'  => $packageId,
+							'outlet_id'   => $outletId,
+						);
+						$record = $this->MasterAdminModel->MultiWhereSelect('mss_package_outlet_association',$where);
+						
+						if(isset($record['res_arr']) && empty($record['res_arr'])){
+							$data[] = array(
+								'master_id'  =>  $this->session->userdata['logged_in']['master_admin_id'],
+								'package_id'  => $packageId,
+								'outlet_id'   => $outletId
+							);
+						} 
+						
+					  }
+					}
+				  if(!empty($data)){	
+					$result = $this->MasterAdminModel->InsertBatch($data,'mss_package_outlet_association');
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Package has assigned successfully!");
+						die;
+					}
+					elseif($result['error'] == 'true'){
+						$this->ReturnJsonArray(false,true,$result['message']);
+						die;
+					}
+				  }elseif(empty($data) && !empty($packages) && !empty($outlets)){
+					  $this->ReturnJsonArray(true,false,"Packages has already assigned!");
+					  die;
+				  }
+				}
+			}		
+	    }else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	public function MasterAdminAssignServices(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('assign_package_select[]', 'Packages', 'trim|required');
+				$this->form_validation->set_rules('assign_Services_select[]', 'Services', 'trim|required');
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								);
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}
+				else{
+					$data = array();
+					$packages  = $this->input->post('assign_package_select');
+					$services  = $this->input->post('assign_Services_select');
+					/* Get Service Records */
+					$serviceDetails = $this->MasterAdminModel->getSalonPackageDataByIds(implode(',',$services));
+					
+					$serviceData = array();
+					foreach($serviceDetails['res_arr'] as  $serviceRecords){
+						$serviceData[$serviceRecords['service_id']] = array('discount_percentage'=>$serviceRecords['discount_percentage'],
+																			'birthday_discount' =>$serviceRecords['birthday_discount'],				
+																			'anni_discount' =>$serviceRecords['anni_discount'],				
+																			'service_count' =>$serviceRecords['service_count']				
+																			);
+					}
+					
+					
+					foreach($packages as $packageId){
+					  foreach($services as $serviceId){	
+						
+						/* Check this id exist or not, if already exist then skip else assign */
+						$where = array(
+							'salon_package_id'  => $packageId,
+							'service_id '       => $serviceId,
+						);
+						$record = $this->MasterAdminModel->MultiWhereSelect('mss_salon_package_data',$where);
+						
+						if(isset($record['res_arr']) && empty($record['res_arr'])){
+							$data[] = array(
+								'master_id'  		=> $this->session->userdata['logged_in']['master_admin_id'],
+								'salon_package_id'  => $packageId,
+								'service_id'   		=> $serviceId,
+								'discount_percentage'=>$serviceData[$serviceId]['discount_percentage'],
+								'birthday_discount'	 =>$serviceData[$serviceId]['birthday_discount'],
+								'anni_discount'		 =>$serviceData[$serviceId]['anni_discount'],
+								'service_count'		  =>$serviceData[$serviceId]['service_count'],
+							);
+						} 
+						
+					  }
+					}
+				  if(!empty($data)){	
+					$result = $this->MasterAdminModel->InsertBatch($data,'mss_salon_package_data');
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Services has assigned successfully!");
+						die;
+					}
+					elseif($result['error'] == 'true'){
+						$this->ReturnJsonArray(false,true,$result['message']);
+						die;
+					}
+				  }elseif(empty($data) && !empty($packages) && !empty($serviceId)){
+					  $this->ReturnJsonArray(true,false,"Services has already assigned!");
+					  die;
+				  }
+				}
+			}		
+	    }else{
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}

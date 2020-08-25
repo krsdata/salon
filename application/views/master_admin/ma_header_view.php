@@ -16,8 +16,11 @@
 	<!-- PICK ONE OF THE STYLES BELOW -->
 	<!--<link href="<?=base_url()?>public/app_stack/css/classic.css" rel="stylesheet">-->
 	<!-- <link href="<?=base_url()?>public/app_stack/css/corporate.css" rel="stylesheet"> -->
+	
 	 <link href="<?=base_url()?>public/app_stack/css/modern.css" rel="stylesheet"> 
+	 
 	<link href="<?=base_url()?>public/app_stack/css/custom.css" rel="stylesheet">
+	
 	<!-- BEGIN SETTINGS -->
 	<!-- You can remove this after picking a style -->
 	<style>
