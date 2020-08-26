@@ -132,7 +132,7 @@
 																		<div class="form-group col-md-6">
 																			<label>Virtual Wallet Loading</label>
 																			<input type="number" class="form-control" placeholder="Virtual Wallet Absolute Amount(in Rs)" name="virtual_wallet_money_absolute" min="0">&ensp;&ensp;&ensp;
-																			<input type="number" class="form-control" placeholder="Virtual Wallet Loading in %" name="virtual_wallet_money_percentage" min="100">
+																			<input type="number" class="form-control" placeholder="Virtual Wallet Loading in %" name="virtual_wallet_money_percentage" min="0">
 																		</div>		
 																	</div>
 																	<div id="Services">
