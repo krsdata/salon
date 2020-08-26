@@ -1012,7 +1012,7 @@ class CashierModel extends CI_Model {
     }
 
      public function BillingPackageTransaction($data,$outlet_id,$admin_id){
-		//  $this->PrintArray($outlet_id);
+		//  $this->PrintArray($data);
 		//  exit;
 
         /*
@@ -1069,11 +1069,13 @@ class CashierModel extends CI_Model {
 		
 		$outlet_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();
 			
-         $data['txn_data']['package_txn_unique_serial_id'] = strval("A".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($outlet_counter['business_outlet_bill_counter']));
+        $data['txn_data']['package_txn_unique_serial_id'] = strval("A".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($outlet_counter['business_outlet_bill_counter']));
         
         
         //1.unset sender id and api key from array;
 		unset($data['txn_data']['sender_id'],$data['txn_data']['api_key']);
+		$data['txn_data']+=['package_txn_pending_amount' => $data['customer_pending_data']['pending_amount']];
+		
 	    $result_1 = $this->Insert($data['txn_data'],'mss_package_transactions');
 
         $query = "UPDATE mss_business_outlets SET business_outlet_bill_counter = business_outlet_bill_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
@@ -1084,9 +1086,9 @@ class CashierModel extends CI_Model {
 
         //2.
         $packages_data = array(
-             'package_txn_id'       => $result_1['res_arr']['insert_id'],
-             'salon_package_id'     => $data['cart_data']['salon_package_id'],
-             'txn_package_price'    => $data['cart_data']['package_final_value']
+			'package_txn_id'       => $result_1['res_arr']['insert_id'],
+			'salon_package_id'     => $data['cart_data']['salon_package_id'],
+			'txn_package_price'    => $data['cart_data']['package_final_value']
         );
     
         $result_2 = $this->Insert($packages_data,'mss_transaction_package_details');
@@ -1360,11 +1362,10 @@ class CashierModel extends CI_Model {
             $result = array();
             $result = $query->row_array();
 
-            $sql = "SELECT  mss_transactions.txn_value,mss_transactions.txn_discount,date(mss_transactions.txn_datetime) AS BillDate FROM mss_customers,mss_transactions WHERE mss_customers.customer_id = mss_transactions.txn_customer_id AND mss_customers.customer_id = ".$this->db->escape($customer_id)." ORDER BY mss_transactions.txn_datetime DESC LIMIT 4";            
+            $sql = "SELECT  mss_transactions.txn_value,mss_transactions.txn_discount,date(mss_transactions.txn_datetime) AS BillDate FROM mss_customers,mss_transactions WHERE mss_customers.customer_id = mss_transactions.txn_customer_id AND mss_customers.customer_id = ".$this->db->escape($customer_id)." AND mss_transactions.txn_status=1 ORDER BY mss_transactions.txn_datetime DESC LIMIT 4";            
             
-			      $query = $this->db->query($sql);
-            if($query){
-                
+			$query = $this->db->query($sql);
+            if($query){                
                 $result['transactions'] = $query->result_array();
                 // return $this->ModelHelper(true,false,'',$result);
             }
@@ -1380,6 +1381,7 @@ class CashierModel extends CI_Model {
 					FROM
 						mss_transactions
 					WHERE
+						mss_transactions.txn_status=1 AND
 						mss_transactions.txn_customer_id=".$this->db->escape($customer_id)." ";            
             
 			      $query = $this->db->query($sql);
@@ -2987,14 +2989,14 @@ class CashierModel extends CI_Model {
 					mss_sub_categories.sub_category_name,
 					mss_services.qty_per_item,
 					mss_services.service_unit,
-					SUM(mss_inventory.sku_count) AS 'Total'
+					SUM(mss_inventory_transaction.sku_count) AS 'Total'
 				FROM 
-					mss_inventory,
+					mss_inventory_transaction,
 					mss_services,
 					mss_sub_categories,
 					mss_categories
 				WHERE 
-					mss_inventory.service_id = mss_services.service_id AND
+					mss_inventory_transaction.mss_service_id = mss_services.service_id AND
 					mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND
 					mss_sub_categories.sub_category_category_id = mss_categories.category_id AND
 					mss_categories.category_business_admin_id= ".$this->session->userdata['logged_in']['business_admin_id']." AND
