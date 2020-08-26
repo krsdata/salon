@@ -2349,7 +2349,9 @@ class Cashier extends CI_Controller {
             $data['loyalty_points_given']=$this->BusinessAdminModel->GetLoyaltyPointsGiven($where);
             $data['loyalty_points_given']=$data['loyalty_points_given']['res_arr'][0]['loyalty_points'];
             $due_amount=$this->BusinessAdminModel->GetTodaysDueAmount($where);
-            $data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+						$data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+						$package_due_amount=$this->BusinessAdminModel->GetTodaysPackageDueAmount($where);
+            $data['package_due_amount']=$package_due_amount['res_arr'][0]['package_due_amount'];
             $data['pending_amount_received']=$this->BusinessAdminModel->GetPendingAmountReceived($where);
             $data['pending_amount_received']=$data['pending_amount_received']['res_arr'][0]['pending_amount_received'];
             $data['card_data']= $this->BusinessAdminModel->TodayPackageSales($where);
@@ -3052,7 +3054,7 @@ class Cashier extends CI_Controller {
 
 	public function AddOTCInventory(){
         if($this->IsLoggedIn('cashier')){
-            if(isset($_POST) && !empty($_POST)){
+          if(isset($_POST) && !empty($_POST)){
 				// $this->PrettyPrintArray($_POST);
 					$this->form_validation->set_rules('otc_item','OTC Name', 'trim|required');
           $this->form_validation->set_rules('sku_size', 'SKU', 'trim|required|is_natural_no_zero');
@@ -3827,7 +3829,7 @@ class Cashier extends CI_Controller {
 		}
 	}
 
-    	public function DoPackageTransaction(){
+  public function DoPackageTransaction(){
 		if($this->IsLoggedIn('cashier')){		
 				if(isset($_POST) && !empty($_POST)){
 						$_POST['txn_data']+=['package_txn_expert'=>$_POST['cart_data']['employee_id']];
@@ -6637,5 +6639,59 @@ public function AddToCartRedeemPoints(){
 			$this->LogoutUrl(base_url()."Cashier/Login");
 		}	
 	}
+
+	public function InventoryView(){
+		if($this->IsLoggedIn('cashier')){
+				if(isset($_POST) && !empty($_POST)){
+				}
+				else{
+						//Unset any session so that no one interfere in billing logic
+						if(isset($this->session->userdata['Package_Customer'])){
+								$this->session->unset_userdata('Package_Customer');
+						}
+						if(isset($this->session->userdata['package_cart'])){
+								$this->session->unset_userdata('package_cart');
+						}
+						if(isset($this->session->userdata['payment'])){
+								$this->session->unset_userdata('payment');
+						}
+						if(isset($this->session->userdata['package_payment'])){
+								$this->session->unset_userdata('package_payment');
+						}
+						//
+						$data = $this->GetDataForCashier('View Inventory');
+						$data['raw_materials'] = $this->GetRawMaterials();
+						$data['otc_items'] = $this->GetOTCItems();
+						// $data['otc_stock'] = $this->GetOTCStock();
+						$data['otc_stock']=$this->CashierModel->InventoryStock();
+						if($data['otc_stock']['success'] == 'true'){
+								$data['otc_stock']=$data['otc_stock']['res_arr'];
+						}
+						$where=array(
+							'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
+						);
+						$data['vendors']=$this->BusinessAdminModel->MultiWhereSelect('mss_vendors',$where);
+						if($data['vendors']['success'] == 'true'){
+								$data['vendors']=$data['vendors']['res_arr'];
+						}
+						$data['categories']  = $this->GetCategoriesOtc($this->session->userdata['logged_in']['business_outlet_id']);
+						$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['logged_in']['business_outlet_id']);
+						$data['services']  = $this->GetServices($this->session->userdata['logged_in']['business_outlet_id']);
+						$data['raw_material_stock'] = $this->GetRawMaterialStock();
+						$m = $this->uri->segment(3);
+						if(isset($m))
+						{
+								$data['modal']=1;
+						}
+						else{
+								$data['modal']=0;
+						}
+						$this->load->view('cashier/cashier_inventory_view',$data);
+				}
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/Login");
+		}   
+}
 
 }

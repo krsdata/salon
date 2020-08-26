@@ -498,6 +498,10 @@
 			{
 				display: "Employee Wise Performance Report",
 				value: "EWPR"
+			},
+			{
+				display: "Employee Attendance Report",
+				value: "EAR"
 			}
 		];
 
