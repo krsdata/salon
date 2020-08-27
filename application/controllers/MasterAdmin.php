@@ -65,8 +65,8 @@ class MasterAdmin extends CI_Controller {
   private function PrettyPrintArray($data){
     print("<pre>".print_r($data,true)."</pre>");
     die;
-	}
-  
+  }
+ 
   private function GetMasterAdminPackages(){
 		if($this->IsLoggedIn('master_admin')){
 			$data = $this->MasterAdminModel->MasterAdminPackages($this->session->userdata['logged_in']['master_admin_id']);
@@ -139,6 +139,46 @@ class MasterAdmin extends CI_Controller {
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
 			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}		
+	}
+	
+	private function getServiceDetailsByPackageId($packageId){
+		$returnServiceRecords =$serviceRecords_2 = $serviceIds = array();
+		if($this->IsLoggedIn('master_admin')){
+			$where = array(
+				'master_id' 	   => $this->session->userdata['logged_in']['master_admin_id'],
+				'salon_package_id' => $packageId
+			);
+
+			$data = $this->MasterAdminModel->MultiWhereSelect('mss_salon_package_data',$where);
+			
+			if($data['success'] == 'true' && !empty($data['res_arr'])){	
+				foreach($data['res_arr'] as $key=>$serviceRecords_1){
+					$serviceIds[] = $serviceRecords_1['service_id'];
+				}
+				/* Get Sub Category based on service Id */
+				$masterServiceDetails =$this->MasterAdminModel->getMasterServicesByIds(implode(',',$serviceIds));
+				
+				if($masterServiceDetails['success'] == 'true' && !empty($masterServiceDetails['res_arr'])){	
+				  foreach($masterServiceDetails['res_arr'] as $key=>$masterService){
+						 $serviceRecords_2[$masterService['service_id']] = array('service_sub_category_id'=>$masterService['service_sub_category_id'],
+																			'service_price_inr'=>$masterService['service_price_inr'],
+																			'service_est_time'=>$masterService['service_est_time'],
+																			'service_gst_percentage'=>$masterService['service_gst_percentage'],
+																			'qty_per_item'=>$masterService['qty_per_item']
+																		  );
+					}
+					/* Merge the service record 1,2 */
+					foreach($data['res_arr'] as $key=>$serviceDetails){
+						$returnServiceRecords[] = array_merge($serviceDetails,$serviceRecords_2[$serviceDetails['service_id']]);
+					}
+					
+				}
+			}
+			return $returnServiceRecords;
 		}
 		else{
 			$this->LogoutUrl(base_url()."MasterAdmin");
@@ -3041,6 +3081,26 @@ class MasterAdmin extends CI_Controller {
 		}
 	}
 	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Get Services Based on Sub category Ids for Multiple
+	*/	
+	public function GetServicesBySubCatMultipleIds(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$servicesIds =  implode(',',$_GET['sub_category_id']);
+			
+				$data = $this->MasterAdminModel->getMasterServicesBySubCatIds($servicesIds);
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
 		
 	/**
 	 *
@@ -3705,7 +3765,9 @@ class MasterAdmin extends CI_Controller {
 						}
 					}
 					elseif ($data['salon_package_type'] == "Service_SubCategory_Bulk") {
-						$data['salon_package_type'] = 'Services';
+						$data['salon_package_type_selected'] = $data['salon_package_type'];
+						$data['salon_package_type'] 		 = 'Services';
+						
 						$sub_categories = $this->input->post('service_sub_category_bulk'); 
 						$counts = $this->input->post('count_service_subcategory_bulk');
 						if(!empty($sub_categories) && !empty($counts) && (count($sub_categories) == count($counts))){
@@ -3731,6 +3793,7 @@ class MasterAdmin extends CI_Controller {
 						}	
 					}
 					elseif($data['salon_package_type'] == "Discount_SubCategory_Bulk"){
+						$data['salon_package_type_selected'] = $data['salon_package_type'];
 						$data['salon_package_type'] = 'Discount';
 						$sub_categories = $this->input->post('service_sub_category_bulk');
 						$discounts =  $this->input->post('discount_subcategory_bulk');
@@ -3760,6 +3823,7 @@ class MasterAdmin extends CI_Controller {
 						}
 					}
 					elseif ($data['salon_package_type'] == "Service_Category_Bulk") {
+						$data['salon_package_type_selected'] = $data['salon_package_type'];
 						$data['salon_package_type'] = 'Services';
 						$categories = $this->input->post('service_category_bulk'); 
 						$counts = $this->input->post('count_service_category_bulk');
@@ -3786,6 +3850,7 @@ class MasterAdmin extends CI_Controller {
 						}	
 					}
 					elseif($data['salon_package_type'] == "Discount_Category_Bulk"){
+						$data['salon_package_type_selected'] = $data['salon_package_type'];
 						$data['salon_package_type'] = 'Discount';
 						$categories = $this->input->post('discount_service_category_bulk');
 						$cat_price = $this->input->post('service_price_greater_than');
@@ -3859,8 +3924,7 @@ class MasterAdmin extends CI_Controller {
 				$data['sub_categories'] = $this->GetMasterSubCategories($this->session->userdata['logged_in']['master_admin_id']);
 				$data['services']       = $this->GetMasterServices($this->session->userdata['logged_in']['master_admin_id']);
 				$data['packages']       = $this->ActivePackages($data['selectedOutlets']);
-				
-										
+									
 				/*if(isset($data['selected_outlet']) || !empty($data['selected_outlet'])){
 					$data['services']        = $this->GetServices($this->session->userdata['outlets']['current_outlet']);
 					$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['outlets']['current_outlet']); 
@@ -3868,6 +3932,43 @@ class MasterAdmin extends CI_Controller {
 					$data['packages']        = $this->ActivePackages($this->session->userdata['outlets']['current_outlet']);
 				} */
 				$this->load->view('master_admin/ma_add_packages_view',$data);
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	// get service by id
+	public function GetPackageDetailsById(){
+		$data = array();
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$where = array(
+					'association_id'  => $_GET['pck_association_id']
+				);
+				
+				$packageDetails = $this->MasterAdminModel->GetPackageDetailsByAssociationId($where);
+				$outletIds = array();
+				if(!empty($packageDetails)){
+					$data = $packageDetails['res_arr'];
+					/* Get all Service Details which is assign to this package */
+					
+					$data['servicesDetails'] = $this->getServiceDetailsByPackageId($packageDetails['res_arr']['package_id']);
+					$data['outletIds'] = $this->MasterAdminModel->getOutletsByPackageId($packageDetails['res_arr']['package_id']);
+					if(!empty($data['outletIds']['res_arr'])){
+						foreach($data['outletIds']['res_arr'] as $outletId){
+							 if(!in_array($outletId['outlet_id'],$outletIds)) { $outletIds[] = $outletId['outlet_id']; }
+						}
+					}
+					$data['outletIds'] = $outletIds;
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}else{
+					$this->ReturnJsonArray(false,true,"Something went wrong way! Try again later.");
+					die;
+				}
 			}
 		}
 		else{
@@ -4125,6 +4226,7 @@ class MasterAdmin extends CI_Controller {
 			## Read value
 			$draw = $_POST['draw'];
 			$row = $_POST['start'];
+			
 			$rowperpage = $_POST['length']; // Rows display per page
 			$columnIndex = $_POST['order'][0]['column']; // Column index
 			$columnName = $_POST['columns'][$columnIndex]['data']; // Column name
@@ -4141,11 +4243,12 @@ class MasterAdmin extends CI_Controller {
 								'searchValue' => $searchValue,
 								'rowperpage'=>$rowperpage,
 								//'offset'=>(($row - 1) * $rowperpage + 1)
-								'row' => $row
+								'row' => (!empty($row) && $row!="") ? $row : 0
 								);
 			
 			/* Get total records count */
 			$totalRecords     = $this->MasterAdminModel->GetAllPackagesCount($where,$filterData);
+			
 			$totalRecords     = (!empty($totalRecords['res_arr'])) ? $totalRecords['res_arr'] : 0;
 			
 			$data['packages'] = $this->MasterAdminModel->GetAllPackages($where,$filterData);
@@ -4166,6 +4269,9 @@ class MasterAdmin extends CI_Controller {
 								$action .='<i class="align-middle" data-feather="package"></i>';
 								$action .='</button>';
 					}
+					$action .='<button type="button" class="btn package-edit-btn" salon_package_association_id="'.$package['association_id'].'">';
+								$action .='<i class="fa fa-pencil" aria-hidden="true">edit</i>';
+								$action .='</button>';
 				  $records[] = array( 
 							'salon_package_id'	    => $key+1,
 							'salon_package_name'    => $package['salon_package_name'],    
@@ -4184,7 +4290,7 @@ class MasterAdmin extends CI_Controller {
 			$response = array(
 			  "draw" => intval($draw),
 			  "iTotalRecords" => $totalRecords,
-			  "iTotalDisplayRecords" => $totalRecords,
+			  "iTotalDisplayRecords" => count($records),
 			  "aaData" => $records
 			);
 

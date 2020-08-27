@@ -151,11 +151,11 @@
 														<div class="row">
 															<div class="col-md-12">
 																<form id="AddPackage" method="POST" action="#">
-																	
+																	<input type="hidden" id="association_id" value="0" name="association_id" />
 																	<div class="row">
 																		<div class="form-group col-md-3">
 																			<label>Package Name</label>
-																			<input type="text" class="form-control" placeholder="Package Name" name="salon_package_name" autofocus>
+																			<input type="text" class="form-control" placeholder="Package Name" value="" name="salon_package_name" autofocus>
 																		</div>
 																		<div class="form-group col-md-3">
 																			<label>Price(Rs.)</label>
@@ -173,7 +173,7 @@
 																	<div class="row">
 																	 <div class="form-group col-md-12">
 																		<label >Outlets</label>
-																			<select  name="salon_package_outlet[]" id="salon_package_outlet_ids"  multiple="multiple" >
+																			<select  name="salon_package_outlet[]" id="salon_package_outlet_ids"  multiple="multiple" class="form-control">
 																				 <?php foreach($business_outlet_details as  $key => $outletDetails): ?>
 																				  <option value="<?php echo $outletDetails['business_outlet_id']; ?>" <?php echo $selected; ?>><?php echo $outletDetails['business_outlet_name']; ?></option>
 																				  <?php endforeach; ?>
@@ -212,28 +212,37 @@
 																				<tr>
 																					<td>
 																						<div class="form-group">
-																							<label>Category</label>
-																							<select class="form-control" name="service_category_id">
-																								<option value="" selected></option>
-																								<?php
-																									foreach ($categories as $category) {
-																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
-																									}
-																								?>
-																							</select>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
 																							<label>Sub-Category</label>
-																							<select class="form-control" name="service_sub_category_id">
+																							
+																						    <select id="service_sub_category_id" name="service_sub_category_id" multiple >
+																								<?php if(!empty($categories)){
+																									foreach($categories as $key=>$category): ?>
+																									   <optgroup label="<?php echo $category['category_name']; ?>">
+																										<?php if(!empty($sub_categories)){
+																											foreach($sub_categories as $subcategoryDetails){
+																												if($subcategoryDetails['sub_category_category_id']==$category['category_id']){
+																													echo '<option value="'.$subcategoryDetails['sub_category_id'].'">'.$subcategoryDetails['sub_category_name'].'</option>';
+																												}		
+																											}
+																											//$keyValues = array_search($category['category_id'], array_column($sub_categories, 'sub_category_category_id')); 
+																											//$subCat[$category['category_id']] =  
+																										} 
+																										
+																										?>
+																									</optgroup>
+																									<?php endforeach;
+																								}
+																								
+																								?>
+																								
 																							</select>
+																							
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>Service</label>
-																							<select class="form-control" name="service_id[]" temp="Service">
+																							<select class="" id="service_id" name="service_id[]" multiple="multiple" temp="Service">
 																							</select>
 																						</div>
 																					</td>
@@ -252,6 +261,7 @@
 																				</tr>
 																			</tbody>
 																		</table>
+																		
 																		<button type="button" class="btn btn-success" id="AddRowService">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
 																		<button type="button" class="btn btn-danger" id="DeleteRowService">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
 																	</div>
@@ -733,15 +743,82 @@
 	$this->load->view('master_admin/ma_footer_view');
 ?>
 <script type="text/javascript">
+	$(document).on('click','.package-edit-btn',function(event) {
+		event.preventDefault();	
+			$("#ModalAddPackage").find('.modal-title').html('Edit Package'); 
+			 var packageAssociationId = $(this).attr('salon_package_association_id');
+			 $("#association_id").val(packageAssociationId);
+			 /* Get Details from db */
+			  var parameters = {pck_association_id:packageAssociationId};
+				$.getJSON("<?=base_url()?>MasterAdmin/GetPackageDetailsById", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					console.log(data.outletIds);
+					 if(data!=null && data!='NULL'){
+					 
+							  $("#ModalAddPackage input[name=salon_package_name]").attr('value',data.salon_package_name);
+							  $("#ModalAddPackage input[name=salon_package_price]").attr('value',data.salon_package_price);
+							  $("#ModalAddPackage input[name=salon_package_gst]").attr('value',data.service_gst_percentage);
+							  $("#ModalAddPackage input[name=salon_package_upfront_amt]").attr('value',data.salon_package_upfront_amt);
+							  $("#ModalAddPackage input[name=salon_package_validity]").attr('value',data.salon_package_validity);
+							  $("#ModalAddPackage input[name=virtual_wallet_money_absolute]").attr('value',data.virtual_wallet_money);
+							 // Not exist in db	
+							 //$("#ModalAddPackage input[name=virtual_wallet_money_percentage]").attr('value',data.virtual_wallet_money_percentage);
+							 
+
+							 $('[id=packageType] option').filter(function() { 
+								return ($(this).text() == data.salon_package_type_selected); //To select dropdown record
+							 }).prop('selected', true);
+								
+							
+							 if(data.outletIds.length>0){	
+								$.each(data.outletIds, function( index, selectedId ) {
+								   $('#salon_package_outlet_ids option[value="'+selectedId+'"]').attr("selected", "selected");
+								});	
+							 }
+							 
+							 $('#salon_package_outlet_ids').multiSelect('destroy').multiSelect();	
+							 $('#salon_package_outlet_ids')
+							  if(data.salon_package_type=='Services' || data.salon_package_type=='Discount' || data.salon_package_type_selected=='salon_package_type_selected'){
+								   togglePackage();
+							  }else if(data.salon_package_type=='Wallet'){
+								  
+								  
+							  }
+		
+							/*var options = ""; 
+								for(var i=0;i<data.length;i++){
+									options += "<option value="+data[i].salon_package_id+">"+data[i].salon_package_name+"</option>";
+								}
+								$('#assign-package-select').html("").html(options);
+								$('#assign-package-select').multiSelect();
+							 */
+					
+					 }else{
+						 //window.location.reload();
+					 }
+				   
+				})
+
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				});
+			 $('#ModalAddPackage').modal({ show: true });
+			 
+		});
+		
     $(document).ready(function() {  
 	   
 		 $('#salon_package_outlet_ids').multiSelect();
 		 $('#assign-Outlets-select').multiSelect();
+		 $('#service_id').multiSelect();
 		
 	
 		$("#openAddPackageWindow").on('click', function () {
+			$("#ModalAddPackage").find('.modal-title').html('Add Package'); 
 			 $('#ModalAddPackage').modal({ show: true });
 		});
+		
+		
 		$("#openAssignPackages").on('click', function () {
 			 
 			 var parameters = {};
@@ -791,6 +868,51 @@
 	 });
 	
 	function togglePackage(){
+		var selectedElement=$('#packageType option:selected').val();
+		
+
+		$("#Services").hide();
+		$("#Discount").hide();
+		$("#Wallet").hide();
+
+		$("#Service_SubCategory_Bulk").hide();
+		$("#Discount_SubCategory_Bulk").hide();
+		$("#Service_Category_Bulk").hide();
+		$("#Discount_Category_Bulk").hide();
+		$("#special_membership").hide();
+		
+		if(selectedElement=="Wallet"){	
+			$("#Wallet").show();
+		}
+
+		if(selectedElement=="Services"){	
+			$("#Services").show();
+		}
+
+		if(selectedElement=="Discount"){
+			$("#Discount").show();
+		}
+
+		if(selectedElement == "Service_SubCategory_Bulk"){
+			$("#Service_SubCategory_Bulk").show();
+		}
+
+		if(selectedElement == "Discount_SubCategory_Bulk"){
+			$("#Discount_SubCategory_Bulk").show();
+		}
+		if(selectedElement == "Discount_Category_Bulk"){
+			$("#Discount_Category_Bulk").show();
+		}
+		if(selectedElement == "Service_Category_Bulk"){
+			$("#Service_Category_Bulk").show();
+		}
+		if(selectedElement == "special_membership"){
+			$("#special_membership").show();
+		}
+		$('#service_sub_category_id').multiSelect();
+	}
+	
+	function togglePackage_main(){
 		var selectedElement=$('#packageType option:selected').val();
 		
 
@@ -1323,6 +1445,30 @@
 				});
 			});
 			
+			$(document).on('change',"#serviceTable tr:last select[name=service_sub_category_id]",function(e){
+				var parameters = {
+					'sub_category_id' :  $(this).val()
+				};
+				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatMultipleIds", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					console.log(data);
+						var options = "<option value='' selected></option>"; 
+						
+						for(var i=0;i<data.length;i++){
+							options += "<option value="+data[i].service_id+">"+data[i].service_name+"</option>";
+						}
+						console.log(options);
+					  
+						$("#serviceTable tr:last select[temp=Service]").html("").html(options);
+						$("#service_id").multiSelect('destroy').multiSelect();
+						
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				});
+				
+			});
+			
 			$("#AddRowServiceSubCategoryBulk").click(function(event){
 				event.preventDefault();
 				this.blur();
@@ -1419,24 +1565,7 @@
 				});
 			});
 
-			$(document).on('change',"#serviceTable tr:last select[name=service_sub_category_id]",function(e){
-				var parameters = {
-					'sub_category_id' :  $(this).val()
-				};
-				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatId", parameters)
-				.done(function(data, textStatus, jqXHR) {
-						var options = "<option value='' selected></option>"; 
-						
-						for(var i=0;i<data.length;i++){
-							options += "<option value="+data[i].service_id+">"+data[i].service_name+"</option>";
-						}
-					
-						$("#serviceTable tr:last select[temp=Service]").html("").html(options);
-				})
-				.fail(function(jqXHR, textStatus, errorThrown) {
-					console.log(errorThrown.toString());
-				});
-			});
+		
 			$(document).on('change',"#serviceTable tr:last select[temp=Service]",function(e){
 				var parameters = {
 					'service_id' :  $(this).val()
@@ -1487,7 +1616,7 @@
 				var parameters = {
 					'sub_category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatId", parameters)
+				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatMultipleIds", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = "<option value='' selected></option>"; 
 						for(var i=0;i<data.length;i++){

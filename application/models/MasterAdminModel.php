@@ -216,6 +216,9 @@ class MasterAdminModel extends CI_Model
     }
   }
   
+  
+ 
+  
   public function Services($where)
   {
     $sql = "SELECT * FROM mss_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.category_business_admin_id = " . $this->db->escape($where['category_business_admin_id']) . " AND C.service_is_active = " . $this->db->escape($where['service_is_active']) . " AND A.category_business_outlet_id = " . $this->db->escape($where['category_business_outlet_id']) . " AND C.service_type = " . $this->db->escape($where['service_type']) . "";
@@ -246,6 +249,28 @@ class MasterAdminModel extends CI_Model
   
   public function getMasterServicesByIds($servicesIds=""){
 	   $sql = "SELECT * FROM `master_services` WHERE `service_id` IN (".$servicesIds.")";
+	   $query = $this->db->query($sql);
+    
+		if ($query) {
+		  return $this->ModelHelper(true, false, '', $query->result_array());
+		} else {
+		  return $this->ModelHelper(false, true, "DB error!");
+		}
+  }
+  
+   public function getMasterServicesBySubCatIds($subCategoryIds=""){
+	   $sql = "SELECT * FROM `master_services` WHERE `service_sub_category_id` IN (".$subCategoryIds.") AND service_is_active = TRUE";
+	   $query = $this->db->query($sql);
+    
+		if ($query) {
+		  return $this->ModelHelper(true, false, '', $query->result_array());
+		} else {
+		  return $this->ModelHelper(false, true, "DB error!");
+		}
+  }
+  
+   public function getOutletsByPackageId($packageId=""){
+	   $sql = "SELECT outlet_id FROM `mss_package_outlet_association` WHERE `package_id`='".$packageId."' AND is_active = TRUE ";
 	   $query = $this->db->query($sql);
     
 		if ($query) {
@@ -765,20 +790,36 @@ class MasterAdminModel extends CI_Model
       return $this->ModelHelper(false, true);
     }
   }
-
+  
+  public function GetPackageDetailsByAssociationId($where)
+  {
+    $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages_master_new as B WHERE A.`association_id`=" . $this->db->escape($where['association_id']) . "  AND A.`package_id`=B.salon_package_id";
+	$query = $this->db->query($sql);
+	
+    if ($query) {
+      return $this->ModelHelper(true, false, '', $query->row_array());
+    } else {
+      return $this->ModelHelper(false, true, "DB error!");
+    }
+  }
+  
+  
   public function GetAllPackages($where,$filter=array())
   {
     //$sql = "SELECT * FROM mss_salon_packages_master_new WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
     //$sql = "SELECT * FROM mss_salon_packages_master_new WHERE salon_package_id IN (SELECT package_id FROM `mss_package_outlet_association` WHERE `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `master_id`=" . $this->db->escape($where['master_id']) . ")";
 	$sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages_master_new as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
 	
-	if(!empty($filter)){
-			if(isset($filter['searchValue']) && $filter['searchValue']!=""){
-			 $sql .= "  AND  (B.salon_package_name like '%".$filter['searchValue']."%' or B.salon_package_type like '%".$filter['searchValue']."%' )";
-			}
-			
-			$sql .= "  order by ".$filter['columnName']." ".$filter['columnSortOrder']." limit ".$filter['row'].",".$filter['rowperpage'];
+	
+	if(isset($filter['searchValue']) && $filter['searchValue']!=""){
+	 $sql .= "  AND  (B.salon_package_name like '%".$filter['searchValue']."%' or B.salon_package_type like '%".$filter['searchValue']."%' )";
 	}
+	if(!empty($filter['columnName'])){
+		$sql .= "  order by ".$filter['columnName']." ".$filter['columnSortOrder']; 
+	}
+     if(!empty($filter['row'])){
+		 $sql .= "  limit ".$filter['row'].",".$filter['rowperpage'];
+	 }
 	
 	$query = $this->db->query($sql);
 	
@@ -794,13 +835,13 @@ class MasterAdminModel extends CI_Model
     //$sql = "SELECT * FROM mss_salon_packages_master_new WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
     $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages_master_new as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
 	
-	if(!empty($filter)){
-			if(isset($filter['searchValue']) && $filter['searchValue']!=""){
-			 $sql .= "  AND  (B.salon_package_name like '%".$filter['searchValue']."%' or B.salon_package_type like '%".$filter['searchValue']."%' )";
-			}
-			$sql .= "  order by ".$filter['columnName']." ".$filter['columnSortOrder']." limit ".$filter['row'].",".$filter['rowperpage'];
-			
+	
+	if(isset($filter['searchValue']) && $filter['searchValue']!=""){
+	 $sql .= "  AND  (B.salon_package_name like '%".$filter['searchValue']."%' or B.salon_package_type like '%".$filter['searchValue']."%' )";
 	}
+	$sql .= "  order by ".$filter['columnName']." ".$filter['columnSortOrder']." limit ".$filter['row'].",".$filter['rowperpage'];
+	
+	
 	
 	$query = $this->db->query($sql);
 	
@@ -813,12 +854,12 @@ class MasterAdminModel extends CI_Model
   
    public function GetAllPackagesCount($where,$filter=array()){
         $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages_master_new as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
-		if(!empty($filter)){
+		if(!empty($filter['searchValue'])){
 				if(isset($filter['searchValue']) && $filter['searchValue']!=""){
 				 $sql .= "  AND  (B.salon_package_name like '%".$filter['searchValue']."%' or B.salon_package_type like '%".$filter['searchValue']."%' )";
 				}
 				
-				$sql .= "  order by ".$filter['columnName']." ".$filter['columnSortOrder']." limit ".$filter['row'].",".$filter['rowperpage'];
+				//$sql .= "  order by ".$filter['columnName']." ".$filter['columnSortOrder']." limit ".$filter['row'].",".$filter['rowperpage'];
 		}
 		
 		$query = $this->db->query($sql);
