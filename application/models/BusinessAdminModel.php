@@ -6543,12 +6543,13 @@ public function GetAttendanceAll($data){
 			AND mss_business_admin.business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." 
 			AND Date(mss_transactions_replica.txn_datetime) > 
 			CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust'])." day)";
+	$sql = str_replace(",)",")",$sql);
         $query = $this->db->query($sql);
         if($query){
             $result = $query->result_array();
             $customer_id = $result[0]['customer_id'];
             $sql = "SELECT mss_customers.customer_id FROM mss_customers WHERE mss_customers.customer_business_outlet_id = 1 AND mss_customers.customer_business_admin_id = 1 AND mss_customers.customer_id NOT IN ($customer_id)";
-
+		$sql = str_replace(",)",")",$sql);
         }
         $query = $this->db->query($sql);
         if($query){
@@ -6588,6 +6589,7 @@ public function GetAttendanceAll($data){
              DATE(mss_package_transactions.datetime) > CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust'])." DAY
         )  
             ";
+$sql = str_replace(",)",")",$sql);
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6615,6 +6617,7 @@ public function GetAttendanceAll($data){
            mss_business_admin.business_admin_id 
            AND mss_business_admin.business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." AND Date(mss_transactions_replica.txn_datetime) > 
            CURRENT_DATE - INTERVAL ".$this->db->escape($data['lost_customer'])." day";
+         $sql = str_replace(",)",")",$sql);
         $query = $this->db->query($sql);
         #echo $sql;die;
         if($query){
@@ -6625,6 +6628,7 @@ FROM   mss_customers
 WHERE  mss_customers.customer_business_outlet_id = 1 
        AND mss_customers.customer_business_admin_id = 1 
        AND mss_customers.customer_id NOT IN ($customer_id) ";
+	$sql = str_replace(",)",")",$sql);
             $query = $this->db->query($sql);
             if($query){
                 return $this->ModelHelper(true,false,'',$query->result_array());
