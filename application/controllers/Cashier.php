@@ -6641,6 +6641,59 @@ public function AddToCartRedeemPoints(){
 		}	
 	}
 
+	public function InventoryView(){
+		if($this->IsLoggedIn('cashier')){
+				if(isset($_POST) && !empty($_POST)){
+				}
+				else{
+						//Unset any session so that no one interfere in billing logic
+						if(isset($this->session->userdata['Package_Customer'])){
+								$this->session->unset_userdata('Package_Customer');
+						}
+						if(isset($this->session->userdata['package_cart'])){
+								$this->session->unset_userdata('package_cart');
+						}
+						if(isset($this->session->userdata['payment'])){
+								$this->session->unset_userdata('payment');
+						}
+						if(isset($this->session->userdata['package_payment'])){
+								$this->session->unset_userdata('package_payment');
+						}
+						//
+						$data = $this->GetDataForCashier('View Inventory');
+						$data['raw_materials'] = $this->GetRawMaterials();
+						$data['otc_items'] = $this->GetOTCItems();
+						// $data['otc_stock'] = $this->GetOTCStock();
+						$data['otc_stock']=$this->CashierModel->InventoryStock();
+						if($data['otc_stock']['success'] == 'true'){
+								$data['otc_stock']=$data['otc_stock']['res_arr'];
+						}
+						$where=array(
+							'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
+						);
+						$data['vendors']=$this->BusinessAdminModel->MultiWhereSelect('mss_vendors',$where);
+						if($data['vendors']['success'] == 'true'){
+								$data['vendors']=$data['vendors']['res_arr'];
+						}
+						$data['categories']  = $this->GetCategoriesOtc($this->session->userdata['logged_in']['business_outlet_id']);
+						$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['logged_in']['business_outlet_id']);
+						$data['services']  = $this->GetServices($this->session->userdata['logged_in']['business_outlet_id']);
+						$data['raw_material_stock'] = $this->GetRawMaterialStock();
+						$m = $this->uri->segment(3);
+						if(isset($m))
+						{
+								$data['modal']=1;
+						}
+						else{
+								$data['modal']=0;
+						}
+						$this->load->view('cashier/cashier_inventory_view',$data);
+				}
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/Login");
+		}   
+}
 	public function daybook(){        		
 		if(!$this->IsLoggedIn('cashier')){
 			$this->LogoutUrl(base_url()."Cashier/Login");
@@ -6883,58 +6936,5 @@ public function AddToCartRedeemPoints(){
         $data['to'] = $to;
         $this->load->view('cashier/cashier_cash_book_view',$data);
     }
-	public function InventoryView(){
-		if($this->IsLoggedIn('cashier')){
-				if(isset($_POST) && !empty($_POST)){
-				}
-				else{
-						//Unset any session so that no one interfere in billing logic
-						if(isset($this->session->userdata['Package_Customer'])){
-								$this->session->unset_userdata('Package_Customer');
-						}
-						if(isset($this->session->userdata['package_cart'])){
-								$this->session->unset_userdata('package_cart');
-						}
-						if(isset($this->session->userdata['payment'])){
-								$this->session->unset_userdata('payment');
-						}
-						if(isset($this->session->userdata['package_payment'])){
-								$this->session->unset_userdata('package_payment');
-						}
-						//
-						$data = $this->GetDataForCashier('View Inventory');
-						$data['raw_materials'] = $this->GetRawMaterials();
-						$data['otc_items'] = $this->GetOTCItems();
-						// $data['otc_stock'] = $this->GetOTCStock();
-						$data['otc_stock']=$this->CashierModel->InventoryStock();
-						if($data['otc_stock']['success'] == 'true'){
-								$data['otc_stock']=$data['otc_stock']['res_arr'];
-						}
-						$where=array(
-							'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
-						);
-						$data['vendors']=$this->BusinessAdminModel->MultiWhereSelect('mss_vendors',$where);
-						if($data['vendors']['success'] == 'true'){
-								$data['vendors']=$data['vendors']['res_arr'];
-						}
-						$data['categories']  = $this->GetCategoriesOtc($this->session->userdata['logged_in']['business_outlet_id']);
-						$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['logged_in']['business_outlet_id']);
-						$data['services']  = $this->GetServices($this->session->userdata['logged_in']['business_outlet_id']);
-						$data['raw_material_stock'] = $this->GetRawMaterialStock();
-						$m = $this->uri->segment(3);
-						if(isset($m))
-						{
-								$data['modal']=1;
-						}
-						else{
-								$data['modal']=0;
-						}
-						$this->load->view('cashier/cashier_inventory_view',$data);
-				}
-		}
-		else{
-				$this->LogoutUrl(base_url()."Cashier/Login");
-		}   
-}
 
 }
