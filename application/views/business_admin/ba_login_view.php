@@ -18,7 +18,7 @@
 						<div class="card-body">
 							<div class="m-sm-4">
 								<div class="text-center">
-									<img src="<?=base_url()?>public/images/salonfirst.jpeg" alt="Cashier" class="img-fluid" />
+									<img src="<?=base_url()?>public/images/salonfirst.jpeg" alt="Cashier" width="350" height="100"  />
 								</div>
 								<form id="BusinessAdminLogin" method="POST" action="#">
 									<div class="form-group">
