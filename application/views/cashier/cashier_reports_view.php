@@ -23,6 +23,7 @@
 											<option selected>Report Group</option>
 												<option value="Sales">Sales</option>
 												<option value="Inventory">Inventory</option>
+												<option value="Employee">Employee</option>
 											</select>
 									</div> 
 									<div class=" from-group col-md-2">
@@ -660,7 +661,7 @@
 																	
 																	<table style="width:100%;">
 																	<tr><td>Generated :</td><td>
-																	<?php echo $due_amount;
+																	<?php echo ($due_amount+$package_due_amount);
 																		// echo ($cards_data['payment_wise']['debit_card']+$package_payment_wise['debit_card']);
 																			
 																	?>
@@ -1050,6 +1051,13 @@
 			}
 		];
 
+		var Employee = [
+			{
+				display: "Employee Attendance Report",
+				value: "EAR"
+			}
+		];
+
 	
 
 		// Function executes on change of first select option field.
@@ -1063,6 +1071,11 @@
 
 				case "Inventory":
 				AddSubGroup(Inventory);	
+				break;
+
+
+				case "Employee":
+				AddSubGroup(Employee);	
 				break;
 				
 				default:

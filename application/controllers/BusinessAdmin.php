@@ -289,7 +289,10 @@ class BusinessAdmin extends CI_Controller {
                 $data['total_due_amount']=$data['total_due_amount']['res_arr'][0];
                 
                 $due_amount=$this->BusinessAdminModel->GetTodaysDueAmount($where);
-                $data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+								$data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+								$package_due_amount=$this->BusinessAdminModel->GetTodaysPackageDueAmount($where);
+								$data['package_due_amount']=$package_due_amount['res_arr'][0]['package_due_amount'];
+								                // $this->PrettyPrintArray($data['package_due_amount']);
                 $data['pending_amount_received']=$this->BusinessAdminModel->GetPendingAmountReceived($where);
                 $data['pending_amount_received']=$data['pending_amount_received']['res_arr'][0]['pending_amount_received'];
                 $data['monthly_due_amount']=$this->BusinessAdminModel->GetMonthlyDueAmount($where);
@@ -1136,7 +1139,10 @@ class BusinessAdmin extends CI_Controller {
                 $data['total_due_amount']=$data['total_due_amount']['res_arr'][0];
                 
                 $due_amount=$this->BusinessAdminModel->GetTodaysDueAmount($where);
-                $data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+								$data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+								$package_due_amount=$this->BusinessAdminModel->GetTodaysPackageDueAmount($where);
+								$data['package_due_amount']=$package_due_amount['res_arr'][0]['package_due_amount'];
+
                 $data['pending_amount_received']=$this->BusinessAdminModel->GetPendingAmountReceived($where);
                 $data['pending_amount_received']=$data['pending_amount_received']['res_arr'][0]['pending_amount_received'];
                 $data['monthly_due_amount']=$this->BusinessAdminModel->GetMonthlyDueAmount($where);
@@ -9704,8 +9710,6 @@ public function InsertSalary(){
     public function EngagementReport(){
         if($this->IsLoggedIn('business_admin')){
             $data = $this->GetDataForAdmin("Expense");
-            // $this->PrettyPrintArray($_GET);
-            // exit;
             $data['timeline']=$this->BusinessAdminModel->DetailsById($this->session->userdata['outlets']['current_outlet'],'mss_customer_timeline_setup','business_outlet_id');
             $res1 = $this->BusinessAdminModel->DetailsById($this->session->userdata['outlets']['current_outlet'],'mss_business_outlets','business_outlet_id');
             $res1=$res1['res_arr'];

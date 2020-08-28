@@ -794,6 +794,9 @@ class BusinessAdminModel extends CI_Model {
         }
         elseif($data['report_name']=='CT'){
             return $this->CancelledTransaction($data);
+		}
+		elseif($data['report_name']=='EAR'){
+            return $this->EmployeeAttendanceReport($data);
         }
         else{
             $this->ModelHelper(false,true,"No such report exists!");
@@ -810,6 +813,7 @@ class BusinessAdminModel extends CI_Model {
                     mss_salon_packages.salon_package_type AS 'Package Type',
                     mss_package_transactions.package_txn_value AS 'Bill Amount',
                     mss_package_transactions.package_txn_discount AS 'Discount Given',
+                    mss_package_transactions.package_txn_pending_amount AS 'Pending Amount',
                     mss_package_transaction_settlements.settlement_way AS 'Settlement Way',
                     mss_package_transaction_settlements.payment_mode AS 'Payment Mode',
                     date_add(date(now()),INTERVAL mss_salon_packages.salon_package_validity MONTH) AS 'Expiry Date',
@@ -2853,11 +2857,32 @@ class BusinessAdminModel extends CI_Model {
 		SUM(mss_transactions.txn_pending_amount) AS 'due_amount'    
 		FROM 
 			mss_transactions,
-				mss_customers
+			mss_customers
 		WHERE 
 			date(mss_transactions.txn_datetime)= date(now()) AND
 			mss_transactions.txn_status=1 AND
 			mss_transactions.txn_customer_id=mss_customers.customer_id AND
+			mss_customers.customer_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND
+			mss_customers.customer_business_outlet_id=".$this->db->escape($data['business_outlet_id'])."";
+
+			$query = $this->db->query($sql);
+			
+			if($query->num_rows()>0){
+				return $this->ModelHelper(true,false,'',$query->result_array());
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			} 
+	}
+	public function GetTodaysPackageDueAmount($data){
+		$sql="SELECT 
+		SUM(mss_package_transactions.package_txn_pending_amount) AS 'package_due_amount'    
+		FROM 
+			mss_package_transactions,
+			mss_customers
+		WHERE 
+			date(mss_package_transactions.datetime)= date(now()) AND
+			mss_package_transactions.package_txn_customer_id=mss_customers.customer_id AND
 			mss_customers.customer_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND
 			mss_customers.customer_business_outlet_id=".$this->db->escape($data['business_outlet_id'])."";
 
@@ -6560,10 +6585,12 @@ WHERE  mss_customers.customer_business_outlet_id = 1
     //28-04-2020
     // Reports Customer Timeline
     public function ReportAllCustomer($data){
-        $sql="SELECT mss_customers.customer_name as 'Name',mss_customers.customer_mobile as 'Mobile','ALL' as 'Category',sum(mss_transactions_replica.txn_value) as 'Total_Spend',Max(mss_transactions_replica.txn_datetime) as 'Last_Visit_Date'FROM mss_transactions_replica,mss_customers 
-        WHERE mss_transactions_replica.txn_customer_id = mss_customers.customer_id
-        AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']." 
-        Group By mss_transactions_replica.txn_customer_id
+        $sql="SELECT mss_customers.customer_name as 'Name',
+		mss_customers.customer_mobile as 'Mobile',
+		'ALL' as 'Category'
+		FROM mss_customers 
+        WHERE  mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']." 
+        Group By mss_customers.customer_id
        ";
         $query = $this->db->query($sql);
         if($query){
@@ -9353,14 +9380,14 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 		mss_sub_categories.sub_category_name,
 		mss_services.qty_per_item,
 		mss_services.service_unit,
-		SUM(mss_inventory.sku_count) AS 'Total'
+		SUM(mss_inventory_transaction.sku_count) AS 'Total'
 	FROM 
-		mss_inventory,
+	mss_inventory_transaction,
 		mss_services,
 		mss_sub_categories,
 		mss_categories
 	WHERE 
-		mss_inventory.service_id = mss_services.service_id AND
+	mss_inventory_transaction.mss_service_id = mss_services.service_id AND
 		mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND
 		mss_sub_categories.sub_category_category_id = mss_categories.category_id AND
         mss_categories.category_business_admin_id=".$this->session->userdata['logged_in']['business_admin_id']." AND
@@ -9501,6 +9528,33 @@ WHERE  mss_customers.customer_business_outlet_id = 1
             }
 
             return $this->ModelHelper(true,false,'',$result_to_send);
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+
+	private function EmployeeAttendanceReport($data){
+        $sql = "SELECT 
+					mss_employees.employee_first_name,
+					mss_employees.employee_id,
+					mss_emss_attendance.attendance_date,
+					mss_emss_attendance.in_time,
+					mss_emss_attendance.out_time,
+					mss_emss_attendance.working_hours
+				FROM
+					mss_employees,
+					mss_emss_attendance
+				WHERE 
+					mss_employees.employee_business_outlet=".$this->db->escape($data['business_admin_id'])." AND
+					mss_employees.employee_business_admin=".$this->db->escape($data['business_outlet_id'])." AND 
+					mss_emss_attendance.attendance_date BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])." ";
+
+        $query = $this->db->query($sql);
+        
+        if($query){
+            // $result = $query->result_array();
+            return $this->ModelHelper(true,false,'',$query->result_array());
         }
         else{
             return $this->ModelHelper(false,true,"DB error!");   
