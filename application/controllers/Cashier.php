@@ -2492,6 +2492,7 @@ class Cashier extends CI_Controller {
 						$this->session->set_userdata('loyalty_point',$transcation_detail['res_arr'][0]['txn_loyalty_points']);
 						$detail_id = $cart_detail['res_arr']['insert_id'];
 						$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
+						$bill_url = str_replace("https", "http", $bill_url);
 						$bill_url = shortUrl($bill_url);
 					}
 
@@ -6653,7 +6654,7 @@ public function AddToCartRedeemPoints(){
 						if(isset($this->session->userdata['package_cart'])){
 								$this->session->unset_userdata('package_cart');
 						}
-						if(isset($this->session->userdata['payment'])){
+						if(isset($things->session->userdata['payment'])){
 								$this->session->unset_userdata('payment');
 						}
 						if(isset($this->session->userdata['package_payment'])){
