@@ -11778,7 +11778,24 @@ public function daybook(){
         $data['from'] = $from;
         $data['to'] = $to;
         $this->load->view('business_admin/ba_cash_book_view',$data);
-    }
+		}
+		
+		public function GetPackage(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_GET) && !empty($_GET)){
+					$where = array(
+						'salon_package_id'   => $_GET['salon_package_id']
+					);	
+					$data = $this->BusinessAdminModel->GetPackageDetails($where);
+					header("Content-type: application/json");
+					print(json_encode($data['res_arr'][0], JSON_PRETTY_PRINT));
+					die;
+				}
+			}
+			else{
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}
+		}
 
 }
 
