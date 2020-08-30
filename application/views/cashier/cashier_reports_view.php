@@ -109,7 +109,7 @@
 										<a class="nav-link" data-toggle="tab" href="#tab-5">Product-wise</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#tab-6">Last 50 Transactions</a>
+										<a class="nav-link" data-toggle="tab" href="#tab-6">Last 200 Transactions</a>
 									</li>
 								</ul>
 
@@ -743,7 +743,7 @@
 										<div class="card">
 											<div class="card-header">
 												<h5 class="card-title my-2">
-														Last 50 Transaction
+														Last 200 Transaction
 												</h5>
 											</div>
 											<div class="card-body" style="margin-right:10px;">

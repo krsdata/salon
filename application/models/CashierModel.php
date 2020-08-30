@@ -3249,7 +3249,7 @@ class CashierModel extends CI_Model {
 		AND mss_employees.employee_business_admin = ".$this->session->userdata['logged_in']['business_admin_id']."
 		AND mss_employees.employee_business_outlet = ".$this->session->userdata['logged_in']['business_outlet_id']."		
 		ORDER BY 
-        mss_transactions.txn_id DESC LIMIT 50 ";
+        mss_transactions.txn_id DESC LIMIT 100 ";
 
         $query = $this->db->query($sql);
         
@@ -3297,7 +3297,7 @@ class CashierModel extends CI_Model {
                     AND mss_salon_packages.business_admin_id =  ".$this->db->escape($this->session->userdata['logged_in']['business_admin_id'])."
                     AND mss_salon_packages.business_outlet_id =  ".$this->db->escape($this->session->userdata['logged_in']['business_outlet_id'])."                    
                     ORDER BY
-                        mss_package_transactions.package_txn_id desc limit 50";                        
+                        mss_package_transactions.package_txn_id desc limit 100";                        
                     $query = $this->db->query($sql); 
                     $result2 = $query->result_array();
                     $result = array_merge($result1,$result2);
