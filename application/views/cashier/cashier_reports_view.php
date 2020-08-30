@@ -777,9 +777,21 @@
 															<td><?=$txn['net_amt']?></td>
 															<td><?=$txn['total_tax']?></td>
 															<td><?=$txn['pending_amt']?></td>
-															<td><button class='btn btn-warning sendSmsBtn'  txn_id='<?=$txn['bill_no']?>'><i class='fa fa-sms'></i></button>
+															<?php
+																if($txn['Type'] == "Package"){
+																	?>
+																		<td><button data-type="package" class='btn btn-warning sendSmsBtn'  txn_id='<?=$txn['bill_no']?>'><i class='fa fa-sms'></i></button>
+															<a href='<?=base_url()?>Cashier/PrintBillPackage/<?=$txn['bill_no']?>' target='_blank' class='btn btn-danger' ><i class='fa fa-print'></i></a>
+														</td>
+																	<?php
+																}else{
+																	?>
+																	<td><button  data-type="service" class='btn btn-warning sendSmsBtn'  txn_id='<?=$txn['bill_no']?>'><i class='fa fa-sms'></i></button>
 															<a href='<?=base_url()?>Cashier/RePrintBill/<?=$txn['bill_no']?>' target='_blank' class='btn btn-danger' ><i class='fa fa-print'></i></a>
 														</td>
+																	<?php
+																}
+															?>
 														</tr>
 													<?php }?>
 												</tbody>
@@ -921,7 +933,8 @@
       event.preventDefault();
       this.blur(); // Manually remove focus from clicked link.
 			var parameters={
-				"txn_id" : $(this).attr('txn_id')
+				"txn_id" : $(this).attr('txn_id'),
+				"type":$(this).attr('data-type')
 			};
 			$.ajax({
 		        url: "<?=base_url()?>Cashier/ReSendBill",

@@ -2790,7 +2790,7 @@ class Cashier extends CI_Controller {
 						);
 						$check = $this->CashierModel->VerifyCustomer($where);
 
-						if($check['success'] == 'true'){    
+						if(1 || $check['success'] == 'true'){    
 								$data['title'] = "Invoice";
 								$data['shop_details'] = $this->ShopDetails();
 								$data['individual_customer'] = $this->GetCustomerBilling($customer_id);
@@ -6526,17 +6526,26 @@ public function AddToCartRedeemPoints(){
 							'txn_id' => $this->input->post('txn_id'),
 							'business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id']
 						);
-						$result = $this->BusinessAdminModel->GetCustomerBill($data);			
-						// $this->PrettyPrintArray($result);
+						if($this->input->post('type') == "service"){
+							$result = $this->BusinessAdminModel->GetCustomerBill($data);			
+						}else{
+							$result = $this->BusinessAdminModel->GetCustomerPackageBill($data);
+						}						
+						//$this->PrettyPrintArray($result);
 						if($result['success'] == 'true'){
 							//ReSend Bill SMS
-							$res =$result['res_arr'][0];
-							
+							$res =$result['res_arr'][0];							
 							$customer_id=$res['customer_id'];
 							$detail_id=$res['id'];
 							$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
 							$bill_url = shortUrl($bill_url);
-							$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+							//$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+							if($this->input->post('type') == "service"){
+								$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+							}else{
+								$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['package_txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+							}
+							
 							$this->ReturnJsonArray(true,false,"Message Send.");
 							die;
 						}else{
