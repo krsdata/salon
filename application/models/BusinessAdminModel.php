@@ -982,8 +982,8 @@ class BusinessAdminModel extends CI_Model {
                      mss_transaction_services.txn_service_quantity AS 'Quantity',
                      (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
                      mss_employees.employee_first_name As 'Expert Name',
-                     mss_transaction_services.txn_service_discounted_price AS 'Discounted Service Amt',
-                     mss_transactions.txn_value AS 'Net Bill Amt'
+                     mss_transaction_services.txn_service_discounted_price AS 'Billing Amount'
+                     -- mss_transactions.txn_value AS 'Net Bill Amt'
                 FROM
                      mss_transactions,
                      mss_transaction_services,
@@ -1019,15 +1019,15 @@ class BusinessAdminModel extends CI_Model {
                     date(mss_package_transactions.datetime) AS 'Billing Date',
                     mss_salon_packages.salon_package_name AS 'Service',
                     mss_salon_packages.salon_package_type AS 'Package Type',
-                    IF(mss_salon_packages.salon_package_type,'','') AS 'Sub-Category',
+                    mss_salon_packages.salon_package_name AS 'Sub-Category',
                     IF(mss_package_transactions.package_txn_unique_serial_id,'Package','Package') AS 'Type' ,
                     mss_package_transactions.package_txn_value AS 'Bill Amount',    
                     IF(mss_salon_packages.salon_package_type,'','') AS 'Quantity',
                     mss_package_transactions.package_txn_discount AS 'Discount Given',
                     mss_employees.employee_first_name AS 'Expert Name',
                     -- mss_package_transactions.package_txn_pending_amount AS 'Pending Amount',
-                    mss_package_transactions.package_txn_value AS 'Discounted Service Amt',
-                    mss_package_transactions.package_txn_value  AS 'Net Bill Amt'
+                    mss_package_transactions.package_txn_value AS 'Billing Amount'
+                    -- mss_package_transactions.package_txn_value  AS 'Net Bill Amt'
                     -- mss_package_transaction_settlements.payment_mode AS 'Payment Mode',
                     -- date_add(date(now()),INTERVAL mss_salon_packages.salon_package_validity MONTH) AS 'Expiry Date'                    
                 FROM
