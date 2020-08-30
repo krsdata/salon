@@ -13,6 +13,7 @@
 			<div class="container-fluid p-0">
 				<h1 class="h3 mb-3">Package Management</h1>
 				<div class="row">
+			
 					<?php
 						if(empty($business_outlet_details)){
 					?>	
@@ -171,19 +172,23 @@
 																		</div>
 																	</div>
 																	<div class="row">
-																	 <div class="form-group col-md-12">
+																	 <div class="form-group col-md-6">
 																		<label >Outlets</label>
-																			<select  name="salon_package_outlet[]" id="salon_package_outlet_ids"  multiple="multiple" class="form-control">
+																			<select  name="salon_package_outlet[]" id="salon_package_outlet_ids"  multiple style="display:none;"  >
 																				 <?php foreach($business_outlet_details as  $key => $outletDetails): ?>
 																				  <option value="<?php echo $outletDetails['business_outlet_id']; ?>" <?php echo $selected; ?>><?php echo $outletDetails['business_outlet_name']; ?></option>
 																				  <?php endforeach; ?>
 																			</select>
-																	 </div>	
+																	 </div>
+																	 <div class="form-group col-md-6">
+																	     <label>Total Count of Services</label>
+																		 <input type="number" class="form-control" placeholder="Total Count of Services" name="total_no_of_services">
+																	</div>		
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-6">
 																			<label>Validity</label>
-																			<input type="number" class="form-control" placeholder="Period in Months" name="salon_package_validity" min="1" max="99">
+																			<input type="number" class="form-control" placeholder="Period in Days" name="salon_package_validity" min="1" max="99">
 																		</div>
 																		<div class="form-group col-md-6">
 																			<label>Package Type</label><br>
@@ -213,8 +218,7 @@
 																					<td>
 																						<div class="form-group">
 																							<label>Sub-Category</label>
-																							
-																						    <select id="service_sub_category_id" name="service_sub_category_id" multiple >
+																							  <select id="service_sub_category_id" name="service_sub_category_id[]"  multiple >
 																								<?php if(!empty($categories)){
 																									foreach($categories as $key=>$category): ?>
 																									   <optgroup label="<?php echo $category['category_name']; ?>">
@@ -224,19 +228,15 @@
 																													echo '<option value="'.$subcategoryDetails['sub_category_id'].'">'.$subcategoryDetails['sub_category_name'].'</option>';
 																												}		
 																											}
-																											//$keyValues = array_search($category['category_id'], array_column($sub_categories, 'sub_category_category_id')); 
-																											//$subCat[$category['category_id']] =  
+																									
 																										} 
 																										
 																										?>
 																									</optgroup>
 																									<?php endforeach;
 																								}
-																								
 																								?>
-																								
-																							</select>
-																							
+																						   </select>
 																						</div>
 																					</td>
 																					<td>
@@ -249,7 +249,7 @@
 																					<td>
 																						<div class="form-group">
 																							<label>Price</label>
-																							<input type="text" class="form-control" name="service_price_inr[]" temp="service_price_inr" >
+																							<input type="text" value="" id="service_price_inr" class="form-control" name="service_price_inr[]" temp="service_price_inr" >
 																						</div>
 																					</td>
 																					<td>
@@ -261,38 +261,43 @@
 																				</tr>
 																			</tbody>
 																		</table>
-																		
 																		<button type="button" class="btn btn-success" id="AddRowService">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
 																		<button type="button" class="btn btn-danger" id="DeleteRowService">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
-																	</div>
+															
+																		</div>
 																	<div id="Discount">
 																		<table id="discountTable" class="table table-hover table-bordered">
 																			<tbody>
 																				<tr>
-																					<td>
-																						<div class="form-group">
-																							<label>Category</label>
-																							<select class="form-control" name="service_category_id">
-																								<option value="" selected></option>
-																								<?php
-																									foreach ($categories as $category) {
-																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
-																									}
-																								?>
-																							</select>
-																						</div>
-																					</td>
+																					
 																					<td>
 																						<div class="form-group">
 																							<label>Sub-Category</label>
-																							<select class="form-control" name="service_sub_category_id">
+																							<select id="service_sub_category_discount_id" class="form-control" name="service_sub_category_id[]" multiple>
+																								<?php if(!empty($categories)){
+																										foreach($categories as $key=>$category): ?>
+																										   <optgroup label="<?php echo $category['category_name']; ?>">
+																											<?php if(!empty($sub_categories)){
+																												foreach($sub_categories as $subcategoryDetails){
+																													if($subcategoryDetails['sub_category_category_id']==$category['category_id']){
+																														echo '<option value="'.$subcategoryDetails['sub_category_id'].'">'.$subcategoryDetails['sub_category_name'].'</option>';
+																													}		
+																												}
+																										
+																											} 
+																											
+																											?>
+																										</optgroup>
+																										<?php endforeach;
+																									}
+																									?>
 																							</select>
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>Service</label>
-																							<select class="form-control" name="service_id[]" temp="Service">
+																							<select id="service_id_discount" multiple class="form-control" name="service_id[]" temp="Service">
 																							</select>
 																						</div>
 																					</td>
@@ -317,32 +322,37 @@
 																				</tr>
 																			</tbody>
 																		</table>
-																		
 																		<button type="button" class="btn btn-success" id="AddRowDiscount">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
 																		<button type="button" class="btn btn-danger" id="DeleteRowDiscount">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
+																	
 																			
 																	</div>
 																	<div id="Service_SubCategory_Bulk">
 																		<table id="serviceSubCategoryBulkTable" class="table table-hover table-bordered">
 																			<tbody>
 																				<tr>
-																					<td>
-																						<div class="form-group">
-																							<label>Category</label>
-																							<select class="form-control" name="service_category_id">
-																								<option value="" selected></option>
-																								<?php
-																									foreach ($categories as $category) {
-																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
-																									}
-																								?>
-																							</select>
-																						</div>
-																					</td>
+																					
 																					<td>
 																						<div class="form-group">
 																							<label>Sub-Category</label>
-																							<select class="form-control" name="service_sub_category_bulk[]" temp="Service_SubCategory_Bulk">
+																							<select id="service_sub_category_bulk" multiple class="form-control" name="service_sub_category_bulk[]" temp="Service_SubCategory_Bulk">
+																							  <?php if(!empty($categories)){
+																										foreach($categories as $key=>$category): ?>
+																										   <optgroup label="<?php echo $category['category_name']; ?>">
+																											<?php if(!empty($sub_categories)){
+																												foreach($sub_categories as $subcategoryDetails){
+																													if($subcategoryDetails['sub_category_category_id']==$category['category_id']){
+																														echo '<option value="'.$subcategoryDetails['sub_category_id'].'">'.$subcategoryDetails['sub_category_name'].'</option>';
+																													}		
+																												}
+																										
+																											} 
+																											
+																											?>
+																										</optgroup>
+																										<?php endforeach;
+																									}
+																									?>
 																							</select>
 																						</div>
 																					</td>
@@ -357,28 +367,35 @@
 																		</table>
 																		<button type="button" class="btn btn-success" id="AddRowServiceSubCategoryBulk">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
 																		<button type="button" class="btn btn-danger" id="DeleteRowServiceSubCategoryBulk">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
+														
 																	</div>
 																	<div id="Discount_SubCategory_Bulk">
 																		<table id="discountSubCategoryBulkTable" class="table table-hover table-bordered">
 																			<tbody>
 																				<tr>
-																					<td>
-																						<div class="form-group">
-																							<label>Category</label>
-																							<select class="form-control" name="service_category_id">
-																								<option value="" selected></option>
-																								<?php
-																									foreach ($categories as $category) {
-																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
-																									}
-																								?>
-																							</select>
-																						</div>
-																					</td>
+																					
 																					<td>
 																						<div class="form-group">
 																							<label>Sub-Category</label>
-																							<select class="form-control" name="service_sub_category_bulk[]" temp="Discount_SubCategory_Bulk">
+																							<select id="service_sub_category_bulk_discount" multiple class="form-control" name="service_sub_category_bulk[]" temp="Discount_SubCategory_Bulk">
+																								<?php if(!empty($categories)){
+																									foreach($categories as $key=>$category): ?>
+																									   <optgroup label="<?php echo $category['category_name']; ?>">
+																										<?php if(!empty($sub_categories)){
+																											foreach($sub_categories as $subcategoryDetails){
+																												if($subcategoryDetails['sub_category_category_id']==$category['category_id']){
+																													echo '<option value="'.$subcategoryDetails['sub_category_id'].'">'.$subcategoryDetails['sub_category_name'].'</option>';
+																												}		
+																											}
+																									
+																										} 
+																										
+																										?>
+																									</optgroup>
+																									<?php endforeach;
+																								}
+																								?>
+																							
 																							</select>
 																						</div>
 																					</td>
@@ -397,9 +414,9 @@
 																				</tr>
 																			</tbody>
 																		</table>
-																		
 																		<button type="button" class="btn btn-success" id="AddRowDiscountSubCategoryBulk">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
 																		<button type="button" class="btn btn-danger" id="DeleteRowDiscountSubCategoryBulk">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>			
+																	
 																	</div>
 																	<!-- bulk category  -->
 																	<div id="Service_Category_Bulk">
@@ -409,8 +426,7 @@
 																					<td>
 																						<div class="form-group">
 																							<label>Category</label>
-																							<select class="form-control" name="service_category_bulk[]">
-																								<option value="" selected></option>
+																							<select id="service_category_bulk" multiple class="form-control" name="service_category_bulk[]">
 																								<?php
 																									foreach ($categories as $category) {
 																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
@@ -437,7 +453,7 @@
 																		</table>
 																		<button type="button" class="btn btn-success" id="AddRowServiceCategoryBulk">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
 																		<button type="button" class="btn btn-danger" id="DeleteRowServiceCategoryBulk">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
-																	</div>
+																</div>
 																	<div id="Discount_Category_Bulk">
 																		<table id="discountCategoryBulkTable" class="table table-hover table-bordered">
 																			<tbody>
@@ -445,9 +461,8 @@
 																					<td>
 																						<div class="form-group">
 																							<label>Category</label>
-																							<select class="form-control" name="discount_service_category_bulk[]">
-																								<option value="" selected></option>
-																								<?php
+																							<select id="discount_service_category_bulk" multiple class="form-control" name="discount_service_category_bulk[]">
+																							<?php
 																									foreach ($categories as $category) {
 																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
 																									}
@@ -476,10 +491,10 @@
 																				</tr>
 																			</tbody>
 																		</table>
-																		
 																		<button type="button" class="btn btn-success" id="AddRowDiscountCategoryBulk">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
 																		<button type="button" class="btn btn-danger" id="DeleteRowDiscountCategoryBulk">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>			
-																	</div>
+																	
+																		</div>
 																	<!--end -->
 																	<!-- special membership -->
 																	<div id="special_membership">
@@ -503,8 +518,7 @@
 																					<td>
 																						<div class="form-group">
 																							<!-- <label>Cat. Type</label> -->
-																							<select class="form-control" name="category_type1[]">
-																								<option value="" selected>Category Type</option>
+																							<select id="category_type1" multiple class="form-control" name="category_type1[]">
 																								<option value="Service">Service</option>
 																								<option value="Products">Product</option>
 																							</select>
@@ -532,25 +546,22 @@
 																				</tr>																				
 																			</tbody>
 																		</table>																		
-																		<button type="button" class="btn btn-success mb-1" id="AddRowSpecialMembership1"><i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
-																		<button type="button" class="btn btn-danger mb-1" id="DeleteRowSpecialMembership1"><i class="fa fa-trash" aria-hidden="true"></i></button>			
 																		<table id="specialMembershipTable2" class="table">
 																			<tbody>	
 																				<tr>
 																					<td>
 																						<div class="form-group">
 																							<!-- <label>Cat. Type</label> -->
-																							<select class="form-control" name="category_type2">
-																								<option value="" selected>Category Type</option>
-																								<option value="Service">Service</option>
-																								<option value="Products">Product</option>
+																							<select class="form-control" id="category_type2" multiple name="category_type2">
+																							<option value="Service">Service</option>
+																							<option value="Products">Product</option>
 																							</select>
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<!-- <label>Category</label> -->
-																							<select class="form-control" name="special_category_id2[]" temp="special_category_id2">
+																							<select class="form-control" id="special_category_id2" multiple name="special_category_id2[]" temp="special_category_id2">
 																								
 																							</select>
 																						</div>
@@ -576,121 +587,11 @@
 																					
 																				</tr>																			
 																			</tbody>
-																		</table>																		
-																		<button type="button" class="btn btn-success mb-1" id="AddRowSpecialMembership2"><i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
-																		<button type="button" class="btn btn-danger mb-1" id="DeleteRowSpecialMembership2"><i class="fa fa-trash" aria-hidden="true"></i></button>
-																		<table id="specialMembershipTable3" class="table">
-																			<tbody>
-																				<tr>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Cat. Type</label> -->
-																							<select class="form-control" name="category_type3">
-																								<option value="" selected>Category Type</option>
-																								<option value="Service">Service</option>
-																								<option value="Products">Product</option>
-																							</select>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Category</label> -->
-																							<select class="form-control" name="special_category_id3">
-																								
-																							</select>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Sub-Cat.</label> -->
-																							<select class="form-control" name="special_sub_category_id3[]" temp="special_sub_category_id3">
-																							</select>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Min Price</label> -->
-																							<input type="text" class="form-control" name="min_price3[]" temp="min_price" placeholder="Min Price">
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Max Price</label> -->
-																							<input type="text" class="form-control" min="0" name="max_price3[]"  placeholder="Max Price" >
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Discount</label> -->
-																							<input type="number" min="0" max="100" class="form-control" name="special_discount3[]"  placeholder="Discount % ">
-																						</div>
-																					</td>
-																					
-																				</tr>																			
-																			</tbody>
-																		</table>																		
-																		<button type="button" class="btn btn-success mb-1" id="AddRowSpecialMembership3"><i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
-																		<button type="button" class="btn btn-danger mb-1" id="DeleteRowSpecialMembership3"><i class="fa fa-trash" aria-hidden="true"></i></button>
-																		<table id="specialMembershipTable4" class="table">
-																			<tbody>
-																				<tr>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Cat. Type</label> -->
-																							<select class="form-control" name="category_type4">
-																								<option value="" selected>Category Type</option>
-																								<option value="Service">Service</option>
-																								<option value="Products">Product</option>
-																							</select>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Category</label> -->
-																							<select class="form-control" name="special_category_id4">
-																								
-																							</select>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Sub-Cat.</label> -->
-																							<select class="form-control" name="special_sub_category_id4">
-																							</select>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Service</label> -->
-																							<select class="form-control" name="special_service_id4[]" temp="Service">
-																							</select>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Min Price</label> -->
-																							<input type="text" class="form-control" name="min_price4[]" temp="min_price" placeholder="Min Price">
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Max Price</label> -->
-																							<input type="text" class="form-control" min="0" name="max_price4[]"  placeholder="Max Price" >
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<!-- <label>Discount</label> -->
-																							<input type="number" min="0" max="100" class="form-control" name="special_discount4[]"  placeholder="Discount % ">
-																						</div>
-																					</td>
-																					
-																				</tr>																				
-																			</tbody>
-																		</table>																		
+																		</table>
 																		<button type="button" class="btn btn-success mb-1" id="AddRowSpecialMembership4"><i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
 																		<button type="button" class="btn btn-danger mb-1" id="DeleteRowSpecialMembership4"><i class="fa fa-trash" aria-hidden="true"></i></button>
-																	</div>
+																																		
+																		</div>
 																	<!-- end -->
 																	
 																	<button type="submit" class="btn btn-primary mt-2">Submit</button>
@@ -727,6 +628,7 @@
 												</tr>
 											</thead>
 											<tbody id="package-content"></tbody>
+											
 										</table>										
 									</div>					
 								</div>
@@ -742,6 +644,12 @@
 <?php
 	$this->load->view('master_admin/ma_footer_view');
 ?>
+
+<link href="<?=base_url()?>public/app_stack/css/multiselect/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<?=base_url()?>public/app_stack/js/multiselect/bootstrap.min.js"></script>
+<link href="<?=base_url()?>public/app_stack/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+<script src="<?=base_url()?>public/app_stack/js/multiselect/bootstrap-multiselect.js" type="text/javascript"></script>
+
 <script type="text/javascript">
 	$(document).on('click','.package-edit-btn',function(event) {
 		event.preventDefault();	
@@ -761,6 +669,7 @@
 							  $("#ModalAddPackage input[name=salon_package_upfront_amt]").attr('value',data.salon_package_upfront_amt);
 							  $("#ModalAddPackage input[name=salon_package_validity]").attr('value',data.salon_package_validity);
 							  $("#ModalAddPackage input[name=virtual_wallet_money_absolute]").attr('value',data.virtual_wallet_money);
+							  
 							 // Not exist in db	
 							 //$("#ModalAddPackage input[name=virtual_wallet_money_percentage]").attr('value',data.virtual_wallet_money_percentage);
 							 
@@ -775,11 +684,49 @@
 								   $('#salon_package_outlet_ids option[value="'+selectedId+'"]').attr("selected", "selected");
 								});	
 							 }
-							 
-							 $('#salon_package_outlet_ids').multiSelect('destroy').multiSelect();	
-							 $('#salon_package_outlet_ids')
+							
+							 $('#salon_package_outlet_ids').multiselect('destroy').multiselect({maxHeight: 150,
+										buttonWidth: 150,
+										numberDisplayed: 2,
+										nSelectedText: 'selected'});	
+
+							
 							  if(data.salon_package_type=='Services' || data.salon_package_type=='Discount' || data.salon_package_type_selected=='salon_package_type_selected'){
 								   togglePackage();
+								    
+									if(data.salon_package_type=='Services') {
+										
+									 	$.each(data.servicesDetails, function(key, serviceDetails) {
+										
+											 $('#serviceTable tr:last select[name=service_sub_category_id] option').filter(function() { 
+												return ($(this).val() == serviceDetails.service_sub_category_id); //To select dropdown record
+											 }).prop('selected', true);
+											
+											 $("#service_price_inr").attr('value',serviceDetails.service_price_inr);
+											 $("#ModalAddPackage input[name=count_service]").attr('value',serviceDetails.service_count);
+											 
+										});
+										
+										$('#serviceTable tr:last select[name=service_sub_category_id]').multiselect('destroy').multiselect({maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected'});
+											
+										$( "#serviceTable tr:last select[name=service_sub_category_id]" ).trigger("change",[data.servicesDetails]);	
+										/*
+										$.each(data.servicesDetails, function(key, serviceDetails) {
+											
+											 $('[id=service_id] option').filter(function() { 
+												return (parseInt($(this).val()) == serviceDetails.service_id); //To select dropdown record
+											 }).prop('selected', true);
+											 
+										});
+										*/
+										
+										
+											
+										
+									} 
 							  }else if(data.salon_package_type=='Wallet'){
 								  
 								  
@@ -807,12 +754,76 @@
 		});
 		
     $(document).ready(function() {  
-	   
-		 $('#salon_package_outlet_ids').multiSelect();
-		 $('#assign-Outlets-select').multiSelect();
-		 $('#service_id').multiSelect();
+	    
 		
-	
+		 $('#salon_package_outlet_ids').multiselect({maxHeight: 150,
+										buttonWidth: 150,
+										numberDisplayed: 2,
+										nSelectedText: 'selected'});
+		 $('#assign-Outlets-select').multiselect({maxHeight: 150,
+										buttonWidth: 150,
+										numberDisplayed: 2,
+										nSelectedText: 'selected'});
+		 $('#serviceTable tr:last select[name="service_sub_category_id[]"]').multiselect({maxHeight: 150,
+										buttonWidth: 150,
+										numberDisplayed: 2,
+										nSelectedText: 'selected'});
+		 
+	    
+		$('#serviceTable tr:last select[name="service_id[]"]').multiselect({maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected'});
+		$('#discountTable tr:last select[name="service_sub_category_id[]"]').multiselect({maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected'});
+		$('#service_sub_category_bulk').multiselect({maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected'});
+		$('#service_sub_category_bulk_discount').multiselect({maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected'});
+		
+		$('#discountCategoryBulkTable tr:last select[name="discount_service_category_bulk[]"]').multiselect({
+							includeSelectAllOption: true,
+							maxHeight: 150,
+							buttonWidth: 150,
+							numberDisplayed: 2,
+							nSelectedText: 'selected'
+						});
+		$('#service_id_discount').multiselect({maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected'});
+		$('#service_category_bulk').multiselect({
+							includeSelectAllOption: true,
+							maxHeight: 150,
+							buttonWidth: 150,
+							numberDisplayed: 2,
+							nSelectedText: 'selected'
+						});
+		$("#category_type1").multiselect({  maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected',
+											nonSelectedText: 'Category Type'});
+		$("#category_type2").multiselect({  maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected',
+											nonSelectedText: 'Category Type'});	
+
+       $("#special_category_id2").multiselect({  maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected'});												
+
+        											
+		
+		
 		$("#openAddPackageWindow").on('click', function () {
 			$("#ModalAddPackage").find('.modal-title').html('Add Package'); 
 			 $('#ModalAddPackage').modal({ show: true });
@@ -832,7 +843,11 @@
 								}
 								
 								$('#assign-package-select').html("").html(options);
-								$('#assign-package-select').multiSelect();
+								$('#assign-package-select').multiselect('destroy');
+								$('#assign-package-select').multiselect({maxHeight: 150,
+										buttonWidth: 150,
+										numberDisplayed: 2,
+										nSelectedText: 'selected'});
 							/*
 							 htmlContent += '<tr>';
 							 htmlContent += '<td>'+(i+1)+'</td>';
@@ -867,10 +882,10 @@
 		});
 	 });
 	
+	
 	function togglePackage(){
 		var selectedElement=$('#packageType option:selected').val();
 		
-
 		$("#Services").hide();
 		$("#Discount").hide();
 		$("#Wallet").hide();
@@ -909,13 +924,12 @@
 		if(selectedElement == "special_membership"){
 			$("#special_membership").show();
 		}
-		$('#service_sub_category_id').multiSelect();
+		
 	}
 	
 	function togglePackage_main(){
 		var selectedElement=$('#packageType option:selected').val();
 		
-
 		$("#Services").hide();
 		$("#Discount").hide();
 		$("#Wallet").hide();
@@ -1249,20 +1263,43 @@
 			
 			// table2
 			$(document).on('change',"#specialMembershipTable2 tr:last select[name=category_type2]", function(e){
+				
+				e.preventDefault();
+				
 				var parameters = {
 					'category_type' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>MasterAdmin/GetCategoriesByCategoryType", parameters)
+				$.getJSON("<?=base_url()?>MasterAdmin/GetCategoriesByCategoryTypes", parameters)
 				.done(function(data, textStatus, jqXHR) {
-						var options = "<option value='' selected></option>"; 
-						for(var i=0;i<data.length;i++){
-							options += "<option value="+data[i].category_id+">"+data[i].category_name+"</option>";
+					var options = ""; 
+					$.each(data, function(key, recordByCategoryType) {
+						if(recordByCategoryType.length>0){
+							options += '<optgroup label="'+key+'">';
 						}
-						$("#specialMembershipTable2 tr:last select[temp=special_category_id2]").html("").html(options);
+					  	for(var i=0;i<recordByCategoryType.length;i++){
+							options += "<option value="+recordByCategoryType[i].category_id+">"+recordByCategoryType[i].category_name+"</option>";
+						}
+						if(recordByCategoryType.length>0){
+							options +='</optgroup>';
+						}
+						console.log(options);
+					});
+				   	
+					$("#specialMembershipTable2 tr:last select[temp=special_category_id2]").html("").html(options); 
+					$("#special_category_id2").multiselect('destroy');	
+					$("#special_category_id2").multiselect({  maxHeight: 150,
+										buttonWidth: 150,
+										numberDisplayed: 2,
+										nSelectedText: 'selected'});
+					
 				})
 				.fail(function(jqXHR, textStatus, errorThrown) {
+					
 					console.log(errorThrown.toString());
 				});
+				
+				
+					
 			});
 			$("#AddRowSpecialMembership2").click(function(event){
 				event.preventDefault();
@@ -1445,39 +1482,225 @@
 				});
 			});
 			
-			$(document).on('change',"#serviceTable tr:last select[name=service_sub_category_id]",function(e){
+			
+			$(document).on('change',"#serviceTable tr:last select[name='service_sub_category_id[]']",function(e,serviceDetails){
+				
 				var parameters = {
 					'sub_category_id' :  $(this).val()
 				};
 				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatMultipleIds", parameters)
 				.done(function(data, textStatus, jqXHR) {
-					console.log(data);
-						var options = "<option value='' selected></option>"; 
+					
+						var options = ""; 
 						
+						for(var i=0;i<data.length;i++){
+							var selected = "";
+						   if(typeof(serviceDetails)!= "undefined" ){
+							$.each(serviceDetails, function(key, service) {
+								if(service.service_id==data[i].service_id){
+									selected = 'selected="selected"';
+								} //To select dropdown record
+						    });
+						   }
+							options += "<option value="+data[i].service_id+" "+selected+" >"+data[i].service_name+"</option>";
+						}
+						
+					  
+						$("#serviceTable tr:last select[temp=Service]").html("").html(options);
+						$('#serviceTable tr:last select[name="service_id[]"]').multiselect('destroy').multiselect({
+							includeSelectAllOption: true,
+							maxHeight: 150,
+							buttonWidth: 150,
+							numberDisplayed: 2,
+							nSelectedText: 'selected'
+						});
+						
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+					
+				});
+				
+			});
+			
+			$(document).on('change',"#discountTable tr:last select[name='service_sub_category_id[]']",function(e){
+				var parameters = {
+					'sub_category_id' :  $(this).val()
+				};
+				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatMultipleIds", parameters)
+				.done(function(data, textStatus, jqXHR) {
+						var options = ""; 
 						for(var i=0;i<data.length;i++){
 							options += "<option value="+data[i].service_id+">"+data[i].service_name+"</option>";
 						}
-						console.log(options);
-					  
-						$("#serviceTable tr:last select[temp=Service]").html("").html(options);
-						$("#service_id").multiSelect('destroy').multiSelect();
+						$("#discountTable tr:last select[temp=Service]").html("").html(options);
+						$("#discountTable tr:last select[name='service_id[]']").multiselect('destroy').multiselect({
+							includeSelectAllOption: true,
+							maxHeight: 150,
+							buttonWidth: 150,
+							numberDisplayed: 2,
+							nSelectedText: 'selected'
+						});
+						
 						
 				})
 				.fail(function(jqXHR, textStatus, errorThrown) {
 					console.log(errorThrown.toString());
 				});
-				
 			});
+
 			
-			$("#AddRowServiceSubCategoryBulk").click(function(event){
+			/*
+			$(document).on('change',"#serviceTable tr:last select[temp=Service]",function(e){
+				var parameters = {
+					'service_id' :  $(this).val()
+				};
+				// alert($(this).val());
+				$.getJSON("<?=base_url()?>MasterAdmin/GetServicePriceById", parameters)
+				.done(function(data, textStatus, jqXHR) {			
+						$("#serviceTable tr:last input[temp=service_price_inr]").val(data[0].service_price_inr);
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				});
+			});
+			//service price for discount package
+			$(document).on('change',"#discountTable tr:last select[temp=Service]",function(e){
+				var parameters = {
+					'service_id' :  $(this).val()
+				};
+				// alert($(this).val());
+				$.getJSON("<?=base_url()?>MasterAdmin/GetServicePriceById", parameters)
+				.done(function(data, textStatus, jqXHR) {			
+						$("#discountTable tr:last input[temp=service_price_inr]").val(data[0].service_price_inr);
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				});
+			}); */
+			
+			$("#AddRowService").click(function(event){
 				event.preventDefault();
 				this.blur();
-				var rowno = $("#serviceSubCategoryBulkTable tr").length;
+				var rowno = $("#serviceTable tr").length;
+				
+				rowno = rowno+1;
+				var htmlContent = '<tr><td>';
+				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
+				    htmlContent += '<select class="form-control" name="service_sub_category_id[]" multiple>';
+				   
+				    <?php if(!empty($categories)){
+						foreach($categories as $key=>$category): ?>
+						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
+							<?php if(!empty($sub_categories)){
+								foreach($sub_categories as $subcategoryDetails){
+									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
+										htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
+									<?php }		
+								}
+							} 
+							?>
+						htmlContent += '</optgroup>';
+						<?php endforeach;
+					}
+					?>
+					
+					htmlContent +='</select></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Service</label>';
+					htmlContent +='<select class="form-control" name="service_id[]" temp="Service" multiple></select></div>';
+					htmlContent +='</td><td><div class="form-group" ><label>Price</label><input type="text" class="form-control" name="service_price_inr" temp="service_price_inr"></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_service[]" temp="Count" value="1" min="1" max="25"></select></div></td></tr>';
+				    $("#serviceTable tr:last").after(htmlContent);
+					
+					$('#serviceTable tr:last select[name="service_sub_category_id[]"]').multiselect({maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected'});
+					$('#serviceTable tr:last select[name="service_id[]"]').multiselect({maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected'});						
+										
+											
+			});
+
+			$("#AddRowDiscount").click(function(event){
+				event.preventDefault();
+				this.blur();
+				var rowno = $("#discountTable tr").length;
 				
 				rowno = rowno+1;
 				
-				$("#serviceSubCategoryBulkTable tr:last").after("<tr><td><div class=\"form-group\"><label>Category</label><select class=\"form-control\" name=\"service_category_id\"><option value=\"\" selected></option> <?php foreach ($categories as $category) { echo "<option value=".$category['category_id'].">".$category['category_name']."</option>"; }?></select></div></td><td><div class=\"form-group\"><label>Sub-Category</label><select class=\"form-control\" name=\"service_sub_category_bulk[]\" temp=\"Service_SubCategory_Bulk\"></select></div></td><td><div class=\"form-group\"><label>Count</label><input type=\"number\" class=\"form-control\" name=\"count_service_subcategory_bulk[]\" temp=\"Count\" value=\"1\" min=\"1\" max=\"25\"></select></div></td></tr>");
+				var htmlContent = '<tr><td>';
+				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
+				    htmlContent += '<select class="form-control" name="service_sub_category_id[]" multiple>';
+				   
+				    <?php if(!empty($categories)){
+						foreach($categories as $key=>$category): ?>
+						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
+							<?php if(!empty($sub_categories)){
+								foreach($sub_categories as $subcategoryDetails){
+									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
+										htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
+									<?php }		
+								}
+							} 
+							?>
+						htmlContent += '</optgroup>';
+						<?php endforeach;
+					}
+					?>
+					
+					htmlContent +='</select></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Service</label>';
+					htmlContent +='<select class="form-control" name="service_id[]" temp="Service" multiple></select></div>';
+					htmlContent +='</td><td><div class="form-group" ><label>Price</label><input type="text" class="form-control" name="service_price_inr" temp="service_price_inr"></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Discount</label><input type="number" min="0" max="100" class="form-control" name="discount[]" temp="Discount"></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_discount[]" temp="Count" value="1" min="1" max="25"></select></div></td></tr>';
+				    $("#discountTable tr:last").after(htmlContent);
+					
+					$('#discountTable tr:last select[name="service_sub_category_id[]"]').multiselect({maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected'});
+					$('#discountTable tr:last select[name="service_id[]"]').multiselect({maxHeight: 150,
+											buttonWidth: 150,
+											numberDisplayed: 2,
+											nSelectedText: 'selected'});	
+				
 			});
+			
+			$("#AddRowDiscountCategoryBulk").click(function(event){
+				event.preventDefault();
+				this.blur();
+				var rowno = $("#discountCategoryBulkTable tr").length;
+				
+				rowno = rowno+1;
+				var htmlContent = '<tr><td>';
+				    htmlContent += '<div class="form-group"><label>Category</label>';
+				    htmlContent += '<select class="form-control" name="discount_service_category_bulk[]" multiple>';
+				<?php foreach ($categories as $category) { ?>
+						htmlContent +=  '<option value="<?php echo $category["category_id"]; ?>"><?php echo $category["category_name"] ?></option>'; 
+				<?php }
+				?>
+					htmlContent +='</select></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Service Price</label>';
+					htmlContent +='<input type="number" class="form-control" name="service_price_greater_than[]" temp="Discount_Category_Bulk"></div></td>';
+				    htmlContent +='<td><div class="form-group"><label>Discount</label><input type="number" min="0" max="100" class="form-control" name="discount_category_bulk[]" temp="Discount"></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_discount_category_bulk[]" temp="Count" value="1" min="1" max="25"></div></td></tr>';
+				
+				
+				$("#discountCategoryBulkTable tr:last").after(htmlContent);
+				
+				$('#discountCategoryBulkTable tr:last select[name="discount_service_category_bulk[]"]').multiselect({
+							includeSelectAllOption: true,
+							maxHeight: 150,
+							buttonWidth: 150,
+							numberDisplayed: 2,
+							nSelectedText: 'selected'
+						});
+			});
+			
 			// Add Row in Service CAtegory bulk
 			$("#AddRowServiceCategoryBulk").click(function(event){
 				event.preventDefault();
@@ -1485,9 +1708,107 @@
 				var rowno = $("#serviceCategoryBulkTable tr").length;
 				
 				rowno = rowno+1;
+				var htmlContent = '<tr><td>';
+				    htmlContent += '<div class="form-group"><label>Category</label>';
+				    htmlContent += '<select class="form-control" name="service_category_bulk[]" multiple>';
+				<?php foreach ($categories as $category) { ?>
+						htmlContent +=  '<option value="<?php echo $category["category_id"]; ?>"><?php echo $category["category_name"] ?></option>'; 
+				<?php }
+				?>
+				htmlContent +='</select></div></td>';
+				htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_service_subcategory_bulk[]" temp="Count" value="1" min="1" max="25"></div></td></tr>';
+				$("#serviceCategoryBulkTable tr:last").after(htmlContent);
 				
-				$("#serviceCategoryBulkTable tr:last").after("<tr><td><div class=\"form-group\"><label>Category</label><select class=\"form-control\" name=\"service_category_id\"><option value=\"\" selected></option> <?php foreach ($categories as $category) { echo "<option value=".$category['category_id'].">".$category['category_name']."</option>"; }?></select></div></td><td><div class=\"form-group\"><label>Count</label><input type=\"number\" class=\"form-control\" name=\"count_service_subcategory_bulk[]\" temp=\"Count\" value=\"1\" min=\"1\" max=\"25\"></select></div></td></tr>");
+				$('#serviceCategoryBulkTable tr:last select[name="service_category_bulk[]"]').multiselect({
+							includeSelectAllOption: true,
+							maxHeight: 150,
+							buttonWidth: 150,
+							numberDisplayed: 2,
+							nSelectedText: 'selected'
+						});
 			});
+			
+			$("#AddRowDiscountSubCategoryBulk").click(function(event){
+				event.preventDefault();
+				this.blur();
+				var rowno = $("#discountSubCategoryBulkTable tr").length;
+				
+				rowno = rowno+1;
+				var htmlContent = '<tr><td>';
+				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
+				    htmlContent += '<select class="form-control" name="service_sub_category_bulk[]" multiple temp="Discount_SubCategory_Bulk">';
+				   
+				    <?php if(!empty($categories)){
+						foreach($categories as $key=>$category): ?>
+						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
+							<?php if(!empty($sub_categories)){
+								foreach($sub_categories as $subcategoryDetails){
+									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
+										htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
+									<?php }		
+								}
+							} 
+							?>
+						htmlContent += '</optgroup>';
+						<?php endforeach;
+					}
+					?>
+
+				htmlContent +='</select></div></td>';
+				htmlContent += '<td><div class="form-group"><label>Discount</label><input type="number" min="0" max="100" class="form-control" name="discount_subcategory_bulk[]" temp="Discount"></div></td>';				
+				htmlContent += '<td><div class="form-group"><label>Count</label><input type="number" min="0" max="100" class="form-control" name="count_discount_subcategory_bulk[]" temp="Count"  value="1" min="1" max="25"></div></td></tr>';				
+				$("#discountSubCategoryBulkTable tr:last").after(htmlContent);
+				$('#discountSubCategoryBulkTable tr:last select[name="service_sub_category_bulk[]"]').multiselect({
+							includeSelectAllOption: true,
+							maxHeight: 150,
+							buttonWidth: 150,
+							numberDisplayed: 2,
+							nSelectedText: 'selected'
+						});
+						
+			});
+
+			
+			$("#AddRowServiceSubCategoryBulk").click(function(event){
+				event.preventDefault();
+				this.blur();
+				var rowno = $("#serviceSubCategoryBulkTable tr").length;
+				
+				rowno = rowno+1;
+				var htmlContent = '<tr><td>';
+				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
+				    htmlContent += '<select class="form-control" name="service_sub_category_bulk[]" multiple temp="Service_SubCategory_Bulk">';
+				   
+				    <?php if(!empty($categories)){
+						foreach($categories as $key=>$category): ?>
+						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
+							<?php if(!empty($sub_categories)){
+								foreach($sub_categories as $subcategoryDetails){
+									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
+										htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
+									<?php }		
+								}
+							} 
+							?>
+						htmlContent += '</optgroup>';
+						<?php endforeach;
+					}
+					?>
+
+				htmlContent +='</select></div></td>';
+				htmlContent += '<td><div class="form-group"><label>Count</label><input type="number" min="0" max="100" class="form-control" name="count_service_subcategory_bulk[]" temp="Count"  value="1" min="1" max="25"></div></td></tr>';				
+			
+				$("#serviceSubCategoryBulkTable tr:last").after(htmlContent);
+				$('#serviceSubCategoryBulkTable tr:last select[name="service_sub_category_bulk[]"]').multiselect({
+							includeSelectAllOption: true,
+							maxHeight: 150,
+							buttonWidth: 150,
+							numberDisplayed: 2,
+							nSelectedText: 'selected'
+						});
+						
+			});
+			
 
 
 			$("#DeleteRowServiceCategoryBulk").click(function(event){
@@ -1499,15 +1820,7 @@
 				}
 			});
 
-			$("#AddRowDiscountCategoryBulk").click(function(event){
-				event.preventDefault();
-				this.blur();
-				var rowno = $("#discountCategoryBulkTable tr").length;
-				
-				rowno = rowno+1;
-				
-				$("#discountCategoryBulkTable tr:last").after("<tr><td><div class=\"form-group\"><label>Category</label><select class=\"form-control\" name=\"service_category_id\"><option value=\"\" selected></option> <?php foreach ($categories as $category) { echo "<option value=".$category['category_id'].">".$category['category_name']."</option>"; }?></select></div></td><td><div class=\"form-group\"><label>Service Price</label><input type=\"number\" class=\"form-control\" name=\"service_price_greater_than[]\" temp=\"Discount_Category_Bulk\"></div></td><td><div class=\"form-group\"><label>Discount</label><input type=\"number\" min=\"0\" max=\"100\" class=\"form-control\" name=\"discount_category_bulk[]\" temp=\"Discount\"></div></td><td><div class=\"form-group\"><label>Count</label><input type=\"number\" class=\"form-control\" name=\"count_discount_category_bulk[]\" temp=\"Count\" value=\"1\" min=\"1\" max=\"25\"></div></td></tr>");
-			});
+			
 
 			$("#DeleteRowDiscountCategoryBulk").click(function(event){
 				event.preventDefault();
@@ -1528,16 +1841,7 @@
 			});
 			
 			
-			$("#AddRowDiscountSubCategoryBulk").click(function(event){
-				event.preventDefault();
-				this.blur();
-				var rowno = $("#discountSubCategoryBulkTable tr").length;
-				
-				rowno = rowno+1;
-				
-				$("#discountSubCategoryBulkTable tr:last").after("<tr><td><div class=\"form-group\"><label>Category</label><select class=\"form-control\" name=\"service_category_id\"><option value=\"\" selected></option> <?php foreach ($categories as $category) { echo "<option value=".$category['category_id'].">".$category['category_name']."</option>"; }?></select></div></td><td><div class=\"form-group\"><label>Sub-Category</label><select class=\"form-control\" name=\"service_sub_category_bulk[]\" temp=\"Discount_SubCategory_Bulk\"></select></div></td><td><div class=\"form-group\"><label>Discount</label><input type=\"number\" min=\"0\" max=\"100\" class=\"form-control\" name=\"discount_subcategory_bulk[]\" temp=\"Discount\"></div></td><td><div class=\"form-group\"><label>Count</label><input type=\"number\" class=\"form-control\" name=\"count_discount_subcategory_bulk[]\" temp=\"Count\" value=\"1\" min=\"1\" max=\"25\"></div></td></tr>");
-			});
-
+		
 			$("#DeleteRowDiscountSubCategoryBulk").click(function(event){
 				event.preventDefault();
 				this.blur();
@@ -1566,79 +1870,11 @@
 			});
 
 		
-			$(document).on('change',"#serviceTable tr:last select[temp=Service]",function(e){
-				var parameters = {
-					'service_id' :  $(this).val()
-				};
-				// alert($(this).val());
-				$.getJSON("<?=base_url()?>MasterAdmin/GetServicePriceById", parameters)
-				.done(function(data, textStatus, jqXHR) {			
-						$("#serviceTable tr:last input[temp=service_price_inr]").val(data[0].service_price_inr);
-				})
-				.fail(function(jqXHR, textStatus, errorThrown) {
-					console.log(errorThrown.toString());
-				});
-			});
-			//service price for discount package
-			$(document).on('change',"#discountTable tr:last select[temp=Service]",function(e){
-				var parameters = {
-					'service_id' :  $(this).val()
-				};
-				// alert($(this).val());
-				$.getJSON("<?=base_url()?>MasterAdmin/GetServicePriceById", parameters)
-				.done(function(data, textStatus, jqXHR) {			
-						$("#discountTable tr:last input[temp=service_price_inr]").val(data[0].service_price_inr);
-				})
-				.fail(function(jqXHR, textStatus, errorThrown) {
-					console.log(errorThrown.toString());
-				});
-			});
+			
 
 
-			$(document).on('change',"#discountTable tr:last select[name=service_category_id]",function(e){
-				var parameters = {
-					'category_id' :  $(this).val()
-				};
-				$.getJSON("<?=base_url()?>MasterAdmin/GetSubCategoriesByCatId", parameters)
-				.done(function(data, textStatus, jqXHR) {
-						var options = "<option value='' selected></option>"; 
-						for(var i=0;i<data.length;i++){
-							options += "<option value="+data[i].sub_category_id+">"+data[i].sub_category_name+"</option>";
-						}
-						$("#discountTable tr:last select[name=service_sub_category_id]").html("").html(options);
-				})
-				.fail(function(jqXHR, textStatus, errorThrown) {
-					console.log(errorThrown.toString());
-				});
-			});
-
-			$(document).on('change',"#discountTable tr:last select[name=service_sub_category_id]",function(e){
-				var parameters = {
-					'sub_category_id' :  $(this).val()
-				};
-				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatMultipleIds", parameters)
-				.done(function(data, textStatus, jqXHR) {
-						var options = "<option value='' selected></option>"; 
-						for(var i=0;i<data.length;i++){
-							options += "<option value="+data[i].service_id+">"+data[i].service_name+"</option>";
-						}
-						$("#discountTable tr:last select[temp=Service]").html("").html(options);
-				})
-				.fail(function(jqXHR, textStatus, errorThrown) {
-					console.log(errorThrown.toString());
-				});
-			});
-
-			$("#AddRowService").click(function(event){
-				event.preventDefault();
-				this.blur();
-				var rowno = $("#serviceTable tr").length;
-				
-				rowno = rowno+1;
-				
-				$("#serviceTable tr:last").after("<tr><td><div class=\"form-group\"><label>Category</label><select class=\"form-control\" name=\"service_category_id\"><option value=\"\" selected></option> <?php foreach ($categories as $category) { echo "<option value=".$category['category_id'].">".$category['category_name']."</option>"; }?></select></div></td><td><div class=\"form-group\"><label>Sub-Category</label><select class=\"form-control\" name=\"service_sub_category_id\"></select></div></td><td><div class=\"form-group\"><label>Service</label><select class=\"form-control\" name=\"service_id[]\" temp=\"Service\"></select></div></td><td><div class=\"form-group\" ><label>Price</label><input type=\"text\" class=\"form-control\" name=\"service_price_inr\" temp=\"service_price_inr\"></div></td><td><div class=\"form-group\"><label>Count</label><input type=\"number\" class=\"form-control\" name=\"count_service[]\" temp=\"Count\" value=\"1\" min=\"1\" max=\"25\"></select></div></td></tr>");
-			});
-
+		
+		
 			$("#DeleteRowService").click(function(event){
 				event.preventDefault();
 				this.blur();
@@ -1648,15 +1884,7 @@
 				}
 			});
 
-			$("#AddRowDiscount").click(function(event){
-				event.preventDefault();
-				this.blur();
-				var rowno = $("#discountTable tr").length;
-				
-				rowno = rowno+1;
-				
-				$("#discountTable tr:last").after("<tr><td><div class=\"form-group\"><label>Category</label><select class=\"form-control\" name=\"service_category_id\"><option value=\"\" selected></option> <?php foreach ($categories as $category) { echo "<option value=".$category['category_id'].">".$category['category_name']."</option>"; }?></select></div></td><td><div class=\"form-group\"><label>Sub-Category</label><select class=\"form-control\" name=\"service_sub_category_id\"></select></div></td><td><div class=\"form-group\"><label>Service</label><select class=\"form-control\" name=\"service_id[]\" temp=\"Service\"></select></div></td><td><div class=\"form-group\" ><label>Price</label><input type=\"text\" class=\"form-control\" name=\"service_price_inr\" temp=\"service_price_inr\"></div></td><td><div class=\"form-group\"><label>Discount</label><input type=\"number\" min=\"0\" max=\"100\" class=\"form-control\" name=\"discount[]\" temp=\"Discount\"></div></td><td><div class=\"form-group\"><label>Count</label><input type=\"number\" class=\"form-control\" name=\"count_discount[]\" temp=\"Count\" value=\"1\" min=\"1\" max=\"25\"></div></td></tr>");
-			});
+			
 
 			$("#DeleteRowDiscount").click(function(event){
 				event.preventDefault();

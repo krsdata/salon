@@ -146,13 +146,14 @@ class MasterAdmin extends CI_Controller {
 	}
 	
 	private function getServiceDetailsByPackageId($packageId){
+	
 		$returnServiceRecords =$serviceRecords_2 = $serviceIds = array();
 		if($this->IsLoggedIn('master_admin')){
 			$where = array(
 				'master_id' 	   => $this->session->userdata['logged_in']['master_admin_id'],
 				'salon_package_id' => $packageId
 			);
-
+           
 			$data = $this->MasterAdminModel->MultiWhereSelect('mss_salon_package_data',$where);
 			
 			if($data['success'] == 'true' && !empty($data['res_arr'])){	
@@ -173,6 +174,7 @@ class MasterAdmin extends CI_Controller {
 					}
 					/* Merge the service record 1,2 */
 					foreach($data['res_arr'] as $key=>$serviceDetails){
+						$serviceDetails['service_id'] = (int) $serviceDetails['service_id'];
 						$returnServiceRecords[] = array_merge($serviceDetails,$serviceRecords_2[$serviceDetails['service_id']]);
 					}
 					
@@ -3604,6 +3606,7 @@ class MasterAdmin extends CI_Controller {
 					'master_id' 			=>  $this->session->userdata['logged_in']['master_admin_id']
 				);
 				$data = $this->MasterAdminModel->MultiWhereSelect('master_categories',$where);
+				
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
 				die;
@@ -3613,6 +3616,37 @@ class MasterAdmin extends CI_Controller {
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
+	
+	 public function GetCategoriesByCategoryTypes(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$where = array(
+					//'category_type' 		=> $_GET['category_type'],
+					'category_is_active'   => TRUE,
+					'master_id' 			=>  $this->session->userdata['logged_in']['master_admin_id']
+				);
+				$data = $this->MasterAdminModel->MultiWhereSelect('master_categories',$where);
+				if(!empty($data['res_arr'])){
+					$returnData = array('Service'=>array(),'Products'=>array());
+					foreach($data['res_arr'] as $category){
+						if(in_array('Service',$_GET['category_type']) && $category['category_type']=='Service'){
+							$returnData['Service'][] = array('category_id'=>$category['category_id'],'category_name'=>$category['category_name']);
+						}elseif(in_array('Products',$_GET['category_type']) && $category['category_type']=='Products'){
+							$returnData['Products'][] = array('category_id'=>$category['category_id'],'category_name'=>$category['category_name']);
+						}
+					}
+				}
+				
+				header("Content-type: application/json");
+				print(json_encode($returnData, JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
 	
 	
 	
@@ -3661,7 +3695,7 @@ class MasterAdmin extends CI_Controller {
 					);
 					
 					$outletIds = $this->input->post('salon_package_outlet');
-					
+					$masterId = $this->session->userdata['logged_in']['master_admin_id'];
 					if($data['salon_package_type'] == "Wallet"){
 							//Only one insert required
 						if(empty($this->input->post("virtual_wallet_money_absolute")) && empty($this->input->post("virtual_wallet_money_percentage"))){
@@ -3713,10 +3747,11 @@ class MasterAdmin extends CI_Controller {
 						}
 					}
 					elseif($data['salon_package_type'] == "Services"){
+						$data['salon_package_type_selected'] = $data['salon_package_type'];
 						$services = $this->input->post('service_id');
 						$counts   = $this->input->post('count_service');
-						if(!empty($services) && !empty($counts) && (count($services) == count($counts))){
-							$result = $this->MasterAdminModel->AddServicePackageForSalon($data,$services,$counts,$outletIds);
+						if(!empty($services) && !empty($counts)){
+							$result = $this->MasterAdminModel->AddServicePackageForSalon($data,$services,$counts,$outletIds,$masterId);
 							/* Associate Package with multiple outlet*/ 
 							$packageId = $result['res_arr']['insert_id'];
 							
@@ -3738,13 +3773,13 @@ class MasterAdmin extends CI_Controller {
 						}
 					}
 					elseif($data['salon_package_type'] == "Discount"){
-
+						$data['salon_package_type_selected'] = $data['salon_package_type'];
 						$services = $this->input->post('service_id');
 						$discounts =  $this->input->post('discount');
 						$counts = $this->input->post('count_discount');
 						
-						if(!empty($services) && !empty($discounts) && !empty($counts) && (count($services) == count($counts)) && (count($counts) == count($discounts))){
-							$result = $this->MasterAdminModel->AddDiscountPackageForSalon($data,$services,$discounts,$counts,$outletIds);
+						if(!empty($services) && !empty($discounts) && !empty($counts)){
+							$result = $this->MasterAdminModel->AddDiscountPackageForSalon($data,$services,$discounts,$counts,$outletIds,$masterId);
 							/* Associate Package with multiple outlet*/ 
 							$packageId = $result['res_arr']['insert_id'];
 							
@@ -3770,9 +3805,9 @@ class MasterAdmin extends CI_Controller {
 						
 						$sub_categories = $this->input->post('service_sub_category_bulk'); 
 						$counts = $this->input->post('count_service_subcategory_bulk');
-						if(!empty($sub_categories) && !empty($counts) && (count($sub_categories) == count($counts))){
+						if(!empty($sub_categories) && !empty($counts)){
 							
-							$result = $this->MasterAdminModel->AddServiceSubCategoryBulkPackage($data,$sub_categories,$counts,$outletIds);
+							$result = $this->MasterAdminModel->AddServiceSubCategoryBulkPackage($data,$sub_categories,$counts,$outletIds,$masterId);
 							/* Associate Package with multiple outlet*/ 
 							$packageId = $result['res_arr']['insert_id'];
 							
@@ -3799,8 +3834,8 @@ class MasterAdmin extends CI_Controller {
 						$discounts =  $this->input->post('discount_subcategory_bulk');
 						$counts = $this->input->post('count_discount_subcategory_bulk');
 						
-						if(!empty($sub_categories) && !empty($discounts) && !empty($counts) && (count($sub_categories) == count($counts)) && (count($counts) == count($discounts))){
-							$result = $this->MasterAdminModel->AddDiscountSubCategoryBulkPackage($data,$sub_categories,$discounts,$counts,$outletIds);
+						if(!empty($sub_categories) && !empty($discounts) && !empty($counts)){
+							$result = $this->MasterAdminModel->AddDiscountSubCategoryBulkPackage($data,$sub_categories,$discounts,$counts,$outletIds,$masterId);
 							
 							/* Associate Package with multiple outlet*/ 
 							$packageId = $result['res_arr']['insert_id'];
@@ -3827,9 +3862,9 @@ class MasterAdmin extends CI_Controller {
 						$data['salon_package_type'] = 'Services';
 						$categories = $this->input->post('service_category_bulk'); 
 						$counts = $this->input->post('count_service_category_bulk');
-						if(!empty($categories) && !empty($counts) && (count($categories) == count($counts))){
+						if(!empty($categories) && !empty($counts)){
 							// $this->PrettyPrintArray($categories);
-							$result = $this->MasterAdminModel->AddServiceCategoryBulkPackage($data,$categories,$counts,$outletIds);
+							$result = $this->MasterAdminModel->AddServiceCategoryBulkPackage($data,$categories,$counts,$outletIds,$masterId);
 							/* Associate Package with multiple outlet*/ 
 							$packageId = $result['res_arr']['insert_id'];
 							
@@ -3857,8 +3892,8 @@ class MasterAdmin extends CI_Controller {
 						$discounts =  $this->input->post('discount_category_bulk');
 						$counts = $this->input->post('count_discount_category_bulk');
 					
-						if(!empty($categories) && !empty($discounts) && !empty($counts) && (count($categories) == count($counts)) && (count($counts) == count($discounts))){
-							$result = $this->MasterAdminModel->AddDiscountCategoryBulkPackage($data,$categories, $cat_price, $discounts,$counts,$outletIds);
+						if(!empty($categories) && !empty($discounts) && !empty($counts)){
+							$result = $this->MasterAdminModel->AddDiscountCategoryBulkPackage($data,$categories, $cat_price, $discounts,$counts,$outletIds,$masterId);
 							/* Associate Package with multiple outlet*/ 
 							$packageId = $result['res_arr']['insert_id'];
 							
@@ -3879,6 +3914,7 @@ class MasterAdmin extends CI_Controller {
 						}
 					}
 					elseif($data['salon_package_type'] == "special_membership"){
+						$data['salon_package_type_selected'] = $data['salon_package_type'];
 						// $this->PrettyPrintArray($_POST);
 						$where=array(
 							// 'category_type'=> $_POST['category_type'],
@@ -3890,7 +3926,7 @@ class MasterAdmin extends CI_Controller {
 						$counts = 100;
 					
 						if(!empty($counts)){
-							$result = $this->MasterAdminModel->AddDiscountServicePackage($_POST,$data,$counts,$where,$outletIds);
+							$result = $this->MasterAdminModel->AddDiscountServicePackage($_POST,$data,$counts,$where,$outletIds,$masterId);
 							/* Associate Package with multiple outlet*/ 
 							$packageId = $result['res_arr']['insert_id'];
 							
@@ -4290,7 +4326,7 @@ class MasterAdmin extends CI_Controller {
 			$response = array(
 			  "draw" => intval($draw),
 			  "iTotalRecords" => $totalRecords,
-			  "iTotalDisplayRecords" => count($records),
+			  "iTotalDisplayRecords" => ($totalRecords>count($records)) ? $totalRecords : count($records),
 			  "aaData" => $records
 			);
 

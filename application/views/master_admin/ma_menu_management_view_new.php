@@ -1326,6 +1326,12 @@ $this->load->view('master_admin/ma_header_view');
 <?php
 	$this->load->view('master_admin/ma_footer_view');
 ?>
+
+<link href="<?=base_url()?>public/app_stack/css/multiselect/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<?=base_url()?>public/app_stack/js/multiselect/bootstrap.min.js"></script>
+<link href="<?=base_url()?>public/app_stack/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+<script src="<?=base_url()?>public/app_stack/js/multiselect/bootstrap-multiselect.js" type="text/javascript"></script>
+
 <script>
 	function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
     //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
@@ -1433,7 +1439,10 @@ $(document).ready(function(){
     
 	 $(document).ready(function() {  
 	   
-		$('#assign-services-select').multiSelect();
+		$('#assign-services-select').multiselect({includeSelectAllOption: true,maxHeight: 150,
+										buttonWidth: 150,
+										numberDisplayed: 2,
+										nSelectedText: 'selected'});
 		$("#openAssignServices").on('click', function () {
 			 var parameters = {};
 				var htmlContent="";
@@ -1446,7 +1455,10 @@ $(document).ready(function(){
 								}
 								
 								$('#assign-package-select').html("").html(options);
-								$('#assign-package-select').multiSelect();
+								$('#assign-package-select').multiselect({maxHeight: 150,
+										buttonWidth: 150,
+										numberDisplayed: 2,
+										nSelectedText: 'selected'});
 							/*
 							 htmlContent += '<tr>';
 							 htmlContent += '<td>'+(i+1)+'</td>';

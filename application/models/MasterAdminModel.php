@@ -436,7 +436,7 @@ class MasterAdminModel extends CI_Model
 	}
   
    // Add category packages for salon
-    public function AddServiceCategoryBulkPackage($data,$categories,$count,$outletIds){   
+    public function AddServiceCategoryBulkPackage($data,$categories,$count,$outletIds,$masterId){   
 
       $result = $this->Insert($data,'mss_salon_packages_master_new');
       $last_insert_id = $result['res_arr']['insert_id'];
@@ -456,7 +456,8 @@ class MasterAdminModel extends CI_Model
 										'salon_package_id' => $last_insert_id,
 										'service_id' 		=> $service['service_id'],
 										'discount_percentage' => 100,
-										'service_count' => (int)$count[$j]
+										'service_count' => (int)$count[0],
+										'master_id' => $masterId
 								);
 								$result_2 = $this->Insert($data_2,'mss_salon_package_data');
 								$servicesIds[] = $service['service_id'];
@@ -469,7 +470,7 @@ class MasterAdminModel extends CI_Model
     }
 	
 	
-	public function AddDiscountCategoryBulkPackage($data,$categories,$cat_price,$discounts,$count,$outletIds){
+	public function AddDiscountCategoryBulkPackage($data,$categories,$cat_price,$discounts,$count,$outletIds,$masterId){
 
         $result = $this->Insert($data,'mss_salon_packages_master_new');
 
@@ -491,7 +492,8 @@ class MasterAdminModel extends CI_Model
 									'salon_package_id' => $last_insert_id,
 									'service_id' => $services[$k]['service_id'],
 									'discount_percentage' => (int)$discounts[$i],
-									'service_count' => $count[$i]
+									'service_count' => $count[0],
+									'master_id' => $masterId
 								);
 								$result_2 = $this->Insert($data_2,'mss_salon_package_data');
 								$servicesIds[] = $services[$k]['service_id'];
@@ -506,7 +508,7 @@ class MasterAdminModel extends CI_Model
     }
   
  //ServicePAckage
-	public function AddDiscountServicePackage($post,$data,$count,$where,$outletIds){
+	public function AddDiscountServicePackage($post,$data,$count,$where,$outletIds,$masterId){
         // $this->PrintArray($_POST['category_type1']);
 		$result = $this->Insert($data,'mss_salon_packages_master_new');
 		$last_insert_id = $result['res_arr']['insert_id'];	
@@ -515,8 +517,8 @@ class MasterAdminModel extends CI_Model
             for($i=0;$i<count($_POST['category_type1']);$i++){
                 $filter=array(
                     'category_type'=>$_POST['category_type1'][$i],
-                    'min_price'=>$_POST['min_price1'][$i],
-                    'max_price'=>$_POST['max_price1'][$i],
+                    'min_price'=>$_POST['min_price1'][0],
+                    'max_price'=>$_POST['max_price1'][0],
                     'business_admin_id'=>$where['business_admin_id']
                     //'business_outlet_id'=>$where['business_outlet_id']
                 );
@@ -533,7 +535,8 @@ class MasterAdminModel extends CI_Model
                     'service_monthly_discount'=>$_POST['package_monthly_discount'],
                     'birthday_discount' =>$_POST['birthday_discount'],
                     'anni_discount'	=> $_POST['anniversary_discount'],
-                    'service_count' => $count
+                    'service_count' => $count,
+					'master_id' =>$masterId
                     );							
                     $result = $this->Insert($data_2,'mss_salon_package_data');
                     $servicesIds[] = $result_2[$k]['service_id'];					
@@ -545,8 +548,8 @@ class MasterAdminModel extends CI_Model
                 $filter2=array(
                     // 'category_type'=>$_POST['category_type2'],
                     'category_id'=>$_POST['special_category_id2'][$i],
-                    'min_price'=>$_POST['min_price2'][$i],
-                    'max_price'=>$_POST['max_price2'][$i],
+                    'min_price'=>$_POST['min_price2'][0],
+                    'max_price'=>$_POST['max_price2'][0],
                     'business_admin_id'=>$where['business_admin_id'],
                     'business_outlet_id'=>$where['business_outlet_id']
                 );
@@ -561,7 +564,8 @@ class MasterAdminModel extends CI_Model
                     'service_monthly_discount'=>$_POST['package_monthly_discount'],
                     'birthday_discount' =>$_POST['birthday_discount'],
                     'anni_discount'	=> $_POST['anniversary_discount'],
-                    'service_count' => $count
+                    'service_count' => $count,
+					'master_id' =>$masterId
                     );							
                     $result_2 = $this->Insert($data_3,'mss_salon_package_data');   
 					$servicesIds[] = $result_3[$k]['service_id'];							
@@ -620,7 +624,7 @@ class MasterAdminModel extends CI_Model
         return $this->ModelHelper(true,false,'',array('insert_id'=>$last_insert_id));
     }
   
-  public function AddServiceSubCategoryBulkPackage($data, $sub_categories, $count,$outletIds)
+  public function AddServiceSubCategoryBulkPackage($data, $sub_categories, $count,$outletIds,$masterId)
   {
 
     $result = $this->Insert($data, 'mss_salon_packages_master_new');
@@ -640,7 +644,8 @@ class MasterAdminModel extends CI_Model
           'salon_package_id' => $last_insert_id,
           'service_id' => $service['service_id'],
           'discount_percentage' => 100,
-          'service_count' => (int) $count[$i]
+          'service_count' => (int) $count[0],
+		  'master_id'	=> $masterId
         );
         $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
 		$servicesIds[] =   $service['service_id'];
@@ -651,7 +656,7 @@ class MasterAdminModel extends CI_Model
     return $this->ModelHelper(true, false,'',array('insert_id' => $last_insert_id));
   }
 
-  public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $discounts, $count,$outletIds)
+  public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $discounts, $count,$outletIds,$masterId)
   {
     $result = $this->Insert($data, 'mss_salon_packages_master_new');
 
@@ -670,7 +675,8 @@ class MasterAdminModel extends CI_Model
           'salon_package_id' => $last_insert_id,
           'service_id' => $service['service_id'],
           'discount_percentage' => (int) $discounts[$i],
-          'service_count' => (int) $count[$i]
+          'service_count' => (int) $count[0],
+		  'master_id'	=> $masterId
         );
         $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
 		$servicesIds[] =   $service['service_id'];
@@ -681,7 +687,7 @@ class MasterAdminModel extends CI_Model
     return $this->ModelHelper(true, false,'',array('insert_id'=>$last_insert_id));
   }
 
-  public function AddServicePackageForSalon($data, $services, $count_service,$outletIds)
+  public function AddServicePackageForSalon($data, $services, $count_service,$outletIds,$masterId)
   {
 
     $result = $this->Insert($data, 'mss_salon_packages_master_new');
@@ -695,7 +701,8 @@ class MasterAdminModel extends CI_Model
         'salon_package_id' => $last_insert_id,
         'service_id' => (int) $services[$i],
         'discount_percentage' => 100,
-        'service_count' => (int) $count_service[$i]
+        'service_count' => (int) $count_service[0],
+		'master_id'	=> $masterId
       );
       $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
 
@@ -713,7 +720,7 @@ class MasterAdminModel extends CI_Model
     }
   }
 
-  public function AddDiscountPackageForSalon($data, $services, $discounts, $count_discount,$outletIds)
+  public function AddDiscountPackageForSalon($data, $services, $discounts, $count_discount,$outletIds,$masterId)
   {
     $result = $this->Insert($data, 'mss_salon_packages_master_new');
 
@@ -728,7 +735,8 @@ class MasterAdminModel extends CI_Model
         'salon_package_id' => $last_insert_id,
         'service_id' => (int) $services[$i],
         'discount_percentage' => (int) $discounts[$i],
-        'service_count' => (int) $count_discount[$i]
+        'service_count' => (int) $count_discount[0],
+		'master_id'	=> $masterId
       );
       $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
 
@@ -817,7 +825,7 @@ class MasterAdminModel extends CI_Model
 	if(!empty($filter['columnName'])){
 		$sql .= "  order by ".$filter['columnName']." ".$filter['columnSortOrder']; 
 	}
-     if(!empty($filter['row'])){
+     if(isset($filter['row'])){
 		 $sql .= "  limit ".$filter['row'].",".$filter['rowperpage'];
 	 }
 	
