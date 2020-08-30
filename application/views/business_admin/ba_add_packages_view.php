@@ -627,7 +627,542 @@
 													</div>
 												</div>
 											</div>
-										</div>								
+										</div>
+										
+										<div class="modal" id="ModalEditPackage" tabindex="-1" role="dialog" aria-hidden="true">
+											<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title text-white font-weight-bold">Edit Package</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span class="text-white" aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body m-3">
+														<div class="row">
+															<div class="col-md-12">
+																<form id="EditPackage" method="POST" action="#">
+																	<div class="row">
+																		<div class="form-group col-md-3">
+																			<label>Package Name</label>
+																			<input type="text" class="form-control" placeholder="Package Name" name="salon_package_name" id="salon_package_name">
+																		</div>
+																		<div class="form-group col-md-3">
+																			<label>Price(Rs.)</label>
+																			<input type="number" class="form-control" placeholder="Package Price" name="salon_package_price">
+																		</div>
+																		<div class="form-group col-md-3">
+																			<label>GST</label>
+																			<input type="number" class="form-control" placeholder="GST" name="salon_package_gst" step=".1">
+																		</div>
+																		<div class="form-group col-md-3">
+																			<label>Total Amount(Rs.)</label>
+																			<input type="number" class="form-control" placeholder="Upfront Amount in Rs." name="salon_package_upfront_amt" readonly>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-6">
+																			<label>Validity</label>
+																			<input type="number" class="form-control" placeholder="Period in Months" name="salon_package_validity" min="1" max="99">
+																		</div>
+																		<div class="form-group col-md-6">
+																			<label>Package Type</label><br>
+																			<input type="text" class="form-control" name="salon_package_type">
+																		</div>
+																	</div>
+																	<div id="Services" style="display:none">
+																		<table id="serviceTable" class="table table-hover table-bordered">
+																			<tbody>
+																				<tr>
+																					<td>
+																						<div class="form-group">
+																							<label>Category</label>
+																							<select class="form-control" name="service_category_id">
+																								<option value="" selected></option>
+																								<?php
+																									foreach ($categories as $category) {
+																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
+																									}
+																								?>
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Sub-Category</label>
+																							<select class="form-control" name="service_sub_category_id">
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Service</label>
+																							<select class="form-control" name="service_id[]" temp="Service">
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Price</label>
+																							<input type="text" class="form-control" name="service_price_inr[]" temp="service_price_inr" >
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Count</label>
+																							<input type="number" class="form-control" name="count_service[]" temp="Count" value="1" min="1" max="25">
+																						</div>
+																					</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																		<button type="button" class="btn btn-success" id="AddRowService">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																		<button type="button" class="btn btn-danger" id="DeleteRowService">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
+																	</div>
+																	<div id="Discount" style="display:none">
+																		<table id="discountTable" class="table table-hover table-bordered">
+																			<tbody>
+																				<tr>
+																					<td>
+																						<div class="form-group">
+																							<label>Category</label>
+																							<select class="form-control" name="service_category_id">
+																								<option value="" selected></option>
+																								<?php
+																									foreach ($categories as $category) {
+																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
+																									}
+																								?>
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Sub-Category</label>
+																							<select class="form-control" name="service_sub_category_id">
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Service</label>
+																							<select class="form-control" name="service_id[]" temp="Service">
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Price</label>
+																							<input type="text" class="form-control" name="service_price_inr[]" temp="service_price_inr">
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Discount</label>
+																							<input type="number" min="0" max="100" class="form-control" name="discount[]" temp="Discount">
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Count</label>
+																							<input type="number" class="form-control" name="count_discount[]" temp="Count" value="1" min="1" max="25">
+																						</div>
+																					</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																		
+																		<button type="button" class="btn btn-success" id="AddRowDiscount">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																		<button type="button" class="btn btn-danger" id="DeleteRowDiscount">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
+																			
+																	</div>
+																	<div id="Service_SubCategory_Bulk" style="display:none"  >
+																		<table id="serviceSubCategoryBulkTable" class="table table-hover table-bordered">
+																			<tbody>
+																				<tr>
+																					<td>
+																						<div class="form-group">
+																							<label>Category</label>
+																							<select class="form-control" name="service_category_id">
+																								<option value="" selected></option>
+																								<?php
+																									foreach ($categories as $category) {
+																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
+																									}
+																								?>
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Sub-Category</label>
+																							<select class="form-control" name="service_sub_category_bulk[]" temp="Service_SubCategory_Bulk">
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Count</label>
+																							<input type="number" class="form-control" name="count_service_subcategory_bulk[]" temp="Count" value="1" min="1" max="25">
+																						</div>
+																					</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																		<button type="button" class="btn btn-success" id="AddRowServiceSubCategoryBulk">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																		<button type="button" class="btn btn-danger" id="DeleteRowServiceSubCategoryBulk">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
+																	</div>
+																	<div id="Discount_SubCategory_Bulk" style="display:none">
+																		<table id="discountSubCategoryBulkTable" class="table table-hover table-bordered">
+																			<tbody>
+																				<tr>
+																					<td>
+																						<div class="form-group">
+																							<label>Category</label>
+																							<select class="form-control" name="service_category_id">
+																								<option value="" selected></option>
+																								<?php
+																									foreach ($categories as $category) {
+																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
+																									}
+																								?>
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Sub-Category</label>
+																							<select class="form-control" name="service_sub_category_bulk[]" temp="Discount_SubCategory_Bulk">
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Discount</label>
+																							<input type="number" min="0" max="100" class="form-control" name="discount_subcategory_bulk[]" temp="Discount">
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Count</label>
+																							<input type="number" class="form-control" name="count_discount_subcategory_bulk[]" temp="Count" value="1" min="1" max="25">
+																						</div>
+																					</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																		
+																		<button type="button" class="btn btn-success" id="AddRowDiscountSubCategoryBulk">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																		<button type="button" class="btn btn-danger" id="DeleteRowDiscountSubCategoryBulk">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>			
+																	</div>
+																	<!-- bulk category  -->
+																	<div id="Service_Category_Bulk" style="display:none"  >
+																		<table id="serviceCategoryBulkTable" class="table table-hover table-bordered">
+																			<tbody>
+																				<tr>
+																					<td>
+																						<div class="form-group">
+																							<label>Category</label>
+																							<select class="form-control" name="service_category_bulk[]">
+																								<option value="" selected></option>
+																								<?php
+																									foreach ($categories as $category) {
+																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
+																									}
+																								?>
+																							</select>
+																						</div>
+																					</td>
+																					<!-- <td>
+																						<div class="form-group">
+																							<label>Sub-Category</label>
+																							<select class="form-control" name="service_sub_category_bulk[]" temp="Service_SubCategory_Bulk">
+																							</select>
+																						</div>
+																					</td> -->
+																					<td>
+																						<div class="form-group">
+																							<label>Count</label>
+																							<input type="number" class="form-control" name="count_service_category_bulk[]" temp="Count" value="1" min="1" max="25">
+																						</div>
+																					</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																		<button type="button" class="btn btn-success" id="AddRowServiceCategoryBulk">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																		<button type="button" class="btn btn-danger" id="DeleteRowServiceCategoryBulk">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
+																	</div>
+																	<div id="Discount_Category_Bulk" style="display:none">
+																		<table id="discountCategoryBulkTable" class="table table-hover table-bordered">
+																			<tbody>
+																				<tr>
+																					<td>
+																						<div class="form-group">
+																							<label>Category</label>
+																							<select class="form-control" name="discount_service_category_bulk[]">
+																								<option value="" selected></option>
+																								<?php
+																									foreach ($categories as $category) {
+																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
+																									}
+																								?>
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Service Price</label>
+																							<input type="number" class="form-control" name="service_price_greater_than[]" temp="Discount_Category_Bulk" placeholder="Enter Service Price for Discount">
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Discount</label>
+																							<input type="number" min="0" max="100" class="form-control" name="discount_category_bulk[]" temp="Discount" placeholder="Discount %">
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Count</label>
+																							<input type="number" class="form-control" name="count_discount_category_bulk[]" temp="Count" value="1" min="1" max="25">
+																						</div>
+																					</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																		
+																		<button type="button" class="btn btn-success" id="AddRowDiscountCategoryBulk">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																		<button type="button" class="btn btn-danger" id="DeleteRowDiscountCategoryBulk">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>			
+																	</div>
+																	<!--end -->
+																	<!-- special membership -->
+																	<div id="special_membership" style="display:none">
+																		<div class="row">
+																			<div class="form-group col-md-4">
+																			<label>Monthly Discount</label>
+																			<input type="text" name="package_monthly_discount" min="0"  class="form-control" placeholder="Monthly Discount in Rs">
+																			</div>
+																			<div class="form-group col-md-4">
+																				<label>Birthday Discount</label>
+																				<input type="number" min="0"  class="form-control" name="birthday_discount"  placeholder="Birthday Discount in Rs">
+																			</div>
+																			<div class="form-group col-md-4">
+																				<label>Annivaersary Discount</label>
+																				<input type="number" min="0"  class="form-control" name="anniversary_discount" placeholder="Anniversary Discount in Rs">
+																			</div>
+																		</div>
+																		<table id="specialMembershipTable1" class="table">
+																			<tbody>
+																				<tr>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Cat. Type</label> -->
+																							<select class="form-control" name="category_type1[]">
+																								<option value="" selected>Category Type</option>
+																								<option value="Service">Service</option>
+																								<option value="Products">Product</option>
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Min Price</label> -->
+																							<input type="text" class="form-control" name="min_price1[]" temp="min_price1" placeholder="Min Price">
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Max Price</label> -->
+																							<input type="text" class="form-control" min="0" name="max_price1[]"  placeholder="Max Price" >
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Discount</label> -->
+																							<input type="number" min="0" max="100" class="form-control" name="special_discount1[]"  placeholder="Discount % ">
+																						</div>
+																					</td>
+																					
+																				</tr>																				
+																			</tbody>
+																		</table>																		
+																		<button type="button" class="btn btn-success mb-1" id="AddRowSpecialMembership1"><i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																		<button type="button" class="btn btn-danger mb-1" id="DeleteRowSpecialMembership1"><i class="fa fa-trash" aria-hidden="true"></i></button>			
+																		<table id="specialMembershipTable2" class="table">
+																			<tbody>	
+																				<tr>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Cat. Type</label> -->
+																							<select class="form-control" name="category_type2">
+																								<option value="" selected>Category Type</option>
+																								<option value="Service">Service</option>
+																								<option value="Products">Product</option>
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Category</label> -->
+																							<select class="form-control" name="special_category_id2[]" temp="special_category_id2">
+																								
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Min Price</label> -->
+																							<input type="text" class="form-control" name="min_price2[]" temp="min_price" placeholder="Min Price">
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Max Price</label> -->
+																							<input type="text" class="form-control" min="0" name="max_price2[]"  placeholder="Max Price" >
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Discount</label> -->
+																							<input type="number" min="0" max="100" class="form-control" name="special_discount2[]"  placeholder="Discount % ">
+																						</div>
+																					</td>
+																					
+																				</tr>																			
+																			</tbody>
+																		</table>																		
+																		<button type="button" class="btn btn-success mb-1" id="AddRowSpecialMembership2"><i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																		<button type="button" class="btn btn-danger mb-1" id="DeleteRowSpecialMembership2"><i class="fa fa-trash" aria-hidden="true"></i></button>
+																		<table id="specialMembershipTable3" class="table">
+																			<tbody>
+																				<tr>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Cat. Type</label> -->
+																							<select class="form-control" name="category_type3">
+																								<option value="" selected>Category Type</option>
+																								<option value="Service">Service</option>
+																								<option value="Products">Product</option>
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Category</label> -->
+																							<select class="form-control" name="special_category_id3">
+																								
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Sub-Cat.</label> -->
+																							<select class="form-control" name="special_sub_category_id3[]" temp="special_sub_category_id3">
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Min Price</label> -->
+																							<input type="text" class="form-control" name="min_price3[]" temp="min_price" placeholder="Min Price">
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Max Price</label> -->
+																							<input type="text" class="form-control" min="0" name="max_price3[]"  placeholder="Max Price" >
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Discount</label> -->
+																							<input type="number" min="0" max="100" class="form-control" name="special_discount3[]"  placeholder="Discount % ">
+																						</div>
+																					</td>
+																					
+																				</tr>																			
+																			</tbody>
+																		</table>																		
+																		<button type="button" class="btn btn-success mb-1" id="AddRowSpecialMembership3"><i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																		<button type="button" class="btn btn-danger mb-1" id="DeleteRowSpecialMembership3"><i class="fa fa-trash" aria-hidden="true"></i></button>
+																		<table id="specialMembershipTable4" class="table">
+																			<tbody>
+																				<tr>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Cat. Type</label> -->
+																							<select class="form-control" name="category_type4">
+																								<option value="" selected>Category Type</option>
+																								<option value="Service">Service</option>
+																								<option value="Products">Product</option>
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Category</label> -->
+																							<select class="form-control" name="special_category_id4">
+																								
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Sub-Cat.</label> -->
+																							<select class="form-control" name="special_sub_category_id4">
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Service</label> -->
+																							<select class="form-control" name="special_service_id4[]" temp="Service">
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Min Price</label> -->
+																							<input type="text" class="form-control" name="min_price4[]" temp="min_price" placeholder="Min Price">
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Max Price</label> -->
+																							<input type="text" class="form-control" min="0" name="max_price4[]"  placeholder="Max Price" >
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<!-- <label>Discount</label> -->
+																							<input type="number" min="0" max="100" class="form-control" name="special_discount4[]"  placeholder="Discount % ">
+																						</div>
+																					</td>
+																					
+																				</tr>																				
+																			</tbody>
+																		</table>																		
+																		<button type="button" class="btn btn-success mb-1" id="AddRowSpecialMembership4"><i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																		<button type="button" class="btn btn-danger mb-1" id="DeleteRowSpecialMembership4"><i class="fa fa-trash" aria-hidden="true"></i></button>
+																	</div>
+																	<!-- end -->
+																	<input type="hidden" name="salon_package_id">
+																	<button type="submit" class="btn btn-primary mt-2">Submit</button>
+																	
+																</form>
+																<div class="alert alert-dismissible feedback" style="margin:0px;" role="alert">
+																	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+																		<span aria-hidden="true">&times;</span>
+																	</button>
+																	<div class="alert-message">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
 
 										<!--MODAL AREA END-->		
 										<table class="table table-striped datatables-basic" style="width:100%">
@@ -664,6 +1199,9 @@
 												<?php
 													if($package['is_active'] == 1){
 												?>
+													<button type="button" class="btn btn-info package-edit-btn"  salon_package_id="<?=$package['salon_package_id']?>">
+														<i class="align-middle" data-feather="edit"></i>
+													</button>
 													<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="<?=$package['salon_package_id']?>">
 														<i class="align-middle" data-feather="package"></i>
 													</button>
@@ -671,6 +1209,9 @@
 													}
 													else{
 												?>
+													<button type="button" class="btn btn-info package-edit-btn disabled" salon_package_id="<?=$package['salon_package_id']?>">
+														<i class="align-middle" data-feather="edit"></i>
+													</button>
 													<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="<?=$package['salon_package_id']?>">
 														<i class="align-middle" data-feather="package"></i>
 													</button>
@@ -1365,6 +1906,36 @@
 							}
 			});
 			});
+
+			$(document).on('click',".package-edit-btn", function(e){
+				var parameters = {
+					'salon_package_id' :  $(this).attr('salon_package_id')
+				};
+				
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetPackage", parameters)
+				.done(function(data, textStatus, jqXHR) {
+						$("#ModalEditPackage input[name=salon_package_name]").attr('value',data.salon_package_name);
+        		$("#ModalEditPackage input[name=salon_package_price]").val(data.salon_package_price);
+        		$("#ModalEditPackage input[name=salon_package_gst]").attr('value',data.service_gst_percentage);
+						$("#ModalEditPackage input[name=salon_package_upfront_amt]").attr('value',data.salon_package_upfront_amt);
+						$("#ModalEditPackage input[name=salon_package_validity]").attr('value',data.salon_package_validity);
+						$("#ModalEditPackage input[name=salon_package_type]").attr('value',data.salon_package_type);
+						var package_type=data.salon_package_type;
+						if(package_type=="Wallet"){
+							alert("Wallet type package can not be edited. ")
+							return false;
+						}else if(package_type=="Services"){
+							alert(data.salon_package_type);
+						}else if(package_type=="Discount"){
+							alert(data.salon_package_type);
+						}
+        		$("#ModalEditPackage").modal('show');
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				});
+			});
+
 		});
 </script>
 <script>

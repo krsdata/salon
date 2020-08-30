@@ -9781,6 +9781,7 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 		WHERE 
 			mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id  AND
 			mss_transaction_services.txn_service_service_id= mss_services.service_id AND
+			mss_transaction_services.txn_service_status= 1 AND
 			mss_transactions.txn_customer_id= mss_customers.customer_id AND
 			mss_transactions.txn_id= ".$this->db->escape($where)."
 			GROUP BY mss_transaction_services.txn_service_id";
@@ -9987,5 +9988,23 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
         else{
             return $this->ModelHelper(false,true,"DB error!");   
         }
-    }
+	}
+	
+
+	public function GetPackageDetails($where){
+        $sql = "SELECT *
+		FROM 
+			mss_salon_packages 
+		WHERE 
+		mss_salon_packages.salon_package_id = ".$this->db->escape($where['salon_package_id'])."
+			";
+        
+		$query = $this->db->query($sql);
+		if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());
+		}
+		else{
+			return $this->ModelHelper(false,true,"DB error!");   
+		}
+	}
 }
