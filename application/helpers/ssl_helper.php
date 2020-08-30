@@ -34,5 +34,6 @@ function shortUrl($url){
   $json = json_decode($json,true);  
 //  print_r($json);
   //die;
-  return $json['url']['shortLink'];
+  $link = str_replace('https://', 'http://', $json['url']['shortLink']);
+  return $link;
 }

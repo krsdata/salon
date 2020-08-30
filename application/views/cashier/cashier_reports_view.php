@@ -134,7 +134,7 @@
 																	<tr>
 																		<th>Bill No.</th>
 																		<th>Mobile No.</th>
-																		<th>Name</th>
+																		<th>Name</th>																		
 																		<th>MRP Amount</th>
 																		<th>Discount</th>
 																		<th>Net Amount</th>
@@ -755,6 +755,7 @@
 														<th>Date</th>
 														<th>Mobile No.</th>
 														<th>Name</th>
+														<th>Type</th>
 														<th>MRP Amount</th>
 														<th>Discount</th>
 														<th>Net Amount</th>
@@ -770,6 +771,7 @@
 															<td><?=$txn['billing_date']?></td>
 															<td><?=$txn['mobile']?></td>
 															<td><?=$txn['name']?></td>
+															<td><?=$txn['Type']?></td>
 															<td><?=$txn['mrp_amt']?></td>
 															<td><?=$txn['discount']?></td>
 															<td><?=$txn['net_amt']?></td>
