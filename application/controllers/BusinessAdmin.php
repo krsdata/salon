@@ -4118,7 +4118,7 @@ public function GetEmployee(){
 		}
 	}
 
-     public function BusinessAdminAddPackage(){
+	public function BusinessAdminAddPackage(){
 		if($this->IsLoggedIn('business_admin')){
 			// $this->PrettyPrintArray($_POST);
 			if(isset($_POST) && !empty($_POST)){
@@ -5195,7 +5195,7 @@ public function GetEmployee(){
 						print(json_encode($result1['res_arr'], JSON_PRETTY_PRINT));
 						die;									
 				}else{
-					$this->ReturnJsonArray(false,true,"Incorrect Password Or no Data found!");
+					$this->ReturnJsonArray(false,true,"Incorrect Password");
 					die;
 				}				
 			}else{
@@ -11797,6 +11797,74 @@ public function daybook(){
 				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}
 		}
+
+		public function EditPackage(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_POST) && !empty($_POST)){
+					$this->form_validation->set_rules('salon_package_name', 'Package Name', 'trim|required|max_length[50]');
+					$this->form_validation->set_rules('salon_package_price', 'Package Price', 'trim|required');
+					$this->form_validation->set_rules('salon_package_gst', 'Package GST', 'trim|required');
+					$this->form_validation->set_rules('salon_package_upfront_amt', 'Upfront Amount', 'trim|required');
+					$this->form_validation->set_rules('salon_package_validity', 'Validity', 'trim|required|is_natural_no_zero');
+					$this->form_validation->set_rules('salon_package_type', 'Package Type', 'trim|required|max_length[50]');
+					if ($this->form_validation->run() == FALSE) 
+					{
+						$data = array(
+										'success' => 'false',
+										'error'   => 'true',
+										'message' =>  validation_errors()
+									);
+						header("Content-type: application/json");
+						print(json_encode($data, JSON_PRETTY_PRINT));
+						die;
+					}
+					else{
+				
+						$data = array(
+							'salon_package_name' => $this->input->post('salon_package_name'),
+							'salon_package_price' => $this->input->post('salon_package_price'),
+							'service_gst_percentage' => $this->input->post('salon_package_gst'),
+							'salon_package_upfront_amt' => $this->input->post('salon_package_upfront_amt'),
+							'salon_package_validity'=> $this->input->post('salon_package_validity'),
+							'salon_package_type' 	=> $this->input->post('salon_package_type'),
+							'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+							'business_outlet_id' => $this->session->userdata['outlets']['current_outlet'],
+							'salon_package_id'	=> $this->input->post('salon_package_id')
+						);
+						if($data['salon_package_type'] == "Discount"){	
+							$services = $this->input->post('service_id');
+							$discounts =  $this->input->post('discount');
+							$counts = $this->input->post('count_discount');
+							$salon_package_id = $this->input->post('salon_package_id');
+							// $this->PrettyPrintArray($services);
+							if(!empty($services) && !empty($discounts) && !empty($counts) && (count($services) == count($counts)) && (count($counts) == count($discounts))){
+								$result = $this->BusinessAdminModel->UpdateDiscountPackageForSalon($data,$services,$discounts,$counts,$salon_package_id);
+								if($result['success'] == 'true'){
+									$this->ReturnJsonArray(true,false,"Package updated successfully!");
+									die;
+								}
+								elseif($result['error'] == 'true'){
+									$this->ReturnJsonArray(false,true,$result['message']);
+									die;
+								}
+							}
+							else{
+								$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
+								die;
+							}
+						}
+					}
+				}
+				else{
+					$this->ReturnJsonArray(false,true,"Error in Package Update");
+					die;
+				}
+			}
+			else{
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}
+		}
+	
 
 }
 
