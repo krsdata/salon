@@ -6532,7 +6532,7 @@ public function AddToCartRedeemPoints(){
 							$result = $this->BusinessAdminModel->GetCustomerBill($data);			
 						}else{
 							$result = $this->BusinessAdminModel->GetCustomerPackageBill($data);
-						}						
+						}
 						//$this->PrettyPrintArray($result);
 						if($result['success'] == 'true'){
 							//ReSend Bill SMS

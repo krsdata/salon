@@ -9746,9 +9746,9 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 				mss_transaction_cart
 			WHERE
 				mss_customers.customer_id=mss_transactions.txn_customer_id AND
-				mss_transaction_cart.transaction_id= mss_transactions.txn_id AND
+				-- mss_transaction_cart.transaction_id= mss_transactions.txn_id AND
 				mss_business_outlets.business_outlet_id= ".$this->db->escape($where['business_outlet_id'])." AND 
-				mss_transactions.txn_id= ".$this->db->escape($where['txn_id'])."";
+				mss_transactions.txn_id= ".$this->db->escape($where['txn_id'])." group by mss_transactions.txn_id";
         
          $query = $this->db->query($sql);
          if($query){

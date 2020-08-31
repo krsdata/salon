@@ -781,7 +781,7 @@
 																if($txn['Type'] == "Package"){
 																	?>
 																		<td><button data-type="package" class='btn btn-warning sendSmsBtn'  txn_id='<?=$txn['bill_no']?>'><i class='fa fa-sms'></i></button>
-															<a href='<?=base_url()?>Cashier/PrintBillPackage/<?=$txn['bill_no']?>' target='_blank' class='btn btn-danger' ><i class='fa fa-print'></i></a>
+															<a href='<?=base_url()?>Cashier/RePrintPackageBill/<?=$txn['bill_no']?>' target='_blank' class='btn btn-danger' ><i class='fa fa-print'></i></a>
 														</td>
 																	<?php
 																}else{
