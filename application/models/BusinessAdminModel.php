@@ -9806,6 +9806,50 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 		}
     }
 
+
+    public function GetPackageTransactionDetailByTxnId($txn_id){
+        $sql = "SELECT 
+    
+    mss_package_transactions.datetime,
+    mss_package_transactions.package_txn_cashier,
+    mss_package_transactions.package_txn_unique_serial_id,
+    mss_transaction_package_details.txn_package_price,    
+    mss_salon_packages.salon_package_name AS 'package_name',
+    mss_package_transactions.package_txn_discount AS 'Discount',
+    mss_salon_packages.salon_package_upfront_amt AS 'package_old_price',    
+    mss_package_transactions.package_txn_value AS 'package_final_value',
+    mss_salon_packages.salon_package_price AS 'package_price_inr',
+    mss_salon_packages.salon_package_validity AS 'package_validity',
+    mss_salon_packages.service_gst_percentage AS 'package_gst',
+    mss_salon_packages.service_gst_percentage AS 'package_old_gst',
+    mss_salon_packages.salon_package_type AS 'package_type',
+    mss_employees.employee_id,
+    mss_employees.employee_first_name AS 'employee_name',
+    mss_customers.customer_id,
+    mss_customers.customer_name,
+    mss_salon_packages.salon_package_id
+FROM
+    mss_package_transactions,
+    mss_transaction_package_details,
+    mss_salon_packages,
+    mss_employees,
+    mss_customers
+WHERE
+    mss_transaction_package_details.package_txn_id=mss_package_transactions.package_txn_id AND
+    mss_transaction_package_details.salon_package_id= mss_salon_packages.salon_package_id AND
+    mss_package_transactions.package_txn_expert= mss_employees.employee_id AND 
+    mss_package_transactions.package_txn_customer_id= mss_customers.customer_id AND
+    mss_package_transactions.package_txn_id=".$txn_id;
+        
+        $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
+
 	public function GetDailyAmountPaidBAck($where){
         $sql = "SELECT 
 		SUM(mss_transaction_settlements.txn_settlement_balance_paid) AS 'paid_back'

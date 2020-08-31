@@ -2817,7 +2817,9 @@ class Cashier extends CI_Controller {
 								$data['logo'] = $result[0]['config_value'];
 								// $this->PrettyPrintArray($data['shop_details']);
 								// die;
-
+								// echo "<pre>";
+								// print_r($data);
+								// die;
 								$this->load->view('cashier/cashier_package_print_bill',$data);
 						}
 						elseif ($check['error'] == 'true'){
@@ -6541,9 +6543,9 @@ public function AddToCartRedeemPoints(){
 							$bill_url = shortUrl($bill_url);
 							//$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
 							if($this->input->post('type') == "service"){
-								$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+								$this->ReSendBillSms($res['customer_name'],'7415493261',$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
 							}else{
-								$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['package_txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+								$this->ReSendBillSms($res['customer_name'],'7415493261',$res['business_outlet_name'],$res['package_txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
 							}
 							
 							$this->ReturnJsonArray(true,false,"Message Send.");
@@ -6591,7 +6593,7 @@ public function AddToCartRedeemPoints(){
 		if($this->IsLoggedIn('cashier')){	
 			$txn_id = $this->uri->segment(3);
 			$outlet_admin_id = $this->session->userdata['logged_in']['business_outlet_id'];
-			$data['cart']=$this->BusinessAdminModel->GetTransactionDetailByTxnId($txn_id);
+			$data['cart']=$this->BusinessAdminModel->GetTransactionDetailByTxnId($txn_id);			
 			$data['cart']=$data['cart']['res_arr'];
 			$data['shop_details'] = $this->ShopDetails();
 			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
@@ -6607,6 +6609,47 @@ public function AddToCartRedeemPoints(){
 			}
 			$data['logo'] = $result[0]['config_value'];						
 			$this->load->view('cashier/cashier_reprint_bill',$data);			
+		}else{
+			$this->LogoutUrl(base_url()."Cashier/Login");
+		}	
+	}
+
+	public function RePrintPackageBill(){
+		$this->load->helper('pdfhelper');//loading pdf helper
+		if($this->IsLoggedIn('cashier')){	
+			$txn_id = $this->uri->segment(3);
+			$outlet_admin_id = $this->session->userdata['logged_in']['business_outlet_id'];
+
+			$data['title'] = "Invoice";
+			$data['shop_details'] = $this->ShopDetails();
+			// $data['individual_customer'] = $this->GetCustomerBilling($customer_id);
+			if(isset($this->session->userdata['package_cart'])){
+					$data['package_cart'] = $this->session->userdata['package_cart'];
+			}
+			if(isset($this->session->userdata['package_payment'])){
+					$data['package_payment'] = $this->session->userdata['package_payment'][$customer_id];
+			}
+
+
+			$data['package_cart']=$this->BusinessAdminModel->GetPackageTransactionDetailByTxnId($txn_id);			
+			$data['package_cart']=$data['package_cart']['res_arr'][0];
+			// echo "<pre>";
+			// print_r($data);
+			// die;
+			$data['shop_details'] = $this->ShopDetails();
+			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
+
+			$query = $this->db->query($sql);
+
+			$result = $query->result_array();
+			if(empty($result)){
+				$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
+
+				$query = $this->db->query($sql);
+				$result = $query->result_array();
+			}
+			$data['logo'] = $result[0]['config_value'];						
+			$this->load->view('cashier/cashier_package_print_bill',$data);			
 		}else{
 			$this->LogoutUrl(base_url()."Cashier/Login");
 		}	
