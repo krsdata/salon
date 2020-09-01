@@ -969,21 +969,23 @@ class BusinessAdminModel extends CI_Model {
     }
 
     private function GetEmployeeWisePerformanceReport($data){
-        $sql = "SELECT 
-                     mss_transactions.txn_unique_serial_id AS 'Txn Unique Serial Id',
-                     mss_customers.customer_mobile AS 'Customer Mobile',
-                     mss_customers.customer_name AS 'Customer Name',
-                     date(mss_transactions.txn_datetime) AS 'Billing Date',
-                     mss_categories.category_name AS 'Category',
-                     mss_sub_categories.sub_category_name AS 'Sub-Category',
-                     mss_services.service_name AS 'Service',
+        $sql = "SELECT
+                    date(mss_transactions.txn_datetime) AS 'Billing Date', 
+                    mss_transactions.txn_unique_serial_id AS 'Txn Unique Serial Id',
+                    mss_customers.customer_mobile AS 'Customer Mobile',
+                    mss_customers.customer_name AS 'Customer Name',
+                    IF(mss_services.qty_per_item,CONCAT(mss_services.service_name,' ',mss_services.qty_per_item,' ',mss_services.service_unit),mss_services.service_name) 
+       AS 'Service', 
                      IFNULL(mss_services.inventory_type,'Service') AS 'Type' ,
-                     ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'MRP',
-                     mss_transaction_services.txn_service_quantity AS 'Quantity',
-                     (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
                      mss_employees.employee_first_name As 'Expert Name',
-                     mss_transaction_services.txn_service_discounted_price AS 'Billing Amount'
-                     -- mss_transactions.txn_value AS 'Net Bill Amt'
+                     mss_transaction_services.txn_service_quantity AS 'Quantity',
+                     ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'MRP',
+                     (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
+                     (mss_services.service_price_inr*mss_transaction_services.txn_service_quantity) AS 'Before Tax',
+                    mss_transaction_services.txn_service_discounted_price AS 'Billed Amount',
+                     mss_categories.category_name AS 'Category',
+                     mss_sub_categories.sub_category_name AS 'Sub-Category'
+                     
                 FROM
                      mss_transactions,
                      mss_transaction_services,
@@ -1013,23 +1015,24 @@ class BusinessAdminModel extends CI_Model {
             $result1 = $query->result_array();
 
             $sql = "SELECT
+                    date(mss_package_transactions.datetime) AS 'Billing Date',
                     mss_package_transactions.package_txn_unique_serial_id AS 'Txn Unique Serial Id',                    
                     mss_customers.customer_mobile AS 'Customer Mobile',
-                    mss_customers.customer_name AS 'Customer Name',
-                    date(mss_package_transactions.datetime) AS 'Billing Date',
+                    mss_customers.customer_name AS 'Customer Name',                    
                     mss_salon_packages.salon_package_name AS 'Service',
-                    mss_salon_packages.salon_package_type AS 'Package Type',
-                    mss_salon_packages.salon_package_name AS 'Sub-Category',
                     IF(mss_package_transactions.package_txn_unique_serial_id,'Package','Package') AS 'Type' ,
-                    mss_package_transactions.package_txn_value AS 'Bill Amount',    
-                    IF(mss_salon_packages.salon_package_type,'','') AS 'Quantity',
-                    mss_package_transactions.package_txn_discount AS 'Discount Given',
                     mss_employees.employee_first_name AS 'Expert Name',
-                    -- mss_package_transactions.package_txn_pending_amount AS 'Pending Amount',
-                    mss_package_transactions.package_txn_value AS 'Billing Amount'
-                    -- mss_package_transactions.package_txn_value  AS 'Net Bill Amt'
-                    -- mss_package_transaction_settlements.payment_mode AS 'Payment Mode',
-                    -- date_add(date(now()),INTERVAL mss_salon_packages.salon_package_validity MONTH) AS 'Expiry Date'                    
+                    IF(mss_salon_packages.salon_package_type,'','') AS 'Quantity',
+                    mss_package_transactions.package_txn_value AS 'MRP',  
+                    mss_package_transactions.package_txn_discount AS 'Discount',
+                    mss_salon_packages.salon_package_price AS 'Before Tax',
+                    mss_package_transactions.package_txn_value AS 'Billing Amount',
+                    
+                    mss_salon_packages.salon_package_type AS 'Category',
+                    mss_salon_packages.salon_package_name AS 'Sub-Category'
+                    
+                    
+                                        
                 FROM
                     mss_package_transactions,
                     mss_customers,
@@ -1048,6 +1051,7 @@ class BusinessAdminModel extends CI_Model {
                     AND date(mss_package_transactions.datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
                     ORDER BY
                         mss_package_transactions.package_txn_id";
+                        #echo $sql;die;
                         $query = $this->db->query($sql); 
                         $result2 = $query->result_array();
                         $result = array_merge($result1,$result2);

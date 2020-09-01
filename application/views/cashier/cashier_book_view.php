@@ -97,7 +97,7 @@
 													$total_e = $total_e+$expenses_data[$p];
 												}												
 												?></td>
-												<td><?php echo abs($opening_balance_data[$p]+$transaction_data[$p]+$pending_amount_data[$p]-$expenses_data[$p]);?></td>
+												<td><?php echo ($opening_balance_data[$p]+$transaction_data[$p]+$pending_amount_data[$p]-$expenses_data[$p]);?></td>
 											</tr>
 											<?php
 										}
@@ -108,7 +108,7 @@
 												<td><strong><?php echo $total_t;?></strong></td>
 												<td><strong><?php echo $total_p;?></strong></td>
 												<td><strong><?php echo $total_e;?></strong></td>
-												<td><strong><?php echo abs($total_t+$total_p+$total_o-$total_e);?></strong></td>
+												<td><strong><?php echo ($total_t+$total_p+$total_o-$total_e);?></strong></td>
 											</tr>
 									</tbody>
 								</table>
