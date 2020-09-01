@@ -216,7 +216,17 @@ class MasterAdminModel extends CI_Model
     }
   }
   
-  
+   public function getMasterSubCategoriesByIds($where){
+	   //$sql = "SELECT * FROM `master_sub_categories` WHERE `sub_category_category_id` IN (".$this->db->escape($where['sub_category_category_id']).") AND `sub_category_is_active`= " . $this->db->escape($where['sub_category_is_active']) . "";
+	   $sql = "SELECT A.`sub_category_id`,A.`sub_category_name`,A.`sub_category_category_id`,B.category_id,B.category_name FROM `master_sub_categories` as A,`master_categories` as B  WHERE A.`sub_category_category_id` IN (".$where['sub_category_category_id'].") AND A.`sub_category_is_active` = " . $this->db->escape($where['sub_category_is_active']) . " AND A.`sub_category_category_id`=B.category_id ";
+	   $query = $this->db->query($sql);
+    
+		if ($query) {
+		  return $this->ModelHelper(true, false, '', $query->result_array());
+		} else {
+		  return $this->ModelHelper(false, true, "DB error!");
+		}
+  }
  
   
   public function Services($where)
@@ -257,9 +267,18 @@ class MasterAdminModel extends CI_Model
 		  return $this->ModelHelper(false, true, "DB error!");
 		}
   }
-  
-   public function getMasterServicesBySubCatIds($subCategoryIds=""){
+   /* if you want to get Sub Category Details ($isSubCategoryDetails) with service then SET it as TRUE else FALSE */
+   public function getMasterServicesBySubCatIds($subCategoryIds="",$categoryType="",$isSubCategoryDetails=FALSE){
 	   $sql = "SELECT * FROM `master_services` WHERE `service_sub_category_id` IN (".$subCategoryIds.") AND service_is_active = TRUE";
+	   if($isSubCategoryDetails==TRUE){
+		   $sql = "SELECT A.*,B.sub_category_id,B.sub_category_name FROM `master_services` as A ,`master_sub_categories` as B WHERE A.`service_sub_category_id`=B.`sub_category_id` AND A.`service_is_active`=TRUE AND `service_sub_category_id` IN (".$subCategoryIds.")";
+		 
+		   if($categoryType!=""){
+			   $sql .= "  AND A.service_type IN (".$categoryType.") ";
+		   }
+	   
+	   }
+	 
 	   $query = $this->db->query($sql);
     
 		if ($query) {

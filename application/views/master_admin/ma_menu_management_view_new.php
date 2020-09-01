@@ -2466,8 +2466,8 @@ $(document).ready(function(){
        		for(var i=0;i<data.length;i++){
        			options += "<option value="+data[i].sub_category_id+">"+data[i].sub_category_name+"</option>";
        		}
-       		$('#'+objId+' select[name=service_sub_category_id]').html("").html(options);
-       		$('#'+objId+' select[name=otc_sub_category_id]').html("").html(options);
+       		$("#"+objId+' select[name=service_sub_category_id]').html("").html(options);
+       		$("#"+objId+' select[name=otc_sub_category_id]').html("").html(options);
 			
     	})
     	.fail(function(jqXHR, textStatus, errorThrown) {
@@ -2970,7 +2970,7 @@ $(document).ready(function(){
   
     $.getJSON("<?=base_url()?>MasterAdmin/GetSubCategoriesByCategoryType",parameters)
     .done(function(data,textStatus,jqXHR){
-      $('#'+selectedId+' '+'select[name=category_id]').html("");
+      $("#"+selectedId+' '+'select[name=category_id]').html("");
 	 if(onChangeType=='dropdownOnChange'){  // for reset sub category dropdown
 	  $('#Service-Sub-Category-Id-Edit').html("<option value=''>--Select--</option>");
 	  $('#Service-Sub-Category-Id').html("<option value=''>--Select--</option>");
@@ -2978,7 +2978,7 @@ $(document).ready(function(){
 	  $('#OTC-Sub-Category-Id-Edit').html("<option value=''>--Select--</option>");
 	 
 	 }
-	  $('#'+selectedId+' '+'select[name=category_id]').append("<option value=''>--Select--</option>");
+	  $("#"+selectedId+' '+'select[name=category_id]').append("<option value=''>--Select--</option>");
       var selectedParam="";
 	  for (var i=0;i<data.length;i++)
       {
@@ -2987,7 +2987,7 @@ $(document).ready(function(){
 		}else{
 			selectedParam = "";
 		}
-		$('#'+selectedId+' '+'select[name=category_id]').append("<option value="+data[i]['category_id']+" "+selectedParam+" >"+data[i]['category_name']+"</option>");
+		$("#"+selectedId+' '+'select[name=category_id]').append("<option value="+data[i]['category_id']+" "+selectedParam+" >"+data[i]['category_name']+"</option>");
       }
     })
     .fail(function(jqXHR,textStatus,errorThrown){
@@ -3001,8 +3001,8 @@ $(document).ready(function(){
 
     $.getJSON("<?=base_url()?>MasterAdmin/GetSubCategoriesByCatId",parameters)
     .done(function(data,textStatus,jqXHR){
-      $('#'+selectedId+' '+'select[name='+selectDropdownName+']').html("");
-      $('#'+selectedId+' '+'select[name='+selectDropdownName+']').append("<option value=''>--Select--</option>");
+      $("#"+selectedId+' '+'select[name='+selectDropdownName+']').html("");
+      $("#"+selectedId+' '+'select[name='+selectDropdownName+']').append("<option value=''>--Select--</option>");
       var selectedParam="";
 	  for(var i=0;i<data.length;i++)
       {
@@ -3011,7 +3011,7 @@ $(document).ready(function(){
 		}else{
 			selectedParam = "";
 		}
-        $('#'+selectedId+' '+'select[name='+selectDropdownName+']').append("<option value="+data[i]['sub_category_id']+" "+selectedParam+" >"+data[i]['sub_category_name']+"</option>");
+        $("#"+selectedId+' '+'select[name='+selectDropdownName+']').append("<option value="+data[i]['sub_category_id']+" "+selectedParam+" >"+data[i]['sub_category_name']+"</option>");
       }
     })
     .fail(function(jqXHR,textStatus,errorThrown){

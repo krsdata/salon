@@ -3062,6 +3062,34 @@ class MasterAdmin extends CI_Controller {
 	/**
 	 *
 	 * @author	: Pinky Sahukar
+	 * @Function : Get Sub categories based on category Ids (multiple ids)
+	*/	
+    public function GetSubCategoriesByCatIds(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$where = array(
+					'sub_category_category_id' => implode(',',$_GET['category_id']),
+					'sub_category_is_active'   => TRUE
+				);
+				$returnData =  array();
+				$data = $this->MasterAdminModel->getMasterSubCategoriesByIds($where);
+				if(!empty($data['res_arr'])){
+				  foreach($data['res_arr'] as $key=>$value){	
+					$returnData[$value['category_id']][] = $value;
+				  }
+				}
+				echo json_encode($returnData);
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
 	 * @Function : Get Services Based on Sub category Id
 	*/	
 	public function GetServicesBySubCatId(){
@@ -3076,6 +3104,40 @@ class MasterAdmin extends CI_Controller {
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
 				die;
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
+	/**
+	 *
+	 * @author	: Pinky Sahukar
+	 * @Function : Get Services Based on Sub category Ids (Multiple ids)
+	*/	
+	public function GetServicesBySubCatIds(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_GET) && !empty($_GET)){
+				$categoryType = array();
+				foreach($_GET['category_type'] as $type){
+					if($type=='Service'){
+						$categoryType[] = "'".'service'."'";
+					}elseif($type=='Products'){
+						$categoryType[] = "'".'otc'."'";
+					}
+				}
+				$returnServices = array();
+				$categoryType    = (!empty($categoryType)) ? implode(',',$categoryType) : "";
+				$subCategoryIds  = implode(',',$_GET['sub_category_id']);
+				$isSubCategoryDetails = TRUE; /* if you want to get Sub Category Details with service then SET it as TRUE else FALSE */
+				$data = $this->MasterAdminModel->getMasterServicesBySubCatIds($subCategoryIds,$categoryType,$isSubCategoryDetails);
+				if(!empty($data['res_arr'])){
+					foreach($data['res_arr'] as $services){
+						$returnServices[$services['service_sub_category_id']][] = $services;
+					}
+				}
+				echo json_encode($returnServices);
 			}
 		}
 		else{
@@ -3668,6 +3730,8 @@ class MasterAdmin extends CI_Controller {
 				$this->form_validation->set_rules('virtual_wallet_money_absolute', 'Wallet money loaded', 'trim');
 				$this->form_validation->set_rules('virtual_wallet_money_percentage', 'Wallet money loaded', 'trim');
 				$this->form_validation->set_rules('salon_package_outlet[]', 'Outlet', 'trim|required');
+				$this->form_validation->set_rules('total_no_of_services', 'Total No. of Services', 'trim|required');
+				$this->form_validation->set_rules('package_end_date', 'Package End Date', 'trim|required');
 				if ($this->form_validation->run() == FALSE) 
 				{
 					$data = array(
@@ -3691,7 +3755,9 @@ class MasterAdmin extends CI_Controller {
 						'business_admin_id'         => 0,
 						'master_id'				    => $this->session->userdata['logged_in']['master_admin_id'],
 						'business_outlet_id' 	    => 0,
-						'salon_package_date' 		=> date('Y-m-d')
+						'salon_package_date' 		=> date('Y-m-d'),
+						'salon_package_end_date' 	=> $this->input->post('package_end_date'),
+						'total_count_of_services' 	=> $this->input->post('total_no_of_services')
 					);
 					
 					$outletIds = $this->input->post('salon_package_outlet');
