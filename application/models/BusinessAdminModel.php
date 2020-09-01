@@ -969,21 +969,23 @@ class BusinessAdminModel extends CI_Model {
     }
 
     private function GetEmployeeWisePerformanceReport($data){
-        $sql = "SELECT 
-                     mss_transactions.txn_unique_serial_id AS 'Txn Unique Serial Id',
-                     mss_customers.customer_mobile AS 'Customer Mobile',
-                     mss_customers.customer_name AS 'Customer Name',
-                     date(mss_transactions.txn_datetime) AS 'Billing Date',
-                     mss_categories.category_name AS 'Category',
-                     mss_sub_categories.sub_category_name AS 'Sub-Category',
-                     mss_services.service_name AS 'Service',
-                     mss_services.inventory_type AS 'Type' ,
-                     ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'MRP',
-                     mss_transaction_services.txn_service_quantity AS 'Quantity',
-                     (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
+        $sql = "SELECT
+                    date(mss_transactions.txn_datetime) AS 'Billing Date', 
+                    mss_transactions.txn_unique_serial_id AS 'Txn Unique Serial Id',
+                    mss_customers.customer_mobile AS 'Customer Mobile',
+                    mss_customers.customer_name AS 'Customer Name',
+                    IF(mss_services.qty_per_item,CONCAT(mss_services.service_name,' ',mss_services.qty_per_item,' ',mss_services.service_unit),mss_services.service_name) 
+       AS 'Service', 
+                     IFNULL(mss_services.inventory_type,'Service') AS 'Type' ,
                      mss_employees.employee_first_name As 'Expert Name',
-                     mss_transaction_services.txn_service_discounted_price AS 'Discounted Service Amt',
-                     mss_transactions.txn_value AS 'Net Bill Amt'
+                     mss_transaction_services.txn_service_quantity AS 'Quantity',
+                     ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'MRP',
+                     (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
+                     (mss_services.service_price_inr*mss_transaction_services.txn_service_quantity) AS 'Before Tax',
+                    mss_transaction_services.txn_service_discounted_price AS 'Billed Amount',
+                     mss_categories.category_name AS 'Category',
+                     mss_sub_categories.sub_category_name AS 'Sub-Category'
+                     
                 FROM
                      mss_transactions,
                      mss_transaction_services,
@@ -1006,11 +1008,57 @@ class BusinessAdminModel extends CI_Model {
                      AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
                      ORDER BY
                         mss_transactions.txn_id";
-
+                        #echo $sql;die;
         $query = $this->db->query($sql); 
         
         if($query){
-            return $this->ModelHelper(true,false,'',$query->result_array());
+            $result1 = $query->result_array();
+
+            $sql = "SELECT
+                    date(mss_package_transactions.datetime) AS 'Billing Date',
+                    mss_package_transactions.package_txn_unique_serial_id AS 'Txn Unique Serial Id',                    
+                    mss_customers.customer_mobile AS 'Customer Mobile',
+                    mss_customers.customer_name AS 'Customer Name',                    
+                    mss_salon_packages.salon_package_name AS 'Service',
+                    IF(mss_package_transactions.package_txn_unique_serial_id,'Package','Package') AS 'Type' ,
+                    mss_employees.employee_first_name AS 'Expert Name',
+                    IF(mss_salon_packages.salon_package_type,'','') AS 'Quantity',
+                    mss_package_transactions.package_txn_value AS 'MRP',  
+                    mss_package_transactions.package_txn_discount AS 'Discount',
+                    mss_salon_packages.salon_package_price AS 'Before Tax',
+                    mss_package_transactions.package_txn_value AS 'Billing Amount',
+                    
+                    mss_salon_packages.salon_package_type AS 'Category',
+                    mss_salon_packages.salon_package_name AS 'Sub-Category'
+                    
+                    
+                                        
+                FROM
+                    mss_package_transactions,
+                    mss_customers,
+                    mss_salon_packages,
+                    mss_transaction_package_details,
+                    mss_employees,
+                    mss_package_transaction_settlements
+                WHERE
+                    mss_package_transactions.package_txn_id = mss_transaction_package_details.package_txn_id
+                    AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_txn_id
+                    AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
+                    AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
+                    AND mss_package_transactions.package_txn_expert= mss_employees.employee_id
+                    AND mss_salon_packages.business_admin_id =  ".$this->db->escape($data['business_admin_id'])."
+                    AND mss_salon_packages.business_outlet_id =  ".$this->db->escape($data['business_outlet_id'])."
+                    AND date(mss_package_transactions.datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
+                    ORDER BY
+                        mss_package_transactions.package_txn_id";
+                        #echo $sql;die;
+                        $query = $this->db->query($sql); 
+                        $result2 = $query->result_array();
+                        $result = array_merge($result1,$result2);
+                        // print_r($result1);
+                        // print_r($result2);
+                        // die;
+            return $this->ModelHelper(true,false,'',$result);
         }
         else{
             return $this->ModelHelper(false,true,"DB error!");   
@@ -3544,6 +3592,7 @@ class BusinessAdminModel extends CI_Model {
 								mss_transactions.txn_customer_id = mss_customers.customer_id 
 								AND date(mss_transactions.txn_datetime)  >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH)
 								AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+								AND mss_transactions.txn_status=1
 								AND mss_transaction_settlements.txn_settlement_way = 'Split Payment'
 								AND mss_customers.customer_business_admin_id = ".$this->db->escape($where['business_admin_id'])."
 								AND mss_customers.customer_business_outlet_id = ".$this->db->escape($where['business_outlet_id'])."";
@@ -3745,6 +3794,7 @@ class BusinessAdminModel extends CI_Model {
 								mss_transactions.txn_customer_id = mss_customers.customer_id 
 								AND date(mss_transactions.txn_datetime)  BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH)
 								AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+								AND mss_transactions.txn_status=1
 								AND mss_transaction_settlements.txn_settlement_way = 'Split Payment'
 								AND mss_customers.customer_business_admin_id = ".$this->db->escape($where['business_admin_id'])."
 								AND mss_customers.customer_business_outlet_id = ".$this->db->escape($where['business_outlet_id'])."";
@@ -3884,6 +3934,13 @@ class BusinessAdminModel extends CI_Model {
 				mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." AND 
 				mss_transaction_settlements.txn_settlement_txn_id=".$this->db->escape($data['txn_id'])." ";	
 			$query = $this->db->query($sql);
+			
+			$all_service_status=$this->MultiWhereSelect('mss_transaction_services',array('txn_service_txn_id'=>$data['txn_id'],'txn_service_status'=>1));
+			if($all_service_status['res_arr']=="" || $all_service_status['res_arr']==null){
+				$q="UPDATE mss_transactions SET txn_status=0  WHERE mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." ";
+	
+				$this->db->query($q);
+			}
 			if($query){
 				return $this->ModelHelper(true,false,'');
 			}
@@ -6548,7 +6605,7 @@ public function GetAttendanceAll($data){
         if($query){
             $result = $query->result_array();
             $customer_id = $result[0]['customer_id'];
-            $sql = "SELECT mss_customers.customer_id FROM mss_customers WHERE mss_customers.customer_business_outlet_id = 1 AND mss_customers.customer_business_admin_id = 1 AND mss_customers.customer_id NOT IN ($customer_id)";
+            $sql = "SELECT mss_customers.customer_id FROM mss_customers WHERE mss_customers.customer_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND mss_customers.customer_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." AND mss_customers.customer_id NOT IN ($customer_id)";
 		$sql = str_replace(",)",")",$sql);
         }
         $query = $this->db->query($sql);
@@ -9702,9 +9759,21 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 				mss_transaction_cart
 			WHERE
 				mss_customers.customer_id=mss_transactions.txn_customer_id AND
-				mss_transaction_cart.transaction_id= mss_transactions.txn_id AND
+				-- mss_transaction_cart.transaction_id= mss_transactions.txn_id AND
 				mss_business_outlets.business_outlet_id= ".$this->db->escape($where['business_outlet_id'])." AND 
-				mss_transactions.txn_id= ".$this->db->escape($where['txn_id'])."";
+				mss_transactions.txn_id= ".$this->db->escape($where['txn_id'])." group by mss_transactions.txn_id";
+        
+         $query = $this->db->query($sql);
+         if($query){
+             return $this->ModelHelper(true,false,'',$query->result_array());
+         }
+         else{
+             return $this->ModelHelper(false,true,"DB error!");   
+         }
+    }
+
+    public function GetCustomerPackageBill($where){
+        $sql = "SELECT mss_package_transactions.package_txn_value, mss_package_transactions.package_txn_unique_serial_id, Date(mss_package_transactions.datetime) AS 'date', mss_customers.customer_id, mss_customers.customer_name, mss_customers.customer_mobile, mss_business_outlets.business_outlet_sender_id AS 'sender_id', mss_business_outlets.api_key, mss_business_outlets.business_outlet_name, mss_transaction_cart.id FROM mss_package_transactions, mss_customers, mss_business_outlets, mss_transaction_cart WHERE mss_business_outlets.business_outlet_id =  ".$this->db->escape($where['business_outlet_id'])." AND mss_package_transactions.package_txn_id = ".$this->db->escape($where['txn_id'])." group by mss_package_transactions.package_txn_id";
         
          $query = $this->db->query($sql);
          if($query){
@@ -9748,6 +9817,50 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 		else{
 			return $this->ModelHelper(false,true,"DB error!");   
 		}
+    }
+
+
+    public function GetPackageTransactionDetailByTxnId($txn_id){
+        $sql = "SELECT 
+    
+    mss_package_transactions.datetime,
+    mss_package_transactions.package_txn_cashier,
+    mss_package_transactions.package_txn_unique_serial_id,
+    mss_transaction_package_details.txn_package_price,    
+    mss_salon_packages.salon_package_name AS 'package_name',
+    mss_package_transactions.package_txn_discount AS 'Discount',
+    mss_salon_packages.salon_package_upfront_amt AS 'package_old_price',    
+    mss_package_transactions.package_txn_value AS 'package_final_value',
+    mss_salon_packages.salon_package_price AS 'package_price_inr',
+    mss_salon_packages.salon_package_validity AS 'package_validity',
+    mss_salon_packages.service_gst_percentage AS 'package_gst',
+    mss_salon_packages.service_gst_percentage AS 'package_old_gst',
+    mss_salon_packages.salon_package_type AS 'package_type',
+    mss_employees.employee_id,
+    mss_employees.employee_first_name AS 'employee_name',
+    mss_customers.customer_id,
+    mss_customers.customer_name,
+    mss_salon_packages.salon_package_id
+FROM
+    mss_package_transactions,
+    mss_transaction_package_details,
+    mss_salon_packages,
+    mss_employees,
+    mss_customers
+WHERE
+    mss_transaction_package_details.package_txn_id=mss_package_transactions.package_txn_id AND
+    mss_transaction_package_details.salon_package_id= mss_salon_packages.salon_package_id AND
+    mss_package_transactions.package_txn_expert= mss_employees.employee_id AND 
+    mss_package_transactions.package_txn_customer_id= mss_customers.customer_id AND
+    mss_package_transactions.package_txn_id=".$txn_id;
+        
+        $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
     }
 
 	public function GetDailyAmountPaidBAck($where){
@@ -9821,7 +9934,7 @@ WHERE  mss_customers.customer_business_outlet_id = 1
             $outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
         }        
 
-        $sql = "SELECT payment_mode, SUM(total_amount) as total_amount FROM `mss_expenses` WHERE `expense_date` = '$date' and bussiness_outlet_id = ".$outlet_id." GROUP BY payment_mode";
+        $sql = "SELECT payment_mode, SUM(amount) as total_amount FROM `mss_expenses` WHERE `expense_date` = '$date' and bussiness_outlet_id = ".$outlet_id." GROUP BY payment_mode";
         
         $query = $this->db->query($sql);
         $data['expenses'] = $query->result_array();
@@ -9854,7 +9967,7 @@ WHERE  Date(t1.txn_datetime) = "'.$date.'" and t3.employee_business_outlet = '.$
     }
 
     public function GetCronExpenseRecord($date){
-        $sql = "SELECT payment_mode, (total_amount) as total_amount,bussiness_outlet_id FROM `mss_expenses` WHERE `expense_date` = '$date'";
+        $sql = "SELECT payment_mode, (amount) as total_amount,bussiness_outlet_id FROM `mss_expenses` WHERE `expense_date` = '$date'";
         #\\echo $sql;die;
         $query = $this->db->query($sql);
         $data['expenses'] = $query->result_array();
@@ -9866,11 +9979,11 @@ WHERE  Date(t1.txn_datetime) = "'.$date.'" and t3.employee_business_outlet = '.$
         $data['pending_amount'] = $query->result_array();
 
         $sql = 'SELECT t2.txn_settlement_payment_mode, 
-       t2.txn_settlement_amount_received AS total_price ,t3.employee_business_outlet as bussiness_outlet_id
-FROM   `mss_transactions` t1 
-       LEFT JOIN mss_transaction_settlements t2 
-              ON t1.`txn_id` = t2.txn_settlement_txn_id 
-       LEFT JOIN mss_employees t3 on t1.`txn_cashier` = t3.employee_id
+        t2.txn_settlement_amount_received AS total_price ,t3.employee_business_outlet as bussiness_outlet_id
+        FROM   `mss_transactions` t1 
+        LEFT JOIN mss_transaction_settlements t2 
+        ON t1.`txn_id` = t2.txn_settlement_txn_id 
+        LEFT JOIN mss_employees t3 on t1.`txn_cashier` = t3.employee_id
 WHERE  Date(t1.txn_datetime) = "'.$date.'" GROUP  BY t2.txn_settlement_txn_id';
 
 
@@ -9913,7 +10026,7 @@ public function GetCashRecord($from,$to){
             $outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
         }        
 
-        $sql = "SELECT payment_mode, SUM(total_amount) as total_amount FROM `mss_expenses` WHERE `expense_date` between '".$from."' AND '".$to."'  and bussiness_outlet_id = ".$outlet_id." GROUP BY payment_mode";
+        $sql = "SELECT payment_mode, SUM(amount) as total_amount FROM `mss_expenses` WHERE `expense_date` between '".$from."' AND '".$to."'  and bussiness_outlet_id = ".$outlet_id." GROUP BY payment_mode";
 
         $query = $this->db->query($sql);
         $data['expenses'] = $query->result_array();
@@ -9925,11 +10038,11 @@ public function GetCashRecord($from,$to){
         $data['pending_amount'] = $query->result_array();
 
         $sql = 'SELECT t2.txn_settlement_payment_mode, 
-       t2.txn_settlement_amount_received AS total_price 
+        t2.txn_settlement_amount_received AS total_price 
 FROM   `mss_transactions` t1 
-       LEFT JOIN mss_transaction_settlements t2 
-              ON t1.`txn_id` = t2.txn_settlement_txn_id 
-       LEFT JOIN mss_employees t3 on t1.`txn_cashier` = t3.employee_id
+        LEFT JOIN mss_transaction_settlements t2 
+        ON t1.`txn_id` = t2.txn_settlement_txn_id 
+        LEFT JOIN mss_employees t3 on t1.`txn_cashier` = t3.employee_id
 WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_business_outlet = '.$outlet_id.' GROUP  BY t2.txn_settlement_txn_id';
     // $sql = 'SELECT t2.txn_settlement_payment_mode, t2.txn_settlement_amount_received AS total_price FROM `mss_transactions` t1 LEFT JOIN mss_transaction_settlements t2 ON t1.`txn_id` = t2.txn_settlement_txn_id WHERE Date(t1.txn_datetime) = "2020-07-12" GROUP BY t2.txn_settlement_txn_id';
 
@@ -9943,5 +10056,71 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
         else{
             return $this->ModelHelper(false,true,"DB error!");   
         }
+	}
+	
+
+	public function GetPackageDetails($where){
+        $sql = "SELECT *
+		FROM 
+			mss_salon_packages 
+		WHERE 
+		mss_salon_packages.salon_package_id = ".$this->db->escape($where['salon_package_id'])."
+			";
+        
+		$query = $this->db->query($sql);
+		if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());
+		}
+		else{
+			return $this->ModelHelper(false,true,"DB error!");   
+		}
+	}
+
+	public function UpdateDiscountPackageForSalon($data,$services,$discounts,$count_discount,$salon_package_id){
+		
+		$result = $this->Update($data,'mss_salon_packages','salon_package_id');
+        $count = 0;
+        //create a discounts packages
+        for($i=0;$i < count($services);$i++){
+			$where=array(
+					'salon_package_id' => $salon_package_id,
+					'service_id'	=> (int)$services[$i]
+			);
+			$where2=array(
+				'salon_package_id' => $salon_package_id
+			);
+			$is_service_exist=$this->MultiWhereSelect('mss_salon_package_data',$where);
+			if(empty($is_service_exist['res_arr']) || $is_service_exist['res_arr']==""){
+					$data_2 = array(
+						'salon_package_id' => $salon_package_id,
+						'service_id' => (int)$services[$i],
+						'discount_percentage' => (int)$discounts[$i],
+						'service_count' => (int)$count_discount[$i]
+					);
+					$result_2 = $this->Insert($data_2,'mss_salon_package_data');
+
+					$cust_with_package = $this->MultiWhereSelect('mss_customer_packages',$where2);
+					$cust_with_package=$cust_with_package['res_arr'];
+					foreach($cust_with_package as $cust){
+						$data_3=array(
+							'customer_package_id'=> $cust['customer_package_id'],
+							'service_id'=> (int)$services[$i],
+							'service_count'=> (int)$count_discount[$i],
+							'service_discount'=> (int)$discounts[$i]
+						);
+						$result_3 = $this->Insert($data_3,'mss_customer_package_profile');
+					}
+			}            
+            if($result_2['success'] == 'true'){
+                $count = $count + 1;
+            }    
+        }        
+        if($count  <= count($services)){
+            return $this->ModelHelper(true,false);
+        }
+        else{
+            return $this->ModelHelper(false,true,"Can't Update!");        
+        }
     }
+
 }

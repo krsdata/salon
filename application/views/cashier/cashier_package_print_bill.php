@@ -53,7 +53,7 @@ class MYPDF extends TCPDF {
 			<div class="col-md-12">
 				<?php
 				// set color for text
-					$pdf->SetTextColor(0, 63, 127);
+					/*$pdf->SetTextColor(0, 63, 127);
 					$shop=$shop_details['business_outlet_address'];
 					$cust=$individual_customer['customer_name'].' '.date('d-M-Y h:i A');
 					$pdf->MultiCell(25,	0,$cust, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
@@ -70,8 +70,34 @@ class MYPDF extends TCPDF {
 					
 					// write the first column
 					// $pdf->writeHTMLCell(70, '', '', $y+10, $first_column, 0, 0, 0, true, 'J', false);
-					$pdf->writeHTMLCell(70, '', '', $y+14, $second_column, 0, 0, 0, true, 'J', true);
+					$pdf->writeHTMLCell(70, '', '', $y+14, $second_column, 0, 0, 0, true, 'J', true);*/
 					
+
+
+					$pdf->MultiCell(0,	0,$cust, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					$pdf->Ln(3);
+				// set color for text
+					$pdf->SetTextColor(0, 63, 127);
+					$shop=$shop_details['business_outlet_address'];
+					$cust=$individual_customer['customer_name'].' '.date('d-M-Y h:i A');
+					$pdf->MultiCell(45,	0,$shop, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					
+					$pdf->Ln(6);
+					// $pdf->Cell(30, 25,'Date : '.date('d-M-Y h:i A') , 0, 0, 'L', 0, '', 0, false, 'T', 'C');
+					// $pdf->MultiCell(40,0,$shop, 0, 'R', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					$pdf->MultiCell(140,0,$cust, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
+					// $bill_no=180;
+					$html ='<br>';
+					$pdf->writeHTML($html, true, false, true, false, '');
+					// create columns content
+					$first_column = '<b>Bill No: </b>'.$bill_no;
+					$second_column = '<b>GST: </b>'.$shop_details['business_outlet_gst_in'];
+					// get current vertical position
+					$y = $pdf->getY();
+					
+					// write the first column
+					$pdf->writeHTMLCell(40, '', '', $y+2, $first_column, 0, 0, 0, true, 'J', false);
+					$pdf->writeHTMLCell(40, '', '', $y+5, $second_column, 0, 0, 0, true, 'J', true);
 				?>
 			</div>
 			
