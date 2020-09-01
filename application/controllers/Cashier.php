@@ -6543,9 +6543,9 @@ public function AddToCartRedeemPoints(){
 							$bill_url = shortUrl($bill_url);
 							//$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
 							if($this->input->post('type') == "service"){
-								$this->ReSendBillSms($res['customer_name'],'7415493261',$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+								$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
 							}else{
-								$this->ReSendBillSms($res['customer_name'],'7415493261',$res['business_outlet_name'],$res['package_txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+								$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['package_txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
 							}
 							
 							$this->ReturnJsonArray(true,false,"Message Send.");
