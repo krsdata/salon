@@ -186,7 +186,7 @@
 																		</div>
 																		<div class="form-group col-md-4">
 																	     <label>Package End Date</label>
-																		 <input type="text" class="form-control datepicker" data-date-format="yyyy/mm/dd" placeholder="yyyy/mm/dd/" name="package_end_date">
+																		 <input type="text" class="form-control datepicker" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" name="package_end_date">
 																	</div>																			
 																	</div>
 																	<div class="row">
@@ -889,6 +889,8 @@
 							  $("#ModalAddPackage input[name=salon_package_upfront_amt]").attr('value',data.salon_package_upfront_amt);
 							  $("#ModalAddPackage input[name=salon_package_validity]").attr('value',data.salon_package_validity);
 							  $("#ModalAddPackage input[name=virtual_wallet_money_absolute]").attr('value',data.virtual_wallet_money);
+							  $("#ModalAddPackage input[name=total_no_of_services]").attr('value',data.total_count_of_services);
+							  $("#ModalAddPackage input[name=package_end_date]").attr('value',data.salon_package_end_date);
 							  
 							 // Not exist in db	
 							 //$("#ModalAddPackage input[name=virtual_wallet_money_percentage]").attr('value',data.virtual_wallet_money_percentage);
