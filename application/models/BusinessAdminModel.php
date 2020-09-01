@@ -3296,7 +3296,7 @@ class BusinessAdminModel extends CI_Model {
 		mss_services
 		WHERE
 		mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
-		AND mss_transactions.txn_customer_id = mss_customers.customer_id
+		-- AND mss_transactions.txn_customer_id = mss_customers.customer_id
 		AND mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id
 		AND mss_transaction_services.txn_service_service_id=mss_services.service_id
 		AND mss_services.service_type= 'service'
@@ -10117,6 +10117,52 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
         else{
             return $this->ModelHelper(false,true,"Can't Update!");        
         }
-    }
+	}
+	
+	public function EditServicePackageForSalon($data,$services,$count_service){		    
+		$result = $this->Update($data,'mss_salon_packages','salon_package_id');
+        $count = 0;
+        //create a discounts packages
+        for($i=0;$i < count($services);$i++){
+			$where=array(
+					'salon_package_id' => $data['salon_package_id'],
+					'service_id'	=> (int)$services[$i]
+			);
+			$where2=array(
+				'salon_package_id' => $data['salon_package_id']
+			);
+			$is_service_exist=$this->MultiWhereSelect('mss_salon_package_data',$where);
+			if(empty($is_service_exist['res_arr']) || $is_service_exist['res_arr']==""){
+					$data_2 = array(
+						'salon_package_id' => $data['salon_package_id'],
+						'service_id' => (int)$services[$i],
+						'discount_percentage' => 100,
+						'service_count' => (int)$count_service[$i]
+					);
+					$result_2 = $this->Insert($data_2,'mss_salon_package_data');
+
+					$cust_with_package = $this->MultiWhereSelect('mss_customer_packages',$where2);
+					$cust_with_package=$cust_with_package['res_arr'];
+					foreach($cust_with_package as $cust){
+						$data_3=array(
+							'customer_package_id'=> $cust['customer_package_id'],
+							'service_id'=> (int)$services[$i],
+							'service_count'=> (int)$count_service[$i],
+							'service_discount'=> 100
+						);
+						$result_3 = $this->Insert($data_3,'mss_customer_package_profile');
+					}
+			}            
+            if($result_2['success'] == 'true'){
+                $count = $count + 1;
+            }    
+        }        
+        if($count  <= count($services)){
+            return $this->ModelHelper(true,false);
+        }
+        else{
+            return $this->ModelHelper(false,true,"Can't Update!");        
+        }
+	}
 
 }
