@@ -2349,7 +2349,9 @@ class Cashier extends CI_Controller {
             $data['loyalty_points_given']=$this->BusinessAdminModel->GetLoyaltyPointsGiven($where);
             $data['loyalty_points_given']=$data['loyalty_points_given']['res_arr'][0]['loyalty_points'];
             $due_amount=$this->BusinessAdminModel->GetTodaysDueAmount($where);
-            $data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+						$data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+						$package_due_amount=$this->BusinessAdminModel->GetTodaysPackageDueAmount($where);
+            $data['package_due_amount']=$package_due_amount['res_arr'][0]['package_due_amount'];
             $data['pending_amount_received']=$this->BusinessAdminModel->GetPendingAmountReceived($where);
             $data['pending_amount_received']=$data['pending_amount_received']['res_arr'][0]['pending_amount_received'];
             $data['card_data']= $this->BusinessAdminModel->TodayPackageSales($where);
@@ -2490,6 +2492,7 @@ class Cashier extends CI_Controller {
 						$this->session->set_userdata('loyalty_point',$transcation_detail['res_arr'][0]['txn_loyalty_points']);
 						$detail_id = $cart_detail['res_arr']['insert_id'];
 						$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
+						$bill_url = str_replace("https", "http", $bill_url);
 						$bill_url = shortUrl($bill_url);
 					}
 
@@ -2787,7 +2790,7 @@ class Cashier extends CI_Controller {
 						);
 						$check = $this->CashierModel->VerifyCustomer($where);
 
-						if($check['success'] == 'true'){    
+						if(1 || $check['success'] == 'true'){    
 								$data['title'] = "Invoice";
 								$data['shop_details'] = $this->ShopDetails();
 								$data['individual_customer'] = $this->GetCustomerBilling($customer_id);
@@ -2814,7 +2817,9 @@ class Cashier extends CI_Controller {
 								$data['logo'] = $result[0]['config_value'];
 								// $this->PrettyPrintArray($data['shop_details']);
 								// die;
-
+								// echo "<pre>";
+								// print_r($data);
+								// die;
 								$this->load->view('cashier/cashier_package_print_bill',$data);
 						}
 						elseif ($check['error'] == 'true'){
@@ -3052,7 +3057,7 @@ class Cashier extends CI_Controller {
 
 	public function AddOTCInventory(){
         if($this->IsLoggedIn('cashier')){
-            if(isset($_POST) && !empty($_POST)){
+          if(isset($_POST) && !empty($_POST)){
 				// $this->PrettyPrintArray($_POST);
 					$this->form_validation->set_rules('otc_item','OTC Name', 'trim|required');
           $this->form_validation->set_rules('sku_size', 'SKU', 'trim|required|is_natural_no_zero');
@@ -3770,7 +3775,8 @@ class Cashier extends CI_Controller {
 						"customer_id" => $this->input->post('customer_id'),
 						"pending_amount_submitted" => (int)$this->input->post('amount_paid_now'),
 						"pending_amount_outstanding" => (int)$this->input->post('due_amount') - (int)$this->input->post('amount_paid_now'),
-						'payment_type'=>$this->input->post('payment_type')
+						'payment_type'=>$this->input->post('payment_type'),
+						'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
 					);
 					
 					$result = $this->CashierModel->Update($data,'mss_customers','customer_id');
@@ -3827,7 +3833,7 @@ class Cashier extends CI_Controller {
 		}
 	}
 
-    	public function DoPackageTransaction(){
+  public function DoPackageTransaction(){
 		if($this->IsLoggedIn('cashier')){		
 				if(isset($_POST) && !empty($_POST)){
 						$_POST['txn_data']+=['package_txn_expert'=>$_POST['cart_data']['employee_id']];
@@ -6522,17 +6528,26 @@ public function AddToCartRedeemPoints(){
 							'txn_id' => $this->input->post('txn_id'),
 							'business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id']
 						);
-						$result = $this->BusinessAdminModel->GetCustomerBill($data);			
-						// $this->PrettyPrintArray($result);
+						if($this->input->post('type') == "service"){
+							$result = $this->BusinessAdminModel->GetCustomerBill($data);			
+						}else{
+							$result = $this->BusinessAdminModel->GetCustomerPackageBill($data);
+						}
+						//$this->PrettyPrintArray($result);
 						if($result['success'] == 'true'){
 							//ReSend Bill SMS
-							$res =$result['res_arr'][0];
-							
+							$res =$result['res_arr'][0];							
 							$customer_id=$res['customer_id'];
 							$detail_id=$res['id'];
 							$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
 							$bill_url = shortUrl($bill_url);
-							$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+							//$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+							if($this->input->post('type') == "service"){
+								$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+							}else{
+								$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['package_txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
+							}
+							
 							$this->ReturnJsonArray(true,false,"Message Send.");
 							die;
 						}else{
@@ -6578,7 +6593,7 @@ public function AddToCartRedeemPoints(){
 		if($this->IsLoggedIn('cashier')){	
 			$txn_id = $this->uri->segment(3);
 			$outlet_admin_id = $this->session->userdata['logged_in']['business_outlet_id'];
-			$data['cart']=$this->BusinessAdminModel->GetTransactionDetailByTxnId($txn_id);
+			$data['cart']=$this->BusinessAdminModel->GetTransactionDetailByTxnId($txn_id);			
 			$data['cart']=$data['cart']['res_arr'];
 			$data['shop_details'] = $this->ShopDetails();
 			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
@@ -6594,6 +6609,47 @@ public function AddToCartRedeemPoints(){
 			}
 			$data['logo'] = $result[0]['config_value'];						
 			$this->load->view('cashier/cashier_reprint_bill',$data);			
+		}else{
+			$this->LogoutUrl(base_url()."Cashier/Login");
+		}	
+	}
+
+	public function RePrintPackageBill(){
+		$this->load->helper('pdfhelper');//loading pdf helper
+		if($this->IsLoggedIn('cashier')){	
+			$txn_id = $this->uri->segment(3);
+			$outlet_admin_id = $this->session->userdata['logged_in']['business_outlet_id'];
+
+			$data['title'] = "Invoice";
+			$data['shop_details'] = $this->ShopDetails();
+			// $data['individual_customer'] = $this->GetCustomerBilling($customer_id);
+			if(isset($this->session->userdata['package_cart'])){
+					$data['package_cart'] = $this->session->userdata['package_cart'];
+			}
+			if(isset($this->session->userdata['package_payment'])){
+					$data['package_payment'] = $this->session->userdata['package_payment'][$customer_id];
+			}
+
+
+			$data['package_cart']=$this->BusinessAdminModel->GetPackageTransactionDetailByTxnId($txn_id);			
+			$data['package_cart']=$data['package_cart']['res_arr'][0];
+			// echo "<pre>";
+			// print_r($data);
+			// die;
+			$data['shop_details'] = $this->ShopDetails();
+			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
+
+			$query = $this->db->query($sql);
+
+			$result = $query->result_array();
+			if(empty($result)){
+				$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
+
+				$query = $this->db->query($sql);
+				$result = $query->result_array();
+			}
+			$data['logo'] = $result[0]['config_value'];						
+			$this->load->view('cashier/cashier_package_print_bill',$data);			
 		}else{
 			$this->LogoutUrl(base_url()."Cashier/Login");
 		}	
@@ -6637,5 +6693,301 @@ public function AddToCartRedeemPoints(){
 			$this->LogoutUrl(base_url()."Cashier/Login");
 		}	
 	}
+
+	public function InventoryView(){
+		if($this->IsLoggedIn('cashier')){
+				if(isset($_POST) && !empty($_POST)){
+				}
+				else{
+						//Unset any session so that no one interfere in billing logic
+						if(isset($this->session->userdata['Package_Customer'])){
+								$this->session->unset_userdata('Package_Customer');
+						}
+						if(isset($this->session->userdata['package_cart'])){
+								$this->session->unset_userdata('package_cart');
+						}
+						if(isset($things->session->userdata['payment'])){
+								$this->session->unset_userdata('payment');
+						}
+						if(isset($this->session->userdata['package_payment'])){
+								$this->session->unset_userdata('package_payment');
+						}
+						//
+						$data = $this->GetDataForCashier('View Inventory');
+						$data['raw_materials'] = $this->GetRawMaterials();
+						$data['otc_items'] = $this->GetOTCItems();
+						// $data['otc_stock'] = $this->GetOTCStock();
+						$data['otc_stock']=$this->CashierModel->InventoryStock();
+						if($data['otc_stock']['success'] == 'true'){
+								$data['otc_stock']=$data['otc_stock']['res_arr'];
+						}
+						$where=array(
+							'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
+						);
+						$data['vendors']=$this->BusinessAdminModel->MultiWhereSelect('mss_vendors',$where);
+						if($data['vendors']['success'] == 'true'){
+								$data['vendors']=$data['vendors']['res_arr'];
+						}
+						$data['categories']  = $this->GetCategoriesOtc($this->session->userdata['logged_in']['business_outlet_id']);
+						$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['logged_in']['business_outlet_id']);
+						$data['services']  = $this->GetServices($this->session->userdata['logged_in']['business_outlet_id']);
+						$data['raw_material_stock'] = $this->GetRawMaterialStock();
+						$m = $this->uri->segment(3);
+						if(isset($m))
+						{
+								$data['modal']=1;
+						}
+						else{
+								$data['modal']=0;
+						}
+						$this->load->view('cashier/cashier_inventory_view',$data);
+				}
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/Login");
+		}   
+}
+	public function daybook(){        		
+		if(!$this->IsLoggedIn('cashier')){
+			$this->LogoutUrl(base_url()."Cashier/Login");
+		}
+        $this->load->model('BusinessAdminModel');
+        if(!isset($_GET) || empty($_GET)){
+            if(!empty($_REQUEST['to_date'])){
+                $date = $_REQUEST['to_date'];
+                $one_day_before = date('Y-m-d', strtotime($date. ' - 1 days'));                    
+            }else{
+                $date = date('Y-m-d');    
+                $one_day_before = date('Y-m-d',strtotime("-1 days"));
+            }
+           
+            $result = $this->BusinessAdminModel->GetExpenseRecord($date);
+        }            
+        if($result['success']){
+            $transaction = $result['res_arr']['transaction'];
+            $expenses = $result['res_arr']['expenses'];
+            $pending_amount = $result['res_arr']['pending_amount'];
+            $temp = [];
+            $transaction_data = [];
+            $json_data = [];                
+            //transaction data
+            $key_info = [];
+            
+            foreach ($transaction as $key => $value) {
+                if(!empty($value['txn_settlement_payment_mode'])){                        
+                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
+                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
+                    }else{
+                        $result = json_decode($value['txn_settlement_payment_mode']);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
+                        }else{
+                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
+                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
+                        }                            
+                    }
+                }                        
+            }                
+            if(!empty($json_data)){                    
+                foreach ($json_data as $key => $j) {
+                    foreach ($j as $key => $t) {
+                      if(in_array(strtolower($t['payment_type']), $temp)){
+                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
+                        }else{
+                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
+                            $temp[] = strtolower($t['payment_type']);
+                        }  
+                    }                       
+                }
+            }
+            $key_info['keys'][0] = $temp;                
+            // expenses
+
+            $temp = [];
+            $expenses_data = [];          
+            //transaction data                
+            foreach ($expenses as $key => $value) {
+                if(!empty($value['payment_mode'])){                        
+                    if(in_array(strtolower($value['payment_mode']), $temp)){
+                        $expenses_data[strtolower($value['payment_mode'])] += $value['total_amount'];
+                    }else{                            
+                            $expenses_data[strtolower($value['payment_mode'])] = $value['total_amount'];
+                            $temp[] = strtolower($value['payment_mode']);
+                    }
+                }                        
+            }
+            $key_info['keys'][1] = $temp;
+            // pending tracker
+            $temp = [];
+            $pending_amount_data = [];          
+            //transaction data                        
+            foreach ($pending_amount as $key => $value) {
+                if(!empty($value['payment_type'])){                        
+                    if(in_array(strtolower($value['payment_type']), $temp)){
+                        $pending_amount_data[strtolower($value['payment_type'])] += $value['total_amount'];
+                    }else{                            
+                            $pending_amount_data[strtolower($value['payment_type'])] = $value['total_amount'];
+                            $temp[] = strtolower($value['payment_type']);
+                    }
+                }                        
+            }
+            $key_info['keys'][2] = $temp;
+
+            //get opening record        
+            $result = $this->BusinessAdminModel->getOpeningRecord($one_day_before);
+            $opening_balance = $result['res_arr']['opening_balance'];       
+            $temp = [];
+                $opening_balance_data = [];          
+                //transaction data                        
+                foreach ($opening_balance as $key => $value) {
+                    if(!empty($value['payment_mode'])){                        
+                        if(in_array(strtolower($value['payment_mode']), $temp)){
+                            $opening_balance_data[strtolower($value['payment_mode'])] += $value['amount'];
+                        }else{                            
+                                $opening_balance_data[strtolower($value['payment_mode'])] = $value['amount'];
+                                $temp[] = strtolower($value['payment_mode']);
+                        }
+                    }                        
+                }
+                $key_info['keys'][3] = $temp;
+
+
+                $p_mode = [];
+                foreach ($key_info as $key => $k) {
+                    foreach ($k as $key => $keys) {
+                        if(!in_array($keys, $p_mode)){
+                            $p_mode[] = $keys;
+                        }
+                    }                                    
+                }
+
+        }
+        
+        $p_mode = array_filter($p_mode);        
+        $p_mode = call_user_func_array('array_merge', $p_mode);
+        $p_mode = array_unique($p_mode);
+        $p_mode = array_values($p_mode);        
+        $data['p_mode'] = $p_mode;
+        $data['opening_balance_data'] = $opening_balance_data;
+        $data['pending_amount_data'] = $pending_amount_data;
+        $data['expenses_data'] = $expenses_data;
+        $data['transaction_data'] = $transaction_data;
+        $data['date'] = $date;
+        $this->load->view('cashier/cashier_book_view',$data);
+    }
+
+
+    public function cashbook(){       
+    	if(!$this->IsLoggedIn('cashier')){
+			$this->LogoutUrl(base_url()."Cashier/Login");
+		} 
+        $this->load->model('BusinessAdminModel');
+        if(!isset($_GET) || empty($_GET)){
+            if(!empty($_REQUEST['to_date'])){
+                $from = $_REQUEST['from_date'];
+                $to = $_REQUEST['to_date'];
+                //$one_day_before = date('Y-m-d', strtotime($date. ' - 1 days'));                    
+            }else{
+                $from = $to = date('Y-m-d');    
+                //$one_day_before = date('Y-m-d',strtotime("-1 days"));
+            }
+           
+            $result = $this->BusinessAdminModel->GetCashRecord($from,$to);
+        }            
+        if($result['success']){
+            $transaction = $result['res_arr']['transaction'];
+            $expenses = $result['res_arr']['expenses'];
+            $pending_amount = $result['res_arr']['pending_amount'];
+            $temp = [];
+            $transaction_data = [];
+            $json_data = [];                
+            //transaction data
+            $key_info = [];
+            
+            foreach ($transaction as $key => $value) {
+                if(!empty($value['txn_settlement_payment_mode'])){                        
+                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
+                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
+                    }else{
+                        $result = json_decode($value['txn_settlement_payment_mode']);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
+                        }else{
+                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
+                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
+                        }                            
+                    }
+                }                        
+            }                
+            if(!empty($json_data)){                    
+                foreach ($json_data as $key => $j) {
+                    foreach ($j as $key => $t) {
+                      if(in_array(strtolower($t['payment_type']), $temp)){
+                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
+                        }else{
+                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
+                            $temp[] = strtolower($t['payment_type']);
+                        }  
+                    }                       
+                }
+            }
+            $key_info['keys'][0] = $temp;                
+            // expenses
+
+            $temp = [];
+            $expenses_data = [];          
+            //transaction data                
+            foreach ($expenses as $key => $value) {
+                if(!empty($value['payment_mode'])){                        
+                    if(in_array(strtolower($value['payment_mode']), $temp)){
+                        $expenses_data[strtolower($value['payment_mode'])] += $value['total_amount'];
+                    }else{                            
+                            $expenses_data[strtolower($value['payment_mode'])] = $value['total_amount'];
+                            $temp[] = strtolower($value['payment_mode']);
+                    }
+                }                        
+            }
+            $key_info['keys'][1] = $temp;
+            // pending tracker
+            $temp = [];
+            $pending_amount_data = [];          
+            //transaction data                        
+            foreach ($pending_amount as $key => $value) {
+                if(!empty($value['payment_type'])){                        
+                    if(in_array(strtolower($value['payment_type']), $temp)){
+                        $pending_amount_data[strtolower($value['payment_type'])] += $value['total_amount'];
+                    }else{                            
+                            $pending_amount_data[strtolower($value['payment_type'])] = $value['total_amount'];
+                            $temp[] = strtolower($value['payment_type']);
+                    }
+                }                        
+            }
+            $key_info['keys'][2] = $temp;
+
+            
+                $p_mode = [];
+                foreach ($key_info as $key => $k) {
+                    foreach ($k as $key => $keys) {
+                        if(!in_array($keys, $p_mode)){
+                            $p_mode[] = $keys;
+                        }
+                    }                                    
+                }
+
+        }
+        
+        $p_mode = array_filter($p_mode);        
+        $p_mode = call_user_func_array('array_merge', $p_mode);
+        $p_mode = array_unique($p_mode);
+        $p_mode = array_values($p_mode);        
+        $data['p_mode'] = $p_mode;
+        $data['opening_balance_data'] = $opening_balance_data;
+        $data['pending_amount_data'] = $pending_amount_data;
+        $data['expenses_data'] = $expenses_data;
+        $data['transaction_data'] = $transaction_data;
+        $data['from'] = $from;
+        $data['to'] = $to;
+        $this->load->view('cashier/cashier_cash_book_view',$data);
+    }
 
 }

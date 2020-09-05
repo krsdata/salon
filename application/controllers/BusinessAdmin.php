@@ -289,7 +289,10 @@ class BusinessAdmin extends CI_Controller {
                 $data['total_due_amount']=$data['total_due_amount']['res_arr'][0];
                 
                 $due_amount=$this->BusinessAdminModel->GetTodaysDueAmount($where);
-                $data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+								$data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+								$package_due_amount=$this->BusinessAdminModel->GetTodaysPackageDueAmount($where);
+								$data['package_due_amount']=$package_due_amount['res_arr'][0]['package_due_amount'];
+								                // $this->PrettyPrintArray($data['package_due_amount']);
                 $data['pending_amount_received']=$this->BusinessAdminModel->GetPendingAmountReceived($where);
                 $data['pending_amount_received']=$data['pending_amount_received']['res_arr'][0]['pending_amount_received'];
                 $data['monthly_due_amount']=$this->BusinessAdminModel->GetMonthlyDueAmount($where);
@@ -1136,7 +1139,10 @@ class BusinessAdmin extends CI_Controller {
                 $data['total_due_amount']=$data['total_due_amount']['res_arr'][0];
                 
                 $due_amount=$this->BusinessAdminModel->GetTodaysDueAmount($where);
-                $data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+								$data['due_amount']=$due_amount['res_arr'][0]['due_amount'];
+								$package_due_amount=$this->BusinessAdminModel->GetTodaysPackageDueAmount($where);
+								$data['package_due_amount']=$package_due_amount['res_arr'][0]['package_due_amount'];
+
                 $data['pending_amount_received']=$this->BusinessAdminModel->GetPendingAmountReceived($where);
                 $data['pending_amount_received']=$data['pending_amount_received']['res_arr'][0]['pending_amount_received'];
                 $data['monthly_due_amount']=$this->BusinessAdminModel->GetMonthlyDueAmount($where);
@@ -4112,7 +4118,7 @@ public function GetEmployee(){
 		}
 	}
 
-     public function BusinessAdminAddPackage(){
+	public function BusinessAdminAddPackage(){
 		if($this->IsLoggedIn('business_admin')){
 			// $this->PrettyPrintArray($_POST);
 			if(isset($_POST) && !empty($_POST)){
@@ -5084,8 +5090,11 @@ public function GetEmployee(){
 										);		
 				// $data = $this->BusinessAdminModel->CancelBills($data);	
 				$result = $this->BusinessAdminModel->BusinessAdminByEmail($this->session->userdata['logged_in']['business_admin_email']);	
-				// $this->PrettyPrintArray($result);
-				// exit;
+				$txn_details=$this->BusinessAdminModel->DetailsById($_POST['txn_id'],'mss_transactions','txn_id');
+				$cust_id=$txn_details['res_arr']['txn_customer_id'];
+				$pending_amount= $txn_details['res_arr']['txn_pending_amount'];
+				$result2= $this->BusinessAdminModel->UpdateCustomerPendingAmount($cust_id,$pending_amount);
+
 				if(password_verify($_POST['password'],$result['res_arr']['business_admin_password']))	{
 					$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');			
 					if($result['success'] == 'true'){	
@@ -5110,7 +5119,6 @@ public function GetEmployee(){
 		//Update bills
 		public function UpdateTransaction(){	
 			if($this->IsLoggedIn('business_admin')){
-				// $this->PrettyPrintArray($_POST);
 				if(isset($_POST) && !empty($_POST)){
 					if(empty($_POST['txn_date'])){
 						$data=array(	
@@ -5134,19 +5142,29 @@ public function GetEmployee(){
 							'txn_service_expert_id'=>$_POST['txn_expert']
 						);
 					}
-					if(empty($_POST['txn_abs_disc'])){
+					if(empty($_POST['txn_abs_disc'] )){
 						$data3=array(	
+							'txn_id'=>$_POST['txn_id'],
 							'txn_service_id'=>$_POST['txn_service_id'],
-							'txn_service_discount_absolute'=>$_POST['old_txn_disc']
+							'txn_service_discount_absolute'=>$_POST['old_txn_disc'],
+							'txn_discounted_result'	=>($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
 						);
+						if($_POST['txn_abs_disc']==0){
+							$data3=array(	
+								'txn_id'=>$_POST['txn_id'],
+								'txn_service_id'=>$_POST['txn_service_id'],
+								'txn_service_discount_absolute'=>$_POST['txn_abs_disc'],
+								'txn_discounted_result'	=>($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
+							);
+						}
 					}else{
 						$data3=array(	
+							'txn_id'=>$_POST['txn_id'],
 							'txn_service_id'=>$_POST['txn_service_id'],
 							'txn_service_discount_absolute'=>$_POST['txn_abs_disc'],
 							'txn_discounted_result'	=>($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
 						);
 					}
-						
 						$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');	
 						$result2 = $this->BusinessAdminModel->Update($data2,'mss_transaction_services','txn_service_id');	
 						$result3 = $this->BusinessAdminModel->UpdateAbsDiscount($data3);			
@@ -5169,17 +5187,15 @@ public function GetEmployee(){
 		if($this->IsLoggedIn('business_admin')){
 			if(isset($_GET) && !empty($_GET)){
 				$data=array('business_admin_password'=>$_GET['admin_password']);		
-				// $data = $this->BusinessAdminModel->CancelBills($data);	
 				$result = $this->BusinessAdminModel->BusinessAdminByEmail($this->session->userdata['logged_in']['business_admin_email']);	
 				$result1=$this->BusinessAdminModel->GetFullTransactionDetail($_GET['txn_id']);
-				// $this->PrettyPrintArray($result1);
-				// exit;	
+					
 				if(password_verify($data['business_admin_password'],$result['res_arr']['business_admin_password']))	{
 						header("Content-type: application/json" && $result1['res_arr']!=null);
 						print(json_encode($result1['res_arr'], JSON_PRETTY_PRINT));
 						die;									
 				}else{
-					$this->ReturnJsonArray(false,true,"Incorrect Password Or no Data found!");
+					$this->ReturnJsonArray(false,true,"Incorrect Password");
 					die;
 				}				
 			}else{
@@ -5702,6 +5718,7 @@ public function GetEmployee(){
 							$customer_id=$res['customer_id'];
 							$detail_id=$res['id'];
 							$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
+                            $bill_url =     str_replace("https", "http", $bill_url);
 							$bill_url = shortUrl($bill_url);
 							$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
 							$this->ReturnJsonArray(true,false,"Message Send.");
@@ -9694,8 +9711,6 @@ public function InsertSalary(){
     public function EngagementReport(){
         if($this->IsLoggedIn('business_admin')){
             $data = $this->GetDataForAdmin("Expense");
-            // $this->PrettyPrintArray($_GET);
-            // exit;
             $data['timeline']=$this->BusinessAdminModel->DetailsById($this->session->userdata['outlets']['current_outlet'],'mss_customer_timeline_setup','business_outlet_id');
             $res1 = $this->BusinessAdminModel->DetailsById($this->session->userdata['outlets']['current_outlet'],'mss_business_outlets','business_outlet_id');
             $res1=$res1['res_arr'];
@@ -11524,5 +11539,332 @@ public function InsertSalary(){
 		}   
 }
 
+public function daybook(){        
+    if(!$this->IsLoggedIn('business_admin')){
+        $this->LogoutUrl(base_url()."BusinessAdmin/");
+    }
+        $this->load->model('BusinessAdminModel');
+        if(!isset($_GET) || empty($_GET)){
+            if(!empty($_REQUEST['to_date'])){
+                $date = $_REQUEST['to_date'];
+                $one_day_before = date('Y-m-d', strtotime($date. ' - 1 days'));                    
+            }else{
+                $date = date('Y-m-d');    
+                $one_day_before = date('Y-m-d',strtotime("-1 days"));
+            }
+           
+            $result = $this->BusinessAdminModel->GetExpenseRecord($date);
+        }            
+        if($result['success']){
+            $transaction = $result['res_arr']['transaction'];
+            $expenses = $result['res_arr']['expenses'];
+            $pending_amount = $result['res_arr']['pending_amount'];
+            $temp = [];
+            $transaction_data = [];
+            $json_data = [];                
+            //transaction data
+            $key_info = [];
+            
+            foreach ($transaction as $key => $value) {
+                if(!empty($value['txn_settlement_payment_mode'])){                        
+                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
+                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
+                    }else{
+                        $result = json_decode($value['txn_settlement_payment_mode']);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
+                        }else{
+                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
+                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
+                        }                            
+                    }
+                }                        
+            }                
+            if(!empty($json_data)){                    
+                foreach ($json_data as $key => $j) {
+                    foreach ($j as $key => $t) {
+                      if(in_array(strtolower($t['payment_type']), $temp)){
+                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
+                        }else{
+                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
+                            $temp[] = strtolower($t['payment_type']);
+                        }  
+                    }                       
+                }
+            }
+            $key_info['keys'][0] = $temp;                
+            // expenses
+
+            $temp = [];
+            $expenses_data = [];          
+            //transaction data                
+            foreach ($expenses as $key => $value) {
+                if(!empty($value['payment_mode'])){                        
+                    if(in_array(strtolower($value['payment_mode']), $temp)){
+                        $expenses_data[strtolower($value['payment_mode'])] += $value['total_amount'];
+                    }else{                            
+                            $expenses_data[strtolower($value['payment_mode'])] = $value['total_amount'];
+                            $temp[] = strtolower($value['payment_mode']);
+                    }
+                }                        
+            }
+            $key_info['keys'][1] = $temp;
+            // pending tracker
+            $temp = [];
+            $pending_amount_data = [];          
+            //transaction data                        
+            foreach ($pending_amount as $key => $value) {
+                if(!empty($value['payment_type'])){                        
+                    if(in_array(strtolower($value['payment_type']), $temp)){
+                        $pending_amount_data[strtolower($value['payment_type'])] += $value['total_amount'];
+                    }else{                            
+                            $pending_amount_data[strtolower($value['payment_type'])] = $value['total_amount'];
+                            $temp[] = strtolower($value['payment_type']);
+                    }
+                }                        
+            }
+            $key_info['keys'][2] = $temp;
+
+            //get opening record        
+            $result = $this->BusinessAdminModel->getOpeningRecord($one_day_before);
+            $opening_balance = $result['res_arr']['opening_balance'];       
+            $temp = [];
+                $opening_balance_data = [];          
+                //transaction data                        
+                foreach ($opening_balance as $key => $value) {
+                    if(!empty($value['payment_mode'])){                        
+                        if(in_array(strtolower($value['payment_mode']), $temp)){
+                            $opening_balance_data[strtolower($value['payment_mode'])] += $value['amount'];
+                        }else{                            
+                                $opening_balance_data[strtolower($value['payment_mode'])] = $value['amount'];
+                                $temp[] = strtolower($value['payment_mode']);
+                        }
+                    }                        
+                }
+                $key_info['keys'][3] = $temp;
+
+
+                $p_mode = [];
+                foreach ($key_info as $key => $k) {
+                    foreach ($k as $key => $keys) {
+                        if(!in_array($keys, $p_mode)){
+                            $p_mode[] = $keys;
+                        }
+                    }                                    
+                }
+
+        }
+        
+        $p_mode = array_filter($p_mode);        
+        $p_mode = call_user_func_array('array_merge', $p_mode);
+        $p_mode = array_unique($p_mode);
+        $p_mode = array_values($p_mode);        
+        $data['p_mode'] = $p_mode;
+        $data['opening_balance_data'] = $opening_balance_data;
+        $data['pending_amount_data'] = $pending_amount_data;
+        $data['expenses_data'] = $expenses_data;
+        $data['transaction_data'] = $transaction_data;
+        $data['date'] = $date;
+        $this->load->view('business_admin/ba_expense_view',$data);
+    }
+
+    public function cashbook(){  
+        if(!$this->IsLoggedIn('business_admin')){
+            $this->LogoutUrl(base_url()."BusinessAdmin/");
+        }      
+        $this->load->model('BusinessAdminModel');
+        if(!isset($_GET) || empty($_GET)){
+            if(!empty($_REQUEST['to_date'])){
+                $from = $_REQUEST['from_date'];
+                $to = $_REQUEST['to_date'];
+                //$one_day_before = date('Y-m-d', strtotime($date. ' - 1 days'));                    
+            }else{
+                $from = $to = date('Y-m-d');    
+                //$one_day_before = date('Y-m-d',strtotime("-1 days"));
+            }
+           
+            $result = $this->BusinessAdminModel->GetCashRecord($from,$to);
+        }            
+        if($result['success']){
+            $transaction = $result['res_arr']['transaction'];
+            $expenses = $result['res_arr']['expenses'];
+            $pending_amount = $result['res_arr']['pending_amount'];
+            $temp = [];
+            $transaction_data = [];
+            $json_data = [];                
+            //transaction data
+            $key_info = [];
+            
+            foreach ($transaction as $key => $value) {
+                if(!empty($value['txn_settlement_payment_mode'])){                        
+                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
+                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
+                    }else{
+                        $result = json_decode($value['txn_settlement_payment_mode']);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
+                        }else{
+                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
+                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
+                        }                            
+                    }
+                }                        
+            }                
+            if(!empty($json_data)){                    
+                foreach ($json_data as $key => $j) {
+                    foreach ($j as $key => $t) {
+                      if(in_array(strtolower($t['payment_type']), $temp)){
+                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
+                        }else{
+                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
+                            $temp[] = strtolower($t['payment_type']);
+                        }  
+                    }                       
+                }
+            }
+            $key_info['keys'][0] = $temp;                
+            // expenses
+
+            $temp = [];
+            $expenses_data = [];          
+            //transaction data                
+            foreach ($expenses as $key => $value) {
+                if(!empty($value['payment_mode'])){                        
+                    if(in_array(strtolower($value['payment_mode']), $temp)){
+                        $expenses_data[strtolower($value['payment_mode'])] += $value['total_amount'];
+                    }else{                            
+                            $expenses_data[strtolower($value['payment_mode'])] = $value['total_amount'];
+                            $temp[] = strtolower($value['payment_mode']);
+                    }
+                }                        
+            }
+            $key_info['keys'][1] = $temp;
+            // pending tracker
+            $temp = [];
+            $pending_amount_data = [];          
+            //transaction data                        
+            foreach ($pending_amount as $key => $value) {
+                if(!empty($value['payment_type'])){                        
+                    if(in_array(strtolower($value['payment_type']), $temp)){
+                        $pending_amount_data[strtolower($value['payment_type'])] += $value['total_amount'];
+                    }else{                            
+                            $pending_amount_data[strtolower($value['payment_type'])] = $value['total_amount'];
+                            $temp[] = strtolower($value['payment_type']);
+                    }
+                }                        
+            }
+            $key_info['keys'][2] = $temp;
+
+            
+                $p_mode = [];
+                foreach ($key_info as $key => $k) {
+                    foreach ($k as $key => $keys) {
+                        if(!in_array($keys, $p_mode)){
+                            $p_mode[] = $keys;
+                        }
+                    }                                    
+                }
+
+        }
+        
+        $p_mode = array_filter($p_mode);        
+        $p_mode = call_user_func_array('array_merge', $p_mode);
+        $p_mode = array_unique($p_mode);
+        $p_mode = array_values($p_mode);        
+        $data['p_mode'] = $p_mode;
+        $data['opening_balance_data'] = $opening_balance_data;
+        $data['pending_amount_data'] = $pending_amount_data;
+        $data['expenses_data'] = $expenses_data;
+        $data['transaction_data'] = $transaction_data;
+        $data['from'] = $from;
+        $data['to'] = $to;
+        $this->load->view('business_admin/ba_cash_book_view',$data);
+		}
+		
+		public function GetPackage(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_GET) && !empty($_GET)){
+					$where = array(
+						'salon_package_id'   => $_GET['salon_package_id']
+					);	
+					$data = $this->BusinessAdminModel->GetPackageDetails($where);
+					header("Content-type: application/json");
+					print(json_encode($data['res_arr'][0], JSON_PRETTY_PRINT));
+					die;
+				}
+			}
+			else{
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}
+		}
+
+		public function EditPackage(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_POST) && !empty($_POST)){
+					$this->form_validation->set_rules('salon_package_name', 'Package Name', 'trim|required|max_length[50]');
+					$this->form_validation->set_rules('salon_package_price', 'Package Price', 'trim|required');
+					$this->form_validation->set_rules('salon_package_gst', 'Package GST', 'trim|required');
+					$this->form_validation->set_rules('salon_package_upfront_amt', 'Upfront Amount', 'trim|required');
+					$this->form_validation->set_rules('salon_package_validity', 'Validity', 'trim|required|is_natural_no_zero');
+					$this->form_validation->set_rules('salon_package_type', 'Package Type', 'trim|required|max_length[50]');
+					if ($this->form_validation->run() == FALSE) 
+					{
+						$data = array(
+										'success' => 'false',
+										'error'   => 'true',
+										'message' =>  validation_errors()
+									);
+						header("Content-type: application/json");
+						print(json_encode($data, JSON_PRETTY_PRINT));
+						die;
+					}
+					else{
+				
+						$data = array(
+							'salon_package_name' => $this->input->post('salon_package_name'),
+							'salon_package_price' => $this->input->post('salon_package_price'),
+							'service_gst_percentage' => $this->input->post('salon_package_gst'),
+							'salon_package_upfront_amt' => $this->input->post('salon_package_upfront_amt'),
+							'salon_package_validity'=> $this->input->post('salon_package_validity'),
+							'salon_package_type' 	=> $this->input->post('salon_package_type'),
+							'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+							'business_outlet_id' => $this->session->userdata['outlets']['current_outlet'],
+							'salon_package_id'	=> $this->input->post('salon_package_id')
+						);
+						if($data['salon_package_type'] == "Discount"){	
+							$services = $this->input->post('service_id');
+							$discounts =  $this->input->post('discount');
+							$counts = $this->input->post('count_discount');
+							$salon_package_id = $this->input->post('salon_package_id');
+							// $this->PrettyPrintArray($services);
+							if(!empty($services) && !empty($discounts) && !empty($counts) && (count($services) == count($counts)) && (count($counts) == count($discounts))){
+								$result = $this->BusinessAdminModel->UpdateDiscountPackageForSalon($data,$services,$discounts,$counts,$salon_package_id);
+								if($result['success'] == 'true'){
+									$this->ReturnJsonArray(true,false,"Package updated successfully!");
+									die;
+								}
+								elseif($result['error'] == 'true'){
+									$this->ReturnJsonArray(false,true,$result['message']);
+									die;
+								}
+							}
+							else{
+								$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
+								die;
+							}
+						}
+					}
+				}
+				else{
+					$this->ReturnJsonArray(false,true,"Error in Package Update");
+					die;
+				}
+			}
+			else{
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}
+		}
+	
+
 }
-	    
+

@@ -627,7 +627,123 @@
 													</div>
 												</div>
 											</div>
-										</div>								
+										</div>
+										
+										<div class="modal" id="ModalEditPackage" tabindex="-1" role="dialog" aria-hidden="true">
+											<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title text-white font-weight-bold">Edit Package</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span class="text-white" aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body m-3">
+														<div class="row">
+															<div class="col-md-12">
+																<form id="EditPackage" method="POST" action="#">
+																	<div class="row">
+																		<div class="form-group col-md-3">
+																			<label>Package Name</label>
+																			<input type="text" class="form-control" placeholder="Package Name" name="salon_package_name" id="salon_package_name">
+																		</div>
+																		<div class="form-group col-md-3">
+																			<label>Price(Rs.)</label>
+																			<input type="number" class="form-control" placeholder="Package Price" name="salon_package_price">
+																		</div>
+																		<div class="form-group col-md-3">
+																			<label>GST</label>
+																			<input type="number" class="form-control" placeholder="GST" name="salon_package_gst">
+																		</div>
+																		<div class="form-group col-md-3">
+																			<label>Total Amount(Rs.)</label>
+																			<input type="number" class="form-control" placeholder="Upfront Amount in Rs." name="salon_package_upfront_amt" readonly>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-6">
+																			<label>Validity</label>
+																			<input type="number" class="form-control" placeholder="Validity in Months" name="salon_package_validity" min="1" max="99" readonly>
+																		</div>
+																		<div class="form-group col-md-6">
+																			<label>Package Type</label><br>
+																			<input type="text" class="form-control" name="salon_package_type" readonly>
+																		</div>
+																	</div>
+																	<div id="EditDiscount">
+																		<table id="editDiscountTable" class="table table-hover table-bordered">
+																			<tbody>
+																				<tr>
+																					<td>
+																						<div class="form-group">
+																							<label>Category</label>
+																							<select class="form-control" name="service_category_id">
+																								<option value="" selected></option>
+																								<?php
+																									foreach ($categories as $category) {
+																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
+																									}
+																								?>
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Sub-Category</label>
+																							<select class="form-control" name="service_sub_category_id">
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Service</label>
+																							<select class="form-control" name="service_id[]" temp="Service">
+																							</select>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Price</label>
+																							<input type="text" class="form-control" name="service_price_inr[]" temp="service_price_inr">
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Discount</label>
+																							<input type="number" min="0" max="100" class="form-control" name="discount[]" temp="Discount">
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Count</label>
+																							<input type="number" class="form-control" name="count_discount[]" temp="Count" value="1" min="1" max="25">
+																						</div>
+																					</td>
+																				</tr>
+																			</tbody>
+																		</table>
+																		
+																		<button type="button" class="btn btn-success" id="AddRowEditDiscount">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																		<button type="button" class="btn btn-danger" id="DeleteRowEditDiscount">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
+																			
+																	</div>
+																	<input type="hidden" name="salon_package_id">
+																	<button type="submit" class="btn btn-primary mt-2">Submit</button>
+																	
+																</form>
+																<div class="alert alert-dismissible feedback" style="margin:0px;" role="alert">
+																	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+																		<span aria-hidden="true">&times;</span>
+																	</button>
+																	<div class="alert-message">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
 
 										<!--MODAL AREA END-->		
 										<table class="table table-striped datatables-basic" style="width:100%">
@@ -664,6 +780,9 @@
 												<?php
 													if($package['is_active'] == 1){
 												?>
+													<button type="button" class="btn btn-info package-edit-btn"  salon_package_id="<?=$package['salon_package_id']?>">
+														<i class="align-middle" data-feather="edit"></i>
+													</button>
 													<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="<?=$package['salon_package_id']?>">
 														<i class="align-middle" data-feather="package"></i>
 													</button>
@@ -671,6 +790,9 @@
 													}
 													else{
 												?>
+													<button type="button" class="btn btn-info package-edit-btn disabled" salon_package_id="<?=$package['salon_package_id']?>">
+														<i class="align-middle" data-feather="edit"></i>
+													</button>
 													<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="<?=$package['salon_package_id']?>">
 														<i class="align-middle" data-feather="package"></i>
 													</button>
@@ -812,8 +934,7 @@
 				errorElement: "div",
 				rules: {
 					"salon_package_name" : {
-						required : true,
-						maxlength : 50
+						required : true
 					},
 					"salon_package_price" : {
 						required : true
@@ -829,8 +950,7 @@
 						required : true
 					},
 					"salon_package_validity" : {
-						required : true,
-						digits : true
+						required : true
 					},
 					"virtual_wallet_money_absolute" : {
 						digits : true		
@@ -1365,6 +1485,173 @@
 							}
 			});
 			});
+
+			$(document).on('click',".package-edit-btn", function(e){
+				var parameters = {
+					'salon_package_id' :  $(this).attr('salon_package_id')
+				};
+				
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetPackage", parameters)
+				.done(function(data, textStatus, jqXHR) {
+						$("#ModalEditPackage input[name=salon_package_name]").attr('value',data.salon_package_name);
+        		$("#ModalEditPackage input[name=salon_package_price]").val(data.salon_package_price);
+        		$("#ModalEditPackage input[name=salon_package_gst]").attr('value',data.service_gst_percentage);
+						$("#ModalEditPackage input[name=salon_package_upfront_amt]").attr('value',data.salon_package_upfront_amt);
+						$("#ModalEditPackage input[name=salon_package_validity]").attr('value',data.salon_package_validity);
+						$("#ModalEditPackage input[name=salon_package_type]").attr('value',data.salon_package_type);
+						$("#ModalEditPackage input[name=salon_package_id]").attr('value',data.salon_package_id);
+						var package_type=data.salon_package_type;
+						if(package_type=="Wallet" || package_type=="Services"){
+							alert(package_type+" type package can not be edited. ")
+							return false;
+						}else if(package_type=="Discount"){
+							$("#ModalEditPackage").modal('show');
+						}
+        		
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				});
+			});
+
+			$("#EditPackage input[name=salon_package_gst]").on('input',function(){
+
+			var package_base_price =parseFloat($("#EditPackage input[name=salon_package_price]").val());
+			var gst = parseFloat($("#EditPackage input[name=salon_package_gst]").val());
+			var package_total_value= package_base_price;
+			package_total_value = Math.round(package_base_price+(package_base_price*gst/100));
+			$("#EditPackage input[name=salon_package_upfront_amt]").val(package_total_value);
+			
+			});
+
+				//service price for discount package
+				$(document).on('change',"#editDiscountTable tr:last select[temp=Service]",function(e){
+				var parameters = {
+					'service_id' :  $(this).val()
+				};
+				// alert($(this).val());
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetServicePriceById", parameters)
+				.done(function(data, textStatus, jqXHR) {			
+						$("#editDiscountTable tr:last input[temp=service_price_inr]").val(data[0].service_price_inr);
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				});
+			});
+
+
+			$(document).on('change',"#editDiscountTable tr:last select[name=service_category_id]",function(e){
+				var parameters = {
+					'category_id' :  $(this).val()
+				};
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetSubCategoriesByCatId", parameters)
+				.done(function(data, textStatus, jqXHR) {
+						var options = "<option value='' selected></option>"; 
+						for(var i=0;i<data.length;i++){
+							options += "<option value="+data[i].sub_category_id+">"+data[i].sub_category_name+"</option>";
+						}
+						$("#editDiscountTable tr:last select[name=service_sub_category_id]").html("").html(options);
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				});
+			});
+
+			$(document).on('change',"#editDiscountTable tr:last select[name=service_sub_category_id]",function(e){
+				var parameters = {
+					'sub_category_id' :  $(this).val()
+				};
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetServicesBySubCatId", parameters)
+				.done(function(data, textStatus, jqXHR) {
+						var options = "<option value='' selected></option>"; 
+						for(var i=0;i<data.length;i++){
+							options += "<option value="+data[i].service_id+">"+data[i].service_name+"</option>";
+						}
+						$("#editDiscountTable tr:last select[temp=Service]").html("").html(options);
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				});
+			});
+
+			$("#AddRowEditDiscount").click(function(event){
+				event.preventDefault();
+				this.blur();
+				var rowno = $("#editDiscountTable tr").length;
+				
+				rowno = rowno+1;
+				
+				$("#editDiscountTable tr:last").after("<tr><td><div class=\"form-group\"><label>Category</label><select class=\"form-control\" name=\"service_category_id\"><option value=\"\" selected></option> <?php foreach ($categories as $category) { echo "<option value=".$category['category_id'].">".$category['category_name']."</option>"; }?></select></div></td><td><div class=\"form-group\"><label>Sub-Category</label><select class=\"form-control\" name=\"service_sub_category_id\"></select></div></td><td><div class=\"form-group\"><label>Service</label><select class=\"form-control\" name=\"service_id[]\" temp=\"Service\"></select></div></td><td><div class=\"form-group\" ><label>Price</label><input type=\"text\" class=\"form-control\" name=\"service_price_inr\" temp=\"service_price_inr\"></div></td><td><div class=\"form-group\"><label>Discount</label><input type=\"number\" min=\"0\" max=\"100\" class=\"form-control\" name=\"discount[]\" temp=\"Discount\"></div></td><td><div class=\"form-group\"><label>Count</label><input type=\"number\" class=\"form-control\" name=\"count_discount[]\" temp=\"Count\" value=\"1\" min=\"1\" max=\"25\"></div></td></tr>");
+			});
+
+			$("#DeleteRowEditDiscount").click(function(event){
+				event.preventDefault();
+				this.blur();
+				var rowno = $("#editDiscountTable tr").length;
+				if(rowno > 1){
+					$('#editDiscountTable tr:last').remove();
+				}
+			});
+
+		$("#EditPackage").validate({
+	  	errorElement: "div",
+	    rules: {
+	        "salon_package_name" : {
+            required : true
+	        },
+	        "salon_package_price" : {
+	          required : true
+	        },
+	        "salon_package_gst" : {
+	        	required : true
+	        },
+	        "salon_package_upfront_amt" : {
+	        	required : true
+	        },
+	        "salon_package_validity" : {
+	        	required : true
+	        },
+	        "salon_package_type" : {
+	        	required : true
+	        }    
+	    },
+	    submitHandler: function(form) {
+				var formData = $("#EditPackage").serialize(); 
+				$.ajax({
+		        url: "<?=base_url()?>BusinessAdmin/EditPackage",
+		        data: formData,
+		        type: "POST",
+						cache: false,
+		    		success: function(data) {
+              if(data.success == 'true'){
+              	$("#ModalEditPackage").modal('hide');
+									toastr["success"](data.message,"", {
+									positionClass: "toast-top-right",
+									progressBar: "toastr-progress-bar",
+									newestOnTop: "toastr-newest-on-top",
+									rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+									timeOut: 1000
+								});
+								setTimeout(function () { location.reload(1); }, 1000);
+              }
+              else if (data.success == 'false'){                   
+          	    if($('.feedback').hasClass('alert-success')){
+                  $('.feedback').removeClass('alert-success').addClass('alert-danger');
+                }
+                else{
+                  $('.feedback').addClass('alert-danger');
+                }
+                $('.alert-message').html("").html(data.message); 
+              }
+            },
+            error: function(data){
+    					$('.feedback').addClass('alert-danger');
+    					$('.alert-message').html("").html(data.message); 
+            }
+				});
+			},
+		});
+
 		});
 </script>
 <script>

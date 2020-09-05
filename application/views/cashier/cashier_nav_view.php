@@ -18,6 +18,16 @@
 		    		<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory"><i data-feather="pen-tool" style="color:#0070c0"></i>Inventory</a></li>
 				</ul>
 			</li>
+			<!-- <li class="sidebar-item">
+				<a href="#inventory" data-toggle="collapse" class="sidebar-link collapsed">
+					<i class="align-middle" data-feather="pen-tool" style="color:#0070c0"></i> <span class="align-middle">Inventory</span>
+				</a>
+				<ul id="inventory" class="sidebar-dropdown list-unstyled collapse ">
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/InventoryView/"><i data-feather="grid" style="color:orange"></i>View Inventory</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory/"><i data-feather="book" style="color:green"></i>Add Inventory</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory/"><i data-feather="trash" style="color:blue"></i>Wastage</a></li>
+				</ul>
+			</li> -->
 			<li class="sidebar-item">
 				<a href="#packages" data-toggle="collapse" class="sidebar-link collapsed">
 					<i class="align-middle" data-feather="gift" style="color:#0070c0"></i> <span class="align-middle">Packages</span>
@@ -88,6 +98,8 @@
 				endif;
 			?>
 			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/ReportsManagement"><i data-feather="book" style="color:#009925;"></i>Reports</a></li>	
+			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/daybook"><i data-feather="clipboard" style="color:#009925;"></i>Day Book</a></li>	
+			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/cashbook"><i data-feather="clipboard" style="color:#009925;"></i>Cash Book</a></li>	
 			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Video"><i data-feather="video"></i>Demo Videos</a></li>
 			<li class="sidebar-header">
 				Other Options

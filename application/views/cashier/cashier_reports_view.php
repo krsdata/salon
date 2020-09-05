@@ -23,6 +23,7 @@
 											<option selected>Report Group</option>
 												<option value="Sales">Sales</option>
 												<option value="Inventory">Inventory</option>
+												<option value="Employee">Employee</option>
 											</select>
 									</div> 
 									<div class=" from-group col-md-2">
@@ -108,7 +109,7 @@
 										<a class="nav-link" data-toggle="tab" href="#tab-5">Product-wise</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#tab-6">Last 50 Transactions</a>
+										<a class="nav-link" data-toggle="tab" href="#tab-6">Last 200 Transactions</a>
 									</li>
 								</ul>
 
@@ -133,7 +134,7 @@
 																	<tr>
 																		<th>Bill No.</th>
 																		<th>Mobile No.</th>
-																		<th>Name</th>
+																		<th>Name</th>																		
 																		<th>MRP Amount</th>
 																		<th>Discount</th>
 																		<th>Net Amount</th>
@@ -660,7 +661,7 @@
 																	
 																	<table style="width:100%;">
 																	<tr><td>Generated :</td><td>
-																	<?php echo $due_amount;
+																	<?php echo ($due_amount+$package_due_amount);
 																		// echo ($cards_data['payment_wise']['debit_card']+$package_payment_wise['debit_card']);
 																			
 																	?>
@@ -742,7 +743,7 @@
 										<div class="card">
 											<div class="card-header">
 												<h5 class="card-title my-2">
-														Last 50 Transaction
+														Last 200 Transaction
 												</h5>
 											</div>
 											<div class="card-body" style="margin-right:10px;">
@@ -754,6 +755,7 @@
 														<th>Date</th>
 														<th>Mobile No.</th>
 														<th>Name</th>
+														<th>Type</th>
 														<th>MRP Amount</th>
 														<th>Discount</th>
 														<th>Net Amount</th>
@@ -769,14 +771,27 @@
 															<td><?=$txn['billing_date']?></td>
 															<td><?=$txn['mobile']?></td>
 															<td><?=$txn['name']?></td>
+															<td><?=$txn['Type']?></td>
 															<td><?=$txn['mrp_amt']?></td>
 															<td><?=$txn['discount']?></td>
 															<td><?=$txn['net_amt']?></td>
 															<td><?=$txn['total_tax']?></td>
 															<td><?=$txn['pending_amt']?></td>
-															<td><button class='btn btn-warning sendSmsBtn'  txn_id='<?=$txn['bill_no']?>'><i class='fa fa-sms'></i></button>
+															<?php
+																if($txn['Type'] == "Package"){
+																	?>
+																		<td><button data-type="package" class='btn btn-warning sendSmsBtn'  txn_id='<?=$txn['bill_no']?>'><i class='fa fa-sms'></i></button>
+															<a href='<?=base_url()?>Cashier/RePrintPackageBill/<?=$txn['bill_no']?>' target='_blank' class='btn btn-danger' ><i class='fa fa-print'></i></a>
+														</td>
+																	<?php
+																}else{
+																	?>
+																	<td><button  data-type="service" class='btn btn-warning sendSmsBtn'  txn_id='<?=$txn['bill_no']?>'><i class='fa fa-sms'></i></button>
 															<a href='<?=base_url()?>Cashier/RePrintBill/<?=$txn['bill_no']?>' target='_blank' class='btn btn-danger' ><i class='fa fa-print'></i></a>
 														</td>
+																	<?php
+																}
+															?>
 														</tr>
 													<?php }?>
 												</tbody>
@@ -918,7 +933,8 @@
       event.preventDefault();
       this.blur(); // Manually remove focus from clicked link.
 			var parameters={
-				"txn_id" : $(this).attr('txn_id')
+				"txn_id" : $(this).attr('txn_id'),
+				"type":$(this).attr('data-type')
 			};
 			$.ajax({
 		        url: "<?=base_url()?>Cashier/ReSendBill",
@@ -1050,6 +1066,13 @@
 			}
 		];
 
+		var Employee = [
+			{
+				display: "Employee Attendance Report",
+				value: "EAR"
+			}
+		];
+
 	
 
 		// Function executes on change of first select option field.
@@ -1063,6 +1086,11 @@
 
 				case "Inventory":
 				AddSubGroup(Inventory);	
+				break;
+
+
+				case "Employee":
+				AddSubGroup(Employee);	
 				break;
 				
 				default:

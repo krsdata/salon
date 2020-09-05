@@ -168,7 +168,7 @@
 												
 												<table style="width:100%;">
 												<tr><td>Generated :</td><td>
-												<?php echo $due_amount;
+												<?php echo ($due_amount+$package_due_amount);
 													// echo ($cards_data['payment_wise']['debit_card']+$package_payment_wise['debit_card']);
 														
 												?>
@@ -215,7 +215,7 @@
 													echo ($total_due_amount['total_due_amount']);
 												?></td>
 											</tr>
-											<tr><td>Generated : </td><td><?=$due_amount?></td></tr>
+											<tr><td>Generated : </td><td><?=($due_amount+$package_due_amount)?></td></tr>
 											<tr><td>Received : </td><td><?=$pending_amount_received?></td></tr>
 											<tr><td>Closing Balance : </td><td><?=($total_due_amount['total_due_amount']+$due_amount-$pending_amount_received)?></td></tr>
 										</table>

@@ -502,6 +502,10 @@
 			{
 				display: "Employee Wise Performance Report",
 				value: "EWPR"
+			},
+			{
+				display: "Employee Attendance Report",
+				value: "EAR"
 			}
 		];
 
@@ -645,7 +649,7 @@
 						str_2 += "<td>"+data[i].mrp_amt+"</td>";
 						str_2 += "<td>"+data[i].discount+"</td>";						
 						str_2 += "<td>"+data[i].net_amt+"</td>";
-						// str_2 += "<td>"+data[i].settlement_way+"</td>";
+						// str_2 += "<td>"+data[i].payment_way+"</td>";
 						var edit_bill="<?php if(array_search('Edit_Bill', $business_admin_packages) !== false){ echo 'Edit_Bill';}?>";
 						
 						if(data[i].txn_status==1 && data[i].net_amt > 0){
@@ -723,7 +727,9 @@
 			});
 
 			$(document).on('click','#close_edit_btn',function(event){
-				window.location.reload();
+				// var d1=$("#from_date").val();
+				// var d2=$("#to_date").val();
+				// window.location.reload();
 			});
 			$(document).on('click',".updateService",function(event){
 				event.preventDefault();
@@ -814,7 +820,7 @@
 								rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
 								timeOut: 500
 							});
-							setTimeout(function () { location.reload(1); }, 500);
+							// setTimeout(function () { location.reload(1); }, 500);
           }
           else if (data.success == 'false'){  
 						$("#ModalEditBill").modal('hide');                 
