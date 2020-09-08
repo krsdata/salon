@@ -250,12 +250,12 @@
 																							</select>
 																						</div>
 																					</td>
-																					<td>
+																					<!--<td>
 																						<div class="form-group">
 																							<label>Price</label>
 																							<input type="text" value="" id="service_price_inr" class="form-control" name="service_price_inr[]" temp="service_price_inr" >
 																						</div>
-																					</td>
+																					</td>-->
 																					<td colspan="2">
 																						<div class="form-group">
 																							<label>Count</label>
@@ -306,12 +306,12 @@
 																							</select>
 																						</div>
 																					</td>
-																					<td>
+																					<!--<td>
 																						<div class="form-group">
 																							<label>Price</label>
 																							<input type="text" class="form-control" name="service_price_inr[]" temp="service_price_inr">
 																						</div>
-																					</td>
+																					</td>-->
 																					<td>
 																						<div class="form-group">
 																							<label>Discount</label>
@@ -358,7 +358,7 @@
 																										<?php endforeach;
 																									}
 																									?>
-																							</select>
+																							</select><input type="hidden" name="service_sub_category_bulk_index[]" />
 																						</div>
 																					</td>
 																					<td style="width:40%">
@@ -403,7 +403,7 @@
 																								}
 																								?>
 																							
-																							</select>
+																							</select><input type="hidden" name="service_sub_category_discount_bulk_index[]" />
 																						</div>
 																					</td>
 																					<td>
@@ -434,13 +434,13 @@
 																					<td style="width:20%">
 																						<div class="form-group">
 																							<label>Category</label>
-																							<select id="service_category_bulk" multiple class="form-control" name="service_category_bulk[]">
+																							<select id="service_category_bulk_1" multiple class="form-control" name="service_category_bulk[]">
 																								<?php
 																									foreach ($categories as $category) {
 																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
 																									}
 																								?>
-																							</select>
+																							</select><input type="hidden" name="service_category_bulk_index[]" />
 																						</div>
 																					</td>
 																					<!-- <td>
@@ -476,7 +476,7 @@
 																										echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
 																									}
 																								?>
-																							</select>
+																							</select><input type="hidden" name="service_discount_category_bulk_index[]" />
 																						</div>
 																					</td>
 																					<td colspan="2">
@@ -779,7 +779,7 @@
 	 width: 200px;;
 }
 .modal-content #discountTable tbody tr td{
-	 width: 200px;;
+	 width: 150px;;
 }
 
 .modal-content #discountSubCategoryBulkTable tbody tr td{
@@ -870,9 +870,314 @@
 					console.log(errorThrown.toString());
 				});
 	}
+	
+	function addNewRowOfService(serviceDetails){
+					var rowno = $("#serviceTable tr").length;
+				
+				rowno = rowno+1;
+				var htmlContent = '<tr><td>';
+				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
+				    htmlContent += '<select class="form-control" name="service_sub_category_id[]" multiple>';
+				   
+				    <?php if(!empty($categories)){
+						foreach($categories as $key=>$category): ?>
+						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
+							<?php if(!empty($sub_categories)){
+								foreach($sub_categories as $subcategoryDetails){
+									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
+									    htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
+									<?php }		
+								}
+							} 
+							?>
+						htmlContent += '</optgroup>';
+						<?php endforeach;
+					}
+					?>
+					
+					htmlContent +='</select></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Service</label>';
+					htmlContent +='<select class="form-control" name="service_id[]" temp="Service" multiple></select></div>';
+					//htmlContent +='</td><td><div class="form-group" ><label>Price</label><input type="text" class="form-control" name="service_price_inr" temp="service_price_inr"></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_service[]" temp="Count" value="1" min="1" max="25"></select></div></td></tr>';
+				    $("#serviceTable tr:last").after(htmlContent);
+					if(serviceDetails!=undefined && serviceDetails!='undefined'){
+						$.each(serviceDetails, function(key, service) {		
+							 $('#serviceTable tr:last select[name="service_sub_category_id[]"] option').filter(function() { 
+								return ($(this).val() == service.service_sub_category_id); //To select dropdown record
+							 }).prop('selected', true);
+						 });
+					}
+					$('#serviceTable tr:last select[name="service_sub_category_id[]"]').multiselect(multiSelectParamsData);
+					$('#serviceTable tr:last select[name="service_id[]"]').multiselect(multiSelectParamsData);						
+					
+		}
+	
+	function addNewRowOfDiscount(serviceDetails){
+				var rowno = $("#discountTable tr").length;
+				rowno = rowno+1;
+				
+				var htmlContent = '<tr><td>';
+				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
+				    htmlContent += '<select class="form-control" name="service_sub_category_id[]" multiple>';
+				   
+				    <?php if(!empty($categories)){
+						foreach($categories as $key=>$category): ?>
+						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
+							<?php if(!empty($sub_categories)){
+								foreach($sub_categories as $subcategoryDetails){
+									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
+										htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
+									<?php }		
+								}
+							} 
+							?>
+						htmlContent += '</optgroup>';
+						<?php endforeach;
+					}
+					?>
+					
+					htmlContent +='</select></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Service</label>';
+					htmlContent +='<select class="form-control" name="service_id[]" temp="Service" multiple></select></div>';
+					//htmlContent +='</td><td><div class="form-group" ><label>Price</label><input type="text" class="form-control" name="service_price_inr" temp="service_price_inr"></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Discount</label><input type="number" min="0" max="100" class="form-control" name="discount[]" temp="Discount"></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_discount[]" temp="Count" value="1" min="1" max="25"></select></div></td></tr>';
+				    $("#discountTable tr:last").after(htmlContent);
+					if(serviceDetails!=undefined && serviceDetails!='undefined'){
+						$.each(serviceDetails, function(key, service) {		
+							 $('#discountTable tr:last select[name="service_sub_category_id[]"] option').filter(function() { 
+								return ($(this).val() == service.service_sub_category_id); //To select dropdown record
+							 }).prop('selected', true);
+						 });
+					}
+					$('#discountTable tr:last select[name="service_sub_category_id[]"]').multiselect(multiSelectParamsData);
+					$('#discountTable tr:last select[name="service_id[]"]').multiselect(multiSelectParamsData);	
+				
+	}
+	
+	function addNewRowOfServiceSubCategoryBulk(serviceDetails){
+				var rowno = $("#serviceSubCategoryBulkTable tr").length;
+				
+				rowno = rowno+1;
+				var htmlContent = '<tr><td>';
+				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
+				    htmlContent += '<select class="form-control" name="service_sub_category_bulk[]" multiple temp="Service_SubCategory_Bulk">';
+				   
+				    <?php if(!empty($categories)){
+						foreach($categories as $key=>$category): ?>
+						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
+							<?php if(!empty($sub_categories)){
+								foreach($sub_categories as $subcategoryDetails){
+									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
+										htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
+									<?php }		
+								}
+							} 
+							?>
+						htmlContent += '</optgroup>';
+						<?php endforeach;
+					}
+					?>
+
+				htmlContent +='</select></div><input type="hidden" name="service_sub_category_bulk_index[]" /></td>';
+				htmlContent += '<td><div class="form-group"><label>Count</label><input type="number" min="0" max="100" class="form-control" name="count_service_subcategory_bulk[]" temp="Count"  value="1" min="1" max="25"></div></td><td colspan="2"></td></tr>';				
+			
+				$("#serviceSubCategoryBulkTable tr:last").after(htmlContent);
+				if(serviceDetails!=undefined && serviceDetails!='undefined'){
+					$.each(serviceDetails, function(key, service) {		
+						 $('#serviceSubCategoryBulkTable tr:last select[name="service_sub_category_bulk[]"] option').filter(function() { 
+							return ($(this).val() == service.service_sub_category_id); //To select dropdown record
+						 }).prop('selected', true);
+					 });
+				}
+				$('#serviceSubCategoryBulkTable tr:last select[name="service_sub_category_bulk[]"]').multiselect(multiSelectParamsData);
+			
+	}
+	
+		function addNewRowOfDiscountServiceSubCategoryBulk(serviceDetails){
+				var rowno = $("#discountSubCategoryBulkTable tr").length;
+				
+				rowno = rowno+1;
+				var htmlContent = '<tr><td>';
+				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
+				    htmlContent += '<select class="form-control" name="service_sub_category_bulk[]" multiple temp="Discount_SubCategory_Bulk">';
+				   
+				    <?php if(!empty($categories)){
+						foreach($categories as $key=>$category): ?>
+						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
+							<?php if(!empty($sub_categories)){
+								foreach($sub_categories as $subcategoryDetails){
+									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
+										htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
+									<?php }		
+								}
+							} 
+							?>
+						htmlContent += '</optgroup>';
+						<?php endforeach;
+					}
+					?>
+
+				htmlContent +='</select></div><input type="hidden" name="service_sub_category_discount_bulk_index[]" /></td>';
+				htmlContent += '<td><div class="form-group"><label>Discount</label><input type="number" min="0" max="100" class="form-control" name="discount_subcategory_bulk[]" temp="Discount"></div></td>';				
+				htmlContent += '<td><div class="form-group"><label>Count</label><input type="number" min="0" max="100" class="form-control" name="count_discount_subcategory_bulk[]" temp="Count"  value="1" min="1" max="25"></div></td></tr>';				
+				$("#discountSubCategoryBulkTable tr:last").after(htmlContent);
+				if(serviceDetails!=undefined && serviceDetails!='undefined'){
+					$.each(serviceDetails, function(key, service) {		
+						 $('#discountSubCategoryBulkTable tr:last select[name="service_sub_category_bulk[]"] option').filter(function() { 
+							return ($(this).val() == service.service_sub_category_id); //To select dropdown record
+						 }).prop('selected', true);
+					 });
+				}
+				$('#discountSubCategoryBulkTable tr:last select[name="service_sub_category_bulk[]"]').multiselect(multiSelectParamsData);
+
+		}
+			
+		function addNewRowOfServiceCategoryBulk(serviceDetails){
+			var rowno = $("#serviceCategoryBulkTable tr").length;
+			
+			rowno = rowno+1;
+			var htmlContent = '<tr><td>';
+				htmlContent += '<div class="form-group"><label>Category</label>';
+				htmlContent += '<select class="form-control" name="service_category_bulk[]" multiple>';
+			<?php foreach ($categories as $category) { ?>
+					htmlContent +=  '<option value="<?php echo $category["category_id"]; ?>"><?php echo $category["category_name"] ?></option>'; 
+			<?php }
+			?>
+			htmlContent +='</select><input type="hidden" name="service_category_bulk_index[]" /></div></td>';
+			htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_service_category_bulk[]" temp="Count" value="1" min="1" max="25"></div></td></tr>';
+			$("#serviceCategoryBulkTable tr:last").after(htmlContent);
+			if(serviceDetails!=undefined && serviceDetails!='undefined'){
+					$.each(serviceDetails, function(key, service) {		
+						 $('#serviceCategoryBulkTable tr:last select[name="service_category_bulk[]"] option').filter(function() { 
+							return ($(this).val() == service.service_category_id); //To select dropdown record
+						 }).prop('selected', true);
+					 });
+			}
+			$('#serviceCategoryBulkTable tr:last select[name="service_category_bulk[]"]').multiselect(multiSelectParamsData);
+		}
+		
+		function addNewRowOfDiscountServiceCategoryBulk(serviceDetails){
+				var rowno = $("#discountCategoryBulkTable tr").length;
+				
+				rowno = rowno+1;
+				var htmlContent = '<tr><td>';
+				    htmlContent += '<div class="form-group"><label>Category</label>';
+				    htmlContent += '<select class="form-control" name="discount_service_category_bulk[]" multiple>';
+				<?php foreach ($categories as $category) { ?>
+						htmlContent +=  '<option value="<?php echo $category["category_id"]; ?>"><?php echo $category["category_name"] ?></option>'; 
+				<?php }
+				?>
+					htmlContent +='</select><input type="hidden" name="service_discount_category_bulk_index[]" /></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Service Price</label>';
+					htmlContent +='<input type="number" class="form-control" name="service_price_greater_than[]" temp="Discount_Category_Bulk"></div></td>';
+				    htmlContent +='<td><div class="form-group"><label>Discount</label><input type="number" min="0" max="100" class="form-control" name="discount_category_bulk[]" temp="Discount"></div></td>';
+					htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_discount_category_bulk[]" temp="Count" value="1" min="1" max="25"></div></td></tr>';
+				
+				
+				$("#discountCategoryBulkTable tr:last").after(htmlContent);
+				if(serviceDetails!=undefined && serviceDetails!='undefined'){
+					$.each(serviceDetails, function(key, service) {		
+						 $('#discountCategoryBulkTable tr:last select[name="discount_service_category_bulk[]"] option').filter(function() { 
+							return ($(this).val() == service.service_category_id); //To select dropdown record
+						 }).prop('selected', true);
+					 });
+				}
+				$('#discountCategoryBulkTable tr:last select[name="discount_service_category_bulk[]"]').multiselect(multiSelectParamsData);
+		
+		}
+			
+	function getServiceSubCategoryById(parameters,serviceDetails,objId){
+				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatMultipleIds", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					   console.log(serviceDetails);
+						var options = ""; 
+						
+						for(var i=0;i<data.length;i++){
+							var selected = "";
+						   if(typeof(serviceDetails)!= "undefined" ){
+							
+							$.each(serviceDetails, function(key, service) {
+								if(service.service_id==data[i].service_id){
+									selected = 'selected="selected"';
+								} //To select dropdown record
+						    });
+						   }
+						  
+							options += "<option value="+data[i].service_id+" "+selected+" >"+data[i].service_name+" ("+data[i].service_price_inr+")</option>";
+						
+						}
+						
+					  
+						$("#"+objId+" tr:last select[temp=Service]").html("").html(options);
+						$("#"+objId+" tr:last select[name='service_id[]']").multiselect('destroy').multiselect(multiSelectParamsData1);
+						
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+					
+				});
+	}
 			
 	$(document).on('click','.package-edit-btn',function(event) {
 		event.preventDefault();	
+		
+		/* trigger delete rows  */
+		var rowno = $("#serviceTable tr").length;
+		if(rowno > 1){
+		  for(i=1;i<rowno;i++){	
+		    $('#serviceTable tr:last').remove();
+		  }
+		  $('#serviceTable tr:last select[name="service_sub_category_id[]"]').multiselect('clearSelection');
+		}
+		
+		/* trigger delete rows  */
+		var rowno = $("#discountTable tr").length;
+		if(rowno > 1){
+		  for(i=1;i<rowno;i++){	
+		    $('#discountTable tr:last').remove();
+		  }
+		  $('#discountTable tr:last select[name="service_sub_category_id[]"]').multiselect('clearSelection');
+		}
+		
+		/* trigger delete rows  */
+		var rowno = $("#serviceSubCategoryBulkTable tr").length;
+		if(rowno > 1){
+		  for(i=1;i<rowno;i++){	
+		    $('#serviceSubCategoryBulkTable tr:last').remove();
+		  }
+		  $('#serviceSubCategoryBulkTable tr:last select[name="service_sub_category_bulk[]"]').multiselect('clearSelection');
+		}
+		
+		/* trigger delete rows  */
+		var rowno = $("#discountSubCategoryBulkTable tr").length;
+		if(rowno > 1){
+		  for(i=1;i<rowno;i++){	
+		    $('#discountSubCategoryBulkTable tr:last').remove();
+		  }
+		  $('#discountSubCategoryBulkTable tr:last select[name="service_sub_category_bulk[]"]').multiselect('clearSelection');
+		}
+		
+		/* trigger delete rows  */
+		var rowno = $("#serviceCategoryBulkTable tr").length;
+		if(rowno > 1){
+		  for(i=1;i<rowno;i++){	
+		    $('#serviceCategoryBulkTable tr:last').remove();
+		  }
+		  $('#serviceCategoryBulkTable tr:last select[name="service_category_bulk[]"]').multiselect('clearSelection');
+		}
+		
+		/* trigger delete rows  */
+		var rowno = $("#discountCategoryBulkTable tr").length;
+		if(rowno > 1){
+		  for(i=1;i<rowno;i++){	
+		    $('#discountCategoryBulkTable tr:last').remove();
+		  }
+		  $('#discountCategoryBulkTable tr:last select[name="discount_service_category_bulk[]"]').multiselect('clearSelection');
+		}
+		
+				
 			$("#ModalAddPackage").find('.modal-title').html('Edit Package'); 
 			 var packageAssociationId = $(this).attr('salon_package_association_id');
 			 $("#association_id").val(packageAssociationId);
@@ -897,7 +1202,7 @@
 							 
 
 							 $('[id=packageType] option').filter(function() { 
-								return ($(this).text() == data.salon_package_type_selected); //To select dropdown record
+								return ($(this).val() == data.salon_package_type_selected); //To select dropdown record
 							 }).prop('selected', true);
 								
 							
@@ -909,43 +1214,140 @@
 							
 							 $('#salon_package_outlet_ids').multiselect('destroy').multiselect(multiSelectParamsDataForOutlets);	
 
-							
-							  if(data.salon_package_type=='Services' || data.salon_package_type=='Discount' || data.salon_package_type_selected=='salon_package_type_selected'){
-								   togglePackage();
-								    
-									if(data.salon_package_type=='Services') {
-										
-									 	$.each(data.servicesDetails, function(key, serviceDetails) {
-										
-											 $('#serviceTable tr:last select[name=service_sub_category_id] option').filter(function() { 
-												return ($(this).val() == serviceDetails.service_sub_category_id); //To select dropdown record
-											 }).prop('selected', true);
+							  togglePackage();
+							  //if(data.salon_package_type_selected=='Services' || data.salon_package_type_selected=='Discount' || data.salon_package_type_selected=='Service_SubCategory_Bulk' || data.salon_package_type_selected=='Discount_SubCategory_Bulk'){
+								
+							  if(data.salon_package_type_selected=='special_membership'){
+								  console.log('come');
+							  }else{
+							     var tableId = '';
+								   if(data.salon_package_type_selected=='Services') {
+									   tableId = 'serviceTable'; 
+								   }else if(data.salon_package_type_selected=='Discount'){
+									   tableId = 'discountTable'; 
+								   }else if(data.salon_package_type_selected=='Service_SubCategory_Bulk'){
+									   tableId = 'serviceSubCategoryBulkTable'; 
+								   }else if(data.salon_package_type_selected=='Discount_SubCategory_Bulk'){
+									   tableId = 'discountSubCategoryBulkTable'; 
+								   }else if(data.salon_package_type_selected=='Service_Category_Bulk'){
+									   tableId = 'serviceCategoryBulkTable'; 
+								   }else if(data.salon_package_type_selected=='Discount_Category_Bulk'){
+									   tableId = 'discountCategoryBulkTable'; 
+								   }
+								   
+								   if(tableId!=""){
+									   	var firstRowServiceDetails = "";
+										var i=1;
+										$.each(Object.keys(data.servicesDetails), function( index, key ) {
+										  
+										  var  serviceDetails  = data.servicesDetails[key];
+										 
+										if(i==1){
+											     firstRowServiceDetails = serviceDetails;
+											    
+											   if(tableId=='serviceSubCategoryBulkTable' || tableId=='discountSubCategoryBulkTable'){
+												    $.each(serviceDetails, function(key1, service) {
+													   
+														 $("#"+tableId+" tr:last select[name='service_sub_category_bulk[]'] option").filter(function() { 
+															return ($(this).val() == service.service_sub_category_id); //To select dropdown record
+														 }).prop('selected', true);
+													 });
+													 
+													$("#"+tableId+" tr:last select[name='service_sub_category_bulk[]']").multiselect('destroy').multiselect(multiSelectParamsData);
+											       if(tableId=='serviceSubCategoryBulkTable'){
+														$('#serviceSubCategoryBulkTable tr:last input[name="count_service_subcategory_bulk[]"]').attr('value',key); 
+												   }else if(tableId=='discountSubCategoryBulkTable'){
+													 	$('#discountSubCategoryBulkTable tr:last input[name="count_discount_subcategory_bulk[]"]').attr('value',key); 
+														$('#discountSubCategoryBulkTable tr:last input[name="discount_subcategory_bulk[]"]').attr('value',serviceDetails[0].discount_percentage); 
+												   }
+											   
+											   }if(tableId=='serviceCategoryBulkTable' || tableId=='discountCategoryBulkTable'){
+												  
+												   if(tableId=='serviceCategoryBulkTable'){
+													     var tabName = 'service_category_bulk[]';
+														
+														$('#serviceCategoryBulkTable tr:last input[name="count_service_category_bulk[]"]').attr('value',key); 
+												   }else if(tableId=='discountCategoryBulkTable'){
+													    var tabName = 'discount_service_category_bulk[]';
+													 	$('#discountCategoryBulkTable tr:last input[name="service_price_greater_than[]"]').attr('value',serviceDetails[0].service_price_inr); 
+													 	$('#discountCategoryBulkTable tr:last input[name="count_discount_category_bulk[]"]').attr('value',key); 
+														$('#discountCategoryBulkTable tr:last input[name="discount_category_bulk[]"]').attr('value',serviceDetails[0].discount_percentage); 
+												   }
+												   
+												   $.each(serviceDetails, function(key1, service) {
+													   
+														 $("#"+tableId+" tr:last select[name='"+tabName+"'] option").filter(function() { 
+															return ($(this).val() == service.service_category_id); //To select dropdown record
+														 }).prop('selected', true);
+													 });
+													 
+													$("#"+tableId+" tr:last select[name='"+tabName+"']").multiselect('destroy').multiselect(multiSelectParamsData);
+											      
+											   
+											  }else if(tableId=='serviceTable' || tableId=='discountTable'){  
+													$.each(serviceDetails, function(key1, service) {
+													   
+														 $("#"+tableId+" tr:last select[name='service_sub_category_id[]'] option").filter(function() { 
+															return ($(this).val() == service.service_sub_category_id); //To select dropdown record
+														 }).prop('selected', true);
+													 });
+													 
+													$("#"+tableId+" tr:last select[name='service_sub_category_id[]']").multiselect('destroy').multiselect(multiSelectParamsData);
+												    var parameters = {
+														'sub_category_id' :  $("#"+tableId+" tr:last select[name='service_sub_category_id[]']").val()
+													};
+												   getServiceSubCategoryById(parameters,firstRowServiceDetails,tableId);	
+												   if(tableId=='serviceTable'){ 
+														$("#serviceTable tr:last input[name='count_service[]']").attr('value',key); 
+												   }else if(tableId=='discountTable'){
+														$('#discountTable tr:last input[name="count_discount[]"]').attr('value',key); 
+														$('#discountTable tr:last input[name="discount[]"]').attr('value',serviceDetails[0].discount_percentage); 
+												   }
+											  }
+											  
+										}else{
+												
+											function delay(){
+											  // Add New row  
+											  if(tableId=='serviceTable'){ 
+											   addNewRowOfService(serviceDetails);
+											   $("#serviceTable tr:last input[name='count_service[]']").attr('value',key); 
+											  }else if(tableId=='discountTable'){
+												  addNewRowOfDiscount(serviceDetails);
+												  $('#discountTable tr:last input[name="count_discount[]"]').attr('value',key); 
+												  $('#discountTable tr:last input[name="discount[]"]').attr('value',serviceDetails[0].discount_percentage); 
+											  }else if(tableId=='serviceSubCategoryBulkTable'){	
+												  addNewRowOfServiceSubCategoryBulk(serviceDetails);
+												  $('#serviceSubCategoryBulkTable tr:last input[name="count_service_subcategory_bulk[]"]').attr('value',key); 
+											  }else if(tableId=='discountSubCategoryBulkTable'){	
+												  addNewRowOfDiscountServiceSubCategoryBulk(serviceDetails);
+												  $('#discountSubCategoryBulkTable tr:last input[name="count_discount_subcategory_bulk[]"]').attr('value',key); 
+												  $('#discountSubCategoryBulkTable tr:last input[name="discount_subcategory_bulk[]"]').attr('value',serviceDetails[0].discount_percentage); 
+											  }else if(tableId=='serviceCategoryBulkTable'){	
+												  addNewRowOfServiceCategoryBulk(serviceDetails);
+												  $('#serviceCategoryBulkTable tr:last input[name="count_service_category_bulk[]"]').attr('value',key); 
+											  }else if(tableId=='discountSubCategoryBulkTable'){	
+												  addNewRowOfDiscountServiceCategoryBulk(serviceDetails);
+													$('#discountCategoryBulkTable tr:last input[name="service_price_greater_than[]"]').attr('value',serviceDetails[0].service_price_inr); 
+													$('#discountCategoryBulkTable tr:last input[name="count_discount_category_bulk[]"]').attr('value',key); 
+													$('#discountCategoryBulkTable tr:last input[name="discount_category_bulk[]"]').attr('value',serviceDetails[0].discount_percentage); 
+											  }
+											  if(tableId=='serviceTable' || tableId=='discountTable'){   
+												   var parameters = {
+														'sub_category_id' :  $("#"+tableId+" tr:last select[name='service_sub_category_id[]']").val()
+													};
+													getServiceSubCategoryById(parameters,serviceDetails,tableId);
+												}
+												  
+											};
+											window.setTimeout( delay, 200 ); // 5 seconds
+		
+										}
 											
-											 $("#service_price_inr").attr('value',serviceDetails.service_price_inr);
-											 $("#ModalAddPackage input[name=count_service]").attr('value',serviceDetails.service_count);
-											 
+											i++;
 										});
-										
-										$('#serviceTable tr:last select[name=service_sub_category_id]').multiselect('destroy').multiselect(multiSelectParamsData);
-											
-										$( "#serviceTable tr:last select[name=service_sub_category_id]" ).trigger("change",[data.servicesDetails]);	
-										/*
-										$.each(data.servicesDetails, function(key, serviceDetails) {
-											
-											 $('[id=service_id] option').filter(function() { 
-												return (parseInt($(this).val()) == serviceDetails.service_id); //To select dropdown record
-											 }).prop('selected', true);
-											 
-										});
-										*/
-										
-										
-											
-										
-									} 
-							  }else if(data.salon_package_type=='Wallet'){
-								  
-								  
+								   }
+								   
 							  }
 		
 							/*var options = ""; 
@@ -987,7 +1389,7 @@
 		
 		$('#discountCategoryBulkTable tr:last select[name="discount_service_category_bulk[]"]').multiselect(multiSelectParamsData);
 		$('#service_id_discount').multiselect(multiSelectParamsData);
-		$('#service_category_bulk').multiselect(multiSelectParamsData);
+		$('#service_category_bulk_1').multiselect(multiSelectParamsData);
 		$('#specialMembershipTable1 tr:last select[name="category_type1[]"]').multiselect(multiSelectParamsCategoryTpe);
 		$('#specialMembershipTable2 tr:last select[name="category_type2[]"]').multiselect(multiSelectParamsCategoryTpe);	
 		$('#specialMembershipTable3 tr:last select[name="category_type3[]"]').multiselect(multiSelectParamsCategoryTpe);	
@@ -1390,7 +1792,23 @@
 					}
 				},
 				submitHandler: function(form) {
+					$("#serviceSubCategoryBulkTable tr").each(function(i){
+						$(this).find('td input[name="service_sub_category_bulk_index[]"]').val($(this).find("td select[name='service_sub_category_bulk[]']").val());
+					});
+					$("#discountSubCategoryBulkTable tr").each(function(i){
+						$(this).find('td input[name="service_sub_category_discount_bulk_index[]"]').val($(this).find("td select[name='service_sub_category_bulk[]']").val());
+					});
+					$("#serviceCategoryBulkTable tr").each(function(i){
+						$(this).find('td input[name="service_category_bulk_index[]"]').val($(this).find("td select[name='service_category_bulk[]']").val());
+					});
+					$("#discountCategoryBulkTable tr").each(function(i){
+						$(this).find('td input[name="service_discount_category_bulk_index[]"]').val($(this).find("td select[name='discount_service_category_bulk[]']").val());
+					});
+					
+					
 					var formData = $("#AddPackage").serialize(); 
+					console.log(formData);
+					
 					// alert("Ashok");
 					$.ajax({
 						url: "<?=base_url()?>MasterAdmin/MasterAdminAddPackage",
@@ -1774,48 +2192,28 @@
 			
 			
 			$(document).on('change',"#serviceTable tr:last select[name='service_sub_category_id[]']",function(e,serviceDetails){
-				
+				e.preventDefault();
 				var parameters = {
 					'sub_category_id' :  $(this).val()
 				};
-				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatMultipleIds", parameters)
-				.done(function(data, textStatus, jqXHR) {
-					
-						var options = ""; 
-						
-						for(var i=0;i<data.length;i++){
-							var selected = "";
-						   if(typeof(serviceDetails)!= "undefined" ){
-							$.each(serviceDetails, function(key, service) {
-								if(service.service_id==data[i].service_id){
-									selected = 'selected="selected"';
-								} //To select dropdown record
-						    });
-						   }
-							options += "<option value="+data[i].service_id+" "+selected+" >"+data[i].service_name+"</option>";
-						}
-						
-					  
-						$("#serviceTable tr:last select[temp=Service]").html("").html(options);
-						$('#serviceTable tr:last select[name="service_id[]"]').multiselect('destroy').multiselect(multiSelectParamsData1);
-						
-				})
-				.fail(function(jqXHR, textStatus, errorThrown) {
-					console.log(errorThrown.toString());
-					
-				});
+				getServiceSubCategoryById(parameters,serviceDetails,'serviceTable');
 				
 			});
 			
-			$(document).on('change',"#discountTable tr:last select[name='service_sub_category_id[]']",function(e){
+			
+			
+			$(document).on('change',"#discountTable tr:last select[name='service_sub_category_id[]']",function(e,serviceDetails){
 				var parameters = {
 					'sub_category_id' :  $(this).val()
 				};
+				getServiceSubCategoryById(parameters,serviceDetails,'discountTable');
+				/*
 				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatMultipleIds", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = ""; 
 						for(var i=0;i<data.length;i++){
-							options += "<option value="+data[i].service_id+">"+data[i].service_name+"</option>";
+							options += "<option value="+data[i].service_id+"  >"+data[i].service_name+" ("+data[i].service_price_inr+")</option>";
+						
 						}
 						$("#discountTable tr:last select[temp=Service]").html("").html(options);
 						$("#discountTable tr:last select[name='service_id[]']").multiselect('destroy').multiselect(multiSelectParamsData);
@@ -1824,7 +2222,7 @@
 				})
 				.fail(function(jqXHR, textStatus, errorThrown) {
 					console.log(errorThrown.toString());
-				});
+				}); */
 			});
 
 			
@@ -1856,199 +2254,46 @@
 					console.log(errorThrown.toString());
 				});
 			}); */
-			
+		
 			$("#AddRowService").click(function(event){
 				event.preventDefault();
 				this.blur();
-				var rowno = $("#serviceTable tr").length;
-				
-				rowno = rowno+1;
-				var htmlContent = '<tr><td>';
-				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
-				    htmlContent += '<select class="form-control" name="service_sub_category_id[]" multiple>';
-				   
-				    <?php if(!empty($categories)){
-						foreach($categories as $key=>$category): ?>
-						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
-							<?php if(!empty($sub_categories)){
-								foreach($sub_categories as $subcategoryDetails){
-									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
-										htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
-									<?php }		
-								}
-							} 
-							?>
-						htmlContent += '</optgroup>';
-						<?php endforeach;
-					}
-					?>
-					
-					htmlContent +='</select></div></td>';
-					htmlContent +='<td><div class="form-group"><label>Service</label>';
-					htmlContent +='<select class="form-control" name="service_id[]" temp="Service" multiple></select></div>';
-					htmlContent +='</td><td><div class="form-group" ><label>Price</label><input type="text" class="form-control" name="service_price_inr" temp="service_price_inr"></div></td>';
-					htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_service[]" temp="Count" value="1" min="1" max="25"></select></div></td></tr>';
-				    $("#serviceTable tr:last").after(htmlContent);
-					
-					$('#serviceTable tr:last select[name="service_sub_category_id[]"]').multiselect(multiSelectParamsData);
-					$('#serviceTable tr:last select[name="service_id[]"]').multiselect(multiSelectParamsData);						
-										
-											
+			    addNewRowOfService();					
 			});
 
 			$("#AddRowDiscount").click(function(event){
 				event.preventDefault();
 				this.blur();
-				var rowno = $("#discountTable tr").length;
-				
-				rowno = rowno+1;
-				
-				var htmlContent = '<tr><td>';
-				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
-				    htmlContent += '<select class="form-control" name="service_sub_category_id[]" multiple>';
-				   
-				    <?php if(!empty($categories)){
-						foreach($categories as $key=>$category): ?>
-						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
-							<?php if(!empty($sub_categories)){
-								foreach($sub_categories as $subcategoryDetails){
-									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
-										htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
-									<?php }		
-								}
-							} 
-							?>
-						htmlContent += '</optgroup>';
-						<?php endforeach;
-					}
-					?>
-					
-					htmlContent +='</select></div></td>';
-					htmlContent +='<td><div class="form-group"><label>Service</label>';
-					htmlContent +='<select class="form-control" name="service_id[]" temp="Service" multiple></select></div>';
-					htmlContent +='</td><td><div class="form-group" ><label>Price</label><input type="text" class="form-control" name="service_price_inr" temp="service_price_inr"></div></td>';
-					htmlContent +='<td><div class="form-group"><label>Discount</label><input type="number" min="0" max="100" class="form-control" name="discount[]" temp="Discount"></div></td>';
-					htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_discount[]" temp="Count" value="1" min="1" max="25"></select></div></td></tr>';
-				    $("#discountTable tr:last").after(htmlContent);
-					
-					$('#discountTable tr:last select[name="service_sub_category_id[]"]').multiselect(multiSelectParamsData);
-					$('#discountTable tr:last select[name="service_id[]"]').multiselect(multiSelectParamsData);	
-				
+				addNewRowOfDiscount();
+			
 			});
 			
 			$("#AddRowDiscountCategoryBulk").click(function(event){
 				event.preventDefault();
 				this.blur();
-				var rowno = $("#discountCategoryBulkTable tr").length;
-				
-				rowno = rowno+1;
-				var htmlContent = '<tr><td>';
-				    htmlContent += '<div class="form-group"><label>Category</label>';
-				    htmlContent += '<select class="form-control" name="discount_service_category_bulk[]" multiple>';
-				<?php foreach ($categories as $category) { ?>
-						htmlContent +=  '<option value="<?php echo $category["category_id"]; ?>"><?php echo $category["category_name"] ?></option>'; 
-				<?php }
-				?>
-					htmlContent +='</select></div></td>';
-					htmlContent +='<td><div class="form-group"><label>Service Price</label>';
-					htmlContent +='<input type="number" class="form-control" name="service_price_greater_than[]" temp="Discount_Category_Bulk"></div></td>';
-				    htmlContent +='<td><div class="form-group"><label>Discount</label><input type="number" min="0" max="100" class="form-control" name="discount_category_bulk[]" temp="Discount"></div></td>';
-					htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_discount_category_bulk[]" temp="Count" value="1" min="1" max="25"></div></td></tr>';
-				
-				
-				$("#discountCategoryBulkTable tr:last").after(htmlContent);
-				
-				$('#discountCategoryBulkTable tr:last select[name="discount_service_category_bulk[]"]').multiselect(multiSelectParamsData);
+				addNewRowOfDiscountServiceCategoryBulk();
 			});
+			
 			
 			// Add Row in Service CAtegory bulk
 			$("#AddRowServiceCategoryBulk").click(function(event){
 				event.preventDefault();
 				this.blur();
-				var rowno = $("#serviceCategoryBulkTable tr").length;
-				
-				rowno = rowno+1;
-				var htmlContent = '<tr><td>';
-				    htmlContent += '<div class="form-group"><label>Category</label>';
-				    htmlContent += '<select class="form-control" name="service_category_bulk[]" multiple>';
-				<?php foreach ($categories as $category) { ?>
-						htmlContent +=  '<option value="<?php echo $category["category_id"]; ?>"><?php echo $category["category_name"] ?></option>'; 
-				<?php }
-				?>
-				htmlContent +='</select></div></td>';
-				htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_service_subcategory_bulk[]" temp="Count" value="1" min="1" max="25"></div></td></tr>';
-				$("#serviceCategoryBulkTable tr:last").after(htmlContent);
-				
-				$('#serviceCategoryBulkTable tr:last select[name="service_category_bulk[]"]').multiselect(multiSelectParamsData);
+			    addNewRowOfServiceCategoryBulk();
 			});
+			
 			
 			$("#AddRowDiscountSubCategoryBulk").click(function(event){
 				event.preventDefault();
 				this.blur();
-				var rowno = $("#discountSubCategoryBulkTable tr").length;
-				
-				rowno = rowno+1;
-				var htmlContent = '<tr><td>';
-				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
-				    htmlContent += '<select class="form-control" name="service_sub_category_bulk[]" multiple temp="Discount_SubCategory_Bulk">';
-				   
-				    <?php if(!empty($categories)){
-						foreach($categories as $key=>$category): ?>
-						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
-							<?php if(!empty($sub_categories)){
-								foreach($sub_categories as $subcategoryDetails){
-									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
-										htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
-									<?php }		
-								}
-							} 
-							?>
-						htmlContent += '</optgroup>';
-						<?php endforeach;
-					}
-					?>
-
-				htmlContent +='</select></div></td>';
-				htmlContent += '<td><div class="form-group"><label>Discount</label><input type="number" min="0" max="100" class="form-control" name="discount_subcategory_bulk[]" temp="Discount"></div></td>';				
-				htmlContent += '<td><div class="form-group"><label>Count</label><input type="number" min="0" max="100" class="form-control" name="count_discount_subcategory_bulk[]" temp="Count"  value="1" min="1" max="25"></div></td></tr>';				
-				$("#discountSubCategoryBulkTable tr:last").after(htmlContent);
-				$('#discountSubCategoryBulkTable tr:last select[name="service_sub_category_bulk[]"]').multiselect(multiSelectParamsData);
-						
+				addNewRowOfDiscountServiceSubCategoryBulk();						
 			});
 
-			
+		
 			$("#AddRowServiceSubCategoryBulk").click(function(event){
 				event.preventDefault();
 				this.blur();
-				var rowno = $("#serviceSubCategoryBulkTable tr").length;
-				
-				rowno = rowno+1;
-				var htmlContent = '<tr><td>';
-				    htmlContent += '<div class="form-group"><label>Sub-Category</label>';
-				    htmlContent += '<select class="form-control" name="service_sub_category_bulk[]" multiple temp="Service_SubCategory_Bulk">';
-				   
-				    <?php if(!empty($categories)){
-						foreach($categories as $key=>$category): ?>
-						   htmlContent += '<optgroup label="<?php echo $category["category_name"]; ?>">';
-							<?php if(!empty($sub_categories)){
-								foreach($sub_categories as $subcategoryDetails){
-									if($subcategoryDetails['sub_category_category_id']==$category['category_id']){ ?>
-										htmlContent += '<option value="<?php echo $subcategoryDetails["sub_category_id"] ?>"><?php echo $subcategoryDetails["sub_category_name"]; ?></option>';
-									<?php }		
-								}
-							} 
-							?>
-						htmlContent += '</optgroup>';
-						<?php endforeach;
-					}
-					?>
-
-				htmlContent +='</select></div></td>';
-				htmlContent += '<td><div class="form-group"><label>Count</label><input type="number" min="0" max="100" class="form-control" name="count_service_subcategory_bulk[]" temp="Count"  value="1" min="1" max="25"></div></td></tr>';				
-			
-				$("#serviceSubCategoryBulkTable tr:last").after(htmlContent);
-				$('#serviceSubCategoryBulkTable tr:last select[name="service_sub_category_bulk[]"]').multiselect(multiSelectParamsData);
-						
+				addNewRowOfServiceSubCategoryBulk();			
 			});
 			
 

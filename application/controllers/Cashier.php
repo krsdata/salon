@@ -3525,7 +3525,8 @@ class Cashier extends CI_Controller {
         if($this->IsLoggedIn('cashier')){       
                 $data = $this->GetDataForCashier("Buy Packages");           
                 $data['salon_packages'] = $this->AdminActivePackages();
-                $data['sidebar_collapsed'] = "true";      
+            
+				$data['sidebar_collapsed'] = "true";      
                 $customer_id = $this->uri->segment(3);
                 if($customer_id != ''){
                     $sess_data = $this->GetCustomerBilling($customer_id);
@@ -3607,12 +3608,12 @@ class Cashier extends CI_Controller {
 		if($this->IsLoggedIn('cashier')){
 			
 			$where = array(
-				'business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
+				//'business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
 				'business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 				'is_active' => TRUE
 			);
 
-			$data = $this->CashierModel->MultiWhereSelect('mss_salon_packages',$where);
+			$data = $this->CashierModel->GetTotalPackagesByOutletId($where);
 			
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
@@ -3645,12 +3646,13 @@ class Cashier extends CI_Controller {
 			}
 		 //
 		 $where = array(
-			'business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
+			//'business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
 			'business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 			'is_active' => TRUE
 		);
 			$data = $this->GetDataForCashier("Active Package");	
-			$data['activePackages']=$this->CashierModel->ActivePackage($where['business_admin_id'],$where['business_outlet_id']);
+		   
+			$data['activePackages']=$this->CashierModel->ActivePackage($where['business_outlet_id']);
 			$data['activePackages']=$data['activePackages']['res_arr'];
 		
 			$data['sidebar_collapsed'] = "true";
@@ -3682,7 +3684,26 @@ class Cashier extends CI_Controller {
 			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
-
+	
+	public function PackageDetail(){
+		
+		if($this->IsLoggedIn('cashier')){
+			$packageId = $this->uri->segment(3);
+			if(isset($packageId) && !empty($packageId)){
+				$data = $this->CashierModel->GetPackageDetails($packageId);
+				if(isset($data['res_arr']) && !empty($data['res_arr'])){
+					$this->load->view('cashier/cashier_packages_details_view',$data);	
+				}else{
+					redirect(base_url().'Cashier/ActivePackages','refresh');
+				}
+			}else{
+				redirect(base_url().'Cashier/ActivePackages','refresh');
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/");
+		}		
+	}
 	public function GetPackage(){
 		if($this->IsLoggedIn('cashier')){
 			if(isset($_GET) && !empty($_GET)){

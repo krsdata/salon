@@ -227,7 +227,17 @@ class MasterAdminModel extends CI_Model
 		  return $this->ModelHelper(false, true, "DB error!");
 		}
   }
- 
+  
+  public function getMasterCategoriesBySubCatIds($where){
+	   $sql = "SELECT A.`sub_category_id`,A.`sub_category_name`,A.`sub_category_category_id`,B.category_id,B.category_name FROM `master_sub_categories` as A,`master_categories` as B  WHERE A.`sub_category_id` IN (".$where['sub_category_id'].") AND A.`sub_category_is_active` = " . $this->db->escape($where['sub_category_is_active']) . " AND A.`sub_category_category_id`=B.category_id ";
+	   $query = $this->db->query($sql);
+    
+		if ($query) {
+		  return $this->ModelHelper(true, false, '', $query->result_array());
+		} else {
+		  return $this->ModelHelper(false, true, "DB error!");
+		}
+  }
   
   public function Services($where)
   {
@@ -456,33 +466,50 @@ class MasterAdminModel extends CI_Model
   
    // Add category packages for salon
     public function AddServiceCategoryBulkPackage($data,$categories,$count,$outletIds,$masterId){   
-
-      $result = $this->Insert($data,'mss_salon_packages_master_new');
+	  $categoryBulkIndex = $data['service_category_bulk_index'];
+	
+	  unset($data['service_category_bulk_index']);	
+      $result = $this->Insert($data,'mss_salon_packages');
       $last_insert_id = $result['res_arr']['insert_id'];
 
       //create a services packages
 	  $servicesIds = array();
       for($i=0;$i < count($categories);$i++){
+		$serviceCount = 0;
+			 /* Find Count */
+			 if(!empty($categoryBulkIndex)){
+				foreach($categoryBulkIndex as $key=>$catgroup){
+					if(in_array($categories[$i],explode(',',$catgroup))){
+						$serviceCount 	 = (int) $count[$key];
+					}
+				}
+			}
+		
 					$sub_categories=$this->MultiWhereSelect('master_sub_categories',array('sub_category_category_id' => $categories[$i]));
+					
 					$sub_categories=$sub_categories['res_arr'];
 					for($j=0;$j< count($sub_categories);$j++){
           //for each sub category id -> add all services in it
-						$services_data = $this->MultiWhereSelect('master_services',array('service_sub_category_id' => $sub_categories[$i]['sub_category_id']));
+						$services_data = $this->MultiWhereSelect('master_services',array('service_sub_category_id' => $sub_categories[$j]['sub_category_id']));
 						
 						$services = $services_data['res_arr'];
+						
+						
 						foreach ($services as $service) {
 								$data_2 = array(
 										'salon_package_id' => $last_insert_id,
 										'service_id' 		=> $service['service_id'],
 										'discount_percentage' => 100,
-										'service_count' => (int)$count[0],
+										'service_count' => $serviceCount,
 										'master_id' => $masterId
 								);
+							
 								$result_2 = $this->Insert($data_2,'mss_salon_package_data');
 								$servicesIds[] = $service['service_id'];
 						}
 					}
       }
+	
 	  /* Outlet_services */
 	  $this->AddServiceForOutlet($servicesIds,$outletIds);	
       return $this->ModelHelper(true,false,'',array('insert_id'=>$last_insert_id));
@@ -490,14 +517,28 @@ class MasterAdminModel extends CI_Model
 	
 	
 	public function AddDiscountCategoryBulkPackage($data,$categories,$cat_price,$discounts,$count,$outletIds,$masterId){
-
-        $result = $this->Insert($data,'mss_salon_packages_master_new');
+	  $categoryBulkIndex = $data['service_category_bulk_index'];
+	
+	  unset($data['service_category_bulk_index']);
+        $result = $this->Insert($data,'mss_salon_packages');
 
         $last_insert_id = $result['res_arr']['insert_id'];
 
         //create a discounts packages
 		$servicesIds = array();
         for($i=0;$i<count($categories);$i++){
+			
+			$serviceCount = $serviceDiscount = 0;
+			 /* Find Count */
+			 if(!empty($categoryBulkIndex)){
+				foreach($categoryBulkIndex as $key=>$catgroup){
+					if(in_array($categories[$i],explode(',',$catgroup))){
+						$serviceCount 	 	 = (int) $count[$key];
+						$serviceDiscount 	 = (int) $discounts[$key];
+					}
+				}
+			}
+			
 					$sub_categories=$this->MultiWhereSelect('master_sub_categories',array('sub_category_category_id' => $categories[$i]));
 					$sub_categories=$sub_categories['res_arr'];
 					for($j=0;$j< count($sub_categories);$j++){
@@ -510,8 +551,8 @@ class MasterAdminModel extends CI_Model
 								$data_2 = array(
 									'salon_package_id' => $last_insert_id,
 									'service_id' => $services[$k]['service_id'],
-									'discount_percentage' => (int)$discounts[$i],
-									'service_count' => $count[0],
+									'discount_percentage' => $serviceDiscount,
+									'service_count' =>$serviceCount,
 									'master_id' => $masterId
 								);
 								$result_2 = $this->Insert($data_2,'mss_salon_package_data');
@@ -529,7 +570,7 @@ class MasterAdminModel extends CI_Model
  //ServicePAckage
 	public function AddDiscountServicePackage($post,$data,$count,$where,$outletIds,$masterId){
         // $this->PrintArray($_POST['category_type1']);
-		$result = $this->Insert($data,'mss_salon_packages_master_new');
+		$result = $this->Insert($data,'mss_salon_packages');
 		$last_insert_id = $result['res_arr']['insert_id'];	
 		$servicesIds = array();
         if(!empty($_POST['category_type1'])){
@@ -645,15 +686,28 @@ class MasterAdminModel extends CI_Model
   
   public function AddServiceSubCategoryBulkPackage($data, $sub_categories, $count,$outletIds,$masterId)
   {
-
-    $result = $this->Insert($data, 'mss_salon_packages_master_new');
+    $subCategoryBulkIndex = $data['service_sub_category_bulk_index'];
+	
+	unset($data['service_sub_category_bulk_index']);
+    $result = $this->Insert($data, 'mss_salon_packages');
 
     $last_insert_id = $result['res_arr']['insert_id'];
 
     //create a services packages
 	$servicesIds = array();
-    for ($i = 0; $i < count($sub_categories); $i++) {
-
+	
+	
+	for ($i = 0; $i < count($sub_categories); $i++) {
+	 $serviceCount = 0;
+     /* Find Count */
+	 if(!empty($subCategoryBulkIndex)){
+		foreach($subCategoryBulkIndex as $key=>$subCatgroup){
+			if(in_array($sub_categories[$i],explode(',',$subCatgroup))){
+				$serviceCount = (int) $count[$key];
+			}
+		}
+	}
+	
       //for each sub category id -> add all services in it
       $services_data = $this->MultiWhereSelect('master_services', array('service_sub_category_id' => $sub_categories[$i]));
 
@@ -663,7 +717,7 @@ class MasterAdminModel extends CI_Model
           'salon_package_id' => $last_insert_id,
           'service_id' => $service['service_id'],
           'discount_percentage' => 100,
-          'service_count' => (int) $count[0],
+          'service_count' => $serviceCount,
 		  'master_id'	=> $masterId
         );
         $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
@@ -677,14 +731,27 @@ class MasterAdminModel extends CI_Model
 
   public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $discounts, $count,$outletIds,$masterId)
   {
-    $result = $this->Insert($data, 'mss_salon_packages_master_new');
+	$subCategoryBulkIndex = $data['service_sub_category_bulk_index'];
+	
+	unset($data['service_sub_category_bulk_index']);
+    $result = $this->Insert($data, 'mss_salon_packages');
 
     $last_insert_id = $result['res_arr']['insert_id'];
 
     //create a discounts packages
 	$servicesIds = array();
     for ($i = 0; $i < count($sub_categories); $i++) {
-
+	  $serviceCount = 0;
+	  $serviceDiscount = 0;
+     /* Find Count */
+	 if(!empty($subCategoryBulkIndex)){
+		foreach($subCategoryBulkIndex as $key=>$subCatgroup){
+			if(in_array($sub_categories[$i],explode(',',$subCatgroup))){
+				$serviceCount 	 = (int) $count[$key];
+				$serviceDiscount = (int) $discounts[$key];
+			}
+		}
+	}
       //for each sub category id -> add all services in it
       $services_data = $this->MultiWhereSelect('master_services', array('service_sub_category_id' => (int) $sub_categories[$i]));
 
@@ -693,8 +760,8 @@ class MasterAdminModel extends CI_Model
         $data_2 = array(
           'salon_package_id' => $last_insert_id,
           'service_id' => $service['service_id'],
-          'discount_percentage' => (int) $discounts[$i],
-          'service_count' => (int) $count[0],
+          'discount_percentage' => $serviceDiscount,
+          'service_count' => $serviceCount,
 		  'master_id'	=> $masterId
         );
         $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
@@ -709,7 +776,7 @@ class MasterAdminModel extends CI_Model
   public function AddServicePackageForSalon($data, $services, $count_service,$outletIds,$masterId)
   {
 
-    $result = $this->Insert($data, 'mss_salon_packages_master_new');
+    $result = $this->Insert($data, 'mss_salon_packages');
 	$last_insert_id = $result['res_arr']['insert_id'];
    
     $count = 0;
@@ -720,7 +787,7 @@ class MasterAdminModel extends CI_Model
         'salon_package_id' => $last_insert_id,
         'service_id' => (int) $services[$i],
         'discount_percentage' => 100,
-        'service_count' => (int) $count_service[0],
+        'service_count' => (int) $count_service[$i],
 		'master_id'	=> $masterId
       );
       $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
@@ -741,7 +808,7 @@ class MasterAdminModel extends CI_Model
 
   public function AddDiscountPackageForSalon($data, $services, $discounts, $count_discount,$outletIds,$masterId)
   {
-    $result = $this->Insert($data, 'mss_salon_packages_master_new');
+    $result = $this->Insert($data, 'mss_salon_packages');
 
     $last_insert_id = $result['res_arr']['insert_id'];
 	
@@ -754,7 +821,7 @@ class MasterAdminModel extends CI_Model
         'salon_package_id' => $last_insert_id,
         'service_id' => (int) $services[$i],
         'discount_percentage' => (int) $discounts[$i],
-        'service_count' => (int) $count_discount[0],
+        'service_count' => (int) $count_discount[$i],
 		'master_id'	=> $masterId
       );
       $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
@@ -820,7 +887,7 @@ class MasterAdminModel extends CI_Model
   
   public function GetPackageDetailsByAssociationId($where)
   {
-    $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages_master_new as B WHERE A.`association_id`=" . $this->db->escape($where['association_id']) . "  AND A.`package_id`=B.salon_package_id";
+    $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`association_id`=" . $this->db->escape($where['association_id']) . "  AND A.`package_id`=B.salon_package_id";
 	$query = $this->db->query($sql);
 	
     if ($query) {
@@ -833,9 +900,9 @@ class MasterAdminModel extends CI_Model
   
   public function GetAllPackages($where,$filter=array())
   {
-    //$sql = "SELECT * FROM mss_salon_packages_master_new WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
-    //$sql = "SELECT * FROM mss_salon_packages_master_new WHERE salon_package_id IN (SELECT package_id FROM `mss_package_outlet_association` WHERE `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `master_id`=" . $this->db->escape($where['master_id']) . ")";
-	$sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages_master_new as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
+    //$sql = "SELECT * FROM mss_salon_packages WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
+    //$sql = "SELECT * FROM mss_salon_packages WHERE salon_package_id IN (SELECT package_id FROM `mss_package_outlet_association` WHERE `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `master_id`=" . $this->db->escape($where['master_id']) . ")";
+	$sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
 	
 	
 	if(isset($filter['searchValue']) && $filter['searchValue']!=""){
@@ -859,8 +926,8 @@ class MasterAdminModel extends CI_Model
   
   public function GetAllPackagesCountWithFilter($where,$filter=array())
   {
-    //$sql = "SELECT * FROM mss_salon_packages_master_new WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
-    $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages_master_new as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
+    //$sql = "SELECT * FROM mss_salon_packages WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
+    $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
 	
 	
 	if(isset($filter['searchValue']) && $filter['searchValue']!=""){
@@ -880,7 +947,7 @@ class MasterAdminModel extends CI_Model
   }
   
    public function GetAllPackagesCount($where,$filter=array()){
-        $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages_master_new as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
+        $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
 		if(!empty($filter['searchValue'])){
 				if(isset($filter['searchValue']) && $filter['searchValue']!=""){
 				 $sql .= "  AND  (B.salon_package_name like '%".$filter['searchValue']."%' or B.salon_package_type like '%".$filter['searchValue']."%' )";

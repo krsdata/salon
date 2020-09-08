@@ -997,8 +997,33 @@ class CashierModel extends CI_Model {
             return $this->ModelHelper(false,true,"DB error!");   
         }
     }
+	
+	public function GetPackageDetails($salon_package_id){
+        $sql = "SELECT * FROM mss_salon_packages,mss_salon_package_data,master_services WHERE mss_salon_packages.salon_package_id = mss_salon_package_data.salon_package_id AND mss_salon_package_data.service_id = master_services.service_id AND mss_salon_packages.salon_package_id = ".$this->db->escape($salon_package_id)."";
 
-    public function GetPackageDetails($salon_package_id){
+        $query = $this->db->query($sql);
+        
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
+	
+	public function GetTotalPackagesByOutletId($where){
+		$sql = "SELECT * FROM `mss_salon_packages` WHERE `salon_package_id` IN (SELECT `package_id` FROM `mss_package_outlet_association` WHERE `outlet_id`=".$this->db->escape($where['business_outlet_id'])." AND `is_active`=".$this->db->escape($where['is_active']).") AND `is_active`=".$this->db->escape($where['is_active'])."  ";
+		$query = $this->db->query($sql);
+        
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	
+    public function GetPackageDetails_old($salon_package_id){
         $sql = "SELECT * FROM mss_salon_packages,mss_salon_package_data,mss_services WHERE mss_salon_packages.salon_package_id = mss_salon_package_data.salon_package_id AND mss_salon_package_data.service_id = mss_services.service_id AND mss_salon_packages.salon_package_id = ".$this->db->escape($salon_package_id)."";
 
         $query = $this->db->query($sql);
@@ -1662,7 +1687,39 @@ class CashierModel extends CI_Model {
 			}  
 	}
 	//Appointment Module end
-	public function ActivePackage($business_admin_id,$business_outlet_id){
+	public function ActivePackage($business_outlet_id){
+		$sql = "SELECT DISTINCT  
+				A.salon_package_id,
+				A.salon_package_name,
+				A.salon_package_price,
+				A.salon_package_upfront_amt,
+				A.salon_package_validity,
+				A.salon_package_type,
+			    A.virtual_wallet_money,
+				A.salon_package_date,
+				A.total_count_of_services,
+				A.salon_package_end_date	
+				FROM 
+			   `mss_salon_packages` as A,`mss_salon_package_data` as B 
+				WHERE 
+				A.`salon_package_id`=B.`salon_package_id` 
+				AND 
+					A.`is_active`=1 
+				AND 
+					A.`salon_package_id` IN (SELECT `package_id` FROM `mss_package_outlet_association` WHERE `outlet_id`=".$this->db->escape($business_outlet_id)." AND `is_active`=1)
+				AND DATE(A.salon_package_end_date) >= DATE(NOW())";
+
+        $query = $this->db->query($sql);
+        
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	
+	public function ActivePackage_old($business_admin_id,$business_outlet_id){
 		$sql = "SELECT DISTINCT
 		mss_salon_packages.salon_package_id,
 		mss_salon_packages.salon_package_name,
@@ -1693,6 +1750,7 @@ class CashierModel extends CI_Model {
             return $this->ModelHelper(false,true,"DB error!");   
         }
 	}
+	
 	//Package Redemption
 	public function GetPackageRedemptionDetails($where){
 		$sql = "SELECT 

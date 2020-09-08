@@ -117,7 +117,7 @@
 												<input type="text" class="form-control" name="package_type" readonly>
 											</div>
 											<div class="form-group col-md-6">
-												<label class="form-label">Package Validity (In months)</label>
+												<label class="form-label">Package Validity (In days)</label>
 												<input type="number" class="form-control" name="package_validity" readonly>
 											</div>
 											</div>
@@ -202,7 +202,7 @@
 												<th>Upfront Amount</th>
 												<th>Creation Date</th>
 												<th>Wallet Balance</th>
-												<th>Validity (Months)</th>
+												<th>Validity (Days)</th>
 											</thead>
 											<tbody id="SingleWalletPackageDetails">
 											</tbody>
@@ -330,7 +330,7 @@
 																	
 																	<div class="col-12">
 																		<p class="d-flex mb-0 font-weight-light" style="color:red;">Upfront Amt: Rs <?=$package['salon_package_upfront_amt']?></p>
-																		<p class="d-flex mb-0 font-weight-light">Validity: <?=$package['salon_package_validity']?> months</p>
+																		<p class="d-flex mb-0 font-weight-light">Validity: <?=$package['salon_package_validity']?> days</p>
 																	</div>
 																</div>
 																<div class="row">
@@ -374,7 +374,7 @@
 																
 																<div class="col-12">
 																	<p class="d-flex mb-0 font-weight-light" style="color:red;">Upfront Amt: Rs <?=$package['salon_package_upfront_amt']?></p>
-																	<p class="d-flex mb-0 font-weight-light">Validity: <?=$package['salon_package_validity']?> months</p>
+																	<p class="d-flex mb-0 font-weight-light">Validity: <?=$package['salon_package_validity']?> days</p>
 																</div>
 															</div>
 															<div class="row">
@@ -418,7 +418,7 @@
 																
 																<div class="col-12">
 																	<p class="d-flex mb-0 font-weight-light" style="color:red;">Upfront Amt: Rs <?=$package['salon_package_upfront_amt']?></p>
-																	<p class="d-flex mb-0 font-weight-light">Validity: <?=$package['salon_package_validity']?> months</p>
+																	<p class="d-flex mb-0 font-weight-light">Validity: <?=$package['salon_package_validity']?> days</p>
 																</div>
 															</div>
 															<div class="row">

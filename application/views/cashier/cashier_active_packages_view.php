@@ -27,10 +27,10 @@
 												<th>Package Name</th>
 												<th>Type</th>
 												<th>MRP</th>
-												<th>Validity</th>
+												<th>Validity in Days</th>
 												<th>Wallet Balance</th>
 												<th>No.of Services</th>
-												<th>Discount %</th>
+												<th>Package End Date</th>
 												<th>Creation Date</th>
 												
 											</tr>
@@ -42,15 +42,15 @@
 											?>
 											<tr>
 												<td><?=$count?></td>
-												<td><a class="OpenServiceDetails text-primary" salon_package_id="<?=$packages['salon_package_id']?>"><?=$packages['salon_package_name']?></a></td>
+												<td><a href="<?=base_url('Cashier/PackageDetail/'.$packages['salon_package_id']); ?>" target="_blank" class="text-primary" salon_package_id="<?=$packages['salon_package_id']?>"><?=$packages['salon_package_name']?></a></td>
+												<!--<td><a  class="OpenServiceDetails text-primary" salon_package_id="<?=$packages['salon_package_id']?>"><?=$packages['salon_package_name']?></a></td>-->
 												<td><?=$packages['salon_package_type']?></td>
 												<td><?=$packages['salon_package_upfront_amt']?></td>
 												<td><?=$packages['salon_package_validity']?></td>
 												<td><?=$packages['virtual_wallet_money']?></td>
-												<td><?=$packages['service_count']?></td>	
-												<td><?=$packages['discount_percentage']?></td>										
+												<td><?=$packages['total_count_of_services']?></td>	
+												<td><?=$packages['salon_package_end_date']?></td>										
 												<td><?=$packages['salon_package_date']?></td>
-											
 											</tr>
 											<?php
 												$count++;
