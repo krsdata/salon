@@ -2458,13 +2458,14 @@ class BusinessAdminModel extends CI_Model {
     
     //Generate Bills
     public function GenerateBills($data){
-    	$sql="SELECT 
+        $sql="SELECT 
           mss_transactions.txn_id AS 'bill_no',
-    	  mss_transactions.txn_status,
+          mss_transactions.txn_status,
           mss_transactions.txn_unique_serial_id AS 'txn_id',
           date(mss_transactions.txn_datetime) AS 'billing_date',
           mss_customers.customer_mobile AS 'mobile',
           mss_customers.customer_name AS 'name',
+          IF(mss_transactions.txn_id,'Service','Service') AS 'Type' ,
           (mss_transactions.txn_discount+mss_transactions.txn_value) AS 'mrp_amt',
           mss_transactions.txn_discount AS 'discount',
           mss_transactions.txn_value AS 'net_amt',
@@ -2473,28 +2474,81 @@ class BusinessAdminModel extends CI_Model {
           mss_transaction_settlements.txn_settlement_way AS 'settlement_way',
           mss_transaction_settlements.txn_settlement_payment_mode AS 'payment_way'
       
-		FROM 
-		mss_customers,
-		mss_transactions,
-		mss_transaction_settlements,
-		mss_employees
-		WHERE 
-		mss_transactions.txn_customer_id = mss_customers.customer_id
-		AND mss_transactions.txn_cashier = mss_employees.employee_id
-		AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
-		AND mss_employees.employee_business_admin= ".$this->db->escape($data['business_admin_id'])."
-		AND mss_employees.employee_business_outlet= ".$this->db->escape($data['business_outlet_id'])."
-	    AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."";
+        FROM 
+        mss_customers,
+        mss_transactions,
+        mss_transaction_settlements,
+        mss_employees
+        WHERE 
+        mss_transactions.txn_customer_id = mss_customers.customer_id
+        AND mss_transactions.txn_cashier = mss_employees.employee_id
+        AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+        AND mss_employees.employee_business_admin= ".$this->db->escape($data['business_admin_id'])."
+        AND mss_employees.employee_business_outlet= ".$this->db->escape($data['business_outlet_id'])."
+        AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."";
 
         $query = $this->db->query($sql);
         
         if($query->num_rows()){
-          return $this->ModelHelper(true,false,'',$query->result_array());
+
+            $result1 = $query->result_array();            
+            $sql = "SELECT
+                    mss_package_transactions.package_txn_id AS 'bill_no',
+                    mss_package_transactions.package_txn_unique_serial_id AS 'txn_id',
+                    date(mss_package_transactions.datetime) AS 'billing_date',
+                    mss_customers.customer_mobile AS 'mobile',
+                    mss_customers.customer_name AS 'name',            
+                    IF(mss_package_transactions.package_txn_id,'Package','Package') AS 'Type' ,
+                    mss_package_transactions.package_txn_value AS 'mrp_amt',  
+                    mss_package_transactions.package_txn_discount AS 'discount',
+                    mss_package_transactions.package_txn_value AS 'net_amt',
+                    IF(mss_salon_packages.service_gst_percentage,'0','0') AS 'total_tax',
+                    mss_package_transactions.package_txn_pending_amount AS 'pending_amt',
+                     mss_package_transaction_settlements.settlement_way AS 'settlement_way',
+                    mss_package_transaction_settlements.payment_mode AS 'payment_way'
+
+                    -- mss_salon_packages.salon_package_name AS 'Service',
+                    -- mss_salon_packages.salon_package_type AS 'Package Type',
+                    -- mss_salon_packages.salon_package_name AS 'Sub-Category',
+                    -- IF(mss_package_transactions.package_txn_unique_serial_id,'Package','Package') AS 'Type' ,
+                      
+                    -- IF(mss_salon_packages.salon_package_type,'','') AS 'Quantity',
+                    
+                    -- mss_employees.employee_first_name AS 'Expert Name',
+                    
+                    
+                    
+                FROM
+                    mss_package_transactions,
+                    mss_customers,
+                    mss_salon_packages,
+                    mss_transaction_package_details,
+                    mss_employees,
+                    mss_package_transaction_settlements
+                WHERE
+                    mss_package_transactions.package_txn_id = mss_transaction_package_details.package_txn_id
+                    AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_txn_id
+                    AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
+                    AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
+                    AND mss_package_transactions.package_txn_expert= mss_employees.employee_id
+                    AND mss_salon_packages.business_admin_id =  ".$this->db->escape($data['business_admin_id'])."
+                    AND mss_salon_packages.business_outlet_id =  ".$this->db->escape($data['business_outlet_id'])."
+                    AND date(mss_package_transactions.datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
+                    ORDER BY
+                        mss_package_transactions.package_txn_id desc";  
+                        
+                        $query = $this->db->query($sql); 
+                    $result2 = $query->result_array();
+                    $result = array_merge($result1,$result2);
+
+
+          return $this->ModelHelper(true,false,'',$result);
         }
         else{
           return $this->ModelHelper(true,false,'Database Error');   
         } 
-	  }
+      }
+
 	  
 
 	  //Cancel Bills
