@@ -2989,14 +2989,14 @@ class CashierModel extends CI_Model {
 					mss_sub_categories.sub_category_name,
 					mss_services.qty_per_item,
 					mss_services.service_unit,
-					SUM(mss_inventory_transaction.sku_count) AS 'Total'
+					SUM(mss_inventory.sku_count) AS 'Total'
 				FROM 
-					mss_inventory_transaction,
+					mss_inventory,
 					mss_services,
 					mss_sub_categories,
 					mss_categories
 				WHERE 
-					mss_inventory_transaction.mss_service_id = mss_services.service_id AND
+					mss_inventory.service_id = mss_services.service_id AND
 					mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND
 					mss_sub_categories.sub_category_category_id = mss_categories.category_id AND
 					mss_categories.category_business_admin_id= ".$this->session->userdata['logged_in']['business_admin_id']." AND
