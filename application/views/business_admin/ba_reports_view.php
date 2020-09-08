@@ -298,6 +298,7 @@
 											<th>Bill No.</th>
 											<th>Mobile No.</th>
 											<th>Name</th>
+											<th>Type.</th>
 											<th>Bill Date</th>
 											<th>MRP Amount</th>
 											<th>Discount</th>
@@ -645,6 +646,7 @@
 						str_2 += "<td>"+data[i].txn_id+"</td>";
 						str_2 += "<td>"+data[i].mobile+"</td>";
 						str_2 += "<td>"+data[i].name+"</td>";
+						str_2 += "<td>"+data[i].Type+"</td>";
 							str_2 += "<td>"+data[i].billing_date+"</td>";
 						str_2 += "<td>"+data[i].mrp_amt+"</td>";
 						str_2 += "<td>"+data[i].discount+"</td>";						

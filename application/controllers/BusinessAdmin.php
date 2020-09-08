@@ -5059,7 +5059,7 @@ public function GetEmployee(){
 	}
 	
 	//Bill generate for Cancel purpose
-	public function GenerateCustomerBill(){	
+	public function GenerateCustomerBill(){	        
 		if($this->IsLoggedIn('business_admin')){
 			if(isset($_GET) && !empty($_GET)){
 				$where=array(	'from_date'	=> $_GET['from_date'],
