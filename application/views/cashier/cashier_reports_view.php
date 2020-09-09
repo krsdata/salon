@@ -117,7 +117,7 @@
 							<div class="card-body">
 								<div class="tab-content">
 									<div class="tab-pane" id="tab-1" role="tabpanel">
-									<div class="accordion" id="accordionExample">
+										<div class="accordion" id="accordionExample">
 													<div class="card">
 														<div class="card-header" id="headingOne">
 															<h5 class="card-title my-2">

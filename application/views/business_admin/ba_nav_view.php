@@ -30,10 +30,9 @@
 					
 				    </ul>
 					</li>
-						<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/ReportsManagement"><i data-feather="book" style="color:#009925;"></i>Reports</a></li>
-						<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/daybook"><i data-feather="book" style="color:#009925;"></i>Day Book</a></li>
-						<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/cashbook"><i data-feather="book" style="color:#009925;"></i>Cash Book</a></li>	
-				    
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/ReportsManagement"><i data-feather="book" style="color:#009925;"></i>Reports</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/daybook"><i data-feather="book" style="color:#009925;"></i>Day Book</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/cashbook"><i data-feather="book" style="color:#009925;"></i>Cash Book</a></li>				    
 				</ul>
 			</li>
 			

@@ -2919,6 +2919,14 @@ class Cashier extends CI_Controller {
                 $where=array(
 									'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
 								);
+
+								$data['stock']=$this->CashierModel->AvailableStock($where);
+								$data['stock']=	$data['stock']['res_arr'];
+
+								$data['stock_incoming']=$this->CashierModel->IncomingStock($where);
+								$data['stock_incoming']=	$data['stock_incoming']['res_arr'];
+
+
 								$data['vendors']=$this->BusinessAdminModel->MultiWhereSelect('mss_vendors',$where);
 								if($data['vendors']['success'] == 'true'){
 										$data['vendors']=$data['vendors']['res_arr'];
@@ -2934,7 +2942,9 @@ class Cashier extends CI_Controller {
                 }
                 else{
                     $data['modal']=0;
-                }
+								}
+								$data['sidebar_collapsed'] = "true";
+								// $this->PrettyPrintArray($data['stock_incoming']);
                 $this->load->view('cashier/cashier_add_inventory_view',$data);
             }
         }
@@ -3058,7 +3068,7 @@ class Cashier extends CI_Controller {
 	public function AddOTCInventory(){
         if($this->IsLoggedIn('cashier')){
           if(isset($_POST) && !empty($_POST)){
-				// $this->PrettyPrintArray($_POST);
+				$this->PrettyPrintArray($_POST);
 					$this->form_validation->set_rules('otc_item','OTC Name', 'trim|required');
           $this->form_validation->set_rules('sku_size', 'SKU', 'trim|required|is_natural_no_zero');
                 $a=explode(',',$_POST['sku_size']);
@@ -6634,9 +6644,9 @@ public function AddToCartRedeemPoints(){
 			if(isset($this->session->userdata['package_cart'])){
 					$data['package_cart'] = $this->session->userdata['package_cart'];
 			}
-			if(isset($this->session->userdata['package_payment'])){
-					$data['package_payment'] = $this->session->userdata['package_payment'][$customer_id];
-			}
+			// if(isset($this->session->userdata['package_payment'])){
+			// 		$data['package_payment'] = $this->session->userdata['package_payment'][$customer_id];
+			// }
 
 
 			$data['package_cart']=$this->BusinessAdminModel->GetPackageTransactionDetailByTxnId($txn_id);			
@@ -6714,7 +6724,7 @@ public function AddToCartRedeemPoints(){
 						if(isset($this->session->userdata['package_cart'])){
 								$this->session->unset_userdata('package_cart');
 						}
-						if(isset($things->session->userdata['payment'])){
+						if(isset($this->session->userdata['payment'])){
 								$this->session->unset_userdata('payment');
 						}
 						if(isset($this->session->userdata['package_payment'])){
@@ -6748,6 +6758,7 @@ public function AddToCartRedeemPoints(){
 						else{
 								$data['modal']=0;
 						}
+						$data['sidebar_collapsed'] = "true";
 						$this->load->view('cashier/cashier_inventory_view',$data);
 				}
 		}
@@ -6997,5 +7008,272 @@ public function AddToCartRedeemPoints(){
         $data['to'] = $to;
         $this->load->view('cashier/cashier_cash_book_view',$data);
     }
+
+		public function AddInventory(){
+			if($this->IsLoggedIn('cashier')){
+				if(isset($_POST) && !empty($_POST)){
+					$this->form_validation->set_rules('invoice_number','OTC Name', 'trim|required');
+					$this->form_validation->set_rules('invoice_date', 'SKU', 'trim|required');
+			
+					if ($this->form_validation->run() == FALSE){
+							$data = array(
+															'success' => 'false',
+															'error'   => 'true',
+															'message' =>  validation_errors()
+													);
+							header("Content-type: application/json");
+							print(json_encode($data, JSON_PRETTY_PRINT));
+							die;
+					}else{
+						$data2=array(
+								'invoice_number'    =>  $this->input->post('invoice_number'),
+								'invoice_date'   		=>  $this->input->post('invoice_date'),
+								'invoice_amount' 		=>  $this->input->post('invoice_amount'),
+								'invoice_tax' 			=>  $this->input->post('invoice_tax'),
+								'source'   					=>  $this->input->post('source_type'),
+								'source_name'  			=>  $this->input->post('source_name'),
+								'invoice_type'  		=>  $this->input->post('invoice_type'),
+								'amount_paid'   		=>  $this->input->post('amount_paid'),
+								'payment_type'   		=>  $this->input->post('payment_mode'),
+								'payment_status' 		=>  $this->input->post('payment_status'),
+								'notes' 							=>  $this->input->post('note'),
+								'business_outlet_id'=>  $this->session->userdata['logged_in']['business_outlet_id']
+						);
+						$result=$this->CashierModel->Insert($data2,'inventory');
+						foreach($_POST['product_name'] as $key=>$val){
+							$data3=array(
+								'inventory_id'				=>$result['res_arr']['insert_id'],
+								'service_id'					=>$_POST['product_id'][$key],
+								'product_name'				=>$_POST['product_name'][$key],
+								'product_type'				=>$_POST['product_type'][$key],
+								'product_barcode'			=>$_POST['product_barcode'][$key],
+								'sku_size'						=>$_POST['sku_size'][$key],
+								'product_qty'					=>$_POST['product_qty'][$key],
+								'product_price'				=>$_POST['product_price'][$key],
+								'product_gst'					=>$_POST['product_gst'][$key],
+								'product_mrp'					=>$_POST['product_mrp'][$key],
+								'expiry_date'					=>$_POST['product_exp_date'][$key]
+							);
+							$this->CashierModel->Insert($data3,'inventory_data');
+							$where=array(
+								'stock_service_id' => $_POST['product_id'][$key],
+								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id']
+							);
+							$data4=array(
+								'stock_service_id' => $_POST['product_id'][$key],
+								'total_stock'=> $_POST['product_qty'][$key],
+								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
+								'updated_on'	=>date('Y-m-d')
+							);
+							$stock_exist= $this->CashierModel->CheckStockExist($where);
+							if($stock_exist['success']=='true'){
+								$update_stock=$this->CashierModel->UpdateInventoryStock($data4);
+							}else{
+								$insert_stock=$this->CashierModel->Insert($data4,'inventory_stock');
+							}
+						}
+						$this->ReturnJsonArray(true,false,"Inventory added successfully!");
+						die;						
+					}
+				}else{
+					$this->ReturnJsonArray(false,true,"Wrong Method!");
+					die;
+				}
+			}
+			else{
+					$this->LogoutUrl(base_url()."Cashier/");
+			}
+		}
+	public function TransferInventory(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('invoice_number','OTC Name', 'trim|required');
+				$this->form_validation->set_rules('invoice_date', 'SKU', 'trim|required');
+		
+				if ($this->form_validation->run() == FALSE){
+						$data = array(
+														'success' => 'false',
+														'error'   => 'true',
+														'message' =>  validation_errors()
+												);
+						header("Content-type: application/json");
+						print(json_encode($data, JSON_PRETTY_PRINT));
+						die;
+				}else{
+					$this->db->trans_start();
+					$data2=array(
+							'invoice_number'    =>  $this->input->post('invoice_number'),
+							'invoice_date'   		=>  $this->input->post('invoice_date'),
+							'invoice_amount' 		=>  $this->input->post('invoice_amount'),
+							'invoice_tax' 			=>  $this->input->post('invoice_tax'),
+							'destination'   		=>  $this->input->post('destination_type'),
+							'destination_name'  =>  $this->input->post('destination_name'),
+							'invoice_type'  		=>  $this->input->post('invoice_type'),
+							'amount_paid'   		=>  $this->input->post('amount_paid'),
+							'payment_type'   		=>  $this->input->post('payment_mode'),
+							'payment_status' 		=>  $this->input->post('payment_status'),
+							'notes' 							=>  $this->input->post('note'),
+							'business_outlet_id'=>  $this->session->userdata['logged_in']['business_outlet_id']
+					);
+					$result=$this->CashierModel->Insert($data2,'inventory_transfer');
+					foreach($_POST['product_name'] as $key=>$val){
+						$data3=array(
+							'inventory_transfer_id'				=>$result['res_arr']['insert_id'],
+							'service_id'					=>$_POST['product_id'][$key],
+							'product_name'				=>$_POST['product_name'][$key],
+							'product_type'				=>$_POST['product_type'][$key],
+							'product_barcode'			=>$_POST['product_barcode'][$key],
+							'sku_size'						=>$_POST['sku_size'][$key],
+							'product_qty'					=>$_POST['product_qty'][$key],
+							'product_price'				=>$_POST['product_price'][$key],
+							'product_gst'					=>$_POST['product_gst'][$key],
+							'product_mrp'					=>$_POST['product_mrp'][$key],
+							'expiry_date'					=>$_POST['product_exp_date'][$key],
+							'transfer_status'			=>0
+						);
+						
+						$data4=array(
+							'stock_service_id' => $_POST['product_id'][$key],
+							'total_stock'=> $_POST['product_qty'][$key],
+							'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
+							'updated_on'	=>date('Y-m-d')
+						);
+
+						$stock_exist_for_transfer= $this->CashierModel->CheckStockExistForTransfer($data4);
+						if($stock_exist_for_transfer['success']=='true'){
+							// $update_stock=$this->CashierModel->UpdateInventoryStockTransfer($data4);
+							$this->CashierModel->Insert($data3,'inventory_transfer_data');							
+						}else{
+							$this->ReturnJsonArray(false,true,"Stock not available for transfer!");
+							die;							
+						}
+					}
+					$this->db->trans_complete();
+						if ($this->db->trans_status() === FALSE){
+							$this->ReturnJsonArray(false,true,"Stock not available for transfer!");
+							die;
+						}
+					$this->ReturnJsonArray(true,false,"Inventory Transfered successfully!");
+					die;						
+				}
+			}else{
+				$this->ReturnJsonArray(false,true,"Wrong Method!");
+				die;
+			}
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/");
+		}
+	}
+
+	public function TransferFinalInventory(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_POST) && !empty($_POST)){
+				$where=array(
+					'stock_service_id' => $_POST['service_id'],
+					'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id']
+				);
+				$data=array(
+					'stock_service_id' => $_POST['service_id'],
+					'total_stock'=> $_POST['total_stock'],
+					'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
+					'updated_on'	=>date('Y-m-d')
+				);
+				$status=array(
+					'transfer_status'=>1,
+					'inventory_transfer_data_id'=>$_POST['transfer_data_id']
+				);
+				$stock_exist= $this->CashierModel->CheckStockExist($where);
+				if($stock_exist['success']=='true'){
+					$update_stock=$this->CashierModel->UpdateInventoryStock($data);
+				}else{
+					$insert_stock=$this->CashierModel->Insert($data,'inventory_stock');
+				}
+				$res=$this->CashierModel->Update($status,'inventory_transfer_data','inventory_transfer_data_id');
+			}
+			$this->ReturnJsonArray(true,false,"Inventory added successfully!");
+			die;						
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/");
+		}
+	}
+
+	public function RejectTransferInventory(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_POST) && !empty($_POST)){
+				$status=array(
+					'transfer_status'=>2,
+					'inventory_transfer_data_id'=>$_POST['transfer_data_id']
+				);
+				$res=$this->CashierModel->Update($status,'inventory_transfer_data','inventory_transfer_data_id');
+			}
+			$this->ReturnJsonArray(true,false,"Inventory Rejected successfully!");
+			die;						
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/");
+		}
+	}
+
+	public function GetBranchAndVendor(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_GET) && !empty($_GET)){
+				$source_type=$_GET['source_type'];
+				if($source_type=='warehouse'){
+					$data['res_arr'][0]=array('source_id'=>1,'source_name'=>'warehouse');
+					$this->ReturnJsonArray(true,false,$data['res_arr']);
+          die;
+				}else if($source_type=='branch'){
+					$where=array(
+						'business_outlet_business_admin' => $this->session->userdata['logged_in']['business_admin_id'],
+						'business_outlet_status'=>1
+					);
+					$data['outlets']=$this->BusinessAdminModel->MultiWhereSelect('mss_business_outlets',$where);
+					// $this->PrettyPrintArray($data);
+					$data['res_arr1']=array();
+					$temp=array();
+					for($i=0;$i<count($data['outlets']['res_arr']);$i++){
+						$temp+=['source_id'=>$data['outlets']['res_arr'][$i]['business_outlet_id'],'source_name'=>$data['outlets']['res_arr'][$i]['business_outlet_name']];							
+						array_push($data['res_arr1'],$temp);
+						$temp=[];
+					}
+					$this->ReturnJsonArray(true,false,$data['res_arr1']);
+          die;
+				}else if($source_type=='vendor'){
+					$where=array(
+						'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
+					);
+					$data['vendors']=$this->BusinessAdminModel->MultiWhereSelect('mss_vendors',$where);
+					$data['res_arr']=array();	
+					$temp=array();				
+					if($data['vendors']['success'] == 'true'){
+						for($i=0;$i<count($data['vendors']['res_arr']);$i++){
+							$temp+=['source_id'=>$data['vendors']['res_arr'][$i]['vendor_id'],'source_name'=>$data['vendors']['res_arr'][$i]['vendor_name']];							
+							array_push($data['res_arr'],$temp);
+							$temp=[];
+						}
+
+						$this->ReturnJsonArray(true,false,$data['res_arr']);
+          	die;
+					}else{
+						$data['res_arr']='';
+					}
+					$this->ReturnJsonArray(true,false,$data['res_arr']);
+          die;
+				}else{
+					$data['res_arr'][0]=array('source_id'=>1,'source_name'=>'sales_return');
+					$this->ReturnJsonArray(true,false,$data['res_arr']);
+          die;
+				}
+			}else{
+				$this->ReturnJsonArray(false,true,"Wrong Method!");
+				die;
+			}						
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/");
+		}
+	}
 
 }
