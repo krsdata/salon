@@ -4462,6 +4462,8 @@ public function GetEmployee(){
 					);
 
 					$result = $this->BusinessAdminModel->GenerateReports($data);
+                    print_r($result);
+                    die;
 					if($result['success'] == 'true'){
 						$data = array(
 									'success' => 'true',

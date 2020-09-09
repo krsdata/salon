@@ -2498,6 +2498,7 @@ class BusinessAdminModel extends CI_Model {
                     date(mss_package_transactions.datetime) AS 'billing_date',
                     mss_customers.customer_mobile AS 'mobile',
                     mss_customers.customer_name AS 'name',            
+                    IF(mss_package_transactions.package_txn_id,'1','1') AS 'txn_status' ,
                     IF(mss_package_transactions.package_txn_id,'Package','Package') AS 'Type' ,
                     mss_package_transactions.package_txn_value AS 'mrp_amt',  
                     mss_package_transactions.package_txn_discount AS 'discount',
@@ -9796,26 +9797,26 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 	}
 	
 	public function GetCustomerBill($where){
-        $sql = "SELECT mss_transactions.txn_value,
-				date(mss_transactions.txn_datetime) AS 'date',
-				mss_customers.customer_id,
-				mss_customers.customer_name,
-				mss_customers.customer_mobile,
-				mss_business_outlets.business_outlet_sender_id AS 'sender_id',
+       $sql = "SELECT mss_transaction_cart.id as cart_id,mss_transactions.txn_value,
+                date(mss_transactions.txn_datetime) AS 'date',
+                mss_customers.customer_id,
+                mss_customers.customer_name,
+                mss_customers.customer_mobile,
+                mss_business_outlets.business_outlet_sender_id AS 'sender_id',
                 mss_business_outlets.api_key,
-				mss_business_outlets.business_outlet_name,
-				mss_transaction_cart.id 
+                mss_business_outlets.business_outlet_name,
+                mss_transaction_cart.id 
 
-			FROM
-				mss_transactions,
-				mss_customers,
-				mss_business_outlets,
-				mss_transaction_cart
-			WHERE
-				mss_customers.customer_id=mss_transactions.txn_customer_id AND
-				-- mss_transaction_cart.transaction_id= mss_transactions.txn_id AND
-				mss_business_outlets.business_outlet_id= ".$this->db->escape($where['business_outlet_id'])." AND 
-				mss_transactions.txn_id= ".$this->db->escape($where['txn_id'])." group by mss_transactions.txn_id";
+            FROM
+                mss_transactions,
+                mss_customers,
+                mss_business_outlets,
+                mss_transaction_cart
+            WHERE
+                mss_customers.customer_id=mss_transactions.txn_customer_id AND
+                mss_transaction_cart.transaction_id= mss_transactions.txn_id AND
+                mss_business_outlets.business_outlet_id= ".$this->db->escape($where['business_outlet_id'])." AND 
+                mss_transactions.txn_id= ".$this->db->escape($where['txn_id'])." group by mss_transactions.txn_id";
         
          $query = $this->db->query($sql);
          if($query){
