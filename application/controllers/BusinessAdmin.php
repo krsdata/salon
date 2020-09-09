@@ -4462,8 +4462,6 @@ public function GetEmployee(){
 					);
 
 					$result = $this->BusinessAdminModel->GenerateReports($data);
-                    print_r($result);
-                    die;
 					if($result['success'] == 'true'){
 						$data = array(
 									'success' => 'true',
@@ -5712,7 +5710,8 @@ public function GetEmployee(){
 							'business_outlet_id' => $this->session->userdata['outlets']['current_outlet']
 						);
 						$result = $this->BusinessAdminModel->GetCustomerBill($data);			
-									
+                        echo $this->db->last_query();
+						die('Test');
 						if($result['success'] == 'true'){
 							//ReSend Bill SMS
 							$res =$result['res_arr'][0];

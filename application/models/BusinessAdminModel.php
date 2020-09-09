@@ -747,13 +747,15 @@ class BusinessAdminModel extends CI_Model {
         date(mss_transactions.txn_datetime) AS 'Billing Date',
         mss_customers.customer_mobile AS 'Mobile No',
         mss_customers.customer_name AS 'Customer Name',
-        (mss_transactions.txn_discount+mss_transactions.txn_value) AS 'MRP Amt',
+        sum((txn_service_discounted_price+txn_add_on_amount)*txn_service_quantity) AS 'MRP Amt',
+        -- (mss_transactions.txn_discount+mss_transactions.txn_value) AS 'MRP Amt',
         mss_transactions.txn_discount AS 'Discount',
+        (sum((txn_service_discounted_price+txn_add_on_amount)*txn_service_quantity)-mss_transactions.txn_discount) AS 'Net Amount',
         -- mss_transactions.txn_value AS 'Net Amount',
         -- mss_transactions.txn_status AS 'billed=1/canceled=0',
         -- mss_transactions.txn_remarks AS 'Remarks',
-        -- mss_transactions.txn_total_tax AS 'Total Tax (Rs.)',
-        -- mss_transactions.txn_pending_amount AS 'Pending Amount',
+        mss_transactions.txn_total_tax AS 'Total Tax (Rs.)',
+        mss_transactions.txn_pending_amount AS 'Pending Amount',
         mss_transaction_settlements.txn_settlement_way AS 'Settlement Way',
         mss_transaction_settlements.txn_settlement_payment_mode AS 'Payment Mode'
         
@@ -761,9 +763,11 @@ class BusinessAdminModel extends CI_Model {
         mss_customers,
         mss_transactions,
         mss_transaction_settlements,
-        mss_employees
+        mss_employees,
+        mss_transaction_services
     WHERE 
-        mss_transactions.txn_customer_id = mss_customers.customer_id
+        mss_transaction_services.txn_service_txn_id = mss_transactions.txn_id
+        AND mss_transactions.txn_customer_id = mss_customers.customer_id
         AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
         AND mss_transactions.txn_cashier= mss_employees.employee_id
         AND mss_transactions.txn_status=1
@@ -775,7 +779,7 @@ class BusinessAdminModel extends CI_Model {
         $query = $this->db->query($sql);
 
         if($query){
-            $result = $query->result_array();
+            $result = $query->result_array();            
             $result_to_send = array();
 
             for($i=0;$i<count($result);$i++){                
@@ -802,6 +806,8 @@ class BusinessAdminModel extends CI_Model {
             $data['result'] = $this->ModelHelper(true,false,'',$result_to_send);
         }
 
+
+
         $package = $this->GetPackageReport($data);
         if($package['success'] == true){
             $arr = [];
@@ -814,6 +820,9 @@ class BusinessAdminModel extends CI_Model {
                 $arr[$i]['Customer Name'] = $pck['Customer Name'];
                 $arr[$i]['MRP Amt'] = $pck['Bill Amount'];
                 $arr[$i]['Discount'] = $pck['Discount Given'];
+                $arr[$i]['Net Amount'] = $pck['Bill Amount'];
+                $arr[$i]['Total Tax (Rs.)'] = 0;
+                $arr[$i]['Pending Amount'] = 0;
                 $arr[$i]['Settlement Way'] = $pck['Settlement Way'];
                 $arr[$i]['Payment Mode'] = $pck['Payment Mode'];                
                 $arr[$i]["Service Type"] =  "Package";
