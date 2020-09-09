@@ -9796,26 +9796,26 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 	}
 	
 	public function GetCustomerBill($where){
-        $sql = "SELECT mss_transactions.txn_value,
-				date(mss_transactions.txn_datetime) AS 'date',
-				mss_customers.customer_id,
-				mss_customers.customer_name,
-				mss_customers.customer_mobile,
-				mss_business_outlets.business_outlet_sender_id AS 'sender_id',
+       $sql = "SELECT mss_transaction_cart.id as cart_id,mss_transactions.txn_value,
+                date(mss_transactions.txn_datetime) AS 'date',
+                mss_customers.customer_id,
+                mss_customers.customer_name,
+                mss_customers.customer_mobile,
+                mss_business_outlets.business_outlet_sender_id AS 'sender_id',
                 mss_business_outlets.api_key,
-				mss_business_outlets.business_outlet_name,
-				mss_transaction_cart.id 
+                mss_business_outlets.business_outlet_name,
+                mss_transaction_cart.id 
 
-			FROM
-				mss_transactions,
-				mss_customers,
-				mss_business_outlets,
-				mss_transaction_cart
-			WHERE
-				mss_customers.customer_id=mss_transactions.txn_customer_id AND
-				-- mss_transaction_cart.transaction_id= mss_transactions.txn_id AND
-				mss_business_outlets.business_outlet_id= ".$this->db->escape($where['business_outlet_id'])." AND 
-				mss_transactions.txn_id= ".$this->db->escape($where['txn_id'])." group by mss_transactions.txn_id";
+            FROM
+                mss_transactions,
+                mss_customers,
+                mss_business_outlets,
+                mss_transaction_cart
+            WHERE
+                mss_customers.customer_id=mss_transactions.txn_customer_id AND
+                mss_transaction_cart.transaction_id= mss_transactions.txn_id AND
+                mss_business_outlets.business_outlet_id= ".$this->db->escape($where['business_outlet_id'])." AND 
+                mss_transactions.txn_id= ".$this->db->escape($where['txn_id'])." group by mss_transactions.txn_id";
         
          $query = $this->db->query($sql);
          if($query){

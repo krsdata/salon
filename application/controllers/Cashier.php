@@ -6456,18 +6456,25 @@ public function AddToCartRedeemPoints(){
 					//for Bill No
 					$outlet_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$data['individual_customer']['customer_business_outlet_id'])->get()->row_array();
 
-					$data['bill_no']=strval("A".strval(100+$data['individual_customer']['customer_business_admin_id']) . "O" . strval( $data['individual_customer']['customer_business_outlet_id']) . "-" . strval($outlet_counter['business_outlet_bill_counter']));
+					// $data['bill_no']=strval("A".strval(100+$data['individual_customer']['customer_business_admin_id']) . "O" . strval( $data['individual_customer']['customer_business_outlet_id']) . "-" . strval($outlet_counter['business_outlet_bill_counter']));
 										
 					$sql ="SELECT * from mss_transaction_cart where id=".$card_id;
 
 					$query = $this->db->query($sql);
 					$result = $query->result_array();
 					$cart = json_decode($result[0]['cart_data'],true);
-					 
 					
-					$data['cart'] = $cart;
-					// echo "<pre>";
+					$data['cart'] = $cart; 
 					$outlet_admin_id = $result[0]['outlet_admin_id'];
+
+					
+					$sql ="SELECT * FROM `mss_transactions` WHERE `txn_id` = ".$result[0]['transaction_id'];
+
+					$query = $this->db->query($sql);
+					$result = $query->result_array();
+					$data['bill_no']= $result[0]['txn_unique_serial_id'];
+					
+					// echo "<pre>";					
 					//print_r($result[0]['outlet_admin_id']);die;
 					// print_r($data['cart']);
 					$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
@@ -6480,7 +6487,8 @@ public function AddToCartRedeemPoints(){
 						$query = $this->db->query($sql);
 						$result = $query->result_array();
 					}
-					$data['logo'] = $result[0]['config_value'];						// if(isset($this->session->userdata['payment'])){
+					$data['logo'] = $result[0]['config_value'];											
+					// if(isset($this->session->userdata['payment'])){
 					// 	$data['payment'] = $this->session->userdata['payment'][$customer_id];
 					// }
 					// print_r($data['payment']);
