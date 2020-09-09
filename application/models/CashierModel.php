@@ -357,8 +357,8 @@ class CashierModel extends CI_Model {
 
     public function CheckOTCStockExists($where){
         $this->db->select('*');
-        $this->db->from('mss_otc_stock');
-        $this->db->where('otc_service_id',$where['service_id']);
+        $this->db->from('inventory_stock');
+        $this->db->where('stock_service_id',$where['service_id']);
         
         $query = $this->db->get();
 
@@ -528,8 +528,8 @@ class CashierModel extends CI_Model {
             4. Update the pending amounts for the customers if any
             5. Last but not least if composition is available then update the stock for the services taken.
         */
-        // $this->PrintArray($_POST);
-        //exit;
+		// $this->PrintArray($_POST);
+		//exit;
 				if($data['cashback']>0)
                 {
                     $data_cashback = array(
@@ -561,7 +561,7 @@ class CashierModel extends CI_Model {
 				// $data['txn_data']+=['txn_loyalty_points'=>$_POST['cashback']];
 				if(!empty($cashback))
 				{
-						if($cashback['rule_type'] == 'Offers Single Rule' || $cashback['rule_type'] == 'Offers Multiple Rule' || $cashback['rule_type'] == 'Offers LTV Rule')
+					if($cashback['rule_type'] == 'Offers Single Rule' || $cashback['rule_type'] == 'Offers Multiple Rule' || $cashback['rule_type'] == 'Offers LTV Rule')
 					{
 						$data['txn_data']+=['txn_loyalty_points'=>$cashback['points_generated']];
 						$data['txn_data']+=['txn_loyalty_points_expiry'=>date('Y-m-d', strtotime("+".$cashback['points_validity'], strtotime(date("Y-m-d"))))];
@@ -670,11 +670,10 @@ class CashierModel extends CI_Model {
         $this->db->query($query);
 
         if($data['txn_settlement']['txn_settlement_payment_mode'] == 'Virtual_Wallet' && $data['txn_settlement']['txn_settlement_way'] == 'Full Payment'){
-           // Update the customer wallet as well
-           $query = "UPDATE mss_customers SET customer_virtual_wallet = customer_virtual_wallet - ".(int)$data['txn_settlement']['txn_settlement_amount_received']." WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";
-					 $this->db->query($query);
-				}
-				
+			// Update the customer wallet as well
+			$query = "UPDATE mss_customers SET customer_virtual_wallet = customer_virtual_wallet - ".(int)$data['txn_settlement']['txn_settlement_amount_received']." WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";
+				$this->db->query($query);
+			}				
 
 				//5 loyalty wallet payment
 				//jitesh
@@ -775,7 +774,8 @@ class CashierModel extends CI_Model {
         if ($this->db->trans_status() === FALSE)
         {
           return $this->ModelHelper(false,true,'Transaction cannot be processed!');
-        }
+		}
+ 
         //array('txn_id' => $result_1['res_arr']['insert_id']
 				// return $this->ModelHelper(true,false);
 				return $this->ModelHelper(true,false,'',$result_1);
@@ -823,16 +823,13 @@ class CashierModel extends CI_Model {
                 );
                 $this->UpdateStockFromOTC($temp);
             }else{
-                // $this->PrintArray($_POST);
                 $sql="Select * from mss_services where service_id =".$service_id."";
                 $query = $this->db->query($sql);
                 $data=$query->result_array();
                 $master_admin = $this->CashierModel->DetailsById($this->session->userdata['logged_in']['business_admin_id'],'mss_business_admin','business_admin_id');
                 $master_admin_id = $master_admin['res_arr']['business_master_admin_id'];
-                // $service_details = $this->DetailsById($service_id,'mss_services','service_id');
                 $service_details = $this->ServiceDetail($service_id);
                 $service_details = $service_details['res_arr'][0];
-                // $this->PrettyPrintArray($service_details);
                 $temp = array(
                     'service_id' => $service_id,
                     'master_admin_id'=>$master_admin_id,
@@ -928,10 +925,9 @@ class CashierModel extends CI_Model {
     }
 
     private function UpdateStockFromOTC($data){
-        $query1 = "UPDATE mss_inventory SET sku_count = sku_count  - ".(int)$data['consumption_quantity']." WHERE service_id = ".$data['otc_service_id']."";
-        $this->db->query($query1);
-        // $query = "UPDATE mss_otc_stock SET otc_sku = otc_sku  - ".(int)$data['consumption_quantity']." WHERE otc_service_id = ".$data['otc_service_id']."";
-        // $this->db->query($query);  
+		// $query1 = "UPDATE mss_inventory SET sku_count = sku_count  - ".(int)$data['consumption_quantity']." WHERE service_id = ".$data['otc_service_id']."";
+		$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
+        $this->db->query($query1); 
     }
 
     public function GetAllExpenses($where){
@@ -1933,7 +1929,7 @@ class CashierModel extends CI_Model {
         else{
             return $this->ModelHelper(false,true,"Some DB Error!");
         }  
-			}
+	}
 			
 			public function ServiceWiseSale($data){
 				$sql="SELECT 
@@ -2593,7 +2589,7 @@ class CashierModel extends CI_Model {
             WHERE 
                 mss_transactions_replica.txn_outlet_id=".$this->db->escape($data['outlet_id'])." AND
                 mss_transactions_replica.txn_business_admin_id=".$this->db->escape($data['business_admin_id'])."
-            ORDER BY txn_datetime DESC LIMIT 10";
+            ORDER BY mss_transactions_replica.txn_datetime DESC LIMIT 10";
         //execute the query
         $query = $this->db->query($sql);
         if ($query->num_rows() >0){
@@ -2827,6 +2823,7 @@ class CashierModel extends CI_Model {
     public function SearchProduct($search_term,$inventory_type,$business_admin_id,$business_outlet_id){
         $sql = "SELECT 
                     mss_services.*,
+					round(mss_services.service_price_inr+mss_services.service_price_inr*mss_services.service_gst_percentage*(.01)) AS 'mrp',
                     mss_categories.category_name,
                     mss_sub_categories.sub_category_name 
                 FROM 
@@ -3310,4 +3307,98 @@ class CashierModel extends CI_Model {
           return $this->ModelHelper(true,false,'Database Error');   
 		} 
 	}
+
+	public function AvailableStock($data){
+		$sql="SELECT mss_services.*, inventory_stock.* FROM	inventory_stock,
+				mss_services
+			WHERE inventory_stock.stock_service_id = mss_services.service_id AND
+			inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not Available in stock.");
+        } 
+	}
+
+
+	public function IncomingStock($data){
+		$sql="SELECT inventory_transfer.*,inventory_transfer_data.* FROM inventory_transfer, inventory_transfer_data
+		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND inventory_transfer_data.transfer_status=0 AND inventory_transfer.destination_name= ".$this->db->escape($data['business_outlet_id'])." ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not Available in stock.");
+        } 
+	}
+
+	public function CheckStockExist($where){
+        $this->db->select('*');
+        $this->db->from('inventory_stock');
+        $this->db->where('stock_service_id',$where['stock_service_id']);
+        $this->db->where('stock_outlet_id',$where['stock_outlet_id']);
+        $query = $this->db->get();
+
+        if($query->num_rows() === 0){
+            return $this->ModelHelper(false,true);
+        }
+        else if($query->num_rows() === 1){
+            return $this->ModelHelper(true,false);
+        }   
+	}
+	public function UpdateInventoryStock($data){
+		$sql="UPDATE inventory_stock 
+		SET inventory_stock.total_stock= (inventory_stock.total_stock +  ".$data['total_stock']."),
+		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
+		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
+		   
+		   $query = $this->db->query($sql);
+		   if($this->db->affected_rows() > 0){
+			 return $this->ModelHelper(true,false);    
+		   }
+		   elseif($this->db->affected_rows() == 0){
+			   return $this->ModelHelper(true,false,"No row updated!");   
+		   }
+		   else{
+			   return $this->ModelHelper(false,true,"Some DB Error!");
+		   } 
+	}
+
+	public function CheckStockExistForTransfer($where){
+        $sql="SELECT * FROM inventory_stock WHERE inventory_stock.stock_service_id =".$this->db->escape($where['stock_service_id'])." AND inventory_stock.total_stock > ".$this->db->escape($where['total_stock'])." AND inventory_stock.stock_outlet_id= ".$this->db->escape($where['stock_outlet_id'])." ";
+        $query = $this->db->query($sql);
+
+        if($query->num_rows() === 0){
+            return $this->ModelHelper(false,true,"Product not Available in stock Or Less Stock.");
+        }
+        else if($query->num_rows() === 1){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }   
+	}
+
+
+	public function UpdateInventoryStockTransfer($data){
+		$sql="UPDATE inventory_stock 
+		SET inventory_stock.total_stock= (inventory_stock.total_stock -  ".$data['total_stock']."),
+		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
+		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
+		   
+		   $query = $this->db->query($sql);
+		   if($this->db->affected_rows() > 0){
+			 return $this->ModelHelper(true,false);    
+		   }
+		   elseif($this->db->affected_rows() == 0){
+			   return $this->ModelHelper(true,false,"No row updated!");   
+		   }
+		   else{
+			   return $this->ModelHelper(false,true,"Some DB Error!");
+		   } 
+	}
+
+
 }
