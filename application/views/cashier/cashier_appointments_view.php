@@ -1176,9 +1176,9 @@
 	var to_fill3 = "";
 
     $("#customer_mobile").on("typeahead:selected", function(eventObject, suggestion, name) {
-         var loc1 = "#customer_mobile";
-		var loc2 = "#customer_name";
-		var loc3 = "#customer_title";
+      var loc1 = "#customer_mobile";
+			var loc2 = "#customer_name";
+			var loc3 = "#customer_title";
       to_fill = suggestion.customer_mobile;
 			to_fill2 = suggestion.customer_name;
 			to_fill3 = suggestion.customer_title;

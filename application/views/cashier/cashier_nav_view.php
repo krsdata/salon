@@ -1,8 +1,8 @@
 <nav class="sidebar <?php if(isset($sidebar_collapsed)){ if($sidebar_collapsed){ echo 'sidebar-collapsed toggled'; }} ?>">
 	<div class="sidebar-content">
 		<a class="sidebar-brand" href="<?=base_url()?>Cashier/">
- 		 	<img src="<?=base_url()?>public/images/marks_logo.png" width="25px" height="25px" class="img-responsive">
-	   	<span class="align-middle">MarkS ReTech</span>
+ 		 	<img src="<?=base_url()?>public/images/salonfirst.jpeg" width="200px" height=75px" class="img-responsive">
+	   	<!-- <span class="align-middle">Salonfirst</span> -->
     </a>
 		<ul class="sidebar-nav">
 			<?php
@@ -14,20 +14,18 @@
         </a>
 				<ul id="dashboards" class="sidebar-dropdown list-unstyled collapse show">
 					<li class="sidebar-item active"><a class="sidebar-link" href="<?=base_url()?>Cashier/Dashboard/"><i data-feather="shopping-cart" style="color:red"></i>Billing</a></li>
-		    		<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Expenses/"><i class="fa fa-book" style="color:orange"></i>Expenses</a></li>
-		    		<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory"><i data-feather="pen-tool" style="color:#0070c0"></i>Inventory</a></li>
+						<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Expenses/"><i class="fa fa-book" style="color:orange"></i>Expenses</a></li>
+						<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory/"><i data-feather="pen-tool" style="color:#0070c0"></i>Inventory</a></li>
+		    		<!-- <li class="sidebar-item">
+						<a class="sidebar-link" href="#inventory" data-toggle="collapse" class="sidebar-link collapsed"><i data-feather="pen-tool" style="color:#0070c0"></i>Inventory</a>
+						<ul id="inventory" class="sidebar-dropdown list-unstyled collapse ">
+							<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/InventoryView/"><i data-feather="grid" style="color:orange"></i>View Stock level</a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory/"><i data-feather="book" style="color:green"></i>Add Inventory</a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory/"><i data-feather="trash" style="color:blue"></i>Product Transfer</a></li>
+						</ul> -->
+					</li>
 				</ul>
 			</li>
-			<!-- <li class="sidebar-item">
-				<a href="#inventory" data-toggle="collapse" class="sidebar-link collapsed">
-					<i class="align-middle" data-feather="pen-tool" style="color:#0070c0"></i> <span class="align-middle">Inventory</span>
-				</a>
-				<ul id="inventory" class="sidebar-dropdown list-unstyled collapse ">
-					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/InventoryView/"><i data-feather="grid" style="color:orange"></i>View Inventory</a></li>
-					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory/"><i data-feather="book" style="color:green"></i>Add Inventory</a></li>
-					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory/"><i data-feather="trash" style="color:blue"></i>Wastage</a></li>
-				</ul>
-			</li> -->
 			<li class="sidebar-item">
 				<a href="#packages" data-toggle="collapse" class="sidebar-link collapsed">
 					<i class="align-middle" data-feather="gift" style="color:#0070c0"></i> <span class="align-middle">Packages</span>
