@@ -6651,11 +6651,12 @@ public function AddToCartRedeemPoints(){
 
 			$data['package_cart']=$this->BusinessAdminModel->GetPackageTransactionDetailByTxnId($txn_id);			
 			$data['package_cart']=$data['package_cart']['res_arr'][0];
+			$data['bill_no'] = $data['package_cart']['package_txn_unique_serial_id'];
 			// echo "<pre>";
 			// print_r($data);
 			// die;
 			$data['shop_details'] = $this->ShopDetails();
-			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
+			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";	
 
 			$query = $this->db->query($sql);
 
