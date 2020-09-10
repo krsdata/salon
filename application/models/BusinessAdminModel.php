@@ -2503,7 +2503,7 @@ class BusinessAdminModel extends CI_Model {
                     date(mss_package_transactions.datetime) AS 'billing_date',
                     mss_customers.customer_mobile AS 'mobile',
                     mss_customers.customer_name AS 'name',            
-                    IF(mss_package_transactions.package_txn_id,'1','1') AS 'txn_status' ,
+                    -- IF(mss_package_transactions.package_txn_id,'1','1') AS 'txn_status' ,
                     IF(mss_package_transactions.package_txn_id,'Package','Package') AS 'Type' ,
                     mss_package_transactions.package_txn_value AS 'mrp_amt',  
                     mss_package_transactions.package_txn_discount AS 'discount',
