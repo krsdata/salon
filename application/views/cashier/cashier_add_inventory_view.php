@@ -29,6 +29,9 @@
 									<li class="nav-item">
 										<a class="nav-link" data-toggle="tab" href="#tab-4">Incoming Stock</a>
 									</li>
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#tab-5">Outgoing Stock</a>
+									</li>
 								</ul>
 							</div>
 							<div class="card-body">
@@ -170,7 +173,7 @@
 															<div class="form-row mt-2">
 																<div class="col-md-6">
 																	<div class="row">
-																		<div class="form-group col-md-6">
+																		<div class="form-group col-md-12">
 																			<textarea class="form-control" name="note" placeholder="Notes :-"></textarea>
 																		</div>
 																	</div>
@@ -188,7 +191,7 @@
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-6">
-																			<select name="payment_mode" class="form-control" required>
+																			<select name="payment_mode" class="form-control">
 																			<option value="" disabled="disabled" selected>Payment Mode</option>
 																				<option value="cash">Cash</option>
 																				<option value="card">Card</option>
@@ -256,10 +259,7 @@
 																	<div class="row">
 																		<div class="form-group col-md-4">
 																			<select name="destination_name" class="form-control" required>
-																			<option value="" disabled="disabled" selected>Select Destination Name</option>
-																				<option value="warehouse">Warehouse</option>
-																				<option value="branch">Branch</option>
-																				<option value="vendor">Vendor</option>
+																			
 																			</select>
 																		</div>
 																	</div>
@@ -349,7 +349,7 @@
 															<div class="form-row mt-2">
 																<div class="col-md-6">
 																	<div class="row">
-																		<div class="form-group col-md-6">
+																		<div class="form-group col-md-12">
 																			<textarea class="form-control" name="note" placeholder="Notes :-"></textarea>
 																		</div>
 																	</div>
@@ -367,8 +367,8 @@
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-6">
-																			<select name="payment_mode" class="form-control" required>
-																			<option value="" disabled="disabled" selected>Payment Mode</option>
+																			<select name="payment_mode" class="form-control">
+																				<option value="" disabled="disabled" selected>Payment Mode</option>
 																				<option value="cash">Cash</option>
 																				<option value="card">Card</option>
 																				<option value="bank">Bank A/C</option>
@@ -391,7 +391,7 @@
 									<div class="tab-pane" id="tab-3" role="tabpanel">
 										<div class="card">
 											<div class="card-header">
-												<form action="#" class="form-inlne" method="POST">
+												<!-- <form action="#" class="form-inlne" method="POST">
 													<div class="form-row">
 														<div class="form-group col-md-2">
 															<input type="date" class="form-control" name="invoice_number" value="<?=date('Y-m-d');?>" required>
@@ -422,7 +422,8 @@
 															<button type="submit" value="" class="btn btn-primary ">Submit</button>
 														</div>
 													</div>
-												</form>
+												</form> -->
+												<h3>Available Stock</h3>
 											</div>
 											<div class="card-body">
 												<table class="table table-hover datatables-basic" style="width: 100%;">
@@ -481,8 +482,49 @@
 														<td><?=$incoming['sku_size'];?></td>
 														<td><?=$incoming['product_qty'];?></td>
 														<td>
-															<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>'><i class='fa fa-check'>Accept</i></button>
+															<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
 															<button class='btn btn-danger rejectInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>'><i class='fa fa-times'>Reject</i></button>
+														</td>
+														</tr>
+														<?php $count++; }?>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="tab-5" role="tabpanel">
+										<div class="card">
+											<div class="card-header">
+												<h4>Outgoing Stock</h4>
+											</div>
+											<div class="card-body">
+												<table class="table table-hover datatables-basic" style="width: 100%;">
+													<thead>
+														<th>Sr. No.</th>
+														<th>Product Name</th>
+														<th>Type</th>
+														<th>Barcode</th>
+														<th>SKU size</th>
+														<th>Product Qty</th>
+														<th>Status</th>
+													</thead>
+													<tbody>
+														<?php $count=1; foreach($stock_outgoing as $outgoing){ ?>
+															<tr>
+														<td><?=$count?></td>
+														<td><?=$outgoing['product_name'];?></td>
+														<td><?=$outgoing['product_type'];?></td>
+														<td><?=$outgoing['product_barcode'];?></td>
+														<td><?=$outgoing['sku_size'];?></td>
+														<td><?=$outgoing['product_qty'];?></td>
+														<td>
+															<?php if($outgoing['transfer_status']==0){?>
+															<button class='btn btn-warning' disabled>No action</button>
+															<?php }else if($outgoing['transfer_status']==1){?>
+															<button class='btn btn-success' disabled>Accepted</button>
+															<?php }else{?>
+															<button class='btn btn-danger' disabled>Rejected</button>
+															<?php }?>
 														</td>
 														</tr>
 														<?php $count++; }?>
@@ -613,7 +655,7 @@
 			product_id = suggestion.service_id;
 			service_type = suggestion.inventory_type;
 			service_barcode = suggestion.barcode;
-			sku_size = suggestion.qty_per_item;
+			sku_size = suggestion.qty_per_item+suggestion.service_unit;
 			mrp = suggestion.mrp;
       setVals(loc,service_name,suggestion);
 			setVals(loc2,service_type,suggestion);
@@ -898,7 +940,8 @@
 			var parameters = {
 					transfer_data_id : $(this).attr('trans_data_id'),
 					total_stock : $(this).attr('total_stock'),
-					service_id	:	$(this).attr('stock_service_id')
+					service_id	:	$(this).attr('stock_service_id'),
+					sender_outlet_id	:	$(this).attr('sender_outlet')
 			};	
 			$.ajax({
 				url: "<?=base_url()?>Cashier/TransferFinalInventory",
