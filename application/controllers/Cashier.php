@@ -3071,7 +3071,6 @@ class Cashier extends CI_Controller {
 	public function AddOTCInventory(){
         if($this->IsLoggedIn('cashier')){
           if(isset($_POST) && !empty($_POST)){
-				$this->PrettyPrintArray($_POST);
 					$this->form_validation->set_rules('otc_item','OTC Name', 'trim|required');
           $this->form_validation->set_rules('sku_size', 'SKU', 'trim|required|is_natural_no_zero');
                 $a=explode(',',$_POST['sku_size']);

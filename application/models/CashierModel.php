@@ -3309,9 +3309,15 @@ class CashierModel extends CI_Model {
 	}
 
 	public function AvailableStock($data){
-		$sql="SELECT mss_services.*, inventory_stock.* FROM	inventory_stock,
-				mss_services
+		$sql="SELECT mss_services.*, 
+			inventory_stock.*,
+			mss_business_outlets.business_outlet_name
+			FROM	
+			inventory_stock,
+			mss_services,
+			mss_business_outlets
 			WHERE inventory_stock.stock_service_id = mss_services.service_id AND
+			mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." AND
 			inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
@@ -3325,8 +3331,14 @@ class CashierModel extends CI_Model {
 
 
 	public function IncomingStock($data){
-		$sql="SELECT inventory_transfer.*,inventory_transfer_data.* FROM inventory_transfer, inventory_transfer_data
-		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND inventory_transfer_data.transfer_status=0 AND inventory_transfer.destination_name= ".$this->db->escape($data['business_outlet_id'])." ";
+		$sql="SELECT inventory_transfer.*,
+		inventory_transfer_data.*, 
+		mss_business_outlets.business_outlet_name AS 'source',
+		mss_business_outlets.business_outlet_name AS 'destination'
+		FROM inventory_transfer, inventory_transfer_data, mss_business_outlets
+		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND inventory_transfer_data.transfer_status=0 AND 
+		inventory_transfer.destination_name= mss_business_outlets.business_outlet_id AND 
+		inventory_transfer.destination_name= ".$this->db->escape($data['business_outlet_id'])." AND mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
         if($query){
