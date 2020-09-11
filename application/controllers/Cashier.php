@@ -2926,6 +2926,9 @@ class Cashier extends CI_Controller {
 								$data['stock_incoming']=$this->CashierModel->IncomingStock($where);
 								$data['stock_incoming']=	$data['stock_incoming']['res_arr'];
 
+								$data['stock_outgoing']=$this->CashierModel->OutgoingStock($where);
+								$data['stock_outgoing']=	$data['stock_outgoing']['res_arr'];
+
 
 								$data['vendors']=$this->BusinessAdminModel->MultiWhereSelect('mss_vendors',$where);
 								if($data['vendors']['success'] == 'true'){
@@ -3068,7 +3071,6 @@ class Cashier extends CI_Controller {
 	public function AddOTCInventory(){
         if($this->IsLoggedIn('cashier')){
           if(isset($_POST) && !empty($_POST)){
-				$this->PrettyPrintArray($_POST);
 					$this->form_validation->set_rules('otc_item','OTC Name', 'trim|required');
           $this->form_validation->set_rules('sku_size', 'SKU', 'trim|required|is_natural_no_zero');
                 $a=explode(',',$_POST['sku_size']);
@@ -7180,6 +7182,12 @@ public function AddToCartRedeemPoints(){
 					'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
 					'updated_on'	=>date('Y-m-d')
 				);
+				$data2=array(
+					'stock_service_id' => $_POST['service_id'],
+					'total_stock'=> $_POST['total_stock'],
+					'stock_outlet_id'	=> $_POST['sender_outlet_id'],
+					'updated_on'	=>date('Y-m-d')
+				);
 				$status=array(
 					'transfer_status'=>1,
 					'inventory_transfer_data_id'=>$_POST['transfer_data_id']
@@ -7191,6 +7199,7 @@ public function AddToCartRedeemPoints(){
 					$insert_stock=$this->CashierModel->Insert($data,'inventory_stock');
 				}
 				$res=$this->CashierModel->Update($status,'inventory_transfer_data','inventory_transfer_data_id');
+				$update_sender_stock=$this->CashierModel->UpdateSenderInventoryStock($data2);
 			}
 			$this->ReturnJsonArray(true,false,"Inventory added successfully!");
 			die;						

@@ -3309,9 +3309,15 @@ class CashierModel extends CI_Model {
 	}
 
 	public function AvailableStock($data){
-		$sql="SELECT mss_services.*, inventory_stock.* FROM	inventory_stock,
-				mss_services
+		$sql="SELECT mss_services.*, 
+			inventory_stock.*,
+			mss_business_outlets.business_outlet_name
+			FROM	
+			inventory_stock,
+			mss_services,
+			mss_business_outlets
 			WHERE inventory_stock.stock_service_id = mss_services.service_id AND
+			mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." AND
 			inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
@@ -3325,8 +3331,26 @@ class CashierModel extends CI_Model {
 
 
 	public function IncomingStock($data){
+		$sql="SELECT inventory_transfer.*,
+		inventory_transfer_data.*, 
+		mss_business_outlets.business_outlet_name AS 'source',
+		mss_business_outlets.business_outlet_name AS 'destination'
+		FROM inventory_transfer, inventory_transfer_data, mss_business_outlets
+		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND inventory_transfer_data.transfer_status=0 AND 
+		inventory_transfer.destination_name= mss_business_outlets.business_outlet_id AND 
+		inventory_transfer.destination_name= ".$this->db->escape($data['business_outlet_id'])." AND mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not Available in stock.");
+        } 
+	}
+	public function OutgoingStock($data){
 		$sql="SELECT inventory_transfer.*,inventory_transfer_data.* FROM inventory_transfer, inventory_transfer_data
-		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND inventory_transfer_data.transfer_status=0 AND inventory_transfer.destination_name= ".$this->db->escape($data['business_outlet_id'])." ";
+		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id  AND inventory_transfer.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
         if($query){
@@ -3354,6 +3378,24 @@ class CashierModel extends CI_Model {
 	public function UpdateInventoryStock($data){
 		$sql="UPDATE inventory_stock 
 		SET inventory_stock.total_stock= (inventory_stock.total_stock +  ".$data['total_stock']."),
+		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
+		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
+		   
+		   $query = $this->db->query($sql);
+		   if($this->db->affected_rows() > 0){
+			 return $this->ModelHelper(true,false);    
+		   }
+		   elseif($this->db->affected_rows() == 0){
+			   return $this->ModelHelper(true,false,"No row updated!");   
+		   }
+		   else{
+			   return $this->ModelHelper(false,true,"Some DB Error!");
+		   } 
+	}
+
+	public function UpdateSenderInventoryStock($data){
+		$sql="UPDATE inventory_stock 
+		SET inventory_stock.total_stock= (inventory_stock.total_stock -  ".$data['total_stock']."),
 		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
 		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
 		   

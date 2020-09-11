@@ -29,6 +29,9 @@
 									<li class="nav-item">
 										<a class="nav-link" data-toggle="tab" href="#tab-4">Incoming Stock</a>
 									</li>
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#tab-5">Outgoing Stock</a>
+									</li>
 								</ul>
 							</div>
 							<div class="card-body">
@@ -170,7 +173,7 @@
 															<div class="form-row mt-2">
 																<div class="col-md-6">
 																	<div class="row">
-																		<div class="form-group col-md-6">
+																		<div class="form-group col-md-12">
 																			<textarea class="form-control" name="note" placeholder="Notes :-"></textarea>
 																		</div>
 																	</div>
@@ -188,7 +191,7 @@
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-6">
-																			<select name="payment_mode" class="form-control" required>
+																			<select name="payment_mode" class="form-control">
 																			<option value="" disabled="disabled" selected>Payment Mode</option>
 																				<option value="cash">Cash</option>
 																				<option value="card">Card</option>
@@ -256,10 +259,7 @@
 																	<div class="row">
 																		<div class="form-group col-md-4">
 																			<select name="destination_name" class="form-control" required>
-																			<option value="" disabled="disabled" selected>Select Destination Name</option>
-																				<option value="warehouse">Warehouse</option>
-																				<option value="branch">Branch</option>
-																				<option value="vendor">Vendor</option>
+																			
 																			</select>
 																		</div>
 																	</div>
@@ -349,7 +349,7 @@
 															<div class="form-row mt-2">
 																<div class="col-md-6">
 																	<div class="row">
-																		<div class="form-group col-md-6">
+																		<div class="form-group col-md-12">
 																			<textarea class="form-control" name="note" placeholder="Notes :-"></textarea>
 																		</div>
 																	</div>
@@ -367,8 +367,8 @@
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-6">
-																			<select name="payment_mode" class="form-control" required>
-																			<option value="" disabled="disabled" selected>Payment Mode</option>
+																			<select name="payment_mode" class="form-control">
+																				<option value="" disabled="disabled" selected>Payment Mode</option>
 																				<option value="cash">Cash</option>
 																				<option value="card">Card</option>
 																				<option value="bank">Bank A/C</option>
@@ -391,7 +391,7 @@
 									<div class="tab-pane" id="tab-3" role="tabpanel">
 										<div class="card">
 											<div class="card-header">
-												<form action="#" class="form-inlne" method="POST">
+												<!-- <form action="#" class="form-inlne" method="POST">
 													<div class="form-row">
 														<div class="form-group col-md-2">
 															<input type="date" class="form-control" name="invoice_number" value="<?=date('Y-m-d');?>" required>
@@ -422,10 +422,18 @@
 															<button type="submit" value="" class="btn btn-primary ">Submit</button>
 														</div>
 													</div>
-												</form>
+												</form> -->
+												<div class="row">
+													<div class="col-md-6">
+														<h3>Available Stock</h3>
+													</div>
+													<div class="col-md-6">
+													<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-download"></i> Download</button>
+													</div>
+												</div>												
 											</div>
 											<div class="card-body">
-												<table class="table table-hover datatables-basic" style="width: 100%;">
+												<table class="table table-hover datatables-basic" style="width: 100%;" id="availableStock">
 													<thead>
 														<th>Sr. No.</th>
 														<th>Product Name</th>
@@ -433,6 +441,7 @@
 														<th>Barcode</th>
 														<th>SKU size</th>
 														<th>Total Stock</th>
+														<th>Entry Date</th>
 														<th>Location</th>
 													</thead>
 													<tbody>
@@ -443,11 +452,9 @@
 														<td><?=$stock['inventory_type'];?></td>
 														<td><?=$stock['barcode'];?></td>
 														<td><?=$stock['qty_per_item'];?></td>
-														<!-- <td>200</td>
-														<td>150</td>
-														<td>50</td> -->
 														<td><?=$stock['total_stock'];?></td>
-														<td><?=$stock['service_name'];?></td>
+														<td><?=$stock['updated_on'];?></td>
+														<td><?=$stock['business_outlet_name'];?></td>
 														</tr>
 														<?php $count++; }?>
 													</tbody>
@@ -469,6 +476,10 @@
 														<th>Barcode</th>
 														<th>SKU size</th>
 														<th>Product Qty</th>
+														<th>MRP</th>
+														<th>Entry Date</th>
+														<th>Source</th>
+														<th>Destnation</th>
 														<th>Actions</th>
 													</thead>
 													<tbody>
@@ -480,9 +491,56 @@
 														<td><?=$incoming['product_barcode'];?></td>
 														<td><?=$incoming['sku_size'];?></td>
 														<td><?=$incoming['product_qty'];?></td>
+														<td><?=$incoming['product_mrp'];?></td>
+														<td><?=$incoming['invoice_date'];?></td>
+														<td><?=$incoming['source'];?></td>
+														<td><?=$incoming['destination'];?></td>
 														<td>
-															<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>'><i class='fa fa-check'>Accept</i></button>
+															<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
 															<button class='btn btn-danger rejectInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>'><i class='fa fa-times'>Reject</i></button>
+														</td>
+														</tr>
+														<?php $count++; }?>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="tab-5" role="tabpanel">
+										<div class="card">
+											<div class="card-header">
+												<h4>Outgoing Stock</h4>
+											</div>
+											<div class="card-body">
+												<table class="table table-hover datatables-basic" style="width: 100%;">
+													<thead>
+														<th>Sr. No.</th>
+														<th>Product Name</th>
+														<th>Type</th>
+														<th>Barcode</th>
+														<th>SKU size</th>
+														<th>Product Qty</th>
+														<th>MRP</th>
+														<th>Status</th>
+													</thead>
+													<tbody>
+														<?php $count=1; foreach($stock_outgoing as $outgoing){ ?>
+															<tr>
+														<td><?=$count?></td>
+														<td><?=$outgoing['product_name'];?></td>
+														<td><?=$outgoing['product_type'];?></td>
+														<td><?=$outgoing['product_barcode'];?></td>
+														<td><?=$outgoing['sku_size'];?></td>
+														<td><?=$outgoing['product_qty'];?></td>
+														<td><?=$outgoing['product_mrp'];?></td>
+														<td>
+															<?php if($outgoing['transfer_status']==0){?>
+															<button class='btn btn-warning' disabled>No action</button>
+															<?php }else if($outgoing['transfer_status']==1){?>
+															<button class='btn btn-success' disabled>Accepted</button>
+															<?php }else{?>
+															<button class='btn btn-danger' disabled>Rejected</button>
+															<?php }?>
 														</td>
 														</tr>
 														<?php $count++; }?>
@@ -613,7 +671,7 @@
 			product_id = suggestion.service_id;
 			service_type = suggestion.inventory_type;
 			service_barcode = suggestion.barcode;
-			sku_size = suggestion.qty_per_item;
+			sku_size = suggestion.qty_per_item+suggestion.service_unit;
 			mrp = suggestion.mrp;
       setVals(loc,service_name,suggestion);
 			setVals(loc2,service_type,suggestion);
@@ -898,7 +956,8 @@
 			var parameters = {
 					transfer_data_id : $(this).attr('trans_data_id'),
 					total_stock : $(this).attr('total_stock'),
-					service_id	:	$(this).attr('stock_service_id')
+					service_id	:	$(this).attr('stock_service_id'),
+					sender_outlet_id	:	$(this).attr('sender_outlet')
 			};	
 			$.ajax({
 				url: "<?=base_url()?>Cashier/TransferFinalInventory",
@@ -1409,4 +1468,36 @@
         document.getElementById("itotal_cost").value = totalamount;
         
     });
+</script>
+<script>
+	function exportTableToExcel(tableID, filename = ''){
+			var downloadLink;
+			var dataType = 'application/vnd.ms-excel';
+			var tableSelect = document.getElementById(tableID);
+			var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+			
+			// Specify file name
+			filename = filename?filename+'.xls':'excel_data.xls';
+			
+			// Create download link element
+			downloadLink = document.createElement("a");
+			
+			document.body.appendChild(downloadLink);
+			
+			if(navigator.msSaveOrOpenBlob){
+					var blob = new Blob(['\ufeff', tableHTML], {
+							type: dataType
+					});
+					navigator.msSaveOrOpenBlob( blob, filename);
+			}else{
+					// Create a link to the file
+					downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+			
+					// Setting the file name
+					downloadLink.download = filename;
+					
+					//triggering the function
+					downloadLink.click();
+			}
+	}
 </script>
