@@ -357,8 +357,8 @@ class CashierModel extends CI_Model {
 
     public function CheckOTCStockExists($where){
         $this->db->select('*');
-        $this->db->from('inventory_stock');
-        $this->db->where('stock_service_id',$where['service_id']);
+        $this->db->from('mss_inventory');
+        $this->db->where('service_id',$where['service_id']);
         
         $query = $this->db->get();
 
@@ -925,8 +925,8 @@ class CashierModel extends CI_Model {
     }
 
     private function UpdateStockFromOTC($data){
-		// $query1 = "UPDATE mss_inventory SET sku_count = sku_count  - ".(int)$data['consumption_quantity']." WHERE service_id = ".$data['otc_service_id']."";
-		$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
+		$query1 = "UPDATE mss_inventory SET sku_count = sku_count  - ".(int)$data['consumption_quantity']." WHERE service_id = ".$data['otc_service_id']."";
+		//$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
         $this->db->query($query1); 
     }
 
