@@ -458,10 +458,17 @@
 															</div>
 														</div>
 													</form> -->
-													<h3>Available Stock</h3>
+													<div class="row">
+														<div class="col-md-6">
+															<h3>Available Stock</h3>
+														</div>
+														<div class="col-md-6">
+														<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
+														</div>
+													</div>
 												</div>
 												<div class="card-body">
-													<table class="table table-hover datatables-basic" style="width: 100%;">
+													<table class="table table-hover datatables-basic" style="width: 100%;" id="availableStock">
 														<thead>
 															<th>Sr. No.</th>
 															<th>Product Name</th>
@@ -482,7 +489,7 @@
 																	<td><?=$stock['qty_per_item'];?></td>
 																	<td><?=$stock['total_stock'];?></td>
 																	<td><?=$stock['updated_on'];?></td>
-																	<td><?=$stock['service_name'];?></td>
+																	<td><?=$stock['business_outlet_name'];?></td>
 																</tr>
 															<?php $count++; }?>
 														</tbody>
@@ -1511,4 +1518,36 @@
 			});
 		});
 	});
+</script>
+<script>
+	function exportTableToExcel(tableID, filename = ''){
+			var downloadLink;
+			var dataType = 'application/vnd.ms-excel';
+			var tableSelect = document.getElementById(tableID);
+			var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+			
+			// Specify file name
+			filename = filename?filename+'.xls':'excel_data.xls';
+			
+			// Create download link element
+			downloadLink = document.createElement("a");
+			
+			document.body.appendChild(downloadLink);
+			
+			if(navigator.msSaveOrOpenBlob){
+					var blob = new Blob(['\ufeff', tableHTML], {
+							type: dataType
+					});
+					navigator.msSaveOrOpenBlob( blob, filename);
+			}else{
+					// Create a link to the file
+					downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+			
+					// Setting the file name
+					downloadLink.download = filename;
+					
+					//triggering the function
+					downloadLink.click();
+			}
+	}
 </script>

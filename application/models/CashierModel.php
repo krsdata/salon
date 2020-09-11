@@ -3309,9 +3309,15 @@ class CashierModel extends CI_Model {
 	}
 
 	public function AvailableStock($data){
-		$sql="SELECT mss_services.*, inventory_stock.* FROM	inventory_stock,
-				mss_services
+		$sql="SELECT mss_services.*, 
+			inventory_stock.*,
+			mss_business_outlets.business_outlet_name
+			FROM	
+			inventory_stock,
+			mss_services,
+			mss_business_outlets
 			WHERE inventory_stock.stock_service_id = mss_services.service_id AND
+			mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." AND
 			inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
