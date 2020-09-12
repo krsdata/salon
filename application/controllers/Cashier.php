@@ -267,7 +267,8 @@ class Cashier extends CI_Controller {
                             $session_data = array(
                                 'employee_id'      => $result['res_arr']['employee_id'],
                                 'employee_email'   => $result['res_arr']['employee_email'],
-                                'employee_name'    => $result['res_arr']['employee_first_name'].' '.$result['res_arr']['employee_last_name'],
+                                'employee_name'    => $result['res_arr']['employee_first_name'].' '.$result['res_arr']['employee_last_name'],                                
+                                'employee_mobile'   =>$result['res_arr']['employee_mobile'],
                                 'user_type'        => 'cashier',
                                 'master_admin_id'   =>$result['res_arr']['business_master_admin_id'],
                                 'business_admin_id'=> $result['res_arr']['employee_business_admin'],
@@ -423,8 +424,8 @@ class Cashier extends CI_Controller {
             {
                 $data['rules'] = ['res_arr'=>''];
                 // $data['rules'] = $rules['res_arr'];
-						}
-						// $this->PrettyPrintArray($this->session->all_userdata());
+						}	
+						 //$this->PrettyPrintArray($this->session->all_userdata());
 			$data['sidebar_collapsed'] = "true";
 			$this->load->view('cashier/cashier_dashboard_view',$data);
 		}
@@ -7274,6 +7275,15 @@ public function AddToCartRedeemPoints(){
 		else{
 				$this->LogoutUrl(base_url()."Cashier/");
 		}
+	}
+
+	public function sendOtp(){
+		sentOtp();
+	}
+
+	public function verifyOTP(){		
+		$response = verifyOPT($_REQUEST['otp']);
+		echo $response;
 	}
 
 }
