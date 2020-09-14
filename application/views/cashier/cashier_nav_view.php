@@ -15,7 +15,7 @@
 				<ul id="dashboards" class="sidebar-dropdown list-unstyled collapse show">
 					<li class="sidebar-item active"><a class="sidebar-link" href="<?=base_url()?>Cashier/Dashboard/"><i data-feather="shopping-cart" style="color:red"></i>Billing</a></li>
 						<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Expenses/"><i class="fa fa-book" style="color:orange"></i>Expenses</a></li>
-						<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory/"><i data-feather="pen-tool" style="color:#0070c0"></i>Inventory</a></li>
+<!--						<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/Inventory/"><i data-feather="pen-tool" style="color:#0070c0"></i>Inventory</a></li>-->
 		    		<!-- <li class="sidebar-item">
 						<a class="sidebar-link" href="#inventory" data-toggle="collapse" class="sidebar-link collapsed"><i data-feather="pen-tool" style="color:#0070c0"></i>Inventory</a>
 						<ul id="inventory" class="sidebar-dropdown list-unstyled collapse ">
