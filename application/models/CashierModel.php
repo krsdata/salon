@@ -2548,6 +2548,7 @@ class CashierModel extends CI_Model {
         mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
         AND mss_transaction_services.txn_service_service_id = mss_services.service_id   
         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+		AND mss_services.inventory_type !='Raw Material'
         AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
         AND mss_categories.category_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
         AND mss_categories.category_business_outlet_id = ".$this->session->userdata['logged_in']['business_outlet_id']."
