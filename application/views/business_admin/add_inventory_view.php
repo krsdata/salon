@@ -99,7 +99,7 @@
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Freight">
+																			<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Extra Freight Charges">
 																			</div>
 																		</div>
 																	</div>
@@ -215,23 +215,23 @@
 																	</div>
 																	<div class="col-md-6">
 																		<div class="row">
-																			<div class="form-group col-md-6">
-																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
-																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
+																			<div class="form-group col-md-4">
 																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount">
 																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
+																			<div class="form-group col-md-4">
 																				<select name="payment_mode" class="form-control">
 																				<option value="" disabled="disabled" selected>Payment Mode</option>
 																					<option value="cash">Cash</option>
-																					<option value="card">Card</option>
+																					<option value="credit_card">Credit Card</option>
+																					<option value="debit_card">Debit Card</option>
+																					<option value="phonepe">Phonepe</option>
+																					<option value="google_pay">Google Pay</option>
+																					<option value="paytm">Paytm</option>
 																					<option value="bank">Bank A/C</option>
 																				</select>
+																			</div>
+																			<div class="form-group col-md-4">
+																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
 																			</div>
 																		</div>
 																	</div>
@@ -510,6 +510,7 @@
 													<table class="table table-hover datatables-basic" style="width: 100%;">
 														<thead>
 															<th>Sr. No.</th>
+															<th>Txn Id</th>
 															<th>Product Name</th>
 															<th>Type</th>
 															<th>Barcode</th>
@@ -525,6 +526,7 @@
 															<?php $count=1; foreach($stock_incoming as $incoming){ ?>
 																<tr>
 															<td><?=$count?></td>
+															<td><?=$incoming['inventory_transfer_data_id'];?></td>
 															<td><?=$incoming['product_name'];?></td>
 															<td><?=$incoming['product_type'];?></td>
 															<td><?=$incoming['product_barcode'];?></td>
@@ -535,8 +537,12 @@
 															<td><?=$incoming['source'];?></td>
 															<td><?=$incoming['destination'];?></td>
 															<td>
+																<?php if($incoming['transfer_status']==0){?>
 																<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
 																<button class='btn btn-danger rejectInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>'><i class='fa fa-times'>Reject</i></button>
+																<?php }else{?>
+																	Accepted
+																<?php }?>
 															</td>
 															</tr>
 															<?php $count++; }?>
@@ -692,7 +698,7 @@
 													</div>
 													<div class="form-row">	
 														<div class="form-group col-md-4">
-															<label>Product Cost</label>
+															<label>Cost/Unit(<small>before tax</small>)</label>
 															<input type="number" class="form-control" name="product_price" placeholder="Cost/Unit">
 														</div>
 														<div class="form-group col-md-4">
