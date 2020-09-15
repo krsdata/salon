@@ -12226,6 +12226,29 @@ public function daybook(){
 			}
 		}
 
+		public function EditInventory(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_GET) && !empty($_GET)){
+					$service_details=$this->CashierModel->DetailsById($_GET['service_id'],'mss_services','service_id');
+					$service_details=$service_details['res_arr'];
+					$this->ReturnJsonArray(true,false,$service_details);
+					die;
+				}else if(isset($_POST) && !empty($_POST)){
+					$data=array(
+						'stock_service_id'=>$_POST['service_id'],
+						'total_stock'	=>$_POST['product_qty'],
+						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
+						'updated_on'	=>date('Y-m-d')
+					);
+					$res=$this->CashierModel->UpdateInventoryStock($data);
+					$this->ReturnJsonArray(true,false,"Stock Updated!");
+					die;
+				}else{
+					$this->ReturnJsonArray(false,true,"Wrong Method!");
+					die;
+				}
+			}
+		}
 		
 
 }

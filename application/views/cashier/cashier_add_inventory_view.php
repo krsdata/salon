@@ -49,17 +49,17 @@
 																<div class="col-md-6">
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																		<input type="text" class="form-control" name="invoice_number" placeholder="Invoice No." required>
+																		<input type="text" class="form-control" name="invoice_number" placeholder="Invoice No.">
 																		</div>
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																		<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date" required>
+																		<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date">
 																		</div>
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																		<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value" required>
+																		<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value">
 																		</div>
 																	</div>
 																	<div class="row">
@@ -71,7 +71,7 @@
 																<div class="col-md-6">
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																			<select name="source_type" class="form-control" required>
+																			<select name="source_type" class="form-control">
 																				<option value="" disabled="disabled" selected>Select Source Type</option>
 																				<option value="warehouse">Warehouse</option>
 																				<option value="branch">Branch</option>
@@ -82,14 +82,14 @@
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																			<select name="source_name" class="form-control" required>
+																			<select name="source_name" class="form-control">
 																			
 																			</select>
 																		</div>
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																			<select name="invoice_type" class="form-control" required>
+																			<select name="invoice_type" class="form-control">
 																			<option value="" disabled="disabled" selected>Select Invoice Type</option>
 																				<option value="tax">Tax Invoice</option>
 																				<option value="lumpsum">Lumpsum</option>
@@ -111,7 +111,7 @@
 																				<td>
 																					<div class="form-group">
 																						<label>Product Name</label>
-																						<input type="text" class="form-control searchProductByName" name="product_name[]" readonly required>
+																						<input type="text" class="form-control searchProductByName" name="product_name[]" readonly>
 																						<input type="hidden" class="product_id" name="product_id[]">
 																					</div>
 																				</td>
@@ -136,25 +136,25 @@
 																				<td>
 																					<div class="form-group">
 																						<label>Qty</label>
-																						<input type="text" class="form-control" name="product_qty[]" required>
+																						<input type="text" class="form-control" name="product_qty[]">
 																					</div>
 																				</td>
 																				<td>
 																					<div class="form-group">
-																						<label>Cost</label>
-																						<input type="text" class="form-control" name="product_price[]" required>
+																						<label>Cost/Unit(<small>before tax</small>)</label>
+																						<input type="text" class="form-control" name="product_price[]">
 																					</div>
 																				</td>
 																				<td>
 																					<div class="form-group">
 																						<label>GST %</label>
-																						<input type="text" class="form-control" name="product_gst[]" required>
+																						<input type="text" class="form-control" name="product_gst[]">
 																					</div>
 																				</td>
 																				<td>
 																					<div class="form-group">
 																						<label>MRP</label>
-																						<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																						<input type="text" class="form-control mrp" name="product_mrp[]">
 																					</div>
 																				</td>
 																				<td>
@@ -186,7 +186,7 @@
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-6">
-																			<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount" required>
+																			<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount">
 																		</div>
 																	</div>
 																	<div class="row">
@@ -225,17 +225,17 @@
 																<div class="col-md-6">
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																		<input type="text" class="form-control" name="invoice_number" placeholder="Tranf. Order" required>
+																		<input type="text" class="form-control" name="invoice_number" placeholder="Tranf. Order">
 																		</div>
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																		<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date" required>
+																		<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date">
 																		</div>
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																		<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value" required>
+																		<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value">
 																		</div>
 																	</div>
 																	<div class="row">
@@ -247,7 +247,7 @@
 																<div class="col-md-6">
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																			<select name="destination_type" class="form-control" required>
+																			<select name="destination_type" class="form-control">
 																				<option value="" disabled="disabled" selected>Select Destination Type</option>
 																				<option value="warehouse">Warehouse</option>
 																				<option value="branch">Branch</option>
@@ -258,14 +258,14 @@
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																			<select name="destination_name" class="form-control" required>
+																			<select name="destination_name" class="form-control">
 																			
 																			</select>
 																		</div>
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																			<select name="invoice_type" class="form-control" required>
+																			<select name="invoice_type" class="form-control">
 																			<option value="" disabled="disabled" selected>Select Invoice Type</option>
 																				<option value="tax">Tax Invoice</option>
 																				<option value="lumpsum">Lumpsum</option>
@@ -287,7 +287,7 @@
 																				<td>
 																					<div class="form-group">
 																						<label>Product Name</label>
-																						<input type="text" class="form-control searchProductByName" name="product_name[]" readonly required>
+																						<input type="text" class="form-control searchProductByName" name="product_name[]" readonly>
 																						<input type="hidden" class="product_id" name="product_id[]">
 																					</div>
 																				</td>
@@ -312,25 +312,25 @@
 																				<td>
 																					<div class="form-group">
 																						<label>Qty</label>
-																						<input type="text" class="form-control" name="product_qty[]" required>
+																						<input type="text" class="form-control" name="product_qty[]">
 																					</div>
 																				</td>
 																				<td>
 																					<div class="form-group">
-																						<label>Cost</label>
-																						<input type="text" class="form-control" name="product_price[]" required>
+																						<label>Cost/Unit(<small>before tax</small>)</label>
+																						<input type="text" class="form-control" name="product_price[]">
 																					</div>
 																				</td>
 																				<td>
 																					<div class="form-group">
 																						<label>GST %</label>
-																						<input type="text" class="form-control" name="product_gst[]" required>
+																						<input type="text" class="form-control" name="product_gst[]">
 																					</div>
 																				</td>
 																				<td>
 																					<div class="form-group">
 																						<label>MRP</label>
-																						<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																						<input type="text" class="form-control mrp" name="product_mrp[]">
 																					</div>
 																				</td>
 																				<td>
@@ -362,7 +362,7 @@
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-6">
-																			<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount" required>
+																			<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount">
 																		</div>
 																	</div>
 																	<div class="row">
@@ -394,7 +394,7 @@
 												<!-- <form action="#" class="form-inlne" method="POST">
 													<div class="form-row">
 														<div class="form-group col-md-2">
-															<input type="date" class="form-control" name="invoice_number" value="<?=date('Y-m-d');?>" required>
+															<input type="date" class="form-control" name="invoice_number" value="<?=date('Y-m-d');?>">
 														</div>										
 														<div class="form-group col-md-2">
 															<select name="" class="form-control" required>
@@ -424,10 +424,10 @@
 													</div>
 												</form> -->
 												<div class="row">
-													<div class="col-md-6">
+													<div class="col-md-10">
 														<h3>Available Stock</h3>
 													</div>
-													<div class="col-md-6">
+													<div class="col-md-2">
 													<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-download"></i> Download</button>
 													</div>
 												</div>												
@@ -441,7 +441,7 @@
 														<th>Barcode</th>
 														<th>SKU size</th>
 														<th>Total Stock</th>
-														<th>Entry Date</th>
+														<th>Last Updated</th>
 														<th>Location</th>
 													</thead>
 													<tbody>
@@ -451,7 +451,7 @@
 														<td><?=$stock['service_name'];?></td>
 														<td><?=$stock['inventory_type'];?></td>
 														<td><?=$stock['barcode'];?></td>
-														<td><?=$stock['qty_per_item'];?></td>
+														<td><?=$stock['qty_per_item'].' '.$stock['service_unit'] ; ?></td>
 														<td><?=$stock['total_stock'];?></td>
 														<td><?=$stock['updated_on'];?></td>
 														<td><?=$stock['business_outlet_name'];?></td>
@@ -489,7 +489,7 @@
 														<td><?=$incoming['product_name'];?></td>
 														<td><?=$incoming['product_type'];?></td>
 														<td><?=$incoming['product_barcode'];?></td>
-														<td><?=$incoming['sku_size'];?></td>
+														<td><?=$incoming['sku_size'].' '.$stock['service_unit'];?></td>
 														<td><?=$incoming['product_qty'];?></td>
 														<td><?=$incoming['product_mrp'];?></td>
 														<td><?=$incoming['invoice_date'];?></td>
@@ -530,7 +530,7 @@
 														<td><?=$outgoing['product_name'];?></td>
 														<td><?=$outgoing['product_type'];?></td>
 														<td><?=$outgoing['product_barcode'];?></td>
-														<td><?=$outgoing['sku_size'];?></td>
+														<td><?=$outgoing['sku_size'].' '.$stock['service_unit'];?></td>
 														<td><?=$outgoing['product_qty'];?></td>
 														<td><?=$outgoing['product_mrp'];?></td>
 														<td>
