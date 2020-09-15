@@ -1275,12 +1275,12 @@ $this->load->view('master_admin/ma_header_view');
 														<div class="modal-body m-3">
 														    <div class="row">
 																<div class="col-md-12">
-																	<form id="AssignServicesToPackages" method="POST" action="#">
+																	<form id="AssignServicesToOutlets" method="POST" action="#">
 																		<div class="row">
 																			<div class="form-group col-md-12">
-																				<label >Packages</label>
-																				<select id="assign-package-select" name="assign_package_select[]" multiple="multiple" class="form-control float-right">
-																					<option value="">Select Packages</option>
+																				<label >Outlets</label>
+																				<select id="assign-outlet-select" name="assign_outlet_select[]" multiple="multiple" class="form-control float-right">
+																					<option value="">Select Outlets</option>
 																				</select>
 																			</div>
 
@@ -1326,12 +1326,17 @@ $this->load->view('master_admin/ma_header_view');
 <?php
 	$this->load->view('master_admin/ma_footer_view');
 ?>
-
+<!--
 <link href="<?=base_url()?>public/app_stack/css/multiselect/bootstrap.min.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<?=base_url()?>public/app_stack/js/multiselect/bootstrap.min.js"></script>
 <link href="<?=base_url()?>public/app_stack/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 <script src="<?=base_url()?>public/app_stack/js/multiselect/bootstrap-multiselect.js" type="text/javascript"></script>
+-->
 
+<script src="<?=base_url()?>public/app_stack/js/multiselect/jquery.multiselect.js"></script>
+<link rel="stylesheet" href="<?=base_url()?>public/app_stack/css/multiselect/bootstrap.css">
+<link rel="stylesheet" href="<?=base_url()?>public/app_stack/css/multiselect/jquery.multiselect.css">
+ 
 <script>
 	function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
     //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
@@ -1439,53 +1444,32 @@ $(document).ready(function(){
     
 	 $(document).ready(function() {  
 	   
-		$('#assign-services-select').multiselect({includeSelectAllOption: true,maxHeight: 150,
+		/*$('#assign-services-select').multiselect({includeSelectAllOption: true,maxHeight: 150,
 										buttonWidth: 150,
 										numberDisplayed: 2,
 										nSelectedText: 'selected'});
+		*/
+		 $('#assign-services-select').multiselect({columns: 1, selectAll: true,placeholder: 'Select Service'});
+		 $('#assign-outlet-select').multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
+		
 		$("#openAssignServices").on('click', function () {
 			 var parameters = {};
 				var htmlContent="";
-				$.getJSON("<?=base_url()?>MasterAdmin/GetALLMasterPackages", parameters)
+				$.getJSON("<?=base_url()?>MasterAdmin/GetALLOutlets", parameters)
 				.done(function(data, textStatus, jqXHR) {
 					 if(data.length>0){	
 							var options = ""; 
 								for(var i=0;i<data.length;i++){
-									options += "<option value="+data[i].salon_package_id+">"+data[i].salon_package_name+"</option>";
+									options += "<option value="+data[i].business_outlet_id+">"+data[i].business_outlet_name+"</option>";
 								}
 								
-								$('#assign-package-select').html("").html(options);
-								$('#assign-package-select').multiselect({maxHeight: 150,
+								$('#assign-outlet-select').html("").html(options);
+								$('#assign-outlet-select').multiselect( 'reload' );
+								/*$('#assign-outlet-select').multiselect({maxHeight: 150,
 										buttonWidth: 150,
 										numberDisplayed: 2,
-										nSelectedText: 'selected'});
-							/*
-							 htmlContent += '<tr>';
-							 htmlContent += '<td>'+(i+1)+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_name+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_type+'</td>';
-							 
-							 htmlContent += '<td>'+data[i].salon_package_date+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_price+'</td>';
-							 htmlContent += '<td>'+(data[i].service_gst_percentage*data[i].salon_package_price/100)+'</td>';
-							 htmlContent += '<td>'+(data[i].salon_package_price+(data[i].service_gst_percentage*data[i].salon_package_price/100))+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_validity+'</td>';
-							
-							 htmlContent += '<td class="table-action">';
-							if(data[i].is_active==1){
-								 htmlContent += '<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
-							}else{
-								 htmlContent += '<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
-							}
-							 htmlContent += '</td></tr>';	 */			
-					
-					 }else{
-						 htmlContent +='<tr class="odd"><td valign="top" colspan="9" class="dataTables_empty">No data available in table</td>d></tr>';
+										nSelectedText: 'selected'}); */
 					 }
-					
-				    $("#package-content").html(htmlContent);
-					//var json = JSON.stringify(data);
-					//initiateTable("customers-table", json);
 				})
 
 				.fail(function(jqXHR, textStatus, errorThrown) {
@@ -1507,10 +1491,10 @@ $(document).ready(function(){
 	});
 	
 																 
-	$("#AssignServicesToPackages").validate({
+	$("#AssignServicesToOutlets").validate({
 		errorElement: "div",
 		rules: {
-			"assign_package_select[]" : {
+			"assign_outlet_select[]" : {
 				required : true
 			},
 			"assign_Services_select[]" : {
@@ -1518,7 +1502,7 @@ $(document).ready(function(){
 			}
 		},
 		submitHandler: function(form) {
-			var formData = $("#AssignServicesToPackages").serialize(); 
+			var formData = $("#AssignServicesToOutlets").serialize(); 
 			$.ajax({
 				url: "<?=base_url()?>MasterAdmin/MasterAdminAssignServices",
 				data: formData,

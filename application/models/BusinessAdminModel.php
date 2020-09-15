@@ -169,9 +169,20 @@ class BusinessAdminModel extends CI_Model {
             return $this->ModelHelper(false,true,"DB error!");   
         }
     }
-
+    public function GetMasterCategories($where){
+		$sql = "SELECT * FROM `master_categories` WHERE ((`category_business_admin_id`=".$this->db->escape($where['category_business_admin_id'])." AND `category_business_outlet_id`=".$this->db->escape($where['category_business_outlet_id']).") OR `master_id`!=0 ) AND `category_type`=".$this->db->escape($where['category_type'])." AND `category_is_active`=".$this->db->escape($where['category_is_active'])." ";
+        $query = $this->db->query($sql);
+        
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	
     public function SubCategories($where){
-       $sql = "SELECT sub_category_id,sub_category_category_id,sub_category_name,sub_category_is_active,sub_category_description,category_name,category_type FROM mss_sub_categories AS A,mss_categories AS B WHERE A.sub_category_category_id = B.category_id AND B.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND sub_category_is_active = ".$this->db->escape($where['sub_category_is_active'])." AND B.category_business_outlet_id=".$this->db->escape($where['category_business_outlet_id'])."";
+       $sql = "SELECT sub_category_id,sub_category_category_id,sub_category_name,sub_category_is_active,sub_category_description,category_name,category_type FROM mss_sub_categories AS A,master_categories AS B WHERE A.sub_category_category_id = B.category_id AND B.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND sub_category_is_active = ".$this->db->escape($where['sub_category_is_active'])." AND B.category_business_outlet_id=".$this->db->escape($where['category_business_outlet_id'])."";
         
         $query = $this->db->query($sql);
         
@@ -184,7 +195,7 @@ class BusinessAdminModel extends CI_Model {
     }
 
     public function Services($where){
-       $sql = "SELECT * FROM mss_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND C.service_is_active = ".$this->db->escape($where['service_is_active'])." AND A.category_business_outlet_id = ".$this->db->escape($where['category_business_outlet_id'])." AND C.service_type = ".$this->db->escape($where['service_type'])."";
+       $sql = "SELECT * FROM master_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND C.service_is_active = ".$this->db->escape($where['service_is_active'])." AND A.category_business_outlet_id = ".$this->db->escape($where['category_business_outlet_id'])." AND C.service_type = ".$this->db->escape($where['service_type'])."";
         
         $query = $this->db->query($sql);
         
@@ -201,10 +212,10 @@ class BusinessAdminModel extends CI_Model {
             $sql1="update mss_services,mss_sub_categories set mss_services.service_is_active = 0 
             where mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
             AND mss_sub_categories.sub_category_category_id =".$this->db->escape($category_id)."";
-            $sql2="update mss_sub_categories,mss_categories set mss_sub_categories.sub_category_is_active = 0 
+            $sql2="update mss_sub_categories,master_categories set mss_sub_categories.sub_category_is_active = 0 
             where mss_sub_categories.sub_category_category_id=".$this->db->escape($category_id)."";  
-            $sql = "update mss_categories set mss_categories.category_is_active = 0
-            where mss_categories.category_id = ".$this->db->escape($category_id).""; 
+            $sql = "update master_categories set master_categories.category_is_active = 0
+            where master_categories.category_id = ".$this->db->escape($category_id).""; 
                 $query = $this->db->query($sql);
                 $query1 = $this->db->query($sql1);
                 $query2 = $this->db->query($sql2);
@@ -233,7 +244,7 @@ class BusinessAdminModel extends CI_Model {
 		 }
 
     public function ViewCompositionBasic($where){
-        $sql = "SELECT * FROM mss_raw_composition,mss_services,mss_sub_categories,mss_categories WHERE mss_raw_composition.service_id = mss_services.service_id AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND mss_sub_categories.sub_category_category_id = mss_categories.category_id AND mss_categories.category_business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND mss_categories.category_business_outlet_id =".$this->db->escape($where['business_outlet_id'])." GROUP BY mss_raw_composition.service_id";
+        $sql = "SELECT * FROM mss_raw_composition,mss_services,mss_sub_categories,master_categories WHERE mss_raw_composition.service_id = mss_services.service_id AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND mss_sub_categories.sub_category_category_id = master_categories.category_id AND master_categories.category_business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND master_categories.category_business_outlet_id =".$this->db->escape($where['business_outlet_id'])." GROUP BY mss_raw_composition.service_id";
 
         $query = $this->db->query($sql);
         
@@ -252,14 +263,14 @@ class BusinessAdminModel extends CI_Model {
 					mss_raw_composition.consumption_quantity
 				FROM 
 					mss_raw_composition,
-					mss_categories,
+					master_categories,
 					mss_sub_categories,
 					mss_services 
 				WHERE 
 					mss_services.service_id =mss_raw_composition.service_id AND
 					mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND 
-					mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
-					mss_categories.category_business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND
+					mss_sub_categories.sub_category_category_id= master_categories.category_id AND
+					master_categories.category_business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND
 					mss_services.service_id= ".$this->db->escape($where['service_id'])." ";
 
         $query = $this->db->query($sql);
@@ -536,14 +547,14 @@ class BusinessAdminModel extends CI_Model {
 				FROM 
 					mss_services,
 					mss_sub_categories,
-					mss_categories
+					master_categories
 				WHERE
 					mss_services.service_type=".$this->db->escape($data['category_type'])." AND
 					mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
-					mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
+					mss_sub_categories.sub_category_category_id= master_categories.category_id AND
 					mss_services.service_price_inr >= ".$this->db->escape($data['service_price_inr'])." AND
-					mss_categories.category_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND 
-					mss_categories.category_business_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
+					master_categories.category_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND 
+					master_categories.category_business_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
                     
         $query = $this->db->query($sql);
         
@@ -562,14 +573,14 @@ class BusinessAdminModel extends CI_Model {
 				FROM 
 					mss_services,
 					mss_sub_categories,
-					mss_categories
+					master_categories
 				WHERE
 					mss_services.service_type=".$this->db->escape($data['category_type'])." AND
 					mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
-					mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
+					mss_sub_categories.sub_category_category_id= master_categories.category_id AND
 					mss_services.service_price_inr BETWEEN ".$this->db->escape($data['min_price'])." AND ".$this->db->escape($data['max_price'])." AND 
-					mss_categories.category_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND 
-					mss_categories.category_business_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
+					master_categories.category_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND 
+					master_categories.category_business_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
                     
         $query = $this->db->query($sql);
         
@@ -588,13 +599,13 @@ class BusinessAdminModel extends CI_Model {
 				FROM 
 					mss_services,
 					mss_sub_categories,
-					mss_categories
+					master_categories
 				WHERE
 					mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
 					mss_sub_categories.sub_category_category_id=  ".$this->db->escape($data['category_id'])." AND
 					mss_services.service_price_inr BETWEEN ".$this->db->escape($data['min_price'])." AND ".$this->db->escape($data['max_price'])." AND 
-					mss_categories.category_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND 
-					mss_categories.category_business_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
+					master_categories.category_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND 
+					master_categories.category_business_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
                     
         $query = $this->db->query($sql);
         
@@ -613,13 +624,13 @@ class BusinessAdminModel extends CI_Model {
 				FROM 
 					mss_services,
 					mss_sub_categories,
-					mss_categories
+					master_categories
 				WHERE
 					mss_services.service_sub_category_id= ".$this->db->escape($data['sub_category_id'])." AND
-					mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
+					mss_sub_categories.sub_category_category_id= master_categories.category_id AND
 					mss_services.service_price_inr BETWEEN ".$this->db->escape($data['min_price'])." AND ".$this->db->escape($data['max_price'])." AND 
-					mss_categories.category_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND 
-					mss_categories.category_business_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
+					master_categories.category_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND 
+					master_categories.category_business_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
                     
         $query = $this->db->query($sql);
         
@@ -983,7 +994,7 @@ class BusinessAdminModel extends CI_Model {
                      (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
                      (mss_services.service_price_inr*mss_transaction_services.txn_service_quantity) AS 'Before Tax',
                     mss_transaction_services.txn_service_discounted_price AS 'Billed Amount',
-                     mss_categories.category_name AS 'Category',
+                     master_categories.category_name AS 'Category',
                      mss_sub_categories.sub_category_name AS 'Sub-Category'
                      
                 FROM
@@ -991,7 +1002,7 @@ class BusinessAdminModel extends CI_Model {
                      mss_transaction_services,
                      mss_employees,
                      mss_customers,
-                     mss_categories,
+                     master_categories,
                      mss_sub_categories,
                      mss_services
                 WHERE
@@ -1001,7 +1012,7 @@ class BusinessAdminModel extends CI_Model {
                      AND mss_transaction_services.txn_service_service_id = mss_services.service_id
 					 AND mss_transaction_services.txn_service_status = 1
                      AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                     AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                     AND mss_sub_categories.sub_category_category_id = master_categories.category_id
                      AND mss_transactions.txn_customer_id = mss_customers.customer_id
                      AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."
                      AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
@@ -1145,17 +1156,17 @@ class BusinessAdminModel extends CI_Model {
                     mss_otc_stock.otc_expiry_date AS 'Expiry Date'
 
                 FROM 
-                    mss_categories,
+                    master_categories,
                     mss_sub_categories,
                     mss_services,
                     mss_otc_stock 
                 WHERE 
-                    mss_categories.category_id = mss_sub_categories.sub_category_category_id 
+                    master_categories.category_id = mss_sub_categories.sub_category_category_id 
                     AND mss_sub_categories.sub_category_id = mss_services.service_sub_category_id 
                     AND mss_services.service_id = mss_otc_stock.otc_service_id 
-                    AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                    AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
                     AND mss_services.service_is_active = 1 
-                    AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])." 
+                    AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])." 
                     AND mss_services.service_type = 'otc'
                 ORDER BY
                     mss_otc_stock.otc_expiry_date DESC";
@@ -1176,7 +1187,7 @@ class BusinessAdminModel extends CI_Model {
                     date(mss_transactions.txn_datetime) AS 'Billing Date',
                     mss_customers.customer_name AS 'Customer Name',
                     mss_customers.customer_mobile AS 'Customer Mobile',
-                    mss_categories.category_name AS 'Category',
+                    master_categories.category_name AS 'Category',
                     mss_sub_categories.sub_category_name 'Sub-Category',
                     mss_services.service_name AS 'Service',
                     mss_transaction_services.txn_service_discounted_price AS 'Discounted Service Price',
@@ -1184,7 +1195,7 @@ class BusinessAdminModel extends CI_Model {
                 FROM 
                     mss_transactions,
                     mss_customers,
-                    mss_categories,
+                    master_categories,
                     mss_sub_categories,
                     mss_services,
                     mss_transaction_services
@@ -1193,9 +1204,9 @@ class BusinessAdminModel extends CI_Model {
                     AND mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                    AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-                    AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                    AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
                     AND mss_customers.customer_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
                     AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
                 ORDER BY mss_transactions.txn_id";
@@ -1213,7 +1224,7 @@ class BusinessAdminModel extends CI_Model {
     private function GetItemWiseSalesReport($data){
         $sql = "SELECT 
                     date(mss_transactions.txn_datetime) AS 'Billing Date',
-                    mss_categories.category_name AS 'Category',
+                    master_categories.category_name AS 'Category',
                     mss_sub_categories.sub_category_name AS 'Sub-Category',
                     mss_services.service_name AS 'Service',
                     mss_employees.employee_first_name AS 'expert',
@@ -1222,7 +1233,7 @@ class BusinessAdminModel extends CI_Model {
                 FROM
                     mss_transactions,
                     mss_transaction_services,
-                    mss_categories,
+                    master_categories,
                     mss_sub_categories,
                     mss_services,
                     mss_employees
@@ -1231,13 +1242,13 @@ class BusinessAdminModel extends CI_Model {
                     AND mss_transaction_services.txn_service_expert_id=mss_employees.employee_id
                     AND mss_transaction_services.txn_service_service_id = mss_services.service_id 
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                    AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-                    AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                    AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
                     AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
                 GROUP BY
                     date(mss_transactions.txn_datetime),
-                    mss_categories.category_id,
+                    master_categories.category_id,
                     mss_sub_categories.sub_category_id,
                     mss_services.service_id";
 
@@ -1286,27 +1297,27 @@ class BusinessAdminModel extends CI_Model {
     private function GetSubCategoryWiseSalesReport($data){
         $sql = "SELECT 
                     date(mss_transactions.txn_datetime) AS 'Billing Date', 
-                    mss_categories.category_name AS 'Category', 
+                    master_categories.category_name AS 'Category', 
                     mss_sub_categories.sub_category_name AS 'Sub-Category',
                     COUNT(mss_sub_categories.sub_category_id) AS 'Total Sub Category',
                     SUM(mss_transaction_services.txn_service_discounted_price) AS 'Total Amount' 
                 FROM 
                     mss_transactions, 
                     mss_transaction_services, 
-                    mss_categories, 
+                    master_categories, 
                     mss_sub_categories,
                     mss_services
                 WHERE 
                     mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                    AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
-                    AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
+                    AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
                     AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])." 
                 GROUP BY 
                     date(mss_transactions.txn_datetime), 
-                    mss_categories.category_id,
+                    master_categories.category_id,
                     mss_sub_categories.sub_category_id";
 
         $query = $this->db->query($sql);
@@ -1386,10 +1397,10 @@ class BusinessAdminModel extends CI_Model {
     private function GetDateWiseCategorySalesReport($data){
         $sql = "SELECT 
                     date(mss_transactions.txn_datetime) AS 'Billing Date',
-                    mss_categories.category_name AS 'Category Name',
+                    master_categories.category_name AS 'Category Name',
                     SUM(mss_transaction_services.txn_service_discounted_price) AS 'Total Sales(Rs.)'
                 FROM 
-                    mss_categories,
+                    master_categories,
                     mss_sub_categories,
                     mss_services,
                     mss_transactions,
@@ -1400,15 +1411,15 @@ class BusinessAdminModel extends CI_Model {
                       mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                   AND mss_transaction_services.txn_service_service_id = mss_services.service_id 
                   AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                  AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                  AND mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
+                  AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                  AND master_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
                   AND mss_business_outlets.business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
                   AND mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
                   AND mss_business_admin.business_admin_id = ".$this->db->escape($data['business_admin_id'])."
                   AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
                 GROUP BY 
                     date(mss_transactions.txn_datetime), 
-                    mss_categories.category_id";
+                    master_categories.category_id";
 
         $query = $this->db->query($sql);
         
@@ -1885,13 +1896,13 @@ class BusinessAdminModel extends CI_Model {
                     mss_otc_stock,
                     mss_services,
                     mss_sub_categories,
-                    mss_categories
+                    master_categories
                 WHERE
                     mss_otc_stock.otc_service_id = mss_services.service_id
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                    AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
-                    AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])." 
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
+                    AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])." 
                     AND mss_services.service_type = 'otc'
                     AND mss_otc_stock.otc_sku < 15";
 
@@ -2086,14 +2097,14 @@ class BusinessAdminModel extends CI_Model {
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-                                AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                                AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
                                 AND mss_services.service_id = ".$this->db->escape($data['service_id'])."
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
@@ -2110,14 +2121,14 @@ class BusinessAdminModel extends CI_Model {
                               mss_transaction_services,
                               mss_services,
                               mss_sub_categories,
-                            mss_categories
+                            master_categories
                           WHERE
                               mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                               AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                               AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                              AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                              AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-                              AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                              AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                              AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                              AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
                               AND mss_sub_categories.sub_category_id = ".$this->db->escape($data['sub_category_id'])."
                               AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                           GROUP BY
@@ -2134,15 +2145,15 @@ class BusinessAdminModel extends CI_Model {
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-                                AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
-                                AND mss_categories.category_id = ".$this->db->escape($data['category_id'])." 
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                                AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                                AND master_categories.category_id = ".$this->db->escape($data['category_id'])." 
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
                                 YEAR(date(mss_transactions.txn_datetime)),
@@ -2160,14 +2171,14 @@ class BusinessAdminModel extends CI_Model {
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-                                AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                                AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
                                 AND mss_services.service_id = ".$this->db->escape($data['service_id'])."
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
@@ -2184,14 +2195,14 @@ class BusinessAdminModel extends CI_Model {
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-                                AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                                AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
                                 AND mss_sub_categories.sub_category_id = ".$this->db->escape($data['sub_category_id'])."
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
@@ -2208,15 +2219,15 @@ class BusinessAdminModel extends CI_Model {
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-                                AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
-                                AND mss_categories.category_id = ".$this->db->escape($data['category_id'])."
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                                AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                                AND master_categories.category_id = ".$this->db->escape($data['category_id'])."
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
                                 YEAR(date(mss_transactions.txn_datetime)),
@@ -2234,14 +2245,14 @@ class BusinessAdminModel extends CI_Model {
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-                                AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                                AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
                                 AND mss_services.service_id = ".$this->db->escape($data['service_id'])."
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
@@ -2258,14 +2269,14 @@ class BusinessAdminModel extends CI_Model {
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-                                AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                                AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
                                 AND mss_sub_categories.sub_category_id = ".$this->db->escape($data['sub_category_id'])."
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
@@ -2282,15 +2293,15 @@ class BusinessAdminModel extends CI_Model {
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                             mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                            AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                            AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-                            AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
-                            AND mss_categories.category_id = ".$this->db->escape($data['category_id'])."
+                            AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                            AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+                            AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+                            AND master_categories.category_id = ".$this->db->escape($data['category_id'])."
                             AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
                                 YEAR(date(mss_transactions.txn_datetime)),
@@ -4172,7 +4183,7 @@ public function commission_details()
         mss_transaction_services,
         mss_employees,
         mss_customers,
-        mss_categories,
+        master_categories,
         mss_sub_categories,
         mss_services
    WHERE
@@ -4181,7 +4192,7 @@ public function commission_details()
         AND mss_employees.employee_id=".$this->db->escape($commission['expert_id'])."
         AND mss_transaction_services.txn_service_service_id = mss_services.service_id
         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
         AND mss_transactions.txn_customer_id = mss_customers.customer_id
         AND date(mss_transactions.txn_datetime) BETWEEN (last_day(CURRENT_DATE) + interval 1 day - interval 4 month) AND LAST_DAY(now() - INTERVAL 1 MONTH)";
         $query = $this->db->query($sql);
@@ -4252,7 +4263,7 @@ public function commission_details()
       mss_transaction_services,
       mss_employees,
       mss_customers,
-      mss_categories,
+      master_categories,
       mss_sub_categories,
       mss_services
  WHERE
@@ -4261,7 +4272,7 @@ public function commission_details()
       AND mss_employees.employee_id=".$this->db->escape($commission[1])."
       AND mss_transaction_services.txn_service_service_id = mss_services.service_id
       AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-      AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+      AND mss_sub_categories.sub_category_category_id = master_categories.category_id
       AND mss_transactions.txn_customer_id = mss_customers.customer_id
       AND date(mss_transactions.txn_datetime) >= DATE_ADD(NOW(),INTERVAL -90 DAY)";
       $query = $this->db->query($sql);
@@ -4990,7 +5001,7 @@ public function commission_details()
          mss_transaction_services,
          mss_employees,
          mss_customers,
-         mss_categories,
+         master_categories,
          mss_sub_categories,
          mss_services
          WHERE
@@ -4999,7 +5010,7 @@ public function commission_details()
          AND mss_employees.employee_id=".$this->db->escape($commission['emp_id'])."
          AND mss_transaction_services.txn_service_service_id = mss_services.service_id
          AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-         AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+         AND mss_sub_categories.sub_category_category_id = master_categories.category_id
          AND mss_transactions.txn_customer_id = mss_customers.customer_id
          AND date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-
          1 DAY) AND CURRENT_DATE-1";
@@ -5450,7 +5461,7 @@ public function GetAttendanceAll($data){
               mss_transaction_services,
               mss_employees,
               mss_customers,
-              mss_categories,
+              master_categories,
               mss_sub_categories,
               mss_services
       WHERE
@@ -5458,7 +5469,7 @@ public function GetAttendanceAll($data){
               AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
               AND mss_transaction_services.txn_service_service_id = mss_services.service_id
               AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-              AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+              AND mss_sub_categories.sub_category_category_id = master_categories.category_id
               AND mss_transactions.txn_customer_id = mss_customers.customer_id
               AND mss_employees.employee_id=".$this->db->escape($data['expert_id'])."
               AND mss_employees.employee_business_outlet=".$this->session->userdata['outlets']['current_outlet']."
@@ -5543,7 +5554,7 @@ public function GetAttendanceAll($data){
                         mss_transaction_services,
                         mss_employees,
                         mss_customers,
-                        mss_categories,
+                        master_categories,
                         mss_sub_categories,
                         mss_services
                 WHERE
@@ -5551,7 +5562,7 @@ public function GetAttendanceAll($data){
                         AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
                         AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
                         AND mss_transactions.txn_customer_id = mss_customers.customer_id
                         AND mss_employees.employee_business_outlet=".$this->session->userdata['outlets']['current_outlet']."
                         AND date(mss_transactions.txn_datetime) BETWEEN (last_day(CURRENT_DATE) + interval 1 day - interval 4 month) AND LAST_DAY(now() - INTERVAL 1 MONTH)
@@ -5738,7 +5749,7 @@ public function GetAttendanceAll($data){
     public function GetTopServices(){
         $sql = "SELECT 
         date(mss_transactions.txn_datetime) AS 'Billing Date', 
-        mss_categories.category_name AS 'Category', 
+        master_categories.category_name AS 'Category', 
         mss_transaction_services.txn_service_service_id as 'service_id',
         mss_services.service_name 'service_name',
         mss_services.service_price_inr,
@@ -5750,16 +5761,16 @@ public function GetAttendanceAll($data){
         FROM 
         mss_transactions, 
         mss_transaction_services, 
-        mss_categories, 
+        master_categories, 
         mss_sub_categories,
         mss_services
         WHERE 
         mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
         AND mss_transaction_services.txn_service_service_id = mss_services.service_id   
         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-        AND mss_categories.category_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
-        AND mss_categories.category_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
+        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+        AND master_categories.category_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
+        AND master_categories.category_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
         AND month(mss_transactions.txn_datetime) = month(CURRENT_DATE)-1 
         GROUP BY 
         mss_services.service_id 
@@ -5780,15 +5791,15 @@ public function GetAttendanceAll($data){
            // print_r($this->session->userdata['outlets']['current_outlet']);     
            $sql="SELECT
            mss_services.*,
-           mss_categories.category_name,
-           mss_categories.category_type,
+           master_categories.category_name,
+           master_categories.category_type,
            mss_sub_categories.sub_category_name
            from
-           mss_services,mss_categories,mss_sub_categories
+           mss_services,master_categories,mss_sub_categories
            WHERE
            mss_services.service_sub_category_id=mss_sub_categories.sub_category_id AND
-           mss_sub_categories.sub_category_category_id=mss_categories.category_id AND
-           mss_categories.category_business_admin_id=".$this->session->userdata['logged_in']['business_admin_id']."";
+           mss_sub_categories.sub_category_category_id=master_categories.category_id AND
+           master_categories.category_business_admin_id=".$this->session->userdata['logged_in']['business_admin_id']."";
            $query = $this->db->query($sql);
            
            if($query){
@@ -6073,7 +6084,7 @@ public function GetAttendanceAll($data){
                     FROM
                         mss_appointments,
                         mss_appointment_services,
-                        mss_categories,
+                        master_categories,
                         mss_sub_categories,
                         mss_services,
                         mss_employees,
@@ -6081,7 +6092,7 @@ public function GetAttendanceAll($data){
                     WHERE
                         mss_appointments.customer_id = mss_customers.customer_id
                         AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
-                        AND mss_sub_categories.sub_category_category_id=mss_categories.category_id
+                        AND mss_sub_categories.sub_category_category_id=master_categories.category_id
                         AND mss_appointments.appointment_id = mss_appointment_services.appointment_id
                         AND mss_appointments.appointment_date = CURRENT_DATE
                         AND mss_appointments.appointment_start_time >= CURRENT_TIME
@@ -6150,7 +6161,7 @@ public function GetAttendanceAll($data){
         }
         //11-04-2020
         public function MenuManagementServices($where){
-            $sql = "SELECT * FROM mss_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND C.service_is_active = ".$this->db->escape($where['service_is_active'])." AND A.category_business_outlet_id = ".$this->db->escape($where['category_business_outlet_id'])." AND C.service_type = ".$this->db->escape($where['service_type'])." order by C.service_id desc";
+            $sql = "SELECT * FROM master_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND C.service_is_active = ".$this->db->escape($where['service_is_active'])." AND A.category_business_outlet_id = ".$this->db->escape($where['category_business_outlet_id'])." AND C.service_type = ".$this->db->escape($where['service_type'])." order by C.service_id desc";
              $query = $this->db->query($sql);
              if($query){
                  return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6190,7 +6201,7 @@ public function GetAttendanceAll($data){
         C.service_price_inr*C.service_gst_percentage/100 as 'GST',
         C.service_price_inr+C.service_price_inr*C.service_gst_percentage/100 as 'MRP'
         FROM 
-        mss_categories AS A,
+        master_categories AS A,
         mss_sub_categories AS B,
         mss_services AS C 
         WHERE 
@@ -6219,7 +6230,7 @@ public function GetAttendanceAll($data){
         C.service_price_inr*C.service_gst_percentage/100 as 'GST',
         C.service_price_inr+C.service_price_inr*C.service_gst_percentage/100 as 'MRP'
         FROM 
-        mss_categories AS A,
+        master_categories AS A,
         mss_sub_categories AS B,
         mss_services AS C 
         WHERE 
@@ -6246,18 +6257,18 @@ public function GetAttendanceAll($data){
         mss_inventory.barcode as 'Barcode',
         mss_services.service_name as 'Product Name',
         mss_sub_categories.sub_category_name as 'Sub Category',
-        mss_categories.category_name as 'Category',
+        master_categories.category_name as 'Category',
         mss_inventory.brand_name as 'Brand Name',
         mss_inventory.usg_category as 'Usg Type',
         mss_inventory.sku_size as 'SKU Size',
         mss_inventory.unit as 'Unit',
         mss_inventory.sku_count as 'Total Stock'
-        FROM mss_inventory,mss_business_outlets,mss_sub_categories,mss_categories,mss_services
+        FROM mss_inventory,mss_business_outlets,mss_sub_categories,master_categories,mss_services
         where 
         mss_inventory.service_id=mss_services.service_id
         AND mss_inventory.outlet_id = mss_business_outlets.business_outlet_id
         AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id=mss_categories.category_id
+        AND mss_sub_categories.sub_category_category_id=master_categories.category_id
         AND mss_inventory.business_admin_id=".$this->db->escape($data['business_admin_id'])." 
         AND mss_inventory.outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
@@ -6395,7 +6406,7 @@ public function GetAttendanceAll($data){
                 mss_transaction_services,
                 mss_employees,
                 mss_customers,
-                mss_categories,
+                master_categories,
                 mss_sub_categories,
                 mss_services
         WHERE
@@ -6403,7 +6414,7 @@ public function GetAttendanceAll($data){
                 AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
                 AND mss_services.service_type='service'
                 AND mss_transactions.txn_status=1
                 AND mss_transactions.txn_customer_id = mss_customers.customer_id
@@ -6427,7 +6438,7 @@ public function GetAttendanceAll($data){
         mss_transaction_services,
         mss_employees,
         mss_customers,
-        mss_categories,
+        master_categories,
         mss_sub_categories,
         mss_services
         WHERE
@@ -6436,7 +6447,7 @@ public function GetAttendanceAll($data){
         AND mss_employees.employee_id=".$this->db->escape($data['emp_id'])."
         AND mss_transaction_services.txn_service_service_id = mss_services.service_id
         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
         AND mss_services.service_type='service'
         AND mss_transactions.txn_status=1
         AND mss_transactions.txn_customer_id = mss_customers.customer_id
@@ -6460,7 +6471,7 @@ public function GetAttendanceAll($data){
                 mss_transaction_services,
                 mss_employees,
                 mss_customers,
-                mss_categories,
+                master_categories,
                 mss_sub_categories,
                 mss_services
         WHERE
@@ -6468,7 +6479,7 @@ public function GetAttendanceAll($data){
                 AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
                 AND mss_services.service_type='otc'
                 AND mss_transactions.txn_status=1
                 AND mss_transactions.txn_customer_id = mss_customers.customer_id
@@ -6492,7 +6503,7 @@ public function GetAttendanceAll($data){
         mss_transaction_services,
         mss_employees,
         mss_customers,
-        mss_categories,
+        master_categories,
         mss_sub_categories,
         mss_services
         WHERE
@@ -6501,7 +6512,7 @@ public function GetAttendanceAll($data){
         AND mss_employees.employee_id=".$this->db->escape($data['emp_id'])."
         AND mss_transaction_services.txn_service_service_id = mss_services.service_id
         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
         AND mss_services.service_type='otc'
         AND mss_transactions.txn_status=1
         AND mss_transactions.txn_customer_id = mss_customers.customer_id
@@ -7700,7 +7711,7 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 	
 	//04-05-2020
     public function ServicesAll($where){
-        $sql = "SELECT * FROM mss_categories AS A,mss_sub_categories AS B,mss_services AS C 
+        $sql = "SELECT * FROM master_categories AS A,mss_sub_categories AS B,mss_services AS C 
         WHERE A.category_id = B.sub_category_category_id
         AND B.sub_category_id = C.service_sub_category_id 
         AND A.category_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
@@ -9362,14 +9373,14 @@ WHERE  mss_customers.customer_business_outlet_id = 1
     public function StockDetails(){
         $query="SELECT mss_services.service_id, mss_services.service_name,
         mss_sub_categories.sub_category_name,
-        mss_categories.category_name,
+        master_categories.category_name,
         mss_inventory.sku_size,
         mss_inventory.sku_count
-        FROM mss_services,mss_inventory,mss_sub_categories,mss_categories
+        FROM mss_services,mss_inventory,mss_sub_categories,master_categories
         WHERE
         mss_inventory.service_id = mss_services.service_id
         AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
         AND mss_inventory.outlet_id=".$this->session->userdata['outlets']['current_outlet']."
         ";
         $sql = $this->db->query($query);
@@ -9450,7 +9461,7 @@ WHERE  mss_customers.customer_business_outlet_id = 1
           } 
     }
     public function ServicesOtc($where){
-        $sql = "SELECT * FROM mss_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND C.service_is_active = ".$this->db->escape($where['service_is_active'])." AND A.category_business_outlet_id = ".$this->db->escape($where['category_business_outlet_id'])." AND C.service_type = ".$this->db->escape($where['service_type'])." AND C.service_id=".$this->db->escape($where['service_id'])."";
+        $sql = "SELECT * FROM master_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND C.service_is_active = ".$this->db->escape($where['service_is_active'])." AND A.category_business_outlet_id = ".$this->db->escape($where['category_business_outlet_id'])." AND C.service_type = ".$this->db->escape($where['service_type'])." AND C.service_id=".$this->db->escape($where['service_id'])."";
          $query = $this->db->query($sql);
          if($query){
              return $this->ModelHelper(true,false,'',$query->result_array());
@@ -9492,9 +9503,9 @@ WHERE  mss_customers.customer_business_outlet_id = 1
     }
     
     public function SubCategoriesOtc(){
-        $sql = "SELECT * FROM mss_categories,mss_sub_categories
-        WHERE mss_categories.category_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-        AND mss_categories.category_id=mss_sub_categories.sub_category_category_id
+        $sql = "SELECT * FROM master_categories,mss_sub_categories
+        WHERE master_categories.category_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
+        AND master_categories.category_id=mss_sub_categories.sub_category_category_id
         ";
         $query = $this->db->query($sql);
         if($query){
@@ -9529,7 +9540,7 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 		mss_services.service_id,
 		mss_services.service_name,
 		mss_services.inventory_type,
-		mss_categories.category_name,
+		master_categories.category_name,
 		mss_sub_categories.sub_category_name,
 		mss_services.qty_per_item,
 		mss_services.service_unit,
@@ -9538,13 +9549,13 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 	mss_inventory_transaction,
 		mss_services,
 		mss_sub_categories,
-		mss_categories
+		master_categories
 	WHERE 
 	mss_inventory_transaction.mss_service_id = mss_services.service_id AND
 		mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND
-		mss_sub_categories.sub_category_category_id = mss_categories.category_id AND
-        mss_categories.category_business_admin_id=".$this->session->userdata['logged_in']['business_admin_id']." AND
-		mss_categories.category_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
+		mss_sub_categories.sub_category_category_id = master_categories.category_id AND
+        master_categories.category_business_admin_id=".$this->session->userdata['logged_in']['business_admin_id']." AND
+		master_categories.category_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
 		GROUP BY mss_services.service_id ";
         $query = $this->db->query($sql);
         if($query){
@@ -9720,18 +9731,18 @@ WHERE  mss_customers.customer_business_outlet_id = 1
 	FROM 
 		mss_services,
 		mss_sub_categories,
-		mss_categories
+		master_categories
 	WHERE 
 		mss_services.inventory_type='Raw Material' AND
 		mss_services.service_is_active=1 AND
 		mss_services.inventory_type_id=1 AND
 		mss_services.service_sub_category_id =mss_sub_categories.sub_category_id AND
-		mss_sub_categories.sub_category_category_id = mss_categories.category_id AND
-		mss_categories.category_is_active=1 AND 
-		mss_categories.category_is_active=1 AND 
-		mss_categories.category_for=1 AND  
-		mss_categories.category_business_outlet_id=".$this->db->escape($where['business_outlet_id'])."  AND
-		mss_categories.category_business_admin_id=".$this->db->escape($where['business_admin_id'])."";
+		mss_sub_categories.sub_category_category_id = master_categories.category_id AND
+		master_categories.category_is_active=1 AND 
+		master_categories.category_is_active=1 AND 
+		master_categories.category_for=1 AND  
+		master_categories.category_business_outlet_id=".$this->db->escape($where['business_outlet_id'])."  AND
+		master_categories.category_business_admin_id=".$this->db->escape($where['business_admin_id'])."";
          $query = $this->db->query($sql);
          if($query){
              return $this->ModelHelper(true,false,'',$query->result_array());

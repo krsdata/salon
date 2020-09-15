@@ -26,6 +26,7 @@ class MasterAdminModel extends CI_Model
       return $data;
     }
   }
+  
   //Testing Function
   private function PrintArray($data)
   {
@@ -187,7 +188,7 @@ class MasterAdminModel extends CI_Model
 
   public function SubCategories($where)
   {
-    $sql = "SELECT sub_category_id,sub_category_category_id,sub_category_name,sub_category_is_active,sub_category_description,category_name FROM mss_sub_categories AS A,mss_categories AS B WHERE A.sub_category_category_id = B.category_id AND B.category_business_admin_id = " . $this->db->escape($where['category_business_admin_id']) . " AND sub_category_is_active = " . $this->db->escape($where['sub_category_is_active']) . " AND B.category_business_outlet_id=" . $this->db->escape($where['category_business_outlet_id']) . "";
+    $sql = "SELECT sub_category_id,sub_category_category_id,sub_category_name,sub_category_is_active,sub_category_description,category_name FROM mss_sub_categories AS A,master_categories AS B WHERE A.sub_category_category_id = B.category_id AND B.category_business_admin_id = " . $this->db->escape($where['category_business_admin_id']) . " AND sub_category_is_active = " . $this->db->escape($where['sub_category_is_active']) . " AND B.category_business_outlet_id=" . $this->db->escape($where['category_business_outlet_id']) . "";
 
     $query = $this->db->query($sql);
 
@@ -201,7 +202,7 @@ class MasterAdminModel extends CI_Model
    public function MasterSubCategories($data,$getSubCategoryById=0)
   {
 	
-    $sql = "SELECT sub_category_id,sub_category_category_id,sub_category_name,sub_category_is_active,sub_category_description,category_name,category_type FROM master_sub_categories AS A,master_categories AS B WHERE A.sub_category_category_id = B.category_id AND B.master_id = " . $this->db->escape($data['master_id']) . " AND A.sub_category_is_active = " . $this->db->escape($data['sub_category_is_active']) . " ";
+    $sql = "SELECT sub_category_id,sub_category_category_id,sub_category_name,sub_category_is_active,sub_category_description,category_name,category_type FROM mss_sub_categories AS A,master_categories AS B WHERE A.sub_category_category_id = B.category_id AND B.master_id = " . $this->db->escape($data['master_id']) . "AND B.master_id=A.master_id  AND A.sub_category_is_active = " . $this->db->escape($data['sub_category_is_active']) . " ";
     
 	if($getSubCategoryById>0){
 		$sql .= "  AND A.sub_category_id = " . $this->db->escape($getSubCategoryById) . " ";
@@ -217,8 +218,8 @@ class MasterAdminModel extends CI_Model
   }
   
    public function getMasterSubCategoriesByIds($where){
-	   //$sql = "SELECT * FROM `master_sub_categories` WHERE `sub_category_category_id` IN (".$this->db->escape($where['sub_category_category_id']).") AND `sub_category_is_active`= " . $this->db->escape($where['sub_category_is_active']) . "";
-	   $sql = "SELECT A.`sub_category_id`,A.`sub_category_name`,A.`sub_category_category_id`,B.category_id,B.category_name FROM `master_sub_categories` as A,`master_categories` as B  WHERE A.`sub_category_category_id` IN (".$where['sub_category_category_id'].") AND A.`sub_category_is_active` = " . $this->db->escape($where['sub_category_is_active']) . " AND A.`sub_category_category_id`=B.category_id ";
+	   //$sql = "SELECT * FROM `mss_sub_categories` WHERE `sub_category_category_id` IN (".$this->db->escape($where['sub_category_category_id']).") AND `sub_category_is_active`= " . $this->db->escape($where['sub_category_is_active']) . "";
+	   $sql = "SELECT A.`sub_category_id`,A.`sub_category_name`,A.`sub_category_category_id`,B.category_id,B.category_name FROM `mss_sub_categories` as A,`master_categories` as B  WHERE A.`sub_category_category_id` IN (".$where['sub_category_category_id'].") AND A.`sub_category_is_active` = " . $this->db->escape($where['sub_category_is_active']) . " AND A.`sub_category_category_id`=B.category_id ";
 	   $query = $this->db->query($sql);
     
 		if ($query) {
@@ -229,7 +230,7 @@ class MasterAdminModel extends CI_Model
   }
   
   public function getMasterCategoriesBySubCatIds($where){
-	   $sql = "SELECT A.`sub_category_id`,A.`sub_category_name`,A.`sub_category_category_id`,B.category_id,B.category_name FROM `master_sub_categories` as A,`master_categories` as B  WHERE A.`sub_category_id` IN (".$where['sub_category_id'].") AND A.`sub_category_is_active` = " . $this->db->escape($where['sub_category_is_active']) . " AND A.`sub_category_category_id`=B.category_id ";
+	   $sql = "SELECT A.`sub_category_id`,A.`sub_category_name`,A.`sub_category_category_id`,B.category_id,B.category_name FROM `mss_sub_categories` as A,`master_categories` as B  WHERE A.`sub_category_id` IN (".$where['sub_category_id'].") AND A.`sub_category_is_active` = " . $this->db->escape($where['sub_category_is_active']) . " AND A.`sub_category_category_id`=B.category_id ";
 	   $query = $this->db->query($sql);
     
 		if ($query) {
@@ -241,7 +242,7 @@ class MasterAdminModel extends CI_Model
   
   public function Services($where)
   {
-    $sql = "SELECT * FROM mss_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.category_business_admin_id = " . $this->db->escape($where['category_business_admin_id']) . " AND C.service_is_active = " . $this->db->escape($where['service_is_active']) . " AND A.category_business_outlet_id = " . $this->db->escape($where['category_business_outlet_id']) . " AND C.service_type = " . $this->db->escape($where['service_type']) . "";
+    $sql = "SELECT * FROM master_categories AS A,mss_sub_categories AS B,master_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.category_business_admin_id = " . $this->db->escape($where['category_business_admin_id']) . " AND C.service_is_active = " . $this->db->escape($where['service_is_active']) . " AND A.category_business_outlet_id = " . $this->db->escape($where['category_business_outlet_id']) . " AND C.service_type = " . $this->db->escape($where['service_type']) . "";
 
     $query = $this->db->query($sql);
 
@@ -254,7 +255,7 @@ class MasterAdminModel extends CI_Model
  
    public function MasterServices($where,$service_id=0)
   {
-    $sql = "SELECT * FROM master_categories AS A,master_sub_categories AS B,master_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.master_id = " . $this->db->escape($where['master_id']) . " AND C.service_is_active = " . $this->db->escape($where['service_is_active']) . "  AND C.service_type = " . $this->db->escape($where['service_type']) . "";
+    $sql = "SELECT * FROM master_categories AS A,mss_sub_categories AS B,master_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.master_id = " . $this->db->escape($where['master_id']) . " AND C.service_is_active = " . $this->db->escape($where['service_is_active']) . "  AND C.service_type = " . $this->db->escape($where['service_type']) . "";
     if($service_id>0){
 		$sql .= " AND C.service_id = ".$service_id."";
 	}
@@ -281,7 +282,7 @@ class MasterAdminModel extends CI_Model
    public function getMasterServicesBySubCatIds($subCategoryIds="",$categoryType="",$isSubCategoryDetails=FALSE){
 	   $sql = "SELECT * FROM `master_services` WHERE `service_sub_category_id` IN (".$subCategoryIds.") AND service_is_active = TRUE";
 	   if($isSubCategoryDetails==TRUE){
-		   $sql = "SELECT A.*,B.sub_category_id,B.sub_category_name FROM `master_services` as A ,`master_sub_categories` as B WHERE A.`service_sub_category_id`=B.`sub_category_id` AND A.`service_is_active`=TRUE AND `service_sub_category_id` IN (".$subCategoryIds.")";
+		   $sql = "SELECT A.*,B.sub_category_id,B.sub_category_name FROM `master_services` as A ,`mss_sub_categories` as B WHERE A.`service_sub_category_id`=B.`sub_category_id` AND A.`service_is_active`=TRUE AND `service_sub_category_id` IN (".$subCategoryIds.")";
 		 
 		   if($categoryType!=""){
 			   $sql .= "  AND A.service_type IN (".$categoryType.") ";
@@ -323,8 +324,8 @@ class MasterAdminModel extends CI_Model
 
   public function DeactiveCategory($category_id)
   {
-    $sql = "UPDATE mss_services,mss_sub_categories,mss_categories SET mss_services.service_is_active = FALSE,mss_sub_categories.sub_category_is_active = FALSE,mss_categories.category_is_active = FALSE WHERE 
-				mss_sub_categories.sub_category_id = mss_services.service_sub_category_id AND mss_categories.category_id =" . $this->db->escape($category_id) . "";
+    $sql = "UPDATE master_services,mss_sub_categories,master_categories SET master_services.service_is_active = FALSE,mss_sub_categories.sub_category_is_active = FALSE,master_categories.category_is_active = FALSE WHERE 
+				mss_sub_categories.sub_category_id = master_services.service_sub_category_id AND master_categories.category_id =" . $this->db->escape($category_id) . "";
 
     $query = $this->db->query($sql);
 
@@ -337,8 +338,8 @@ class MasterAdminModel extends CI_Model
 
  public function DeactiveMasterCategory($category_id){
    	  
-    /*$sql = "UPDATE master_services,master_sub_categories,master_categories SET master_services.service_is_active = FALSE,master_sub_categories.sub_category_is_active = FALSE,master_categories.category_is_active = FALSE WHERE 
-				master_sub_categories.sub_category_id = master_services.service_sub_category_id AND master_sub_categories.sub_category_category_id = master_categories.category_id  AND master_categories.category_id =" . $this->db->escape($category_id) . "";
+    /*$sql = "UPDATE master_services,mss_sub_categories,master_categories SET master_services.service_is_active = FALSE,mss_sub_categories.sub_category_is_active = FALSE,master_categories.category_is_active = FALSE WHERE 
+				mss_sub_categories.sub_category_id = master_services.service_sub_category_id AND mss_sub_categories.sub_category_category_id = master_categories.category_id  AND master_categories.category_id =" . $this->db->escape($category_id) . "";
  
     */
 	
@@ -348,12 +349,12 @@ class MasterAdminModel extends CI_Model
     if ($this->db->affected_rows() > 0) {
 		
 	  // Deactivated all which belong to this category like Sub category/Service/  	
-	  $sql = "UPDATE master_sub_categories SET sub_category_is_active = FALSE WHERE sub_category_category_id =" . $this->db->escape($category_id) . "";
+	  $sql = "UPDATE mss_sub_categories SET sub_category_is_active = FALSE WHERE sub_category_category_id =" . $this->db->escape($category_id) . "";
 	  $this->db->query($sql);
 	  
 	 
-	  $sql = "UPDATE master_services,master_sub_categories SET master_services.service_is_active = FALSE WHERE 
-				master_sub_categories.sub_category_id = master_services.service_sub_category_id AND master_sub_categories.sub_category_category_id =" . $this->db->escape($category_id) . "";
+	  $sql = "UPDATE master_services,mss_sub_categories SET master_services.service_is_active = FALSE WHERE 
+				mss_sub_categories.sub_category_id = master_services.service_sub_category_id AND mss_sub_categories.sub_category_category_id =" . $this->db->escape($category_id) . "";
 	  $this->db->query($sql);	
 	 	  
       return $this->ModelHelper(true, false);
@@ -364,7 +365,7 @@ class MasterAdminModel extends CI_Model
   
   public function DeactiveSubCategory($sub_category_id)
   {
-    $sql = "UPDATE mss_sub_categories,mss_services SET mss_sub_categories.sub_category_is_active = FALSE,mss_services.service_is_active = FALSE WHERE mss_sub_categories.sub_category_id = mss_services.service_sub_category_id AND mss_sub_categories.sub_category_id = " . $this->db->escape($sub_category_id) . "";
+    $sql = "UPDATE mss_sub_categories,master_services SET mss_sub_categories.sub_category_is_active = FALSE,master_services.service_is_active = FALSE WHERE mss_sub_categories.sub_category_id = master_services.service_sub_category_id AND mss_sub_categories.sub_category_id = " . $this->db->escape($sub_category_id) . "";
 
     $query = $this->db->query($sql);
 
@@ -377,9 +378,9 @@ class MasterAdminModel extends CI_Model
  
   public function MasterDeactiveSubCategory($sub_category_id)
   {
-    //$sql = "UPDATE master_sub_categories,master_services SET master_sub_categories.sub_category_is_active = FALSE,master_services.service_is_active = FALSE WHERE master_sub_categories.sub_category_id = master_services.service_sub_category_id AND master_sub_categories.sub_category_id = " . $this->db->escape($sub_category_id) . "";
+    //$sql = "UPDATE mss_sub_categories,master_services SET mss_sub_categories.sub_category_is_active = FALSE,master_services.service_is_active = FALSE WHERE mss_sub_categories.sub_category_id = master_services.service_sub_category_id AND mss_sub_categories.sub_category_id = " . $this->db->escape($sub_category_id) . "";
     
-	$sql = "UPDATE master_sub_categories SET sub_category_is_active = FALSE WHERE sub_category_id =" . $this->db->escape($sub_category_id) . "";
+	$sql = "UPDATE mss_sub_categories SET sub_category_is_active = FALSE WHERE sub_category_id =" . $this->db->escape($sub_category_id) . "";
 	
     $query = $this->db->query($sql);
 
@@ -396,7 +397,7 @@ class MasterAdminModel extends CI_Model
   
   public function ViewCompositionBasic($where)
   {
-    $sql = "SELECT * FROM mss_raw_composition,mss_services,mss_sub_categories,mss_categories WHERE mss_raw_composition.service_id = mss_services.service_id AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND mss_sub_categories.sub_category_category_id = mss_categories.category_id AND mss_categories.category_business_admin_id = " . $this->db->escape($where['business_admin_id']) . " AND mss_categories.category_business_outlet_id =" . $this->db->escape($where['business_outlet_id']) . " GROUP BY mss_raw_composition.service_id";
+    $sql = "SELECT * FROM mss_raw_composition,master_services,mss_sub_categories,master_categories WHERE mss_raw_composition.service_id = master_services.service_id AND master_services.service_sub_category_id = mss_sub_categories.sub_category_id AND mss_sub_categories.sub_category_category_id = master_categories.category_id AND master_categories.category_business_admin_id = " . $this->db->escape($where['business_admin_id']) . " AND master_categories.category_business_outlet_id =" . $this->db->escape($where['business_outlet_id']) . " GROUP BY mss_raw_composition.service_id";
 
     $query = $this->db->query($sql);
 
@@ -409,7 +410,7 @@ class MasterAdminModel extends CI_Model
 
   public function ViewComposition($where)
   {
-    $sql = "SELECT * FROM mss_raw_composition,mss_raw_material_categories,mss_services WHERE mss_raw_composition.rmc_id = mss_raw_material_categories.raw_material_category_id AND mss_raw_material_categories.raw_material_business_admin_id = " . $this->db->escape($where['business_admin_id']) . " AND mss_raw_material_categories.raw_material_business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . " AND mss_raw_composition.service_id = " . $this->db->escape($where['service_id']) . "  AND mss_raw_composition.service_id = mss_services.service_id";
+    $sql = "SELECT * FROM mss_raw_composition,mss_raw_material_categories,master_services WHERE mss_raw_composition.rmc_id = mss_raw_material_categories.raw_material_category_id AND mss_raw_material_categories.raw_material_business_admin_id = " . $this->db->escape($where['business_admin_id']) . " AND mss_raw_material_categories.raw_material_business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . " AND mss_raw_composition.service_id = " . $this->db->escape($where['service_id']) . "  AND mss_raw_composition.service_id = master_services.service_id";
 
     $query = $this->db->query($sql);
 
@@ -485,7 +486,7 @@ class MasterAdminModel extends CI_Model
 				}
 			}
 		
-					$sub_categories=$this->MultiWhereSelect('master_sub_categories',array('sub_category_category_id' => $categories[$i]));
+					$sub_categories=$this->MultiWhereSelect('mss_sub_categories',array('sub_category_category_id' => $categories[$i]));
 					
 					$sub_categories=$sub_categories['res_arr'];
 					for($j=0;$j< count($sub_categories);$j++){
@@ -494,19 +495,22 @@ class MasterAdminModel extends CI_Model
 						
 						$services = $services_data['res_arr'];
 						
-						
-						foreach ($services as $service) {
-								$data_2 = array(
-										'salon_package_id' => $last_insert_id,
-										'service_id' 		=> $service['service_id'],
-										'discount_percentage' => 100,
-										'service_count' => $serviceCount,
-										'master_id' => $masterId
-								);
-							
-								$result_2 = $this->Insert($data_2,'mss_salon_package_data');
-								$servicesIds[] = $service['service_id'];
-						}
+						foreach($outletIds as $outletId){	
+							foreach ($services as $service) {
+									$data_2 = array(
+											'salon_package_id' => $last_insert_id,
+											'service_id' 		=> 0,
+											'discount_percentage' => 100,
+											'service_count' => $serviceCount,
+											'master_id' => $masterId,
+											'master_service_id' => $service['service_id'],
+											'outlet_id' => $outletId
+									);
+								
+									$result_2 = $this->Insert($data_2,'mss_salon_package_data');
+									$servicesIds[] = $service['service_id'];
+							}
+						 }
 					}
       }
 	
@@ -539,24 +543,28 @@ class MasterAdminModel extends CI_Model
 				}
 			}
 			
-					$sub_categories=$this->MultiWhereSelect('master_sub_categories',array('sub_category_category_id' => $categories[$i]));
+					$sub_categories=$this->MultiWhereSelect('mss_sub_categories',array('sub_category_category_id' => $categories[$i]));
 					$sub_categories=$sub_categories['res_arr'];
 					for($j=0;$j< count($sub_categories);$j++){
 					//for each sub category id -> add all services in it
 						$services_data = $this->MultiWhereSelect('master_services',array('service_sub_category_id' => $sub_categories[$j]['sub_category_id']));
 						$services = $services_data['res_arr'];
 						
-						for($k=0;$k< count($services);$k++) {
-							if($services[$k]['service_price_inr'] > $cat_price[$i] ){
-								$data_2 = array(
-									'salon_package_id' => $last_insert_id,
-									'service_id' => $services[$k]['service_id'],
-									'discount_percentage' => $serviceDiscount,
-									'service_count' =>$serviceCount,
-									'master_id' => $masterId
-								);
-								$result_2 = $this->Insert($data_2,'mss_salon_package_data');
-								$servicesIds[] = $services[$k]['service_id'];
+						foreach($outletIds as $outletId){
+							for($k=0;$k< count($services);$k++) {
+								if($services[$k]['service_price_inr'] > $cat_price[$i] ){
+									$data_2 = array(
+										'salon_package_id' => $last_insert_id,
+										'service_id' => 0,
+										'discount_percentage' => $serviceDiscount,
+										'service_count' =>$serviceCount,
+										'master_id' => $masterId,
+										'master_service_id' => $services[$k]['service_id'],
+										'outlet_id' =>$outletId
+									);
+									$result_2 = $this->Insert($data_2,'mss_salon_package_data');
+									$servicesIds[] = $services[$k]['service_id'];
+								}
 							}
 						}
 					}
@@ -587,20 +595,24 @@ class MasterAdminModel extends CI_Model
                 $result_2=$result_2['res_arr'];
                 // echo $result_2[1]['service_id'];
                 // exit;
-                for($k=0;$k< count($result_2);$k++){
-                    $data_2 = array(
-                    'salon_package_id' => $last_insert_id,
-                    'service_id' => $result_2[$k]['service_id'],
-                    'discount_percentage' => $_POST['special_discount1'][$i],
-                    'service_monthly_discount'=>$_POST['package_monthly_discount'],
-                    'birthday_discount' =>$_POST['birthday_discount'],
-                    'anni_discount'	=> $_POST['anniversary_discount'],
-                    'service_count' => $count,
-					'master_id' =>$masterId
-                    );							
-                    $result = $this->Insert($data_2,'mss_salon_package_data');
-                    $servicesIds[] = $result_2[$k]['service_id'];					
-                }
+              foreach($outletIds as $outletId){  
+					for($k=0;$k< count($result_2);$k++){
+						$data_2 = array(
+						'salon_package_id' => $last_insert_id,
+						'service_id' => 0,
+						'discount_percentage' => $_POST['special_discount1'][$i],
+						'service_monthly_discount'=>$_POST['package_monthly_discount'],
+						'birthday_discount' =>$_POST['birthday_discount'],
+						'anni_discount'	=> $_POST['anniversary_discount'],
+						'service_count' => $count,
+						'master_id' =>$masterId,
+						'master_service_id' =>  $result_2[$k]['service_id'],
+						'outlet_id' =>$outletId
+						);							
+						$result = $this->Insert($data_2,'mss_salon_package_data');
+						$servicesIds[] = $result_2[$k]['service_id'];					
+					}
+			   }
             }
         }        
         if(!empty($_POST['special_category_id2'])){
@@ -616,20 +628,24 @@ class MasterAdminModel extends CI_Model
                 // $categories=$this->ServiceByPrice($co);
                 $result_3=$this->ServiceBetweenPrice2($filter2);
                 $result_3=$result_3['res_arr'];
-                for($k=0;$k< count($result_3);$k++){
-                    $data_3 = array(
-                    'salon_package_id' => $last_insert_id,
-                    'service_id' => $result_3[$k]['service_id'],
-                    'discount_percentage' => $_POST['special_discount2'][$i],
-                    'service_monthly_discount'=>$_POST['package_monthly_discount'],
-                    'birthday_discount' =>$_POST['birthday_discount'],
-                    'anni_discount'	=> $_POST['anniversary_discount'],
-                    'service_count' => $count,
-					'master_id' =>$masterId
-                    );							
-                    $result_2 = $this->Insert($data_3,'mss_salon_package_data');   
-					$servicesIds[] = $result_3[$k]['service_id'];							
-                }
+				foreach($outletIds as $outletId){  	
+					for($k=0;$k< count($result_3);$k++){
+						$data_3 = array(
+						'salon_package_id' => $last_insert_id,
+						'service_id' => 0,
+						'discount_percentage' => $_POST['special_discount2'][$i],
+						'service_monthly_discount'=>$_POST['package_monthly_discount'],
+						'birthday_discount' =>$_POST['birthday_discount'],
+						'anni_discount'	=> $_POST['anniversary_discount'],
+						'service_count' => $count,
+						'master_id' =>$masterId,
+						'master_service_id' => $result_3[$k]['service_id'],
+						'outlet_id' =>$outletId
+						);							
+						$result_2 = $this->Insert($data_3,'mss_salon_package_data');   
+						$servicesIds[] = $result_3[$k]['service_id'];							
+					}
+				 }
             }
         }
         if(!empty($_POST['special_sub_category_id3'])){
@@ -645,35 +661,43 @@ class MasterAdminModel extends CI_Model
                 // $categories=$this->ServiceByPrice($co);
                 $result_3=$this->ServiceBetweenPrice3($filter3);
                 $result_3=$result_3['res_arr'];
-                for($k=0;$k< count($result_3);$k++){
-                    $data_3 = array(
-                    'salon_package_id' => $last_insert_id,
-                    'service_id' => $result_3[$k]['service_id'],
-                    'discount_percentage' => $_POST['special_discount3'][$i],
-                    'service_monthly_discount'=>$_POST['package_monthly_discount'],
-                    'birthday_discount' =>$_POST['birthday_discount'],
-                    'anni_discount'	=> $_POST['anniversary_discount'],
-                    'service_count' => $count
-                    );							
-                    $result_2 = $this->Insert($data_3,'mss_salon_package_data');  
-					$servicesIds[] = $result_3[$k]['service_id'];						
-                }
+                foreach($outletIds as $outletId){
+					for($k=0;$k< count($result_3);$k++){
+						$data_3 = array(
+						'salon_package_id' => $last_insert_id,
+						'service_id' => 0,
+						'discount_percentage' => $_POST['special_discount3'][$i],
+						'service_monthly_discount'=>$_POST['package_monthly_discount'],
+						'birthday_discount' =>$_POST['birthday_discount'],
+						'anni_discount'	=> $_POST['anniversary_discount'],
+						'service_count' => $count,
+						'master_service_id' => $result_3[$k]['service_id'],
+						'outlet_id' =>$outletId
+						);							
+						$result_2 = $this->Insert($data_3,'mss_salon_package_data');  
+						$servicesIds[] = $result_3[$k]['service_id'];						
+					}
+				}
             }
         }
         if(!empty($_POST['special_service_id4'])){
-            for($i=0;$i< count($_POST['special_service_id4']);$i++){	
-                $data_3 = array(
-                    'salon_package_id' => $last_insert_id,
-                    'service_id' => $_POST['special_service_id4'][$i],
-                    'discount_percentage' => $_POST['special_discount4'][$i],
-                    'service_monthly_discount'=>$_POST['package_monthly_discount'],
-                    'birthday_discount' =>$_POST['birthday_discount'],
-                    'anni_discount'	=> $_POST['anniversary_discount'],
-                    'service_count' => $count
-                );							
-                $result_2 = $this->Insert($data_3,'mss_salon_package_data'); 
-				$servicesIds[] = $result_3[$k]['service_id'];	                
-            }
+           foreach($outletIds as $outletId){ 
+				for($i=0;$i< count($_POST['special_service_id4']);$i++){	
+					$data_3 = array(
+						'salon_package_id' => $last_insert_id,
+						'service_id' => 0,
+						'discount_percentage' => $_POST['special_discount4'][$i],
+						'service_monthly_discount'=>$_POST['package_monthly_discount'],
+						'birthday_discount' =>$_POST['birthday_discount'],
+						'anni_discount'	=> $_POST['anniversary_discount'],
+						'service_count' => $count,
+						'master_service_id' => $_POST['special_service_id4'][$i],
+						'outlet_id' => $outletId
+					);							
+					$result_2 = $this->Insert($data_3,'mss_salon_package_data'); 
+					$servicesIds[] = $result_3[$k]['service_id'];	                
+				}
+		   }
         }
 		
 		 /* Outlet_services */
@@ -712,17 +736,21 @@ class MasterAdminModel extends CI_Model
       $services_data = $this->MultiWhereSelect('master_services', array('service_sub_category_id' => $sub_categories[$i]));
 
       $services = $services_data['res_arr'];
-      foreach ($services as $service) {
-		 $data_2 = array(
-          'salon_package_id' => $last_insert_id,
-          'service_id' => $service['service_id'],
-          'discount_percentage' => 100,
-          'service_count' => $serviceCount,
-		  'master_id'	=> $masterId
-        );
-        $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
-		$servicesIds[] =   $service['service_id'];
-      }
+	  foreach($outletIds as $outletId){ 
+		  foreach ($services as $service) {
+			 $data_2 = array(
+			  'salon_package_id' => $last_insert_id,
+			  'service_id' => 0,
+			  'discount_percentage' => 100,
+			  'service_count' => $serviceCount,
+			  'master_id'	=> $masterId,
+			  'master_service_id'	=> $service['service_id'],
+			  'outlet_id' =>$outletId
+			);
+			$result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+			$servicesIds[] =   $service['service_id'];
+		  }
+	   }
     }
     /* Outlet_services */
 	$this->AddServiceForOutlet($servicesIds,$outletIds);	
@@ -756,46 +784,101 @@ class MasterAdminModel extends CI_Model
       $services_data = $this->MultiWhereSelect('master_services', array('service_sub_category_id' => (int) $sub_categories[$i]));
 
       $services = $services_data['res_arr'];
-      foreach ($services as $service) {
-        $data_2 = array(
-          'salon_package_id' => $last_insert_id,
-          'service_id' => $service['service_id'],
-          'discount_percentage' => $serviceDiscount,
-          'service_count' => $serviceCount,
-		  'master_id'	=> $masterId
-        );
-        $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
-		$servicesIds[] =   $service['service_id'];
-      }
-    }
+     foreach($outletIds as $outletId){ 
+		  foreach ($services as $service) {
+			$data_2 = array(
+			  'salon_package_id' => $last_insert_id,
+			  'service_id' => 0,
+			  'discount_percentage' => $serviceDiscount,
+			  'service_count' => $serviceCount,
+			  'master_id'	=> $masterId,
+			  'master_service_id'	=> $service['service_id'],
+			  'outlet_id' =>$outletId
+			);
+			$result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+			$servicesIds[] =   $service['service_id'];
+		  }
+		}
+	}
     /* Outlet_services */
 	$this->AddServiceForOutlet($servicesIds,$outletIds);	
     return $this->ModelHelper(true, false,'',array('insert_id'=>$last_insert_id));
   }
+  
+  function copyMasterServicesToServiceTable($masterServicesIds){
+	$services = array();  
+	$masterServiceDetails = $this->getMasterServicesByIds($masterServicesIds);
+	if(isset($masterServiceDetails['res_arr']) && !empty($masterServiceDetails['res_arr'])){
+		foreach($masterServiceDetails['res_arr'] as $index=>$value){
+			$serviceData = array('master_service_id'  		  =>$value['service_id'],
+											'service_sub_category_id' =>$value['service_sub_category_id'],
+											'inventory_type'		  =>$value['inventory_type'],
+											'service_name'	 		  =>$value['service_name'],
+											'service_price_inr'		  =>$value['service_price_inr'],
+											'service_est_time'		  =>$value['service_est_time'],
+											'service_description'	  =>$value['service_description'],
+											'service_gst_percentage'  =>$value['service_gst_percentage'],
+											'service_type'		  	  =>$value['service_type'],
+											'barcode'		 	  	  =>$value['barcode'],
+											'barcode_id'		  	  =>$value['barcode_id'],
+											'service_unit'		      =>$value['service_unit'],
+											'service_brand'		  	  =>$value['service_brand'],
+											'qty_per_item'		  	  =>$value['qty_per_item'],
+											'inventory_type_id'	 	  =>$value['inventory_type_id'],
+											'created_by'		  	  =>$this->session->userdata['logged_in']['master_admin_id']);
+			
+			
+			$result = $this->Insert($serviceData, 'mss_services');
+			if(isset($result['res_arr']['insert_id']) && !empty($result['res_arr']['insert_id'])){
+				$services[] = $result['res_arr']['insert_id'];
+			}
+		}
+	}
+	return $services;
+  }
 
   public function AddServicePackageForSalon($data, $services, $count_service,$outletIds,$masterId)
   {
-
+    $serviceIdIndex = $data['service_id_index'];
+	
+	unset($data['service_id_index']);
     $result = $this->Insert($data, 'mss_salon_packages');
 	$last_insert_id = $result['res_arr']['insert_id'];
-   
+    
+    /* Copy all master services which are bind to this package to the service table */	
+	//$services = $this->copyMasterServicesToServiceTable($masterServices);
+	 
     $count = 0;
 
     //create a services packages
-    for ($i = 0; $i < count($services); $i++) {
-      $data_2 = array(
-        'salon_package_id' => $last_insert_id,
-        'service_id' => (int) $services[$i],
-        'discount_percentage' => 100,
-        'service_count' => (int) $count_service[$i],
-		'master_id'	=> $masterId
-      );
-      $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+	 foreach($outletIds as $outletId){ 	
+		for ($i = 0; $i < count($services); $i++) {
+			
+		   $serviceCount = 0;
+			 /* Find Count */
+			 if(!empty($serviceIdIndex)){
+				foreach($serviceIdIndex as $key=>$serviceGroup){
+					if(in_array($services[$i],explode(',',$serviceGroup))){
+						$serviceCount = (int) $count_service[$key];
+					}
+				}
+			}	
+		  $data_2 = array(
+			'salon_package_id' => $last_insert_id,
+			'service_id' => 0,
+			'master_service_id' => (int) $services[$i],
+			'discount_percentage' => 100,
+			'service_count' => $serviceCount,
+			'master_id'	=> $masterId,
+			'outlet_id' => $outletId
+		  );
+		  $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
 
-      if ($result_2['success'] == 'true') {
-        $count = $count + 1;
-      }
-    }
+		  if ($result_2['success'] == 'true') {
+			$count = $count + 1;
+		  }
+		}
+	 }
     if ($count  == count($services)) {
 	  /* Outlet_services */
 	  $this->AddServiceForOutlet($services,$outletIds);	
@@ -808,29 +891,48 @@ class MasterAdminModel extends CI_Model
 
   public function AddDiscountPackageForSalon($data, $services, $discounts, $count_discount,$outletIds,$masterId)
   {
+	$serviceIdIndex = $data['service_id_index'];
+	
+	unset($data['service_id_index']);  
     $result = $this->Insert($data, 'mss_salon_packages');
 
     $last_insert_id = $result['res_arr']['insert_id'];
-	
+	/* Copy all master services which are bind to this package to the service table */	
+	//$services = $this->copyMasterServicesToServiceTable($masterServices);
+	 
 
     $count = 0;
     //create a discounts packages
-    for ($i = 0; $i < count($services); $i++) {
+    foreach($outletIds as $outletId){ 	 
+		for ($i = 0; $i < count($services); $i++) {
+		  
+		  $serviceCount = 0;
+		  $serviceDiscount = 0;
+		 /* Find Count */
+		 if(!empty($serviceIdIndex)){
+			foreach($serviceIdIndex as $key=>$serviceDiscountGroup){
+				if(in_array($services[$i],explode(',',$serviceDiscountGroup))){
+					$serviceCount 	 = (int) $count_discount[$key];
+					$serviceDiscount = (int) $discounts[$key];
+				}
+			}
+		}		
+		  $data_2 = array(
+			'salon_package_id' => $last_insert_id,
+			'service_id' => 0,
+			'discount_percentage' => $serviceDiscount,
+			'service_count' => $serviceCount,
+			'master_id'	=> $masterId,
+			'master_service_id' => (int) $services[$i],
+			'outlet_id' => $outletId
+		  );
+		  $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
 
-      $data_2 = array(
-        'salon_package_id' => $last_insert_id,
-        'service_id' => (int) $services[$i],
-        'discount_percentage' => (int) $discounts[$i],
-        'service_count' => (int) $count_discount[$i],
-		'master_id'	=> $masterId
-      );
-      $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
-
-      if ($result_2['success'] == 'true') {
-        $count = $count + 1;
-      }
-    }
-
+		  if ($result_2['success'] == 'true') {
+			$count = $count + 1;
+		  }
+		}
+	}
 
     if ($count  == count($services)){ 
       /* Outlet_services */
@@ -844,8 +946,9 @@ class MasterAdminModel extends CI_Model
   }
   
   public function AddServiceForOutlet($servicesIds=array(),$outletIds=array()){
-		if(!empty($servicesIds)){
-			/* get service details from service master table */
+		return true;
+		/*if(!empty($servicesIds)){
+			// get service details from service master table 
 			$servicesIds = implode(',',$servicesIds);
 			$servicesDetails = $this->getMasterServicesByIds($servicesIds);
 			if(!empty($servicesDetails['res_arr'])){
@@ -862,11 +965,11 @@ class MasterAdminModel extends CI_Model
 						
 					}
 			   }
-			   /* Insert the records */
+			   // Insert the records 
 			   $this->InsertBatch($multipleInsertRecords,'outlet_services');
 		  }
 			
-		}
+		} */
   }
 	
   private function CheckIfPackageServiceExists($insert_id, $service_id)
@@ -902,8 +1005,9 @@ class MasterAdminModel extends CI_Model
   {
     //$sql = "SELECT * FROM mss_salon_packages WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
     //$sql = "SELECT * FROM mss_salon_packages WHERE salon_package_id IN (SELECT package_id FROM `mss_package_outlet_association` WHERE `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `master_id`=" . $this->db->escape($where['master_id']) . ")";
-	$sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
+	//$sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
 	
+	$sql = "SELECT * FROM `mss_salon_packages` WHERE `salon_package_id` IN (SELECT DISTINCT `salon_package_id` FROM `mss_salon_package_data` WHERE `master_id`=" . $this->db->escape($where['master_id']) . " AND `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `is_active`=1) AND `is_active`=1";
 	
 	if(isset($filter['searchValue']) && $filter['searchValue']!=""){
 	 $sql .= "  AND  (B.salon_package_name like '%".$filter['searchValue']."%' or B.salon_package_type like '%".$filter['searchValue']."%' )";
@@ -1091,7 +1195,7 @@ private function GetPackageReport($data)
                      mss_customers.customer_mobile AS 'Customer Mobile',
                      mss_customers.customer_name AS 'Customer Name',
                      date(mss_transactions.txn_datetime) AS 'Billing Date',
-                     mss_categories.category_name AS 'Category',
+                     master_categories.category_name AS 'Category',
                      mss_sub_categories.sub_category_name AS 'Sub-Category',
                      mss_services.service_name AS 'Service',
                      mss_employees.employee_first_name As 'Expert Name',
@@ -1105,7 +1209,7 @@ private function GetPackageReport($data)
                      mss_transaction_services,
                      mss_employees,
                      mss_customers,
-                     mss_categories,
+                     master_categories,
                      mss_sub_categories,
                      mss_services,
                      mss_business_outlets,
@@ -1115,7 +1219,7 @@ private function GetPackageReport($data)
                      AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
                      AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                      AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                     AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                     AND mss_sub_categories.sub_category_category_id = master_categories.category_id
                      AND mss_transactions.txn_customer_id = mss_customers.customer_id
                      AND  mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
                      AND mss_business_outlets.business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
@@ -1232,18 +1336,18 @@ private function GetPackageReport($data)
                     mss_business_admin.business_admin_first_name as 'Admin Name'
 
                 FROM 
-                    mss_categories,
+                    master_categories,
                     mss_sub_categories,
                     mss_services,
                     mss_otc_stock ,
                     mss_business_outlets,
                     mss_business_admin
                 WHERE 
-                    mss_categories.category_id = mss_sub_categories.sub_category_category_id 
+                    master_categories.category_id = mss_sub_categories.sub_category_category_id 
                     AND mss_sub_categories.sub_category_id = mss_services.service_sub_category_id 
                     AND mss_services.service_id = mss_otc_stock.otc_service_id 
                     AND mss_services.service_is_active = 1 
-                    AND mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
+                    AND master_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
                     AND mss_business_outlets.business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
                     AND mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
                     AND mss_business_admin.business_admin_id = " . $this->db->escape($data['business_admin_id']) . " 
@@ -1268,7 +1372,7 @@ private function GetPackageReport($data)
                     date(mss_transactions.txn_datetime) AS 'Billing Date',
                     mss_customers.customer_name AS 'Customer Name',
                     mss_customers.customer_mobile AS 'Customer Mobile',
-                    mss_categories.category_name AS 'Category',
+                    master_categories.category_name AS 'Category',
                     mss_sub_categories.sub_category_name 'Sub-Category',
                     mss_services.service_name AS 'Service',
                     mss_transaction_services.txn_service_discounted_price AS 'Discounted Service Price',
@@ -1279,7 +1383,7 @@ private function GetPackageReport($data)
                 FROM 
                     mss_transactions,
                     mss_customers,
-                    mss_categories,
+                    master_categories,
                     mss_sub_categories,
                     mss_services,
                     mss_transaction_services,
@@ -1290,8 +1394,8 @@ private function GetPackageReport($data)
                     AND mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                    AND mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
                     AND mss_business_outlets.business_outlet_id =" . $this->db->escape($data['business_outlet_id']) . "
                     AND mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
                     AND mss_business_admin.business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
@@ -1315,7 +1419,7 @@ private function GetPackageReport($data)
   {
     $sql = "SELECT 
                     date(mss_transactions.txn_datetime) AS 'Billing Date',
-                    mss_categories.category_name AS 'Category',
+                    master_categories.category_name AS 'Category',
                     mss_sub_categories.sub_category_name AS 'Sub-Category',
                     mss_services.service_name AS 'Service',
                     COUNT(mss_services.service_id) AS 'Bill Count',
@@ -1326,7 +1430,7 @@ private function GetPackageReport($data)
                 FROM
                     mss_transactions,
                     mss_transaction_services,
-                    mss_categories,
+                    master_categories,
                     mss_sub_categories,
                     mss_services,
                     mss_business_outlets,
@@ -1335,15 +1439,15 @@ private function GetPackageReport($data)
                     mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                     AND mss_transaction_services.txn_service_service_id = mss_services.service_id 
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                    AND mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
                     AND mss_business_outlets.business_outlet_id =" . $this->db->escape($data['business_outlet_id']) . "
                     AND mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
                     AND mss_business_admin.business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
                     AND date(mss_transactions.txn_datetime) BETWEEN " . $this->db->escape($data['from_date']) . " AND " . $this->db->escape($data['to_date']) . "
                 GROUP BY
                     date(mss_transactions.txn_datetime),
-                    mss_categories.category_id,
+                    master_categories.category_id,
                     mss_sub_categories.sub_category_id,
                     mss_services.service_id";
 
@@ -1399,7 +1503,7 @@ private function GetPackageReport($data)
   {
     $sql = "SELECT 
                     date(mss_transactions.txn_datetime) AS 'Billing Date', 
-                    mss_categories.category_name AS 'Category', 
+                    master_categories.category_name AS 'Category', 
                     mss_sub_categories.sub_category_name AS 'Sub-Category',
                     COUNT(mss_sub_categories.sub_category_id) AS 'Total Sub Category',
                     SUM(mss_transaction_services.txn_service_discounted_price) AS 'Total Amount',
@@ -1409,7 +1513,7 @@ private function GetPackageReport($data)
                 FROM 
                     mss_transactions, 
                     mss_transaction_services, 
-                    mss_categories, 
+                    master_categories, 
                     mss_sub_categories,
                     mss_services,
                     mss_business_outlets,
@@ -1418,15 +1522,15 @@ private function GetPackageReport($data)
                     mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                    AND mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
                     AND mss_business_outlets.business_outlet_id =" . $this->db->escape($data['business_outlet_id']) . "
                     AND mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
                     AND mss_business_admin.business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
                     AND date(mss_transactions.txn_datetime) BETWEEN " . $this->db->escape($data['from_date']) . " AND " . $this->db->escape($data['to_date']) . " 
                 GROUP BY 
                     date(mss_transactions.txn_datetime), 
-                    mss_categories.category_id,
+                    master_categories.category_id,
                     mss_sub_categories.sub_category_id";
 
     $query = $this->db->query($sql);
@@ -1509,13 +1613,13 @@ private function GetPackageReport($data)
   {
     $sql = "SELECT 
                     date(mss_transactions.txn_datetime) AS 'Billing Date',
-                    mss_categories.category_name AS 'Category Name',
+                    master_categories.category_name AS 'Category Name',
                     SUM(mss_transaction_services.txn_service_discounted_price) AS 'Total Sales(Rs.)',
                     mss_business_outlets.business_outlet_city as 'Outlet Branch',
                     mss_business_outlets.business_outlet_name as 'Outlet Name',
                     mss_business_admin.business_admin_first_name as 'Admin Name'
                 FROM 
-                    mss_categories,
+                    master_categories,
                     mss_sub_categories,
                     mss_services,
                     mss_transactions,
@@ -1526,15 +1630,15 @@ private function GetPackageReport($data)
                       mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                   AND mss_transaction_services.txn_service_service_id = mss_services.service_id 
                   AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                  AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                  AND mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
+                  AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                  AND master_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
                     AND mss_business_outlets.business_outlet_id =" . $this->db->escape($data['business_outlet_id']) . "
                     AND mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
                     AND mss_business_admin.business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
                   AND date(mss_transactions.txn_datetime) BETWEEN " . $this->db->escape($data['from_date']) . " AND " . $this->db->escape($data['to_date']) . "
                 GROUP BY 
                     date(mss_transactions.txn_datetime), 
-                    mss_categories.category_id";
+                    master_categories.category_id";
 
     $query = $this->db->query($sql);
 
@@ -1998,13 +2102,13 @@ private function GetPackageReport($data)
                     mss_otc_stock,
                     mss_services,
                     mss_sub_categories,
-                    mss_categories
+                    master_categories
                 WHERE
                     mss_otc_stock.otc_service_id = mss_services.service_id
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                    AND mss_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . " 
-                    AND mss_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . " 
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . " 
+                    AND master_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . " 
                     AND mss_services.service_type = 'otc'
                     AND mss_otc_stock.otc_sku < 15";
 
@@ -2199,14 +2303,14 @@ private function GetPackageReport($data)
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
-                                AND mss_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
+                                AND master_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
                                 AND mss_services.service_id = " . $this->db->escape($data['service_id']) . "
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
@@ -2222,14 +2326,14 @@ private function GetPackageReport($data)
                               mss_transaction_services,
                               mss_services,
                               mss_sub_categories,
-                            mss_categories
+                            master_categories
                           WHERE
                               mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                               AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                               AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                              AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                              AND mss_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
-                              AND mss_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
+                              AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                              AND master_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
+                              AND master_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
                               AND mss_sub_categories.sub_category_id = " . $this->db->escape($data['sub_category_id']) . "
                               AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                           GROUP BY
@@ -2245,15 +2349,15 @@ private function GetPackageReport($data)
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
-                                AND mss_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
-                                AND mss_categories.category_id = " . $this->db->escape($data['category_id']) . " 
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
+                                AND master_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
+                                AND master_categories.category_id = " . $this->db->escape($data['category_id']) . " 
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
                                 YEAR(date(mss_transactions.txn_datetime)),
@@ -2271,14 +2375,14 @@ private function GetPackageReport($data)
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
-                                AND mss_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
+                                AND master_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
                                 AND mss_services.service_id = " . $this->db->escape($data['service_id']) . "
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
@@ -2294,14 +2398,14 @@ private function GetPackageReport($data)
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
-                                AND mss_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
+                                AND master_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
                                 AND mss_sub_categories.sub_category_id = " . $this->db->escape($data['sub_category_id']) . "
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
@@ -2317,15 +2421,15 @@ private function GetPackageReport($data)
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
-                                AND mss_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
-                                AND mss_categories.category_id = " . $this->db->escape($data['category_id']) . "
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
+                                AND master_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
+                                AND master_categories.category_id = " . $this->db->escape($data['category_id']) . "
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
                                 YEAR(date(mss_transactions.txn_datetime)),
@@ -2343,14 +2447,14 @@ private function GetPackageReport($data)
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
-                                AND mss_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
+                                AND master_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
                                 AND mss_services.service_id = " . $this->db->escape($data['service_id']) . "
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
@@ -2366,14 +2470,14 @@ private function GetPackageReport($data)
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                                 mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                                AND mss_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
-                                AND mss_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
+                                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                                AND master_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
+                                AND master_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
                                 AND mss_sub_categories.sub_category_id = " . $this->db->escape($data['sub_category_id']) . "
                                 AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
@@ -2389,15 +2493,15 @@ private function GetPackageReport($data)
                                 mss_transaction_services,
                                 mss_services,
                                 mss_sub_categories,
-                                mss_categories
+                                master_categories
                             WHERE
                             mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
                             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                            AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                            AND mss_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
-                            AND mss_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
-                            AND mss_categories.category_id = " . $this->db->escape($data['category_id']) . "
+                            AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                            AND master_categories.category_business_admin_id = " . $this->db->escape($data['business_admin_id']) . "
+                            AND master_categories.category_business_outlet_id = " . $this->db->escape($data['business_outlet_id']) . "
+                            AND master_categories.category_id = " . $this->db->escape($data['category_id']) . "
                             AND YEAR(date(mss_transactions.txn_datetime)) = YEAR(date(now()))
                             GROUP BY
                                 YEAR(date(mss_transactions.txn_datetime)),
@@ -2646,7 +2750,7 @@ private function GetPackageReport($data)
                     mss_transaction_services,
                     mss_employees,
                     mss_customers,
-                    mss_categories,
+                    master_categories,
                     mss_sub_categories,
                     mss_services,
                     mss_business_outlets,
@@ -2658,8 +2762,8 @@ private function GetPackageReport($data)
                     AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
                     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                    AND mss_categories.category_type = 'Service'
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_type = 'Service'
                     AND mss_transactions.txn_customer_id = mss_customers.customer_id
                     AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
                     AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
@@ -2672,7 +2776,7 @@ private function GetPackageReport($data)
                     mss_transaction_services,
                     mss_employees,
                     mss_customers,
-                    mss_categories,
+                    master_categories,
                     mss_sub_categories,
                     mss_services,
                     mss_business_outlets,
@@ -2684,8 +2788,8 @@ private function GetPackageReport($data)
                     AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
                     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                    AND mss_categories.category_type = 'Products'
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_type = 'Products'
                     AND mss_transactions.txn_customer_id = mss_customers.customer_id
                     AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
                     AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
@@ -2729,7 +2833,7 @@ private function GetPackageReport($data)
          mss_transaction_services, 
          mss_employees, 
          mss_customers, 
-         mss_categories, 
+         master_categories, 
          mss_sub_categories, 
          mss_services, 
          mss_business_outlets, 
@@ -2740,8 +2844,8 @@ private function GetPackageReport($data)
          AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id 
          AND mss_transaction_services.txn_service_service_id = mss_services.service_id 
          AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-         AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-         AND mss_categories.category_type = 'Service' 
+         AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+         AND master_categories.category_type = 'Service' 
          AND mss_transactions.txn_customer_id = mss_customers.customer_id 
          AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id 
          AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
@@ -2754,7 +2858,7 @@ private function GetPackageReport($data)
          mss_transaction_services, 
          mss_employees, 
          mss_customers, 
-         mss_categories, 
+         master_categories, 
          mss_sub_categories, 
          mss_services, 
          mss_business_outlets, 
@@ -2765,8 +2869,8 @@ private function GetPackageReport($data)
          AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id 
          AND mss_transaction_services.txn_service_service_id = mss_services.service_id 
          AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id 
-         AND mss_sub_categories.sub_category_category_id = mss_categories.category_id 
-         AND mss_categories.category_type = 'Products' 
+         AND mss_sub_categories.sub_category_category_id = master_categories.category_id 
+         AND master_categories.category_type = 'Products' 
          AND mss_transactions.txn_customer_id = mss_customers.customer_id 
          AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id 
          AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id 
@@ -2900,7 +3004,7 @@ private function GetPackageReport($data)
     //             mss_transaction_services,
     //             mss_employees,
     //             mss_customers,
-    //             mss_categories,
+    //             master_categories,
     //             mss_sub_categories,
     //             mss_services,
     //             mss_business_outlets,
@@ -2912,8 +3016,8 @@ private function GetPackageReport($data)
     //        AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //        AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //        AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //        AND mss_categories.category_type = 'Products'
+    //        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //        AND master_categories.category_type = 'Products'
     //        AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //        AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //        AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
@@ -3495,7 +3599,7 @@ private function GetPackageReport($data)
     //             mss_transaction_services,
     //             mss_employees,
     //             mss_customers,
-    //             mss_categories,
+    //             master_categories,
     //             mss_sub_categories,
     //             mss_services,
     //             mss_business_outlets,
@@ -3507,8 +3611,8 @@ private function GetPackageReport($data)
     //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //             AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //             AND mss_categories.category_type = " . $this->db->escape($data) . "
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = " . $this->db->escape($data) . "
     //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //             AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
@@ -3555,7 +3659,7 @@ private function GetPackageReport($data)
         //         mss_transaction_services,
         //         mss_employees,
         //         mss_customers,
-        //         mss_categories,
+        //         master_categories,
         //         mss_sub_categories,
         //         mss_services,
         //         mss_business_outlets,
@@ -3567,8 +3671,8 @@ private function GetPackageReport($data)
         //         AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
         //         AND mss_transaction_services.txn_service_service_id = mss_services.service_id
         //         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-        //         AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-        //         AND mss_categories.category_type = " . $this->db->escape($data) . "
+        //         AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+        //         AND master_categories.category_type = " . $this->db->escape($data) . "
         //         AND mss_transactions.txn_customer_id = mss_customers.customer_id
         //         AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
         //         AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
@@ -3615,7 +3719,7 @@ private function GetPackageReport($data)
     //             mss_transaction_services,
     //             mss_employees,
     //             mss_customers,
-    //             mss_categories,
+    //             master_categories,
     //             mss_sub_categories,
     //             mss_services,
     //             mss_business_outlets,
@@ -3627,8 +3731,8 @@ private function GetPackageReport($data)
     //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //             AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //             AND mss_categories.category_type = " . $this->db->escape($data) . "
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = " . $this->db->escape($data) . "
     //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //             AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
@@ -3687,7 +3791,7 @@ private function GetPackageReport($data)
     //          mss_transaction_services,
     //          mss_employees,
     //          mss_customers,
-    //          mss_categories,
+    //          master_categories,
     //          mss_sub_categories,
     //          mss_services,
     //          mss_business_outlets,
@@ -3709,8 +3813,8 @@ private function GetPackageReport($data)
     //     AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //     AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //     AND mss_categories.category_type = " . $this->db->escape($data) . "
+    //     AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //     AND master_categories.category_type = " . $this->db->escape($data) . "
     //    	GROUP BY 
     //     	month(mss_transactions.txn_datetime)
     //     ORDER BY
@@ -3854,7 +3958,7 @@ private function GetPackageReport($data)
     //                 mss_transaction_services,
     //                 mss_employees,
     //                 mss_customers,
-    //                 mss_categories,
+    //                 master_categories,
     //                 mss_sub_categories,
     //                 mss_services,
     //                 mss_business_outlets,
@@ -3866,8 +3970,8 @@ private function GetPackageReport($data)
     //            AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //            AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //            AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //            AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //            AND mss_categories.category_type = 'Service'
+    //            AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //            AND master_categories.category_type = 'Service'
     //            AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //            AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //            AND mss_employees.employee_business_outlet= ".$this->db->escape($data['outlet_id'])."
@@ -3927,7 +4031,7 @@ private function GetPackageReport($data)
     //             mss_transaction_services,
     //             mss_employees,
     //             mss_customers,
-    //             mss_categories,
+    //             master_categories,
     //             mss_sub_categories,
     //             mss_services,
     //             mss_business_outlets,
@@ -3939,8 +4043,8 @@ private function GetPackageReport($data)
     //        AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //        AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //        AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //        AND mss_categories.category_type = 'Products'
+    //        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //        AND master_categories.category_type = 'Products'
     //        AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //        AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //        AND mss_employees.employee_business_outlet= " . $this->db->escape($data['outlet_id']) . "
@@ -4028,7 +4132,7 @@ private function GetPackageReport($data)
     //             mss_transaction_services,
     //             mss_employees,
     //             mss_customers,
-    //             mss_categories,
+    //             master_categories,
     //             mss_sub_categories,
     //             mss_services,
     //             mss_business_outlets,
@@ -4040,8 +4144,8 @@ private function GetPackageReport($data)
     //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //             AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //             AND mss_categories.category_type = ".$this->db->escape($data['type'])."
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = ".$this->db->escape($data['type'])."
     //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //             AND mss_employees.employee_business_outlet= ".$this->db->escape($data['outlet_id'])."
@@ -4374,7 +4478,7 @@ private function GetPackageReport($data)
     //             mss_transaction_services,
     //             mss_employees,
     //             mss_customers,
-    //             mss_categories,
+    //             master_categories,
     //             mss_sub_categories,
     //             mss_services,
     //             mss_business_outlets,
@@ -4386,8 +4490,8 @@ private function GetPackageReport($data)
     //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //             AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //             AND mss_categories.category_type = ".$this->db->escape($data['type'])."
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = ".$this->db->escape($data['type'])."
     //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //             AND mss_employees.employee_business_outlet= ".$this->db->escape($data['outlet_id'])."
@@ -4437,7 +4541,7 @@ private function GetPackageReport($data)
     //             mss_transaction_services,
     //             mss_employees,
     //             mss_customers,
-    //             mss_categories,
+    //             master_categories,
     //             mss_sub_categories,
     //             mss_services,
     //             mss_business_outlets,
@@ -4449,8 +4553,8 @@ private function GetPackageReport($data)
     //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //             AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //             AND mss_categories.category_type = ".$this->db->escape($data['type'])."
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = ".$this->db->escape($data['type'])."
     //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //             AND mss_employees.employee_business_outlet= ".$this->db->escape($data['outlet_id'])."
@@ -4500,7 +4604,7 @@ private function GetPackageReport($data)
     //             mss_transaction_services,
     //             mss_employees,
     //             mss_customers,
-    //             mss_categories,
+    //             master_categories,
     //             mss_sub_categories,
     //             mss_services,
     //             mss_business_outlets,
@@ -4512,8 +4616,8 @@ private function GetPackageReport($data)
     //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //             AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //             AND mss_categories.category_type = ".$this->db->escape($data['type'])."
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = ".$this->db->escape($data['type'])."
     //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //             AND mss_employees.employee_business_outlet= ".$this->db->escape($data['outlet_id'])."
@@ -4549,17 +4653,17 @@ private function GetPackageReport($data)
   public function FetchCategories($data)
   {
     
-    $query = "SELECT  mss_categories.category_id,mss_categories.category_name,mss_categories.category_type,mss_business_outlets.business_outlet_name,mss_business_outlets.business_outlet_location,mss_business_admin.business_admin_first_name
+    $query = "SELECT  master_categories.category_id,master_categories.category_name,master_categories.category_type,mss_business_outlets.business_outlet_name,mss_business_outlets.business_outlet_location,mss_business_admin.business_admin_first_name
       FROM 
-        mss_categories,
+        master_categories,
         mss_business_outlets,
         mss_business_admin
       WHERE
-        mss_categories.category_business_outlet_id = ".$data['category_business_outlet_id']."
+        master_categories.category_business_outlet_id = ".$data['category_business_outlet_id']."
       AND
-        mss_categories.category_business_admin_id = ".$data['category_business_admin_id']."
+        master_categories.category_business_admin_id = ".$data['category_business_admin_id']."
       AND
-        mss_categories.category_is_active = ".$data['category_is_active']."
+        master_categories.category_is_active = ".$data['category_is_active']."
       AND
         mss_business_outlets.business_outlet_id = ".$data['category_business_outlet_id']."
       AND
@@ -4579,22 +4683,22 @@ private function GetPackageReport($data)
   public function FetchSubCategories($data)
   {
     
-    $query = "SELECT  mss_sub_categories.sub_category_id,mss_sub_categories.sub_category_name,mss_categories.category_id,mss_categories.category_name,mss_categories.category_type,mss_business_outlets.business_outlet_name,mss_business_outlets.business_outlet_location,mss_business_admin.business_admin_first_name
+    $query = "SELECT  mss_sub_categories.sub_category_id,mss_sub_categories.sub_category_name,master_categories.category_id,master_categories.category_name,master_categories.category_type,mss_business_outlets.business_outlet_name,mss_business_outlets.business_outlet_location,mss_business_admin.business_admin_first_name
     FROM 
       mss_sub_categories,
-      mss_categories,
+      master_categories,
       mss_business_outlets,
       mss_business_admin
     WHERE
       mss_sub_categories.sub_category_is_active = ".$data['category_is_active']."
     AND
-      mss_categories.category_id = mss_sub_categories.sub_category_category_id
+      master_categories.category_id = mss_sub_categories.sub_category_category_id
     AND
-      mss_categories.category_business_outlet_id = ".$data['category_business_outlet_id']."
+      master_categories.category_business_outlet_id = ".$data['category_business_outlet_id']."
     AND
-      mss_categories.category_business_admin_id = ".$data['category_business_admin_id']."
+      master_categories.category_business_admin_id = ".$data['category_business_admin_id']."
     AND
-      mss_categories.category_is_active = ".$data['category_is_active']."
+      master_categories.category_is_active = ".$data['category_is_active']."
     AND
       mss_business_outlets.business_outlet_id = ".$data['category_business_outlet_id']."
     AND
@@ -5204,7 +5308,7 @@ private function GetPackageReport($data)
     //                 mss_transaction_services,
     //                 mss_employees,
     //                 mss_customers,
-    //                 mss_categories,
+    //                 master_categories,
     //                 mss_sub_categories,
     //                 mss_services,
     //                 mss_business_outlets,
@@ -5216,8 +5320,8 @@ private function GetPackageReport($data)
     //            AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //            AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //            AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //            AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //            AND mss_categories.category_type = 'Service'
+    //            AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //            AND master_categories.category_type = 'Service'
     //            AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //            AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //            AND mss_employees.employee_business_outlet= ".$this->db->escape($data['outlet_id'])."
@@ -5279,7 +5383,7 @@ private function GetPackageReport($data)
     //             mss_transaction_services,
     //             mss_employees,
     //             mss_customers,
-    //             mss_categories,
+    //             master_categories,
     //             mss_sub_categories,
     //             mss_services,
     //             mss_business_outlets,
@@ -5291,8 +5395,8 @@ private function GetPackageReport($data)
     //        AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //        AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //        AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //        AND mss_categories.category_type = 'Products'
+    //        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //        AND master_categories.category_type = 'Products'
     //        AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //        AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //        AND mss_employees.employee_business_outlet= " . $this->db->escape($data['outlet_id']) . "
@@ -5354,7 +5458,7 @@ private function GetPackageReport($data)
     //             mss_transaction_services,
     //             mss_employees,
     //             mss_customers,
-    //             mss_categories,
+    //             master_categories,
     //             mss_sub_categories,
     //             mss_services,
     //             mss_business_outlets,
@@ -5366,8 +5470,8 @@ private function GetPackageReport($data)
     //        AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
     //        AND mss_transaction_services.txn_service_service_id = mss_services.service_id
     //        AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-    //        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-    //        AND mss_categories.category_type = 'Products'
+    //        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //        AND master_categories.category_type = 'Products'
     //        AND mss_transactions.txn_customer_id = mss_customers.customer_id
     //        AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
     //        AND mss_employees.employee_business_outlet= " . $this->db->escape($data['outlet_id']) . "
@@ -5513,7 +5617,7 @@ private function GetPackageReport($data)
               FROM 
               mss_services,
               mss_sub_categories,
-              mss_categories,
+              master_categories,
               mss_business_admin,
               mss_business_outlets
               WHERE
@@ -5523,9 +5627,9 @@ private function GetPackageReport($data)
               AND
               mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
               AND
-              mss_sub_categories.sub_category_category_id = mss_categories.category_id
+              mss_sub_categories.sub_category_category_id = master_categories.category_id
               AND
-              mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
+              master_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id
               AND
               mss_business_outlets.business_outlet_id = ".$this->db->escape($data['category_business_outlet_id'])."
               AND

@@ -1,5 +1,6 @@
 <?php
 	$this->load->view('cashier/cashier_header_view');
+	$count = 0;
 ?>
 <div class="wrapper">
 	<?php
@@ -728,7 +729,7 @@
                             }   
                             else
                             {
-													$count = 1;
+							$count = 1;
                               if(!isset($loyalty_offer) || empty($loyalty_offer)){
                                 ?>  
                                 <div class="alert alert-info alert-outline alert-dismissible" role="alert">
@@ -1411,7 +1412,7 @@
 															$discount=0;	
 															$total_value=0;	
 															$gross_price=0;
-															// print_r($cart);													
+																														 
 															foreach ($cart as $item):															
 																if($item['service_discount_percentage']>0){
 																	$discount=$item['service_discount_percentage'];

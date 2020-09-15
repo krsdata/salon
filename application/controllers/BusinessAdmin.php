@@ -2310,7 +2310,7 @@ class BusinessAdmin extends CI_Controller {
 				// 'category_type'=>'Products'
 			);
 
-			$data['otccategories'] = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+			$data['otccategories'] = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
 			if($data['otccategories']['success'] == 'true'){	
 				 $data['otccategories']=$data['otccategories']['res_arr'];
 			}
@@ -2587,7 +2587,7 @@ class BusinessAdmin extends CI_Controller {
 						'category_type'         => $this->input->post('category_type')
 					);
 
-					$result = $this->BusinessAdminModel->Insert($data,'mss_categories');
+					$result = $this->BusinessAdminModel->Insert($data,'master_categories');
 						
 					if($result['success'] == 'true'){
 						$this->ReturnJsonArray(true,false,"Category added successfully!");
@@ -2673,7 +2673,7 @@ class BusinessAdmin extends CI_Controller {
 						'category_type' 	=> $this->input->post('category_type')
 					);
 
-					$result = $this->BusinessAdminModel->Update($data,'mss_categories','category_id');
+					$result = $this->BusinessAdminModel->Update($data,'master_categories','category_id');
 						
 					if($result['success'] == 'true'){
 						$this->ReturnJsonArray(true,false,"Category updated successfully!");
@@ -3493,7 +3493,7 @@ public function GetEmployee(){
 	public function GetCategory(){
 		if($this->IsLoggedIn('business_admin')){
 			if(isset($_GET) && !empty($_GET)){
-				$data = $this->BusinessAdminModel->DetailsById($_GET['category_id'],'mss_categories','category_id');
+				$data = $this->BusinessAdminModel->DetailsById($_GET['category_id'],'master_categories','category_id');
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
 				die;
@@ -3722,7 +3722,7 @@ public function GetEmployee(){
 				'category_business_outlet_id'=> $outlet_id
 			);
 
-			$data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+			$data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
 			}
@@ -3758,7 +3758,7 @@ public function GetEmployee(){
 					'category_is_active'   => TRUE,
 					'category_business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id']
 				);
-				$data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+				$data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
 				die;
@@ -4683,7 +4683,7 @@ public function GetEmployee(){
 										'category_business_outlet_id' => $this->session->userdata['outlets']['current_outlet']
 									);
 
-									$result = $this->BusinessAdminModel->Insert($data,'mss_categories');
+									$result = $this->BusinessAdminModel->Insert($data,'master_categories');
 										
 									if($result['success'] == 'true'){
 										$successInserts++;
@@ -8100,7 +8100,7 @@ public function InsertSalary(){
 					'category_is_active'   => TRUE
 				);
 				
-				$data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+				$data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
 				die;
@@ -8120,7 +8120,7 @@ public function InsertSalary(){
 					'category_is_active'   => TRUE
 				);
 				
-				$data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+				$data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
 				die;
@@ -10896,7 +10896,7 @@ public function InsertSalary(){
                 'category_business_outlet_id'=> $outlet_id,
                 'category_type' => 'Products'
             );
-            $data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+            $data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
             if($data['success'] == 'true'){ 
                 return $data['res_arr'];
             }
@@ -11173,7 +11173,7 @@ public function InsertSalary(){
                 'category_type' => 'Products'
             );
             // $this->PrettyPrintArray($where);
-            $data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+            $data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
             // $this->PrettyPrintArray($data);
             if($data['success'] == 'true'){
                 header("Content-type: application/json");

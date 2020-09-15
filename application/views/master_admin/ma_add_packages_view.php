@@ -152,7 +152,7 @@
 														<div class="row">
 															<div class="col-md-12">
 																<form id="AddPackage" method="POST" action="#">
-																	<input type="hidden" id="association_id" value="0" name="association_id" />
+																	<input type="hidden" id="hd_salon_package_id" value="0" name="hd_salon_package_id" />
 																	<div class="row">
 																		<div class="form-group col-md-3">
 																			<label>Package Name</label>
@@ -247,7 +247,7 @@
 																						<div class="form-group">
 																							<label>Service</label>
 																							<select class="" id="service_id" name="service_id[]" multiple="multiple" temp="Service">
-																							</select>
+																							</select><input type="hidden" name="service_id_index[]" />
 																						</div>
 																					</td>
 																					<!--<td>
@@ -303,7 +303,7 @@
 																						<div class="form-group">
 																							<label>Service</label>
 																							<select id="service_id_discount" multiple class="form-control" name="service_id[]" temp="Service">
-																							</select>
+																							</select><input type="hidden" name="service_id_index[]" />
 																						</div>
 																					</td>
 																					<!--<td>
@@ -741,7 +741,7 @@
 													<th>Price</th>
 													<th>GST</th>
 													<th>Total</th>
-													<th>Validity (Months)</th>
+													<th>Validity (In Days)</th>
 													<th>Actions</th>
 												</tr>
 											</thead>
@@ -897,7 +897,7 @@
 					
 					htmlContent +='</select></div></td>';
 					htmlContent +='<td><div class="form-group"><label>Service</label>';
-					htmlContent +='<select class="form-control" name="service_id[]" temp="Service" multiple></select></div>';
+					htmlContent +='<select class="form-control" name="service_id[]" temp="Service" multiple></select><input type="hidden" name="service_id_index[]" /></div>';
 					//htmlContent +='</td><td><div class="form-group" ><label>Price</label><input type="text" class="form-control" name="service_price_inr" temp="service_price_inr"></div></td>';
 					htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_service[]" temp="Count" value="1" min="1" max="25"></select></div></td></tr>';
 				    $("#serviceTable tr:last").after(htmlContent);
@@ -1179,10 +1179,10 @@
 		
 				
 			$("#ModalAddPackage").find('.modal-title').html('Edit Package'); 
-			 var packageAssociationId = $(this).attr('salon_package_association_id');
-			 $("#association_id").val(packageAssociationId);
+			 var packageId = $(this).attr('salon_package_id');
+			 $("#hd_salon_package_id").val(packageId);
 			 /* Get Details from db */
-			  var parameters = {pck_association_id:packageAssociationId};
+			  var parameters = {packageId:packageId};
 				$.getJSON("<?=base_url()?>MasterAdmin/GetPackageDetailsById", parameters)
 				.done(function(data, textStatus, jqXHR) {
 					console.log(data.outletIds);
@@ -1792,6 +1792,12 @@
 					}
 				},
 				submitHandler: function(form) {
+					$("#serviceTable tr").each(function(i){
+						$(this).find('td input[name="service_id_index[]"]').val($(this).find("td select[name='service_id[]']").val());
+					});
+					$("#discountTable tr").each(function(i){
+						$(this).find('td input[name="service_id_index[]"]').val($(this).find("td select[name='service_id[]']").val());
+					});
 					$("#serviceSubCategoryBulkTable tr").each(function(i){
 						$(this).find('td input[name="service_sub_category_bulk_index[]"]').val($(this).find("td select[name='service_sub_category_bulk[]']").val());
 					});

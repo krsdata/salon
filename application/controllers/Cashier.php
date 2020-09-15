@@ -622,8 +622,8 @@ class Cashier extends CI_Controller {
 				}
 				else{
 					$where = array(
-						'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-						'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
+						//'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+						//'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 						'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 						'customer_mobile'  => $this->input->post('customer_mobile')
 					);
@@ -641,7 +641,7 @@ class Cashier extends CI_Controller {
 							'customer_dob'    => $this->input->post('customer_dob'),
 							'customer_mobile' => $this->input->post('customer_mobile'),
 							'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-							'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
+							'customer_business_outlet_id' => 0,
 							'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 							'customer_doa' => $this->input->post('customer_doa')
 						);
@@ -649,9 +649,9 @@ class Cashier extends CI_Controller {
 						$result = $this->CashierModel->Insert($data,'mss_customers');
 							
 						if($result['success'] == 'true'){
-							
 							//After Adding customer we have to add it to session varible
 							$sess_data = $this->GetCustomerBilling($result['res_arr']['insert_id']);
+							
 							$curr_sess_cust_data = array();
 							if(!isset($this->session->userdata['POS'])){
 								array_push($curr_sess_cust_data, $sess_data);
@@ -662,6 +662,7 @@ class Cashier extends CI_Controller {
 								array_push($curr_sess_cust_data, $sess_data);
 								$this->session->set_userdata('POS', $curr_sess_cust_data);
 							}
+							
 							////////////////////////////////////////////////////////////
 
 							$this->ReturnJsonArray(true,false,"Customer added successfully!");
@@ -945,9 +946,9 @@ class Cashier extends CI_Controller {
 			if(isset($customer_id)){
 				//Check whether customer belongs to the logged cashier's shop and business admin
 				$where = array(
-					'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-					'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
-					'master_admin_id'=> $this->session->userdata['logged_in']['master_admin_id'],
+					//'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+					//'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+					'master_admin_id'	  => $this->session->userdata['logged_in']['master_admin_id'],
 					'customer_id'       => $customer_id
 				);
 
@@ -979,6 +980,7 @@ class Cashier extends CI_Controller {
 					$data['experts'] = $this->GetExperts();
 
 					$data['active_packages_categories'] = $this->PurchasedPackages($customer_id);
+				
 					$data['categories_products']=$this->CashierModel->OtcCategory($this->session->userdata['logged_in']['business_outlet_id']);
 					$data['categories_products']=$data['categories_products']['res_arr'];
 
@@ -1073,7 +1075,7 @@ class Cashier extends CI_Controller {
 						}
 					}
 				
-          // $this->PrettyPrintArray($data);
+           //$this->PrettyPrintArray($data);
 					$this->load->view('cashier/cashier_do_billing_view',$data);
 				}
 				elseif ($check['error'] == 'true'){
@@ -1202,7 +1204,7 @@ class Cashier extends CI_Controller {
 				'category_business_outlet_id'=> $outlet_id
 			);
 
-			$data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+			$data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
 			}
@@ -1251,6 +1253,7 @@ class Cashier extends CI_Controller {
 	}
     
     //get category by  category type
+	/* Get all categories which is created by admin or master admin */
 	private function GetCategoriesByType($outlet_id,$type){
 		if($this->IsLoggedIn('cashier')){
 			$where = array(
@@ -1259,8 +1262,27 @@ class Cashier extends CI_Controller {
 				'category_is_active'         => TRUE,
 				'category_business_outlet_id'=> $outlet_id
 			);
+			$data = $this->BusinessAdminModel->GetMasterCategories($where);
+			
+			if($data['success'] == 'true'){	
+				return $data['res_arr'];
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/");
+		}		
+	}
 	
-			$data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+	private function GetCategoriesByType_old($outlet_id,$type){
+		if($this->IsLoggedIn('cashier')){
+			$where = array(
+				'category_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+				'category_type' => $type,
+				'category_is_active'         => TRUE,
+				'category_business_outlet_id'=> $outlet_id
+			);
+	
+			$data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
 			}
@@ -1298,7 +1320,7 @@ class Cashier extends CI_Controller {
 					'service_is_active'   => TRUE
 				);
 				
-				$data = $this->BusinessAdminModel->MultiWhereSelect('mss_services',$where);
+				$data = $this->BusinessAdminModel->MultiWhereSelect('master_services',$where);
 		
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
@@ -1381,8 +1403,7 @@ class Cashier extends CI_Controller {
 				);
 				
 				$data = $this->CashierModel->GetPurchasedPackagesServices($where);
-				// print_r($data);
-				// exit;
+				
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
 				die;
@@ -1459,21 +1480,23 @@ class Cashier extends CI_Controller {
 		 				$this->session->unset_userdata('payment');
 		 			}
 					
+					/* get customer package profile id */
+					
 					$data = array(
-										'customer_id'								 => $this->input->post('customer_id'),
-										'service_id'  							 => $this->input->post('service_id'),
-										'service_name'							 => $this->input->post('service_name'),
-										'service_total_value'				 => $this->input->post('service_total_value'),
-										'service_quantity'					 => $this->input->post('service_quantity'),
+										'customer_id'				 => $this->input->post('customer_id'),
+										'service_id'  				=> $this->input->post('service_id'),
+										'service_name'				 => $this->input->post('service_name'),
+										'service_total_value'		 => $this->input->post('service_total_value'),
+										'service_quantity'			=> $this->input->post('service_quantity'),
 										'service_discount_percentage'=> $this->input->post('service_discount_percentage'),
 										'service_discount_absolute'  => $this->input->post('service_discount_absolute'),
 										'service_expert_id'          => $this->input->post('service_expert_id'),
 										'service_price_inr'          => $this->input->post('service_price_inr'),
-										'service_add_on_price'			=> 0,
+										'service_add_on_price'		 => 0,
 										'service_gst_percentage'     => $this->input->post('service_gst_percentage'),
-										'service_est_time'  => $this->input->post('service_est_time'),
+										'service_est_time'  		 => $this->input->post('service_est_time'),
 										'customer_package_profile_id' => -999, //Short code for no package redemption
-										'coupon_id'									=>$this->input->post('coupon_id')
+										'coupon_id'					=>$this->input->post('coupon_id')
 									);
 
 								
@@ -1500,6 +1523,7 @@ class Cashier extends CI_Controller {
 							$this->session->set_userdata('cart', $curr_sess_cart_data);
 						}
 					}
+					//$this->PrettyPrintArray($_SESSION['cart']);
 					/********************************************************************/
 					$this->ReturnJsonArray(true,false,"Your Cart updated successfully!");
 					die;
@@ -2047,6 +2071,7 @@ class Cashier extends CI_Controller {
 	}
 
 	public function SplitPaymentInfo(){
+		
 		if($this->IsLoggedIn('cashier')){
 			if(isset($_POST) && !empty($_POST)){				
 				$this->form_validation->set_rules('total_final_bill', 'Final Bill', 'trim|required');
@@ -2465,10 +2490,13 @@ class Cashier extends CI_Controller {
 	)
   */
 	
-	public function DoTransaction(){		
+	public function DoTransaction(){	
+        
 		if($this->IsLoggedIn('cashier')){			
 			if(isset($_POST) && !empty($_POST)){
-				$customer_id = $_POST['txn_data']['txn_customer_id'];							
+				
+				$customer_id = $_POST['txn_data']['txn_customer_id'];
+				
 				$count=1;
 				foreach($_POST['cart_data'] as $key => $value)
 				{
@@ -2485,7 +2513,7 @@ class Cashier extends CI_Controller {
 					
 					$cart_data['transaction_id'] = $result['res_arr']['res_arr']['insert_id'];
 					$cart_data['outlet_admin_id'] = $business_admin_id;					
-					$cart_data['transaction_time'] = $transcation_detail['res_arr'][0]['txn_datetime'];
+					$cart_data['transaction_time'] = (!empty($transcation_detail['res_arr'][0]['txn_datetime'])) ? $transcation_detail['res_arr'][0]['txn_datetime'] : date("Y-m-d H:i:s");
 					$cart_data['cart_data'] = json_encode($_POST['cart_data']);
 					$cart_detail = $this->CashierModel->Insert($cart_data,'mss_transaction_cart');
 					if($cart_detail['success'] == 'true'){
@@ -2712,8 +2740,8 @@ class Cashier extends CI_Controller {
 			if(isset($customer_id)){
 				//Check whether customer belongs to the logged cashier's shop and business admin
 				$where = array(
-					'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-					'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+					//'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+					//'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
 					'master_admin_id'=> $this->session->userdata['logged_in']['master_admin_id'],
 					'customer_id'       => $customer_id
 				);
@@ -2783,8 +2811,8 @@ class Cashier extends CI_Controller {
 				if(isset($customer_id)){
 						//Check whether customer belongs to the logged cashier's shop and business admin
 						$where = array(
-								'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-								'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+								//'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+								//'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
 								'master_admin_id'=> $this->session->userdata['logged_in']['master_admin_id'],
 								'customer_id'       => $customer_id
 						);
@@ -2848,8 +2876,8 @@ class Cashier extends CI_Controller {
 			if(isset($customer_id)){
 				//Check whether customer belongs to the logged cashier's shop and business admin
 				$where = array(
-					'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-					'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+					//'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+					//'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
 					'master_admin_id'=> $this->session->userdata['logged_in']['master_admin_id'],
 					'customer_id'       => $customer_id
 				);
@@ -3525,12 +3553,13 @@ class Cashier extends CI_Controller {
         if($this->IsLoggedIn('cashier')){       
                 $data = $this->GetDataForCashier("Buy Packages");           
                 $data['salon_packages'] = $this->AdminActivePackages();
-            
+               
 				$data['sidebar_collapsed'] = "true";      
                 $customer_id = $this->uri->segment(3);
                 if($customer_id != ''){
                     $sess_data = $this->GetCustomerBilling($customer_id);
-                    if(!isset($this->session->userdata['Package_Customer'])){
+					
+					if(!isset($this->session->userdata['Package_Customer'])){
                         $this->session->set_userdata('Package_Customer', $sess_data);
                     }
                     else{
@@ -3540,11 +3569,12 @@ class Cashier extends CI_Controller {
                 }
                 // $this->PrettyPrintArray($customer_id);      
                 if(isset($this->session->userdata['Package_Customer']) || isset($customer_id)){
-                        $data['Package_Customer'] = $this->session->userdata['Package_Customer'];
-                        if(isset($this->session->userdata['package_payment'])){
-                                $data['package_payment'] = $this->session->userdata['package_payment'][''.$this->session->userdata['Package_Customer']['customer_id'].''];
-                        }
+					$data['Package_Customer'] = $this->session->userdata['Package_Customer'];
+					if(isset($this->session->userdata['package_payment'])){
+							$data['package_payment'] = $this->session->userdata['package_payment'][''.$this->session->userdata['Package_Customer']['customer_id'].''];
+					}
                 }
+				
                 if(isset($this->session->userdata['package_cart'])){
                         $data['package_cart'] = $this->session->userdata['package_cart'];
                 }
@@ -6104,7 +6134,7 @@ public function AddToCartRedeemPoints(){
                 'category_business_outlet_id'=> $outlet_id,
                 'category_type' => 'Products'
             );
-            $data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+            $data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
             if($data['success'] == 'true'){ 
                 return $data['res_arr'];
             }
@@ -6128,7 +6158,7 @@ public function AddToCartRedeemPoints(){
                 'category_type' => 'Products'
             );
             // $this->PrettyPrintArray($where);
-            $data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+            $data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
             // $this->PrettyPrintArray($data);
             if($data['success'] == 'true'){
                 header("Content-type: application/json");
