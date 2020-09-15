@@ -5060,7 +5060,7 @@ public function GetEmployee(){
 	}
 	
 	//Bill generate for Cancel purpose
-	public function GenerateCustomerBill(){	
+	public function GenerateCustomerBill(){	        
 		if($this->IsLoggedIn('business_admin')){
 			if(isset($_GET) && !empty($_GET)){
 				$where=array(	'from_date'	=> $_GET['from_date'],
@@ -5711,7 +5711,8 @@ public function GetEmployee(){
 							'business_outlet_id' => $this->session->userdata['outlets']['current_outlet']
 						);
 						$result = $this->BusinessAdminModel->GetCustomerBill($data);			
-									
+                        echo $this->db->last_query();
+						die('Test');
 						if($result['success'] == 'true'){
 							//ReSend Bill SMS
 							$res =$result['res_arr'][0];

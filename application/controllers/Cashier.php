@@ -267,7 +267,8 @@ class Cashier extends CI_Controller {
                             $session_data = array(
                                 'employee_id'      => $result['res_arr']['employee_id'],
                                 'employee_email'   => $result['res_arr']['employee_email'],
-                                'employee_name'    => $result['res_arr']['employee_first_name'].' '.$result['res_arr']['employee_last_name'],
+                                'employee_name'    => $result['res_arr']['employee_first_name'].' '.$result['res_arr']['employee_last_name'],                                
+                                'employee_mobile'   =>$result['res_arr']['employee_mobile'],
                                 'user_type'        => 'cashier',
                                 'master_admin_id'   =>$result['res_arr']['business_master_admin_id'],
                                 'business_admin_id'=> $result['res_arr']['employee_business_admin'],
@@ -423,8 +424,8 @@ class Cashier extends CI_Controller {
             {
                 $data['rules'] = ['res_arr'=>''];
                 // $data['rules'] = $rules['res_arr'];
-						}
-						// $this->PrettyPrintArray($this->session->all_userdata());
+						}	
+						 //$this->PrettyPrintArray($this->session->all_userdata());
 			$data['sidebar_collapsed'] = "true";
 			$this->load->view('cashier/cashier_dashboard_view',$data);
 		}
@@ -6468,18 +6469,25 @@ public function AddToCartRedeemPoints(){
 					//for Bill No
 					$outlet_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$data['individual_customer']['customer_business_outlet_id'])->get()->row_array();
 
-					$data['bill_no']=strval("A".strval(100+$data['individual_customer']['customer_business_admin_id']) . "O" . strval( $data['individual_customer']['customer_business_outlet_id']) . "-" . strval($outlet_counter['business_outlet_bill_counter']));
+					// $data['bill_no']=strval("A".strval(100+$data['individual_customer']['customer_business_admin_id']) . "O" . strval( $data['individual_customer']['customer_business_outlet_id']) . "-" . strval($outlet_counter['business_outlet_bill_counter']));
 										
 					$sql ="SELECT * from mss_transaction_cart where id=".$card_id;
 
 					$query = $this->db->query($sql);
 					$result = $query->result_array();
 					$cart = json_decode($result[0]['cart_data'],true);
-					 
 					
-					$data['cart'] = $cart;
-					// echo "<pre>";
+					$data['cart'] = $cart; 
 					$outlet_admin_id = $result[0]['outlet_admin_id'];
+
+					
+					$sql ="SELECT * FROM `mss_transactions` WHERE `txn_id` = ".$result[0]['transaction_id'];
+
+					$query = $this->db->query($sql);
+					$result = $query->result_array();
+					$data['bill_no']= $result[0]['txn_unique_serial_id'];
+					
+					// echo "<pre>";					
 					//print_r($result[0]['outlet_admin_id']);die;
 					// print_r($data['cart']);
 					$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
@@ -6492,7 +6500,8 @@ public function AddToCartRedeemPoints(){
 						$query = $this->db->query($sql);
 						$result = $query->result_array();
 					}
-					$data['logo'] = $result[0]['config_value'];						// if(isset($this->session->userdata['payment'])){
+					$data['logo'] = $result[0]['config_value'];											
+					// if(isset($this->session->userdata['payment'])){
 					// 	$data['payment'] = $this->session->userdata['payment'][$customer_id];
 					// }
 					// print_r($data['payment']);
@@ -6645,11 +6654,12 @@ public function AddToCartRedeemPoints(){
 
 			$data['package_cart']=$this->BusinessAdminModel->GetPackageTransactionDetailByTxnId($txn_id);			
 			$data['package_cart']=$data['package_cart']['res_arr'][0];
+			$data['bill_no'] = $data['package_cart']['package_txn_unique_serial_id'];
 			// echo "<pre>";
 			// print_r($data);
 			// die;
 			$data['shop_details'] = $this->ShopDetails();
-			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
+			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";	
 
 			$query = $this->db->query($sql);
 
@@ -7275,6 +7285,15 @@ public function AddToCartRedeemPoints(){
 		else{
 				$this->LogoutUrl(base_url()."Cashier/");
 		}
+	}
+
+	public function sendOtp(){
+		sentOtp();
+	}
+
+	public function verifyOTP(){		
+		$response = verifyOPT($_REQUEST['otp']);
+		echo $response;
 	}
 
 }
