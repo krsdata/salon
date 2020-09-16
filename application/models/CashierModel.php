@@ -636,11 +636,11 @@ class CashierModel extends CI_Model {
 								
 								$total_count		 = $customer_profile_record['res_arr'][0]['service_count'];
 								$customer_package_id = $customer_profile_record['res_arr'][0]['customer_package_id'];
-								$customer_total_redeem_count = $customer_profile_record['res_arr'][0]['total_count_of_redeem_services'];
+								$customer_total_redeem_count = $customer_profile_record['res_arr'][0]['grand_total_service_count'];
 								$customer_total_redeem_count = ($customer_total_redeem_count!=0) ? $customer_total_redeem_count : (int)$data['cart_data'][$i]['service_quantity'];
 								/* Get Total Redeem count */ 
 								
-								$redeemQuery = $this->db->query("SELECT sum(`total_count_of_redeem_services`) as totalCount FROM `mss_customer_package_profile` WHERE `customer_package_id`=".$customer_package_id." ");
+								$redeemQuery = $this->db->query("SELECT sum(`grand_total_service_count`) as totalCount FROM `mss_customer_package_profile` WHERE `customer_package_id`=".$customer_package_id." ");
 								$totalCountOfRedeem = $redeemQuery->row_array();
 								$totalCountOfRedeem = (!empty($totalCountOfRedeem)) ? $totalCountOfRedeem['totalCount'] : 0;
 								
@@ -657,7 +657,7 @@ class CashierModel extends CI_Model {
 								/* Get total taken services count for this customer */
 								if($totalCountOfPackage > $totalCountOfRedeem){
 									if($total_count >= $data['cart_data'][$i]['service_quantity']){
-										$update_query = "UPDATE mss_customer_package_profile SET total_count_of_redeem_services	= total_count_of_redeem_services + ".(int)$customer_total_redeem_count." , service_count = service_count - ".(int)$data['cart_data'][$i]['service_quantity']." WHERE customer_package_profile_id = ".$customer_package_profile_id." ";
+										$update_query = "UPDATE mss_customer_package_profile SET grand_total_service_count	= grand_total_service_count + ".(int)$customer_total_redeem_count." , service_count = service_count - ".(int)$data['cart_data'][$i]['service_quantity']." WHERE customer_package_profile_id = ".$customer_package_profile_id." ";
 										$this->db->query($update_query);
 									}else{
 										return $this->ModelHelper(false,true,"You can't redeem more than the available services for redemption. Please select lesser count of Services");
@@ -672,7 +672,7 @@ class CashierModel extends CI_Model {
 
 									$insert_redemption = $this->Insert($package_redemption_data,'mss_package_redemption_history');
 								}else{
-									return $this->ModelHelper(false,true,"You can't redeem more than the available services for redemption.");
+									return $this->ModelHelper(false,true,"You can't redeem more than the Grand Total service count for redemption.");
 									die;
 								} 
 						}
