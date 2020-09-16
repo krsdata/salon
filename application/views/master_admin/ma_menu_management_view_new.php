@@ -1334,7 +1334,6 @@ $this->load->view('master_admin/ma_header_view');
 -->
 
 <script src="<?=base_url()?>public/app_stack/js/multiselect/jquery.multiselect.js"></script>
-<link rel="stylesheet" href="<?=base_url()?>public/app_stack/css/multiselect/bootstrap.css">
 <link rel="stylesheet" href="<?=base_url()?>public/app_stack/css/multiselect/jquery.multiselect.css">
  
 <script>
