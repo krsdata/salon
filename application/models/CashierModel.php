@@ -183,7 +183,7 @@ class CashierModel extends CI_Model {
 
 
     public function GetPurchasedPackagesCategories($where){
-        $sql = "SELECT DISTINCT master_categories.category_name,master_categories.category_id,mss_customer_packages.customer_id FROM mss_customer_packages,mss_customer_package_profile,mss_services,mss_sub_categories,master_categories WHERE mss_customer_packages.customer_package_id = mss_customer_package_profile.customer_package_id AND mss_customer_package_profile.service_id = mss_services.service_id AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND mss_sub_categories.sub_category_category_id = master_categories.category_id AND mss_customer_packages.customer_id = ".$this->db->escape($where['customer_id'])." AND mss_customer_packages.package_expiry_date > DATE(NOW())";
+        $sql = "SELECT DISTINCT mss_categories.category_name,mss_categories.category_id,mss_customer_packages.customer_id FROM mss_customer_packages,mss_customer_package_profile,mss_services,mss_sub_categories,mss_categories WHERE mss_customer_packages.customer_package_id = mss_customer_package_profile.customer_package_id AND mss_customer_package_profile.service_id = mss_services.service_id AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND mss_sub_categories.sub_category_category_id = mss_categories.category_id AND mss_customer_packages.customer_id = ".$this->db->escape($where['customer_id'])." AND mss_customer_packages.package_expiry_date > DATE(NOW())";
         
         //execute the query
         $query = $this->db->query($sql);
@@ -206,13 +206,13 @@ class CashierModel extends CI_Model {
                     mss_customer_package_profile,
                     mss_services,
                     mss_sub_categories,
-                    master_categories
+                    mss_categories
                 WHERE 
                     mss_customer_packages.customer_package_id = mss_customer_package_profile.customer_package_id 
                     AND mss_customer_package_profile.service_id = mss_services.service_id 
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
-                    AND master_categories.category_id = ".$this->db->escape($where['category_id'])."
+                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                    AND mss_categories.category_id = ".$this->db->escape($where['category_id'])."
                     AND mss_customer_packages.customer_id = ".$this->db->escape($where['customer_id'])."
                     AND mss_customer_packages.package_expiry_date > DATE(NOW())";
 
@@ -237,38 +237,21 @@ class CashierModel extends CI_Model {
                     mss_salon_packages
                 WHERE 
                     mss_customer_packages.customer_package_id = mss_customer_package_profile.customer_package_id 
-                    AND (mss_customer_package_profile.service_id = mss_services.service_id)
+                    AND mss_customer_package_profile.service_id = mss_services.service_id
                     AND mss_customer_packages.salon_package_id = mss_salon_packages.salon_package_id
                     AND mss_services.service_sub_category_id = ".$this->db->escape($where['sub_category_id'])."
                     AND mss_customer_packages.customer_id = ".$this->db->escape($where['customer_id'])." 
-					AND mss_services.outlet_id = ".$this->db->escape($where['outlet_id'])." 
                     AND mss_customer_package_profile.service_count > 0
                     AND mss_customer_packages.package_expiry_date > DATE(NOW())";
-        
-         
+                        
         //execute the query
-		
 		$query = $this->db->query($sql);
-		
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
         }
         else{
             return $this->ModelHelper(false,true,"DB error!");   
         }
-    }
-	
-	public function GetPurchasedPackagesServicesNew($where){
-        /*
-        $this->db->select('*');
-		$this->db->from('mss_customer_packages A'); 
-		$this->db->join('Category b', 'b.cat_id=a.cat_id', 'left');
-		$this->db->join('Soundtrack c', 'c.album_id=a.album_id', 'left');
-		$this->db->where('A.customer_id',$this->db->escape($where['customer_id']));
-		$this->db->where('A.package_expiry_date'," >". DATE(NOW()."");
-		$this->db->order_by('c.track_title','asc');         
-		$query = $this->db->get(); */
-		
     }
 
     public function GetCashierPersonal($employee_id){
@@ -302,16 +285,16 @@ class CashierModel extends CI_Model {
         $sql = "SELECT 
                     ROUND(mss_services.service_price_inr+mss_services.service_price_inr*(mss_services.service_gst_percentage/100)) as 'mrp',
                     mss_services.*,
-                    master_categories.category_name
+                    mss_categories.category_name
                 FROM 
                     mss_services,
                     mss_sub_categories,
-                    master_categories
+                    mss_categories
                 WHERE
                     mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
-                    AND master_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
-                    AND master_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
+                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                    AND mss_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
+                    AND mss_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
                     AND mss_services.service_is_active = 1
                     AND (mss_services.service_name LIKE '%$search_term%' OR mss_services.barcode LIKE '$search_term%')
                 ORDER BY mss_services.service_name LIMIT 15";
@@ -374,8 +357,8 @@ class CashierModel extends CI_Model {
 
     public function CheckOTCStockExists($where){
         $this->db->select('*');
-        $this->db->from('mss_otc_stock');
-        $this->db->where('otc_service_id',$where['service_id']);
+        $this->db->from('inventory_stock');
+        $this->db->where('stock_service_id',$where['service_id']);
         
         $query = $this->db->get();
 
@@ -452,7 +435,7 @@ class CashierModel extends CI_Model {
         $this->db->where('customer_id',$where['customer_id']);
         // $this->db->where('customer_business_outlet_id',$where['business_outlet_id']);
         // $this->db->where('customer_business_admin_id',$where['business_admin_id']);
-        //$this->db->where('customer_master_admin_id',$where['master_admin_id']);
+        $this->db->where('customer_master_admin_id',$where['master_admin_id']);
         $query = $this->db->get();
 
         if ($query->num_rows() == 1){
@@ -545,9 +528,8 @@ class CashierModel extends CI_Model {
             4. Update the pending amounts for the customers if any
             5. Last but not least if composition is available then update the stock for the services taken.
         */
-        // $this->PrintArray($_POST);
-        //exit;
-			
+		// $this->PrintArray($_POST);
+		//exit;
 				if($data['cashback']>0)
                 {
                     $data_cashback = array(
@@ -571,7 +553,7 @@ class CashierModel extends CI_Model {
 
         $outlet_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();
 			
-        $data['txn_data']['txn_unique_serial_id'] = strval("A".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($outlet_counter['business_outlet_bill_counter']));
+          $data['txn_data']['txn_unique_serial_id'] = strval("A".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($outlet_counter['business_outlet_bill_counter']));
         
         
         //1.unset sender id and api key from array;
@@ -579,7 +561,7 @@ class CashierModel extends CI_Model {
 				// $data['txn_data']+=['txn_loyalty_points'=>$_POST['cashback']];
 				if(!empty($cashback))
 				{
-						if($cashback['rule_type'] == 'Offers Single Rule' || $cashback['rule_type'] == 'Offers Multiple Rule' || $cashback['rule_type'] == 'Offers LTV Rule')
+					if($cashback['rule_type'] == 'Offers Single Rule' || $cashback['rule_type'] == 'Offers Multiple Rule' || $cashback['rule_type'] == 'Offers LTV Rule')
 					{
 						$data['txn_data']+=['txn_loyalty_points'=>$cashback['points_generated']];
 						$data['txn_data']+=['txn_loyalty_points_expiry'=>date('Y-m-d', strtotime("+".$cashback['points_validity'], strtotime(date("Y-m-d"))))];
@@ -622,7 +604,6 @@ class CashierModel extends CI_Model {
 				}
 				
                 //2.
-				
                 for($i=0;$i<count($data['cart_data']);$i++){
                     $services_data = array(
         					'txn_service_service_id' => $data['cart_data'][$i]['service_id'],
@@ -645,7 +626,7 @@ class CashierModel extends CI_Model {
 						}
 						
 					$result_2 = $this->Insert($services_data,'mss_transaction_services');
-					
+
 						if((int)$data['cart_data'][$i]['customer_package_profile_id'] != -999){
 							if((int)$data['cart_data'][$i]['customer_package_profile_id'] != -9999)
 							{
@@ -718,11 +699,10 @@ class CashierModel extends CI_Model {
         $this->db->query($query);
 
         if($data['txn_settlement']['txn_settlement_payment_mode'] == 'Virtual_Wallet' && $data['txn_settlement']['txn_settlement_way'] == 'Full Payment'){
-           // Update the customer wallet as well
-           $query = "UPDATE mss_customers SET customer_virtual_wallet = customer_virtual_wallet - ".(int)$data['txn_settlement']['txn_settlement_amount_received']." WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";
-					 $this->db->query($query);
-				}
-				
+			// Update the customer wallet as well
+			$query = "UPDATE mss_customers SET customer_virtual_wallet = customer_virtual_wallet - ".(int)$data['txn_settlement']['txn_settlement_amount_received']." WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";
+				$this->db->query($query);
+			}				
 
 				//5 loyalty wallet payment
 				//jitesh
@@ -738,14 +718,12 @@ class CashierModel extends CI_Model {
 					{
 
 							$update_cashback="UPDATE mss_customers SET customer_cashback = customer_cashback + ".$cashback['cashback_generated']." WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";
-							
 							$this->db->query($update_cashback);
 					}
 				}
 				else
 				{
 					$update_cashback = $update_cashback="UPDATE mss_customers SET customer_cashback = customer_cashback + 0 WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";
-					
 					$this->db->query($update_cashback);
 				}
 				
@@ -825,7 +803,8 @@ class CashierModel extends CI_Model {
         if ($this->db->trans_status() === FALSE)
         {
           return $this->ModelHelper(false,true,'Transaction cannot be processed!');
-        }
+		}
+ 
         //array('txn_id' => $result_1['res_arr']['insert_id']
 				// return $this->ModelHelper(true,false);
 				return $this->ModelHelper(true,false,'',$result_1);
@@ -872,39 +851,19 @@ class CashierModel extends CI_Model {
                     'consumption_quantity' =>(int)$quantity
                 );
                 $this->UpdateStockFromOTC($temp);
-            }else{
-                // $this->PrintArray($_POST);
-                $sql="Select * from mss_services where service_id =".$service_id."";
-                $query = $this->db->query($sql);
-                $data=$query->result_array();
-                $master_admin = $this->CashierModel->DetailsById($this->session->userdata['logged_in']['business_admin_id'],'mss_business_admin','business_admin_id');
-                $master_admin_id = $master_admin['res_arr']['business_master_admin_id'];
-                // $service_details = $this->DetailsById($service_id,'mss_services','service_id');
-                $service_details = $this->ServiceDetail($service_id);
-                $service_details = $service_details['res_arr'][0];
-                // $this->PrettyPrintArray($service_details);
+            }else{                
                 $temp = array(
-                    'service_id' => $service_id,
-                    'master_admin_id'=>$master_admin_id,
-                    'business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id'],
-                    'outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id'],
-                    'barcode_id'=>$service_details['barcode_id'],
-                    'barcode'=>$data[0]['barcode'],
-                    'brand_name'=>$data[0]['service_brand'],
-                    'product_type'  => $service_details['sub_category_name'],
-                    'usg_category'=>$data[0]['inventory_type'],
-                    'sku_size'=>$data[0]['qty_per_item'],
-                    'unit'=>$data[0]['service_unit'],
-                    'mrp'  =>$service_details['service_price_inr']+($service_details['service_price_inr']*($service_details['service_gst_percentage']/100)),
-                    'sku_count'=>(int)0-(int)$quantity,
-                    'stock_level'=>'',
-                    'usg_category'=>'',
-                    'expiry'=>' ',
-                    'low_stock_level'=>' '
+                    'stock_service_id' => $service_id,
+					'total_stock'	=>0,
+					'stock_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id'],
+					'updated_on'=>date('Y-m-d')
                 );
-                $this->Insert($temp,'mss_inventory');
-                // $this->PrettyPrintArray($temp);
-                // $this->UpdateStockFromOTC1($temp);
+				$this->Insert($temp,'inventory_stock');
+				$temp1 = array(
+                    'otc_service_id' => $service_id,
+                    'consumption_quantity' =>(int)$quantity
+                );
+                $this->UpdateStockFromOTC($temp1);
             }
         }
 
@@ -916,7 +875,7 @@ class CashierModel extends CI_Model {
     }
 
     public function GetCurrentOTCStock($where){
-       $sql = "SELECT * FROM master_categories AS A,mss_sub_categories AS B,mss_services AS C,mss_otc_stock AS D WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND C.service_id = D.otc_service_id AND A.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND C.service_is_active = 1 AND A.category_business_outlet_id = ".$this->db->escape($where['category_business_outlet_id'])." AND C.service_type = 'otc' GROUP BY D.otc_entry_date,C.service_name DESC";
+       $sql = "SELECT * FROM mss_categories AS A,mss_sub_categories AS B,mss_services AS C,mss_otc_stock AS D WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND C.service_id = D.otc_service_id AND A.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND C.service_is_active = 1 AND A.category_business_outlet_id = ".$this->db->escape($where['category_business_outlet_id'])." AND C.service_type = 'otc' GROUP BY D.otc_entry_date,C.service_name DESC";
         
         $query = $this->db->query($sql);
         
@@ -930,7 +889,7 @@ class CashierModel extends CI_Model {
     //Total OTC STOCK
   
 	public function Total_Otc_Stock($where){
-		$sql = "SELECT count(D.otc_sku) AS 'count' FROM master_categories AS A,mss_sub_categories AS B,mss_services AS C,mss_otc_stock AS D WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND C.service_id = D.otc_service_id AND A.category_business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND C.service_is_active = 1 AND A.category_business_outlet_id = ".$this->db->escape($where['business_outlet_id'])." AND C.service_type = 'otc' ";
+		$sql = "SELECT count(D.otc_sku) AS 'count' FROM mss_categories AS A,mss_sub_categories AS B,mss_services AS C,mss_otc_stock AS D WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND C.service_id = D.otc_service_id AND A.category_business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND C.service_is_active = 1 AND A.category_business_outlet_id = ".$this->db->escape($where['business_outlet_id'])." AND C.service_type = 'otc' ";
 		
 		$query = $this->db->query($sql);
 		
@@ -978,10 +937,10 @@ class CashierModel extends CI_Model {
     }
 
     private function UpdateStockFromOTC($data){
-        $query1 = "UPDATE mss_inventory SET sku_count = sku_count  - ".(int)$data['consumption_quantity']." WHERE service_id = ".$data['otc_service_id']."";
-        $this->db->query($query1);
-        // $query = "UPDATE mss_otc_stock SET otc_sku = otc_sku  - ".(int)$data['consumption_quantity']." WHERE otc_service_id = ".$data['otc_service_id']."";
-        // $this->db->query($query);  
+		// $query1 = "UPDATE mss_inventory SET sku_count = sku_count  - ".(int)$data['consumption_quantity']." WHERE service_id = ".$data['otc_service_id']."";
+		
+		$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
+		$this->db->query($query1);
     }
 
     public function GetAllExpenses($where){
@@ -1107,8 +1066,7 @@ class CashierModel extends CI_Model {
     }
 
      public function BillingPackageTransaction($data,$outlet_id,$admin_id){
-		 // $this->PrintArray($data);
-		
+		//  $this->PrintArray($data);
 		//  exit;
 
         /*
@@ -1281,7 +1239,7 @@ class CashierModel extends CI_Model {
 			
             $result_5 = $this->GetPackageDetailsWithService($data['cart_data']['salon_package_id'],$outlet_id);
             $result_5 = $result_5['res_arr'];
-					
+						// $this->PrintArray($result_5);
             // (ii) Now Create the profile
             foreach ($result_5 as $service) {
                 $customer_package_profile = array(
@@ -1290,9 +1248,9 @@ class CashierModel extends CI_Model {
 									'master_service_id'   => $service['master_service_id'],
 									'service_discount'    => $service['discount_percentage'],
 									'service_monthly_discount'=>$service['service_monthly_discount'],
-									'birthday_discount'		  => $service['birthday_discount'],
-									'anni_discount'			  => $service['anni_discount'],
-									'service_count'       	  => $service['service_count']
+									'birthday_discount'	=> $service['birthday_discount'],
+									'anni_discount'	=>	$service['anni_discount'],
+                  'service_count'       => $service['service_count']
                 );
 
                 $result_6 = $this->Insert($customer_package_profile,'mss_customer_package_profile');    
@@ -1554,7 +1512,7 @@ class CashierModel extends CI_Model {
                     mss_appointments.*,
                     mss_customers.*,
                     mss_services.*,
-					master_categories.category_name,
+					mss_categories.category_name,
 					mss_sub_categories.sub_category_name,
                     mss_employees.employee_id,
                     mss_employees.employee_first_name,
@@ -1562,7 +1520,7 @@ class CashierModel extends CI_Model {
                 FROM
                     mss_appointments,
                     mss_appointment_services,
-					master_categories,
+					mss_categories,
 					mss_sub_categories,
                     mss_services,
                     mss_employees,
@@ -1570,7 +1528,7 @@ class CashierModel extends CI_Model {
                 WHERE
                     mss_appointments.customer_id = mss_customers.customer_id
 					AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id=master_categories.category_id
+                    AND mss_sub_categories.sub_category_category_id=mss_categories.category_id
                     AND mss_appointments.appointment_id = mss_appointment_services.appointment_id
 					AND mss_appointments.appointment_date >=".$this->db->escape($where['appointment_date'])."
                     AND mss_appointment_services.expert_id = mss_employees.employee_id
@@ -1712,12 +1670,12 @@ class CashierModel extends CI_Model {
 					FROM 
 						mss_services,
 						mss_sub_categories,
-						master_categories
+						mss_categories
 					WHERE
 						mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-						AND mss_sub_categories.sub_category_category_id = master_categories.category_id
-						AND master_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
-						AND master_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
+						AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+						AND mss_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
+						AND mss_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
 						AND mss_services.service_is_active = TRUE";
 			
 			$query = $this->db->query($sql);
@@ -1823,7 +1781,6 @@ class CashierModel extends CI_Model {
             return $this->ModelHelper(false,true,"DB error!");   
         }
 	}
-	
 	//Package Redemption
 	public function GetPackageRedemptionDetails($where){
 		$sql = "SELECT 
@@ -2064,12 +2021,12 @@ class CashierModel extends CI_Model {
         else{
             return $this->ModelHelper(false,true,"Some DB Error!");
         }  
-			}
+	}
 			
 			public function ServiceWiseSale($data){
 				$sql="SELECT 
 				date(mss_transactions.txn_datetime) AS 'billing_date',
-				master_categories.category_name AS 'category',
+				mss_categories.category_name AS 'category',
 				mss_sub_categories.sub_category_name AS 'sub_category',
 				mss_services.service_name AS 'service',
 				SUM(mss_transaction_services.txn_service_quantity) AS 'count',
@@ -2077,7 +2034,7 @@ class CashierModel extends CI_Model {
 				FROM
 						mss_transactions,
 						mss_transaction_services,
-						master_categories,
+						mss_categories,
 						mss_sub_categories,
 						mss_services
 				WHERE
@@ -2085,13 +2042,13 @@ class CashierModel extends CI_Model {
 						AND mss_transaction_services.txn_service_service_id = mss_services.service_id 
 						AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
 						AND mss_services.service_type='service'
-						AND mss_sub_categories.sub_category_category_id = master_categories.category_id
-						AND master_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
-						AND master_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
+						AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+						AND mss_categories.category_business_admin_id = ".$this->db->escape($data['business_admin_id'])."
+						AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
 						AND date(mss_transactions.txn_datetime)= date(now())
 				GROUP BY
 						date(mss_transactions.txn_datetime),
-						master_categories.category_id,
+						mss_categories.category_id,
 						mss_sub_categories.sub_category_id,
 						mss_services.service_id";
 				
@@ -2149,7 +2106,7 @@ class CashierModel extends CI_Model {
                     mss_transaction_services,
                     mss_employees,
                     mss_customers,
-                    master_categories,
+                    mss_categories,
                     mss_sub_categories,
                     mss_services
                     WHERE
@@ -2157,7 +2114,7 @@ class CashierModel extends CI_Model {
                     AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
                     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
                     AND mss_transactions.txn_customer_id = mss_customers.customer_id
                     AND mss_transactions.txn_status=1
                     AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."
@@ -2207,14 +2164,14 @@ class CashierModel extends CI_Model {
 
             public function OtcCategory($data){
               $sql="SELECT 
-							master_categories.category_id AS category_id,
-							master_categories.category_name AS category_name 
+							mss_categories.category_id AS category_id,
+							mss_categories.category_name AS category_name 
 						FROM 
-							master_categories
+							mss_categories
 						WHERE 
-							master_categories.category_type='Products' AND
-							master_categories.category_for !=1 AND
-							master_categories.category_business_outlet_id=".$this->db->escape($data)." ";
+							mss_categories.category_type='Products' AND
+							mss_categories.category_for !=1 AND
+							mss_categories.category_business_outlet_id=".$this->db->escape($data)." ";
                 
                   $query = $this->db->query($sql);
                   
@@ -2637,7 +2594,7 @@ class CashierModel extends CI_Model {
 	
 	public function ProductsSalesToday(){
         $sql = "SELECT
-      master_categories.category_name,
+      mss_categories.category_name,
       mss_sub_categories.sub_category_name,
       mss_services.service_name,
       SUM(mss_transaction_services.txn_service_discounted_price) AS 'txn_service_discounted_price', 
@@ -2647,7 +2604,7 @@ class CashierModel extends CI_Model {
                 mss_transaction_services,
                 mss_employees,
                 mss_customers,
-                master_categories,
+                mss_categories,
                 mss_sub_categories,
                 mss_services
         WHERE
@@ -2657,7 +2614,7 @@ class CashierModel extends CI_Model {
                 AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
                 AND mss_transaction_services.txn_service_service_id = mss_services.service_id
                 AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
                 AND mss_services.inventory_type = 'Retail Product'
                 AND mss_transactions.txn_customer_id = mss_customers.customer_id
                 AND employee_business_outlet=".$this->session->userdata['logged_in']['business_outlet_id']."
@@ -2680,7 +2637,7 @@ class CashierModel extends CI_Model {
     public function GetTopServices(){
         $sql = "SELECT 
         date(mss_transactions.txn_datetime) AS 'Billing Date', 
-        master_categories.category_name AS 'Category', 
+        mss_categories.category_name AS 'Category', 
         mss_transaction_services.txn_service_service_id as 'service_id',
         mss_services.service_name 'service_name',
         mss_services.service_price_inr,
@@ -2692,16 +2649,17 @@ class CashierModel extends CI_Model {
         FROM 
         mss_transactions, 
         mss_transaction_services, 
-        master_categories, 
+        mss_categories, 
         mss_sub_categories,
         mss_services
         WHERE 
         mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
         AND mss_transaction_services.txn_service_service_id = mss_services.service_id   
         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
-        AND master_categories.category_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
-        AND master_categories.category_business_outlet_id = ".$this->session->userdata['logged_in']['business_outlet_id']."
+		AND mss_services.inventory_type !='Raw Material'
+        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+        AND mss_categories.category_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
+        AND mss_categories.category_business_outlet_id = ".$this->session->userdata['logged_in']['business_outlet_id']."
         
         GROUP BY 
         mss_services.service_id 
@@ -2724,7 +2682,7 @@ class CashierModel extends CI_Model {
             WHERE 
                 mss_transactions_replica.txn_outlet_id=".$this->db->escape($data['outlet_id'])." AND
                 mss_transactions_replica.txn_business_admin_id=".$this->db->escape($data['business_admin_id'])."
-            ORDER BY txn_datetime DESC LIMIT 10";
+            ORDER BY mss_transactions_replica.txn_datetime DESC LIMIT 10";
         //execute the query
         $query = $this->db->query($sql);
         if ($query->num_rows() >0){
@@ -2927,7 +2885,7 @@ class CashierModel extends CI_Model {
                 FROM
                     mss_appointments,
                     mss_appointment_services,
-                    master_categories,
+                    mss_categories,
                     mss_sub_categories,
                     mss_services,
                     mss_employees,
@@ -2935,7 +2893,7 @@ class CashierModel extends CI_Model {
                 WHERE
                     mss_appointments.customer_id = mss_customers.customer_id
                     AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id=master_categories.category_id
+                    AND mss_sub_categories.sub_category_category_id=mss_categories.category_id
                     AND mss_appointments.appointment_id = mss_appointment_services.appointment_id
                     AND mss_appointments.appointment_date = CURRENT_DATE
                     AND mss_appointments.appointment_start_time >= CURRENT_TIME
@@ -2958,17 +2916,18 @@ class CashierModel extends CI_Model {
     public function SearchProduct($search_term,$inventory_type,$business_admin_id,$business_outlet_id){
         $sql = "SELECT 
                     mss_services.*,
-                    master_categories.category_name,
+					round(mss_services.service_price_inr+mss_services.service_price_inr*mss_services.service_gst_percentage*(.01)) AS 'mrp',
+                    mss_categories.category_name,
                     mss_sub_categories.sub_category_name 
                 FROM 
                     mss_services,
                     mss_sub_categories,
-                    master_categories
+                    mss_categories
                 WHERE
                     mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
-                    AND master_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
-                    AND master_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
+                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                    AND mss_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
+                    AND mss_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
                     AND mss_services.service_is_active = TRUE
                     AND (mss_services.service_name LIKE '$search_term%' OR  mss_services.barcode LIKE '$search_term%')
                     AND mss_services.service_type = 'otc'
@@ -2986,16 +2945,16 @@ class CashierModel extends CI_Model {
         // $this->PrintArray($search_term);
         $sql = "SELECT 
                     mss_services.*,
-                    master_categories.category_name,mss_sub_categories.sub_category_name 
+                    mss_categories.category_name,mss_sub_categories.sub_category_name 
                 FROM 
                     mss_services,
                     mss_sub_categories,
-                    master_categories
+                    mss_categories
                 WHERE
                     mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
-                    AND master_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
-                    AND master_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
+                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                    AND mss_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
+                    AND mss_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
                     AND mss_services.service_is_active = TRUE
                     AND mss_services.service_name = ".$this->db->escape($search_term)."
                    ";
@@ -3011,16 +2970,16 @@ class CashierModel extends CI_Model {
         // $this->PrintArray($inventory_type);
         $sql = "SELECT 
                     mss_services.*,
-                    master_categories.category_name,mss_sub_categories.sub_category_name 
+                    mss_categories.category_name,mss_sub_categories.sub_category_name 
                 FROM 
                     mss_services,
                     mss_sub_categories,
-                    master_categories
+                    mss_categories
                 WHERE
                     mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
-                    AND master_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
-                    AND master_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
+                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                    AND mss_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
+                    AND mss_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
                     AND mss_services.service_is_active = TRUE
                     AND mss_services.service_name = ".$this->db->escape($search_term)."
                     ORDER BY mss_services.service_name LIMIT 15";
@@ -3064,16 +3023,16 @@ class CashierModel extends CI_Model {
     public function SearchProductDetails($search_term,$inventory_type,$business_admin_id,$business_outlet_id){
         $sql = "SELECT 
                     mss_services.*,
-                    master_categories.category_name 
+                    mss_categories.category_name 
                 FROM 
                     mss_services,
                     mss_sub_categories,
-                    master_categories
+                    mss_categories
                 WHERE
                     mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
-                    AND master_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
-                    AND master_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
+                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                    AND mss_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
+                    AND mss_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
                     AND mss_services.service_is_active = TRUE
                     AND (mss_services.service_name LIKE '$search_term%' OR  mss_services.barcode LIKE '$search_term%')
                     AND mss_services.service_type = 'otc'
@@ -3090,16 +3049,16 @@ class CashierModel extends CI_Model {
     public function ProductByName($data){
         $sql = "SELECT 
                     mss_services.*,
-                    master_categories.category_name 
+                    mss_categories.category_name 
                 FROM 
                     mss_services,
                     mss_sub_categories,
-                    master_categories
+                    mss_categories
                 WHERE
                     mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
-                    AND master_categories.category_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
-                    AND master_categories.category_business_outlet_id = ".$this->session->userdata['logged_in']['business_outlet_id']."
+                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+                    AND mss_categories.category_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
+                    AND mss_categories.category_business_outlet_id = ".$this->session->userdata['logged_in']['business_outlet_id']."
                     AND mss_services.service_is_active = TRUE
                     AND mss_services.service_name = ".$this->db->escape($data['service_name'])."
                     AND mss_services.service_type = 'otc'
@@ -3116,22 +3075,22 @@ class CashierModel extends CI_Model {
         $sql = "SELECT 
 					mss_services.service_name,
 					mss_services.inventory_type,
-					master_categories.category_name,
+					mss_categories.category_name,
 					mss_sub_categories.sub_category_name,
 					mss_services.qty_per_item,
 					mss_services.service_unit,
-					SUM(mss_inventory_transaction.sku_count) AS 'Total'
+					SUM(mss_inventory.sku_count) AS 'Total'
 				FROM 
-					mss_inventory_transaction,
+					mss_inventory,
 					mss_services,
 					mss_sub_categories,
-					master_categories
+					mss_categories
 				WHERE 
-					mss_inventory_transaction.mss_service_id = mss_services.service_id AND
+					mss_inventory.service_id = mss_services.service_id AND
 					mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND
-					mss_sub_categories.sub_category_category_id = master_categories.category_id AND
-					master_categories.category_business_admin_id= ".$this->session->userdata['logged_in']['business_admin_id']." AND
-					master_categories.category_business_outlet_id= ".$this->session->userdata['logged_in']['business_outlet_id']." 
+					mss_sub_categories.sub_category_category_id = mss_categories.category_id AND
+					mss_categories.category_business_admin_id= ".$this->session->userdata['logged_in']['business_admin_id']." AND
+					mss_categories.category_business_outlet_id= ".$this->session->userdata['logged_in']['business_outlet_id']." 
 				GROUP BY mss_services.service_id";
         $query = $this->db->query($sql);
         if($query){
@@ -3149,18 +3108,18 @@ class CashierModel extends CI_Model {
         mss_inventory.barcode as 'Barcode',
         mss_services.service_name as 'Product Name',
         mss_sub_categories.sub_category_name as 'Sub Category',
-        master_categories.category_name as 'Category',
+        mss_categories.category_name as 'Category',
         mss_inventory.brand_name as 'Brand Name',
         mss_inventory.usg_category as 'Usg Type',
         mss_inventory.sku_size as 'SKU Size',
         mss_inventory.unit as 'Unit',
         mss_inventory.sku_count as 'Total Stock'
-        FROM mss_inventory,mss_business_outlets,mss_sub_categories,master_categories,mss_services
+        FROM mss_inventory,mss_business_outlets,mss_sub_categories,mss_categories,mss_services
         where 
         mss_inventory.service_id=mss_services.service_id
         AND mss_inventory.outlet_id = mss_business_outlets.business_outlet_id
         AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id=master_categories.category_id
+        AND mss_sub_categories.sub_category_category_id=mss_categories.category_id
         AND mss_inventory.business_admin_id=".$this->session->userdata['logged_in']['business_admin_id']."
         AND mss_inventory.outlet_id=".$this->session->userdata['logged_in']['business_outlet_id']."";
         
@@ -3174,10 +3133,10 @@ class CashierModel extends CI_Model {
         }
     }
     public function ServiceDetail($id){
-        $sql = "SELECT * FROM mss_services,mss_sub_categories,master_categories
+        $sql = "SELECT * FROM mss_services,mss_sub_categories,mss_categories
         where mss_services.service_id=$id
         AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id=master_categories.category_id";
+        AND mss_sub_categories.sub_category_category_id=mss_categories.category_id";
         
         $query = $this->db->query($sql);
         
@@ -3311,7 +3270,7 @@ class CashierModel extends CI_Model {
     public function GetTopServicesCustomer($data){
         $sql = "SELECT 
         date(mss_transactions.txn_datetime) AS 'Billing Date', 
-        master_categories.category_name AS 'Category', 
+        mss_categories.category_name AS 'Category', 
         mss_transaction_services.txn_service_service_id as 'service_id',
         mss_services.service_name 'service_name',
         mss_services.service_price_inr,
@@ -3323,16 +3282,16 @@ class CashierModel extends CI_Model {
         FROM 
         mss_transactions, 
         mss_transaction_services, 
-        master_categories, 
+        mss_categories, 
         mss_sub_categories,
         mss_services
         WHERE 
         mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
         AND mss_transaction_services.txn_service_service_id = mss_services.service_id   
         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
-        AND master_categories.category_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
-        AND master_categories.category_business_outlet_id = ".$this->session->userdata['logged_in']['business_outlet_id']."
+        AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+        AND mss_categories.category_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
+        AND mss_categories.category_business_outlet_id = ".$this->session->userdata['logged_in']['business_outlet_id']."
         AND mss_transactions.txn_customer_id=$data
         GROUP BY 
         mss_services.service_id 
@@ -3441,4 +3400,140 @@ class CashierModel extends CI_Model {
           return $this->ModelHelper(true,false,'Database Error');   
 		} 
 	}
+
+	public function AvailableStock($data){
+		$sql="SELECT mss_services.*, 
+			inventory_stock.*,
+			mss_business_outlets.business_outlet_name
+			FROM	
+			inventory_stock,
+			mss_services,
+			mss_business_outlets
+			WHERE inventory_stock.stock_service_id = mss_services.service_id AND
+			mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." AND
+			inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not Available in stock.");
+        } 
+	}
+
+
+	public function IncomingStock($data){
+		$sql="SELECT inventory_transfer.*,
+		inventory_transfer_data.*, 
+		mss_business_outlets.business_outlet_name AS 'source',
+		mss_business_outlets.business_outlet_name AS 'destination'
+		FROM inventory_transfer, inventory_transfer_data, mss_business_outlets
+		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND inventory_transfer_data.transfer_status=0 AND 
+		inventory_transfer.destination_name= mss_business_outlets.business_outlet_id AND 
+		inventory_transfer.destination_name= ".$this->db->escape($data['business_outlet_id'])." AND mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not Available in stock.");
+        } 
+	}
+	public function OutgoingStock($data){
+		$sql="SELECT inventory_transfer.*,inventory_transfer_data.* FROM inventory_transfer, inventory_transfer_data
+		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id  AND inventory_transfer.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not Available in stock.");
+        } 
+	}
+
+	public function CheckStockExist($where){
+        $this->db->select('*');
+        $this->db->from('inventory_stock');
+        $this->db->where('stock_service_id',$where['stock_service_id']);
+        $this->db->where('stock_outlet_id',$where['stock_outlet_id']);
+        $query = $this->db->get();
+
+        if($query->num_rows() === 0){
+            return $this->ModelHelper(false,true);
+        }
+        else if($query->num_rows() === 1){
+            return $this->ModelHelper(true,false);
+        }   
+	}
+	public function UpdateInventoryStock($data){
+		$sql="UPDATE inventory_stock 
+		SET inventory_stock.total_stock= (inventory_stock.total_stock +  ".$data['total_stock']."),
+		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
+		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
+		   
+		   $query = $this->db->query($sql);
+		   if($this->db->affected_rows() > 0){
+			 return $this->ModelHelper(true,false);    
+		   }
+		   elseif($this->db->affected_rows() == 0){
+			   return $this->ModelHelper(true,false,"No row updated!");   
+		   }
+		   else{
+			   return $this->ModelHelper(false,true,"Some DB Error!");
+		   } 
+	}
+
+	public function UpdateSenderInventoryStock($data){
+		$sql="UPDATE inventory_stock 
+		SET inventory_stock.total_stock= (inventory_stock.total_stock -  ".$data['total_stock']."),
+		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
+		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
+		   
+		   $query = $this->db->query($sql);
+		   if($this->db->affected_rows() > 0){
+			 return $this->ModelHelper(true,false);    
+		   }
+		   elseif($this->db->affected_rows() == 0){
+			   return $this->ModelHelper(true,false,"No row updated!");   
+		   }
+		   else{
+			   return $this->ModelHelper(false,true,"Some DB Error!");
+		   } 
+	}
+
+	public function CheckStockExistForTransfer($where){
+        $sql="SELECT * FROM inventory_stock WHERE inventory_stock.stock_service_id =".$this->db->escape($where['stock_service_id'])." AND inventory_stock.total_stock > ".$this->db->escape($where['total_stock'])." AND inventory_stock.stock_outlet_id= ".$this->db->escape($where['stock_outlet_id'])." ";
+        $query = $this->db->query($sql);
+
+        if($query->num_rows() === 0){
+            return $this->ModelHelper(false,true,"Product not Available in stock Or Less Stock.");
+        }
+        else if($query->num_rows() === 1){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }   
+	}
+
+
+	public function UpdateInventoryStockTransfer($data){
+		$sql="UPDATE inventory_stock 
+		SET inventory_stock.total_stock= (inventory_stock.total_stock -  ".$data['total_stock']."),
+		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
+		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
+		   
+		   $query = $this->db->query($sql);
+		   if($this->db->affected_rows() > 0){
+			 return $this->ModelHelper(true,false);    
+		   }
+		   elseif($this->db->affected_rows() == 0){
+			   return $this->ModelHelper(true,false,"No row updated!");   
+		   }
+		   else{
+			   return $this->ModelHelper(false,true,"Some DB Error!");
+		   } 
+	}
+
+
 }

@@ -14,207 +14,542 @@
 				<h1 class="h3 mb-3">Inventory Management</h1>
 				<div class="row">
 					<div class="col-md-12">
-						<form id="AddOTCInventory" method="POST" action="#">
-							<div  class="smartwizard-arrows-primary wizard wizard-primary">
-								<ul>
-									<li><a href="#arrows-primary-step-1" class="sw-btn-prev">Inventory Details</a></li>
-									<li><a href="#arrows-primary-step-2" class="sw-btn-next">Invoice Details</a></li>
+						<div class="card">
+							<div class="card-header" style="margin-left:10px;">
+								<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight: bolder">
+									<li class="nav-item">
+										<a class="nav-link active" data-toggle="tab" href="#tab-1">Add Stock</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#tab-2">Stock Transfer</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#tab-3">Stock Level</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#tab-4">Incoming Stock</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#tab-5">Outgoing Stock</a>
+									</li>
 								</ul>
-								<div>
-									<div id="arrows-primary-step-1" class="">
+							</div>
+							<div class="card-body">
+								<div class="tab-content">
+									<div class="tab-pane show active" id="tab-1" role="tabpanel">
 										<div class="row">
-											<div class="form-group col-md-3">
-												<label>Inventory Type</label>
-												<select class="form-control" id="otc_inventory_type" name="otc_inventory_type" required>
-													<option value="" selected disabled>Select</option>
-													<option value="Retail Product">Retail Product</option>
-													<option value="Raw Material">Raw Material</option>
-												</select>
-											</div>
-										</div>
-										<div class="row">
-											<div class="input-group col-md-6">
-												<!-- <label>Search Item</label> -->
-												<input type="text" class="form-control" placeholder="Search Item Name" id="SearchServiceByName" name="search">
-												<span class="input-group-append">
-													<button class="btn btn-success" type="button" id="SearchServiceButton">Go</button>
-												</span>
-											</div>
-										</div>
-										<div class="row" style="margin-top:8px">
-											<div class="form-group col-md-3">
-												<label>Category</label>
-												<select class="form-control" name="category_id" id="OTC-Category-Id">
-														
-												</select>
-											</div>   
-											<div class="form-group col-md-3">
-												<label>Sub-Category</label>
-												<select class="form-control" name="otc_sub_category_id" id="OTC-Sub-Category-Id">
-												</select>
-											</div>
-											<div class="form-group col-md-3">
-													<label>Item Name</label>
-													<select class="form-control" name="service_id" style="width: 100%" id="ServiceOTCId">
-													</select>
-											</div>
-											<div class="form-group col-md-3">
-													<label>&ensp;</label>
-													<span class="input-group-append">
-															<button class="btn btn-success" type="button" id="SearchItemButton" >Go</button>
-													</span>
-											</div>
-										</div>
-										<hr>
-										<div class='row'>
-											<div class="form-group col-md-3">
-												<label>Category</label>
-												<input class="form-control" placeholder="Category" id="category" name="otc_category" readonly>
-											</div>
-											<div class="form-group col-md-3">
-												<label>Sub-Category</label>
-												<input class="form-control" placeholder="Sub-Category" id="sub_category" name="otc_sub_category" readonly>
-											</div>
-											<div class="form-group col-md-3">
-												<label>Item</label>
-												<input class="form-control" placeholder="Item" id="otc_item" name="otc_item" readonly>
-											</div>
-											<div class="form-group col-md-3">
-												<label>SKU Size</label>
-												<select class="form-control" name="sku_size" style="width: 100%" id="Service_SKU_Size">
-														<option value>Select...</option>
-												</select>
-											</div>
-										</div>																					
-										<div class='row'>
-											<div class="form-group col-md-3">
-												<label>SKU Count</label>
-												<input type="number" name="sku_count" id="sku_count" class="form-control" placeholder="Number of SKU">
-											</div>
-											<div class="form-group col-md-1" style="padding:0px 0px 0px 0px;margin:0px 0px 0px 12px">
-													<!-- <input type="text" name="expiry_date" id="expiry" class="form-control date"> -->
-													<label>Expiry Date</label>
-													<select name="year" id="year" class="form-control" style="width:60px;padding:0px 0px;margin:0px 0px 0px">
-															<option disabled selected>Year</option>
-															<?php
-																	for($i=date('Y');$i<=date('Y')+3;$i++)
-																	{
-															?>
-																			<option value="<?=$i?>"><?=$i?></option>
-															<?php		
-																	}
-															?>
-													</select>
-											</div>
-											<div class="form-group col-md-1" style="float:left;padding:0px 0px 0px 0px;margin:0px 0px 0px 0px">	
-													<label>&ensp;</label>
-													<select name="month" id="month" class="form-control" style="width:80px;padding:0px 0px 0px 0px;margin:0px 0px 0px 0px;" >
-															<option selected disabled>Month</option>
-															<option value="01">January</option>
-															<option value="02">February</option>
-															<option value="03">March</option>
-															<option value="04">April</option>
-															<option value="05">May</option>
-															<option value="06">June</option>
-															<option value="07">July</option>
-															<option value="08">August</option>
-															<option value="09">September</option>
-															<option value="10">October</option>
-															<option value="11">November</option>
-															<option value="12">December</option>
-													</select>
-											</div>
-											<div class="form-group col-md-3">
-													<input type="text" name="barcode" class="form-control" id="barcode" hidden>
-													<input type="text" name="unit" class="form-control" id="unit" hidden>
-													<input type="text" name="barcode_id" class="form-control" hidden>
-											</div>
-										</div>
-									</div>
-									<div id="arrows-primary-step-2" class="">
-											<div class="row">
-													<div class="form-group col-md-3">
-															<label>Purchase Date</label>
-															<input type="text" name="ipurchase_date" value="<?=date('Y-m-d')?>" class="form-control date" placeholder="Purchase Date">
+											<div class="col-md-12">
+												<div class="card">
+													<div class="card-header">
+														<h4>Stock Entry</h4>
 													</div>
-									
-											</div>
-											<div class="row">
-													<div class="form-group col-md-3">
-															<label>Select Vendor</label>
-															<select name="ivendors" class="form-control" >
+													<div class="card-body">
+														<form action="#" id="AddProduct" method="POST">
+															<div class="form-row">
+																<div class="col-md-6">
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																		<input type="text" class="form-control" name="invoice_number" placeholder="Invoice No." required>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																		<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date" required>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																		<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value" required>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																		<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Freight">
+																		</div>
+																	</div>
+																</div>
+																<div class="col-md-6">
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																			<select name="source_type" class="form-control" required>
+																				<option value="" disabled="disabled" selected>Select Source Type</option>
+																				<option value="warehouse">Warehouse</option>
+																				<option value="branch">Branch</option>
+																				<option value="vendor">Vendor</option>
+																				<option value="return">Sales return</option>
+																			</select>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																			<select name="source_name" class="form-control" required>
 																			
-																			<option value="" disabled selected> Select Vendor</option>
-																			<?php
-																					foreach($vendors as $vendor){
-																			?>
-																				<option value="<?=$vendor['vendor_id']?>"><?=$vendor['vendor_name']?></option>
-																			<?php
-																					}
-																			?>
-															</select>
+																			</select>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																			<select name="invoice_type" class="form-control" required>
+																			<option value="" disabled="disabled" selected>Select Invoice Type</option>
+																				<option value="tax">Tax Invoice</option>
+																				<option value="lumpsum">Lumpsum</option>
+																				<option value="challan">Delivery Challan</option>
+																			</select>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-md-12">
+																	<div class="form-group col-md-3">
+																		<input type="text" id="searchProductByName" class="form-control" placeholder="Search Product By Name or Barcode">
+																	</div>
+																</div>
+																<div id="productTable">
+																	<table id="addProductTable" class="table table-hover table-bordered mb-1">
+																		<tbody>
+																			<tr>
+																				<td>1</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Product Name</label>
+																						<input type="text" class="form-control searchProductByName" name="product_name[]" readonly required>
+																						<input type="hidden" class="product_id" name="product_id[]">
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Type</label>
+																						<input type="text" class="form-control product_type" name="product_type[]" readonly>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Barcode</label>
+																						<input type="text" class="form-control product_barcode" name="product_barcode[]" readonly>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>SKU Size</label>
+																						<input type="text" class="form-control sku_size" name="sku_size[]" temp="service_price_inr" readonly>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Qty</label>
+																						<input type="text" class="form-control" name="product_qty[]" required>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Cost</label>
+																						<input type="text" class="form-control" name="product_price[]" required>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>GST %</label>
+																						<input type="text" class="form-control" name="product_gst[]" required>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>MRP</label>
+																						<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Expiry</label>
+																						<input type="date" class="form-control" value="<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>" name="product_exp_date[]" temp="Count">
+																					</div>
+																				</td>
+																			</tr>
+																		</tbody>
+																	</table>
+																	<button type="button" class="btn btn-success" id="AddRowProductTable">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																	<button type="button" class="btn btn-danger" id="DeleteRowProductTable">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
+																</div>										
+															</div>
+															<div class="form-row mt-2">
+																<div class="col-md-6">
+																	<div class="row">
+																		<div class="form-group col-md-12">
+																			<textarea class="form-control" name="note" placeholder="Notes :-"></textarea>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-md-6">
+																	<div class="row">
+																		<div class="form-group col-md-6">
+																			<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-6">
+																			<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount" required>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-6">
+																			<select name="payment_mode" class="form-control">
+																			<option value="" disabled="disabled" selected>Payment Mode</option>
+																				<option value="cash">Cash</option>
+																				<option value="card">Card</option>
+																				<option value="bank">Bank A/C</option>
+																			</select>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="form-row">
+																<div class="form-group ml-2">
+																	<button type="submit" value="" class="btn btn-primary ">Submit</button>
+																</div>
+															</div>
+														</form>
 													</div>
-													<div class="form-group col-md-3">
-															<label>Invoice no.</label>
-															<input type="text" name="iinvoice_no" class="form-control" placeholder="Invoice No.">
-													</div>
+												</div>
 											</div>
-											<div class="row">
-													<div class="form-group col-md-3">
-															<label>HSN Code</label>
-															<input type="text" name="ihsn_no" class="form-control" placeholder="HSN Code">
+										</div>
+									</div>									
+									<div class="tab-pane" id="tab-2" role="tabpanel">
+										<div class="row">
+											<div class="col-md-12">
+												<div class="card">
+													<div class="card-header">
+														<h4>Stock Transfer</h4>
 													</div>
-													<div class="form-group col-md-3">
-															<label>Product Name</label>
-															<input type="text" name="iproduct_name" id="iproduct_name" class="form-control" placeholder="Product Name">
+													<div class="card-body">
+														<form action="#" id="TransProduct" method="POST">
+															<div class="form-row">
+																<div class="col-md-6">
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																		<input type="text" class="form-control" name="invoice_number" placeholder="Tranf. Order" required>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																		<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date" required>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																		<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value" required>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																		<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Freight">
+																		</div>
+																	</div>
+																</div>
+																<div class="col-md-6">
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																			<select name="destination_type" class="form-control" required>
+																				<option value="" disabled="disabled" selected>Select Destination Type</option>
+																				<option value="warehouse">Warehouse</option>
+																				<option value="branch">Branch</option>
+																				<option value="vendor">Vendor</option>
+																				<option value="return">Sales return</option>
+																			</select>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																			<select name="destination_name" class="form-control" required>
+																			
+																			</select>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-4">
+																			<select name="invoice_type" class="form-control" required>
+																			<option value="" disabled="disabled" selected>Select Invoice Type</option>
+																				<option value="tax">Tax Invoice</option>
+																				<option value="lumpsum">Lumpsum</option>
+																				<option value="challan">Delivery Challan</option>
+																			</select>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-md-12">
+																	<div class="form-group col-md-3">
+																		<input type="text" id="searchProductTransferByName" class="form-control" placeholder="Search Product By Name or Barcode">
+																	</div>
+																</div>
+																<div id="transferTable">
+																	<table id="transProductTable" class="table table-hover table-bordered mb-1">
+																		<tbody>
+																			<tr>
+																				<td>1</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Product Name</label>
+																						<input type="text" class="form-control searchProductByName" name="product_name[]" readonly required>
+																						<input type="hidden" class="product_id" name="product_id[]">
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Type</label>
+																						<input type="text" class="form-control product_type" name="product_type[]" readonly>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Barcode</label>
+																						<input type="text" class="form-control product_barcode" name="product_barcode[]" readonly>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>SKU Size</label>
+																						<input type="text" class="form-control sku_size" name="sku_size[]" temp="service_price_inr" readonly>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Qty</label>
+																						<input type="text" class="form-control" name="product_qty[]" required>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Cost</label>
+																						<input type="text" class="form-control" name="product_price[]" required>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>GST %</label>
+																						<input type="text" class="form-control" name="product_gst[]" required>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>MRP</label>
+																						<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
+																						<label>Expiry</label>
+																						<input type="date" class="form-control" value="<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>" name="product_exp_date[]" temp="Count">
+																					</div>
+																				</td>
+																			</tr>
+																		</tbody>
+																	</table>
+																	<button type="button" class="btn btn-success" id="AddRowProductTransTable">Add <i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+																	<button type="button" class="btn btn-danger" id="DeleteRowProductTransTable">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>
+																</div>										
+															</div>
+															<div class="form-row mt-2">
+																<div class="col-md-6">
+																	<div class="row">
+																		<div class="form-group col-md-12">
+																			<textarea class="form-control" name="note" placeholder="Notes :-"></textarea>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-md-6">
+																	<div class="row">
+																		<div class="form-group col-md-6">
+																			<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-6">
+																			<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount" required>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="form-group col-md-6">
+																			<select name="payment_mode" class="form-control">
+																				<option value="" disabled="disabled" selected>Payment Mode</option>
+																				<option value="cash">Cash</option>
+																				<option value="card">Card</option>
+																				<option value="bank">Bank A/C</option>
+																			</select>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="form-row">
+																<div class="form-group ml-2">
+																	<button type="submit" value="" class="btn btn-primary ">Submit</button>
+																</div>
+															</div>
+														</form>
 													</div>
+												</div>
 											</div>
-											<div class="row">
-													<div class="form-group col-md-3">
-															<label>Base Cost</label>
-															<input type="text" name="ibase_cost" id="ibase_cost" class="form-control" placeholder="Base Cost Amount"> 
-													</div>
-													<div class="form-group col-md-3">
-																<label>GST</label>
-															<input type="text" name="igst" id="igst" class="form-control" placeholder="%GST">
-													</div>
-													<div class="form-group col-md-3">
-															<label>Total Cost</label>
-															<input type="text" name="itotal_cost" id="itotal_cost" class="form-control" placeholder="Total Cost Amount">
-													</div>
-													<div class="form-group col-md-3">
-															<label>MRP</label>
-															<input type="text" name="imrp" id="imrp" class="form-control" placeholder="MRP/Unit">
-															<input type="text" id="imrptemp" class="form-control" hidden>
-															<input type="text" id="igsttemp" class="form-control" hidden>
-															<input type="text" id="ipricetemp" class="form-control" hidden>
-													</div>
-											</div>
-											<div class="row">
-													<div class="form-group col-md-3">
-															<label>Type Of Invoice</label>
-															<!-- <input type="text" name="itype_of_invoice" class="form-control" placeholder="Type of Invoice"> -->
-															<select name="itype_of_invoice" class="form-control">
-																	<option value="Tax">Tax</option>
-																	<option value="Lumpsum">Lumpsum</option>
-																	<option value="Others">Others</option>
-															</select>
-													</div>
-													<div class="form-group col-md-3">
-															<label>Freight Charges</label>
-															<input type="text" name="ifreight_charges" class="form-control" placeholder="Freight Charges">
-													</div>
-											</div>
-											<button type="submit" class="btn btn-primary">Submit</button>
+										</div>
 									</div>
-								</div>																		
-							</div>        
-						</form>
-						<div class="alert alert-dismissible feedback" role="alert">
-							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-							</button>
-							<div class="alert-message">
+									<div class="tab-pane" id="tab-3" role="tabpanel">
+										<div class="card">
+											<div class="card-header">
+												<!-- <form action="#" class="form-inlne" method="POST">
+													<div class="form-row">
+														<div class="form-group col-md-2">
+															<input type="date" class="form-control" name="invoice_number" value="<?=date('Y-m-d');?>" required>
+														</div>										
+														<div class="form-group col-md-2">
+															<select name="" class="form-control" required>
+															<option selected="selected" disabled>Select type</option>
+																<option value="">Warehouse</option>
+																<option value="">Branch</option>
+															</select>
+														</div>
+														<div class="form-group col-md-3">
+															<select name="" class="form-control" required>
+																<option value="">Warehouse</option>
+																<option value="">Branch</option>
+															</select>
+														</div>
+														<div class="form-group col-md-3">
+															<select name="" class="form-control" required>
+																<option selected="selected" disabled>Stock Category</option>
+																<option value="">All</option>
+																<option value="">Regular</option>
+																<option value="">Slow moving</option>
+																<option value="">Dead</option>
+															</select>
+														</div>
+														<div class="form-group col-md-2">
+															<button type="submit" value="" class="btn btn-primary ">Submit</button>
+														</div>
+													</div>
+												</form> -->
+												<div class="row">
+													<div class="col-md-6">
+														<h3>Available Stock</h3>
+													</div>
+													<div class="col-md-6">
+													<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-download"></i> Download</button>
+													</div>
+												</div>												
+											</div>
+											<div class="card-body">
+												<table class="table table-hover datatables-basic" style="width: 100%;" id="availableStock">
+													<thead>
+														<th>Sr. No.</th>
+														<th>Product Name</th>
+														<th>Type</th>
+														<th>Barcode</th>
+														<th>SKU size</th>
+														<th>Total Stock</th>
+														<th>Entry Date</th>
+														<th>Location</th>
+													</thead>
+													<tbody>
+														<?php $count=1; foreach($stock as $stock){ ?>
+															<tr>
+														<td><?=$count?></td>
+														<td><?=$stock['service_name'];?></td>
+														<td><?=$stock['inventory_type'];?></td>
+														<td><?=$stock['barcode'];?></td>
+														<td><?=$stock['qty_per_item'];?></td>
+														<td><?=$stock['total_stock'];?></td>
+														<td><?=$stock['updated_on'];?></td>
+														<td><?=$stock['business_outlet_name'];?></td>
+														</tr>
+														<?php $count++; }?>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="tab-4" role="tabpanel">
+										<div class="card">
+											<div class="card-header">
+												<h4>Incoming Stock</h4>
+											</div>
+											<div class="card-body">
+												<table class="table table-hover datatables-basic" style="width: 100%;">
+													<thead>
+														<th>Sr. No.</th>
+														<th>Product Name</th>
+														<th>Type</th>
+														<th>Barcode</th>
+														<th>SKU size</th>
+														<th>Product Qty</th>
+														<th>MRP</th>
+														<th>Entry Date</th>
+														<th>Source</th>
+														<th>Destnation</th>
+														<th>Actions</th>
+													</thead>
+													<tbody>
+														<?php $count=1; foreach($stock_incoming as $incoming){ ?>
+															<tr>
+														<td><?=$count?></td>
+														<td><?=$incoming['product_name'];?></td>
+														<td><?=$incoming['product_type'];?></td>
+														<td><?=$incoming['product_barcode'];?></td>
+														<td><?=$incoming['sku_size'];?></td>
+														<td><?=$incoming['product_qty'];?></td>
+														<td><?=$incoming['product_mrp'];?></td>
+														<td><?=$incoming['invoice_date'];?></td>
+														<td><?=$incoming['source'];?></td>
+														<td><?=$incoming['destination'];?></td>
+														<td>
+															<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
+															<button class='btn btn-danger rejectInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>'><i class='fa fa-times'>Reject</i></button>
+														</td>
+														</tr>
+														<?php $count++; }?>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="tab-5" role="tabpanel">
+										<div class="card">
+											<div class="card-header">
+												<h4>Outgoing Stock</h4>
+											</div>
+											<div class="card-body">
+												<table class="table table-hover datatables-basic" style="width: 100%;">
+													<thead>
+														<th>Sr. No.</th>
+														<th>Product Name</th>
+														<th>Type</th>
+														<th>Barcode</th>
+														<th>SKU size</th>
+														<th>Product Qty</th>
+														<th>MRP</th>
+														<th>Status</th>
+													</thead>
+													<tbody>
+														<?php $count=1; foreach($stock_outgoing as $outgoing){ ?>
+															<tr>
+														<td><?=$count?></td>
+														<td><?=$outgoing['product_name'];?></td>
+														<td><?=$outgoing['product_type'];?></td>
+														<td><?=$outgoing['product_barcode'];?></td>
+														<td><?=$outgoing['sku_size'];?></td>
+														<td><?=$outgoing['product_qty'];?></td>
+														<td><?=$outgoing['product_mrp'];?></td>
+														<td>
+															<?php if($outgoing['transfer_status']==0){?>
+															<button class='btn btn-warning' disabled>No action</button>
+															<?php }else if($outgoing['transfer_status']==1){?>
+															<button class='btn btn-success' disabled>Accepted</button>
+															<?php }else{?>
+															<button class='btn btn-danger' disabled>Rejected</button>
+															<?php }?>
+														</td>
+														</tr>
+														<?php $count++; }?>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>									
+								</div>
 							</div>
 						</div>
 					</div>
@@ -238,8 +573,7 @@
   });
 </script>
 <script type="text/javascript">
-	$(document).ready(function(){
-		
+	$(document).ready(function(){		
 		$(".datatables-basic").DataTable({
 			responsive: true
 		});
@@ -252,14 +586,421 @@
 			$(this).valid();
 		});
 
-		// Initialize Select2 select box
-		// $("#ServiceOTCId").select2({
-		// 	allowClear: true,
-		// 	placeholder: "Select...",
-		// }).change(function() {
-		// 	$(this).valid();
-		// });
+		$("#AddProduct select[name=source_type]").on('change',function(e){
+  		var parameters = {
+  			'source_type' :  $(this).val()
+			};
+			// alert($(this).val());
+    	$.getJSON("<?=base_url()?>Cashier/GetBranchAndVendor", parameters)
+      .done(function(data, textStatus, jqXHR) {
+				// alert(data.message);
+				$('#AddProduct select[name=source_name]').children().remove();
+      	for(var i=0; i < data.message.length;i++ ){
+					console.log(data.message[i].source_id);
+					$("#AddProduct select[name=source_name]").append("<option value=" + data.message[i].source_id+ ">" + data.message[i].source_name+ "</option>")
+				}
+    	})
+    	.fail(function(jqXHR, textStatus, errorThrown) {
+        console.log(errorThrown.toString());
+   		});
+		});
+		$("#TransProduct select[name=destination_type]").on('change',function(e){
+  		var parameters = {
+  			'source_type' :  $(this).val()
+			};
+			// alert($(this).val());
+    	$.getJSON("<?=base_url()?>Cashier/GetBranchAndVendor", parameters)
+      .done(function(data, textStatus, jqXHR) {
+				// alert(data.message);
+				$('#TransProduct select[name=destination_name]').children().remove();
+      	for(var i=0; i < data.message.length;i++ ){
+					console.log(data.message[i].source_id);
+					$("#TransProduct select[name=destination_name]").append("<option value=" + data.message[i].source_id+ ">" + data.message[i].source_name+ "</option>")
+				}
+    	})
+    	.fail(function(jqXHR, textStatus, errorThrown) {
+        console.log(errorThrown.toString());
+   		});
+    });
 
+		$("#AddRowProductTable").click(function(event){
+			event.preventDefault();
+			this.blur();
+			var rowno = $("#addProductTable tr").length;
+			
+			rowno = rowno+1;
+			
+			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+		});
+
+		$("#DeleteRowProductTable").click(function(event){
+			event.preventDefault();
+			this.blur();
+			var rowno = $("#addProductTable tr").length;
+			if(rowno > 1){
+				$('#addProductTable tr:last').remove();
+			}
+		});
+
+			//Search Product By Name
+
+		$("#searchProductByName").typeahead({	
+      autoselect: true,
+      highlight: true,
+      minLength: 1
+     },
+     {
+      source: searchProductByName,
+      templates: {
+        empty: "No Product Found!",
+        suggestion: _.template("<p class='service_search'><%- service_name %>(<%- qty_per_item %><%- service_unit %>),(<%- sub_category_name %>), (<%- category_name %>),Rs <%- service_price_inr %> </p>")
+      }
+    });
+       
+    // var to_fill = "";
+		var service_name="",product_id="", service_type="", service_barcode="", sku_size="", mrp="";
+
+    $("#searchProductByName").on("typeahead:selected", function(eventObject, suggestion, name) {
+      var loc = "#addProductTable tr:last .searchProductByName";
+			var loc2 = "#addProductTable tr:last .product_type";
+			var loc3 = "#addProductTable tr:last .product_barcode";
+			var loc4 = "#addProductTable tr:last .sku_size";
+			var loc5 = "#addProductTable tr:last .mrp";
+			var loc6 = "#addProductTable tr:last .product_id";
+      service_name = suggestion.service_name;
+			product_id = suggestion.service_id;
+			service_type = suggestion.inventory_type;
+			service_barcode = suggestion.barcode;
+			sku_size = suggestion.qty_per_item+suggestion.service_unit;
+			mrp = suggestion.mrp;
+      setVals(loc,service_name,suggestion);
+			setVals(loc2,service_type,suggestion);
+			setVals(loc3,service_barcode,suggestion);
+			setVals(loc4,sku_size,suggestion);
+			setVals(loc5,mrp,suggestion);
+			setVals(loc6,product_id,suggestion);
+    });
+
+    $("#searchProductByName").blur(function(){
+      $("#addProductTable tr:last .searchProductByName").val(service_name);
+			$("#addProductTable tr:last .product_id").val(product_id);
+			$("#addProductTable tr:last .product_type").val(service_type);
+			$("#addProductTable tr:last .product_barcode").val(service_barcode);
+			$("#addProductTable tr:last .sku_size").val(sku_size);
+			$("#addProductTable tr:last .mrp").val(sku_size);
+      service_name = "";
+			product_id="";
+			service_type = "";
+			service_barcode = "";
+			sku_size = "";
+			mrp="";
+    });
+
+    function searchProductByName(query, cb){
+		var inventory = 'Retail Product';
+      var parameters = {
+        query : query,
+		inventory_type : inventory
+      };
+      
+      $.ajax({
+        url: "<?=base_url()?>Cashier/GetProductData",
+        data: parameters,
+        type: "GET",
+				cache: false,
+        global : false,
+    		success: function(data) {
+         	cb(data.message);
+        },
+        error: function(data){
+					console.log("Some error occured!");
+        }
+			});
+    }  
+
+    function setVals(element,fill,suggestion){
+      $(element).attr('value',fill);
+      $(element).val(fill);
+    }
+
+
+		$("#AddProduct input[name=amount_paid]").on('input',function(e){
+  			var amt_paid=  Number($(this).val());
+				var invoice_amount= Number($("#AddProduct input[name=invoice_amount]").val());
+				if(amt_paid==invoice_amount){
+					$("#AddProduct input[name=payment_status]").attr('value',"paid");
+				}else if(amt_paid > 0 && amt_paid < invoice_amount){
+					$("#AddProduct input[name=payment_status]").attr('value',"partial paid");
+				}else if(amt_paid == 0){
+					$("#AddProduct input[name=payment_status]").attr('value',"unpaid");
+				}else{
+					alert("Amount Paid is much than Invoice Amount.");
+					$("#AddProduct input[name=payment_status]").attr('value',"over paid");
+				}	
+    });
+
+		$("#AddProduct").validate({
+	  	errorElement: "div",
+	    rules: {	       
+	        "invoice_number" : {
+	        	required : true
+	        },
+					"product_name" : {
+	        	required : true
+	        }
+
+	    },
+	    submitHandler: function(form) {
+			// alert(document.getElementById('expiry').value);
+				var formData = $("#AddProduct").serialize(); 
+				$.ajax({
+	        url: "<?=base_url()?>Cashier/AddInventory",
+	        data: formData,
+	        type: "POST",
+					cache: false,
+	    		success: function(data) {
+            if(data.success == 'true'){
+            	var message1 = data.message;
+							var title = "Inventory Addition";
+							var type = "success";
+							toastr[type](message1, title, {
+								positionClass: "toast-top-right",
+								progressBar: "toastr-progress-bar",
+								newestOnTop: "toastr-newest-on-top",
+								rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+								timeOut: 1000
+							});
+							setTimeout(function () { location.reload(1); }, 1000);
+            }
+            else if (data.success == 'false'){                   
+        	    alert("Error in Adding Inventory.");
+            }
+          },
+          error: function(data){
+  					$('.feedback').addClass('alert-danger');
+  					$('.alert-message').html("").html(data.message); 
+          }
+				});
+			},
+		});
+
+		//addproductend
+		//Transfer Product start
+			$("#AddRowProductTransTable").click(function(event){
+				event.preventDefault();
+				this.blur();
+				var rowno = $("#transProductTable tr").length;
+				
+				rowno = rowno+1;
+				
+				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+			});
+
+			$("#DeleteRowProductTransTable").click(function(event){
+				event.preventDefault();
+				this.blur();
+				var rowno = $("#transProductTable tr").length;
+				if(rowno > 1){
+					$('#transProductTable tr:last').remove();
+				}
+			});
+
+			//Search Product By Name
+
+		$("#searchProductTransferByName").typeahead({	
+      autoselect: true,
+      highlight: true,
+      minLength: 1
+     },
+     {
+      source: searchProductTransByName,
+      templates: {
+        empty: "No Product Found!",
+        suggestion: _.template("<p class='service_search'><%- service_name %>(<%- qty_per_item %><%- service_unit %>),(<%- sub_category_name %>), (<%- category_name %>),Rs <%- service_price_inr %> </p>")
+      }
+    });
+       
+    // var to_fill = "";
+		var service_name="",product_id="", service_type="", service_barcode="", sku_size="", mrp="";
+
+    $("#searchProductTransferByName").on("typeahead:selected", function(eventObject, suggestion, name) {
+      var loc = "#transProductTable tr:last .searchProductByName";
+			var loc2 = "#transProductTable tr:last .product_type";
+			var loc3 = "#transProductTable tr:last .product_barcode";
+			var loc4 = "#transProductTable tr:last .sku_size";
+			var loc5 = "#transProductTable tr:last .mrp";
+			var loc6 = "#transProductTable tr:last .product_id";
+      service_name = suggestion.service_name;
+			service_type = suggestion.inventory_type;
+			service_barcode = suggestion.barcode;
+			sku_size = suggestion.qty_per_item;
+			mrp = suggestion.mrp;
+			product_id=suggestion.service_id;
+
+      setVals(loc,service_name,suggestion);
+			setVals(loc2,service_type,suggestion);
+			setVals(loc3,service_barcode,suggestion);
+			setVals(loc4,sku_size,suggestion);
+			setVals(loc5,mrp,suggestion);
+			setVals(loc6,product_id,suggestion);
+    });
+
+    $("#searchProductTransferByName").blur(function(){
+      $("#transProductTable tr:last .searchProductByName").val(service_name);
+			$("#transProductTable tr:last .product_type").val(service_type);
+			$("#transProductTable tr:last .product_barcode").val(service_barcode);
+			$("#transProductTable tr:last .sku_size").val(sku_size);
+			$("#transProductTable tr:last .mrp").val(sku_size);
+			$("#transProductTable tr:last .product_id").val(product_id);
+
+      service_name = "";
+			service_type = "";
+			service_barcode = "";
+			sku_size = "";
+			mrp="";
+			product_id="";
+    });
+
+    function searchProductTransByName(query, cb){
+		var inventory = 'Retail Product';
+      var parameters = {
+        query : query,
+		inventory_type : inventory
+      };
+      
+      $.ajax({
+        url: "<?=base_url()?>Cashier/GetProductData",
+        data: parameters,
+        type: "GET",
+				cache: false,
+        global : false,
+    		success: function(data) {
+         	cb(data.message);
+        },
+        error: function(data){
+					console.log("Some error occured!");
+        }
+			});
+    }  
+
+    function setVals(element,fill,suggestion){
+      $(element).attr('value',fill);
+      $(element).val(fill);
+    }
+
+
+		$("#TransProduct input[name=amount_paid]").on('input',function(e){
+  			var amt_paid=  Number($(this).val());
+				var invoice_amount= Number($("#TransProduct input[name=invoice_amount]").val());
+				if(amt_paid==invoice_amount){
+					$("#TransProduct input[name=payment_status]").attr('value',"paid");
+				}else if(amt_paid > 0 && amt_paid < invoice_amount){
+					$("#TransProduct input[name=payment_status]").attr('value',"partial paid");
+				}else if(amt_paid == 0){
+					$("#TransProduct input[name=payment_status]").attr('value',"unpaid");
+				}else{
+					alert("Amount Paid is much than Invoice Amount.");
+					$("#TransProduct input[name=payment_status]").attr('value',"over paid");
+				}	
+    });
+
+		$("#TransProduct").validate({
+	  	errorElement: "div",
+	    rules: {	       
+	        "invoice_number" : {
+	        	required : true
+	        },
+					"product_name" : {
+	        	required : true
+	        }
+
+	    },
+	    submitHandler: function(form) {
+			// alert(document.getElementById('expiry').value);
+				var formData = $("#TransProduct").serialize(); 
+				$.ajax({
+	        url: "<?=base_url()?>Cashier/TransferInventory",
+	        data: formData,
+	        type: "POST",
+					cache: false,
+	    		success: function(data) {
+            if(data.success == 'true'){
+            	var message1 = data.message;
+							var title = "Inventory Transfer";
+							var type = "success";
+							toastr[type](message1, title, {
+								positionClass: "toast-top-right",
+								progressBar: "toastr-progress-bar",
+								newestOnTop: "toastr-newest-on-top",
+								rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+								timeOut: 1000
+							});
+							setTimeout(function () { location.reload(1); }, 1000);
+            }
+            else if (data.success == 'false'){                   
+        	    alert(data.message);
+            }
+          },
+          error: function(data){
+  					$('.feedback').addClass('alert-danger');
+  					$('.alert-message').html("").html(data.message); 
+          }
+				});
+			},
+		});
+
+
+		$(document).on('click',".acceptInventory",function(event){
+    	event.preventDefault();
+			this.blur();
+			var parameters = {
+					transfer_data_id : $(this).attr('trans_data_id'),
+					total_stock : $(this).attr('total_stock'),
+					service_id	:	$(this).attr('stock_service_id'),
+					sender_outlet_id	:	$(this).attr('sender_outlet')
+			};	
+			$.ajax({
+				url: "<?=base_url()?>Cashier/TransferFinalInventory",
+				data: parameters,
+				type: "POST",
+				cache: false,
+	    	success: function(data) {
+					if(data.success == 'true'){
+						alert("Inventory Updated");
+						window.location.reload();
+					}
+					else if (data.success == 'false'){                   
+						alert("Inventory Error");
+						window.location.reload();
+					}	
+				}
+			}); 
+		});	
+		
+		$(document).on('click',".rejectInventory",function(event){
+    	event.preventDefault();
+			this.blur();
+			var parameters = {
+				transfer_data_id : $(this).attr('trans_data_id')
+			};	
+			$.ajax({
+				url: "<?=base_url()?>Cashier/RejectTransferInventory",
+				data: parameters,
+				type: "POST",
+				cache: false,
+	    	success: function(data) {
+					if(data.success == 'true'){
+						alert("Inventory Rejected");
+						window.location.reload();
+					}
+					else if (data.success == 'false'){                   
+						alert("Inventory Error");
+						window.location.reload();
+					}	
+				}
+			}); 
+    });
+		//trans end
 		$("#RawMaterialCategoryId").on('change',function(e){
   		var parameters = {
   			'raw_material_category_id' :  $(this).val()
@@ -488,29 +1229,29 @@
 		};	
 		//   alert(parameters);
 		$.ajax({
-	        url: "<?=base_url()?>Cashier/GetProductDetail",
-	        data: parameters,
-	        type: "GET",
-	        crossDomain: true,
-			cache: false,
-	        dataType : "json",
+				url: "<?=base_url()?>Cashier/GetProductDetail",
+				data: parameters,
+				type: "GET",
+				crossDomain: true,
+				cache: false,
+				dataType : "json",
 	    	success: function(data) {
-            if(data.success == 'true'){
-							document.getElementById("category").value = data.result[0]['category_name'];
-							document.getElementById("sub_category").value = data.result[0]['sub_category_name'];
-							document.getElementById("otc_item").value = data.result[0]['service_name'];
-							document.getElementById("OTC-Category-Id").value = data.result[0]['category_id'];
-							for(var i=0; i < data.result.length;i++ ){
-								$("#AddOTCInventory select[name=sku_size]").append("<option value=" + data.result[i]['service_id']+","+data.result[i]['qty_per_item'] + ">" + data.result[i]['qty_per_item'] + "</option>")
-							}
-            }
-            else if (data.success == 'false'){                   
-        	    $('#centeredModalDanger').modal('show').on('shown.bs.modal', function (e) {
-								$("#ErrorModalMessage").html("").html(data.message);
-							});
-            }	
-			}
-		}); 
+					if(data.success == 'true'){
+						document.getElementById("category").value = data.result[0]['category_name'];
+						document.getElementById("sub_category").value = data.result[0]['sub_category_name'];
+						document.getElementById("otc_item").value = data.result[0]['service_name'];
+						document.getElementById("OTC-Category-Id").value = data.result[0]['category_id'];
+						for(var i=0; i < data.result.length;i++ ){
+							$("#AddOTCInventory select[name=sku_size]").append("<option value=" + data.result[i]['service_id']+","+data.result[i]['qty_per_item'] + ">" + data.result[i]['qty_per_item'] + "</option>")
+						}
+					}
+					else if (data.success == 'false'){                   
+						$('#centeredModalDanger').modal('show').on('shown.bs.modal', function (e) {
+							$("#ErrorModalMessage").html("").html(data.message);
+						});
+					}	
+				}
+			}); 
     });
 	// function GetServiceid(){
 	// 	var a = document.getElementById("Service_SKU_Size").value;
@@ -727,4 +1468,36 @@
         document.getElementById("itotal_cost").value = totalamount;
         
     });
+</script>
+<script>
+	function exportTableToExcel(tableID, filename = ''){
+			var downloadLink;
+			var dataType = 'application/vnd.ms-excel';
+			var tableSelect = document.getElementById(tableID);
+			var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+			
+			// Specify file name
+			filename = filename?filename+'.xls':'excel_data.xls';
+			
+			// Create download link element
+			downloadLink = document.createElement("a");
+			
+			document.body.appendChild(downloadLink);
+			
+			if(navigator.msSaveOrOpenBlob){
+					var blob = new Blob(['\ufeff', tableHTML], {
+							type: dataType
+					});
+					navigator.msSaveOrOpenBlob( blob, filename);
+			}else{
+					// Create a link to the file
+					downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+			
+					// Setting the file name
+					downloadLink.download = filename;
+					
+					//triggering the function
+					downloadLink.click();
+			}
+	}
 </script>
