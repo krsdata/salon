@@ -64,7 +64,7 @@
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																		<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Freight">
+																		<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Extra Freight Charges">
 																		</div>
 																	</div>
 																</div>
@@ -180,23 +180,23 @@
 																</div>
 																<div class="col-md-6">
 																	<div class="row">
-																		<div class="form-group col-md-6">
-																			<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
-																		</div>
-																	</div>
-																	<div class="row">
-																		<div class="form-group col-md-6">
+																		<div class="form-group col-md-4">
 																			<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount">
 																		</div>
-																	</div>
-																	<div class="row">
-																		<div class="form-group col-md-6">
+																		<div class="form-group col-md-4">
 																			<select name="payment_mode" class="form-control">
 																			<option value="" disabled="disabled" selected>Payment Mode</option>
-																				<option value="cash">Cash</option>
-																				<option value="card">Card</option>
-																				<option value="bank">Bank A/C</option>
+																					<option value="cash">Cash</option>
+																					<option value="credit_card">Credit Card</option>
+																					<option value="debit_card">Debit Card</option>
+																					<option value="phonepe">Phonepe</option>
+																					<option value="google_pay">Google Pay</option>
+																					<option value="paytm">Paytm</option>
+																					<option value="bank">Bank A/C</option>
 																			</select>
+																		</div>
+																		<div class="form-group col-md-4">
+																			<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
 																		</div>
 																	</div>
 																</div>
@@ -240,7 +240,7 @@
 																	</div>
 																	<div class="row">
 																		<div class="form-group col-md-4">
-																		<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Freight">
+																		<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Extra Freight Charges">
 																		</div>
 																	</div>
 																</div>
@@ -356,23 +356,23 @@
 																</div>
 																<div class="col-md-6">
 																	<div class="row">
-																		<div class="form-group col-md-6">
-																			<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
-																		</div>
-																	</div>
-																	<div class="row">
-																		<div class="form-group col-md-6">
+																		<div class="form-group col-md-4">
 																			<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount">
 																		</div>
-																	</div>
-																	<div class="row">
-																		<div class="form-group col-md-6">
+																		<div class="form-group col-md-4">
 																			<select name="payment_mode" class="form-control">
 																				<option value="" disabled="disabled" selected>Payment Mode</option>
 																				<option value="cash">Cash</option>
-																				<option value="card">Card</option>
-																				<option value="bank">Bank A/C</option>
+																					<option value="credit_card">Credit Card</option>
+																					<option value="debit_card">Debit Card</option>
+																					<option value="phonepe">Phonepe</option>
+																					<option value="google_pay">Google Pay</option>
+																					<option value="paytm">Paytm</option>
+																					<option value="bank">Bank A/C</option>
 																			</select>
+																		</div>
+																		<div class="form-group col-md-4">
+																			<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
 																		</div>
 																	</div>
 																</div>
@@ -578,14 +578,6 @@
 			responsive: true
 		});
 
-		// Initialize Select2 select box
-		$("#RawMaterialCategoryId").select2({
-			allowClear: true,
-			placeholder: "Select...",
-		}).change(function() {
-			$(this).valid();
-		});
-
 		$("#AddProduct select[name=source_type]").on('change',function(e){
   		var parameters = {
   			'source_type' :  $(this).val()
@@ -687,7 +679,7 @@
 			$("#addProductTable tr:last .product_type").val(service_type);
 			$("#addProductTable tr:last .product_barcode").val(service_barcode);
 			$("#addProductTable tr:last .sku_size").val(sku_size);
-			$("#addProductTable tr:last .mrp").val(sku_size);
+			$("#addProductTable tr:last .mrp").val(mrp);
       service_name = "";
 			product_id="";
 			service_type = "";
@@ -850,7 +842,7 @@
 			$("#transProductTable tr:last .product_type").val(service_type);
 			$("#transProductTable tr:last .product_barcode").val(service_barcode);
 			$("#transProductTable tr:last .sku_size").val(sku_size);
-			$("#transProductTable tr:last .mrp").val(sku_size);
+			$("#transProductTable tr:last .mrp").val(mrp);
 			$("#transProductTable tr:last .product_id").val(product_id);
 
       service_name = "";
