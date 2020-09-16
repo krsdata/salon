@@ -183,7 +183,7 @@ class CashierModel extends CI_Model {
 
 
     public function GetPurchasedPackagesCategories($where){
-        $sql = "SELECT DISTINCT mss_categories.category_name,mss_categories.category_id,mss_customer_packages.customer_id FROM mss_customer_packages,mss_customer_package_profile,mss_services,mss_sub_categories,mss_categories WHERE mss_customer_packages.customer_package_id = mss_customer_package_profile.customer_package_id AND mss_customer_package_profile.service_id = mss_services.service_id AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND mss_sub_categories.sub_category_category_id = mss_categories.category_id AND mss_customer_packages.customer_id = ".$this->db->escape($where['customer_id'])." AND mss_customer_packages.package_expiry_date > DATE(NOW())";
+        $sql = "SELECT DISTINCT master_categories.category_name,master_categories.category_id,mss_customer_packages.customer_id FROM mss_customer_packages,mss_customer_package_profile,mss_services,mss_sub_categories,master_categories WHERE mss_customer_packages.customer_package_id = mss_customer_package_profile.customer_package_id AND mss_customer_package_profile.service_id = mss_services.service_id AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND mss_sub_categories.sub_category_category_id = master_categories.category_id AND mss_customer_packages.customer_id = ".$this->db->escape($where['customer_id'])." AND mss_customer_packages.package_expiry_date > DATE(NOW())";
         
         //execute the query
         $query = $this->db->query($sql);
@@ -206,13 +206,13 @@ class CashierModel extends CI_Model {
                     mss_customer_package_profile,
                     mss_services,
                     mss_sub_categories,
-                    mss_categories
+                    master_categories
                 WHERE 
                     mss_customer_packages.customer_package_id = mss_customer_package_profile.customer_package_id 
                     AND mss_customer_package_profile.service_id = mss_services.service_id 
                     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
-                    AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
-                    AND mss_categories.category_id = ".$this->db->escape($where['category_id'])."
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_id = ".$this->db->escape($where['category_id'])."
                     AND mss_customer_packages.customer_id = ".$this->db->escape($where['customer_id'])."
                     AND mss_customer_packages.package_expiry_date > DATE(NOW())";
 
@@ -237,10 +237,11 @@ class CashierModel extends CI_Model {
                     mss_salon_packages
                 WHERE 
                     mss_customer_packages.customer_package_id = mss_customer_package_profile.customer_package_id 
-                    AND mss_customer_package_profile.service_id = mss_services.service_id
+                    AND (mss_customer_package_profile.service_id = mss_services.service_id)
                     AND mss_customer_packages.salon_package_id = mss_salon_packages.salon_package_id
                     AND mss_services.service_sub_category_id = ".$this->db->escape($where['sub_category_id'])."
                     AND mss_customer_packages.customer_id = ".$this->db->escape($where['customer_id'])." 
+					AND mss_services.outlet_id = ".$this->db->escape($where['outlet_id'])." 
                     AND mss_customer_package_profile.service_count > 0
                     AND mss_customer_packages.package_expiry_date > DATE(NOW())";
                         
@@ -252,6 +253,19 @@ class CashierModel extends CI_Model {
         else{
             return $this->ModelHelper(false,true,"DB error!");   
         }
+    }
+	
+	public function GetPurchasedPackagesServicesNew($where){
+        /*
+        $this->db->select('*');
+		$this->db->from('mss_customer_packages A'); 
+		$this->db->join('Category b', 'b.cat_id=a.cat_id', 'left');
+		$this->db->join('Soundtrack c', 'c.album_id=a.album_id', 'left');
+		$this->db->where('A.customer_id',$this->db->escape($where['customer_id']));
+		$this->db->where('A.package_expiry_date'," >". DATE(NOW()."");
+		$this->db->order_by('c.track_title','asc');         
+		$query = $this->db->get(); */
+		
     }
 
     public function GetCashierPersonal($employee_id){
@@ -637,7 +651,6 @@ class CashierModel extends CI_Model {
 								$total_count		 = $customer_profile_record['res_arr'][0]['service_count'];
 								$customer_package_id = $customer_profile_record['res_arr'][0]['customer_package_id'];
 								$customer_total_redeem_count = $customer_profile_record['res_arr'][0]['grand_total_service_count'];
-								$customer_total_redeem_count = ($customer_total_redeem_count!=0) ? $customer_total_redeem_count : (int)$data['cart_data'][$i]['service_quantity'];
 								/* Get Total Redeem count */ 
 								
 								$redeemQuery = $this->db->query("SELECT sum(`grand_total_service_count`) as totalCount FROM `mss_customer_package_profile` WHERE `customer_package_id`=".$customer_package_id." ");
@@ -654,8 +667,9 @@ class CashierModel extends CI_Model {
 								*/
 								$totalCountOfPackage = $packageInfo[0]['total_count_of_services'];
 								
+								$grandTotalCount = $totalCountOfRedeem + $data['cart_data'][$i]['service_quantity'];
 								/* Get total taken services count for this customer */
-								if($totalCountOfPackage > $totalCountOfRedeem){
+								if($totalCountOfPackage >= $grandTotalCount){
 									if($total_count >= $data['cart_data'][$i]['service_quantity']){
 										$update_query = "UPDATE mss_customer_package_profile SET grand_total_service_count	= grand_total_service_count + ".(int)$customer_total_redeem_count." , service_count = service_count - ".(int)$data['cart_data'][$i]['service_quantity']." WHERE customer_package_profile_id = ".$customer_package_profile_id." ";
 										$this->db->query($update_query);

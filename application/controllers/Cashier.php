@@ -941,6 +941,7 @@ class Cashier extends CI_Controller {
 
 	//Very Important function
 	public function PerformBilling(){
+		
 		if($this->IsLoggedIn('cashier')){	
 			$customer_id = $this->uri->segment(3);
 			
