@@ -2285,7 +2285,7 @@
 					redeemTotalCount = redeemTotalCount*1 + data[i].grand_total_service_count*1 ;	
 				}
 			}
-			grandTotalServiceCount = (data[0].grand_total_service_count*1 - redeemTotalCount*1);
+			grandTotalServiceCount = (data[0].total_count_of_services*1 - redeemTotalCount*1);
 			for(var i=0;i<data.length;i++){
     			if(data[i].salon_package_type == 'Services'){
 					str += "<div class=\"col-md-4 col-sm-6\">\
