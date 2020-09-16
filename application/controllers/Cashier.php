@@ -1399,7 +1399,8 @@ class Cashier extends CI_Controller {
 				
 				$where = array(
 					'customer_id' => $_GET['customer_id'],
-					'sub_category_id' => $_GET['sub_category_id']
+					'sub_category_id' => $_GET['sub_category_id'],
+					'outlet_id' => $this->session->userdata['logged_in']['business_outlet_id']
 				);
 				
 				$data = $this->CashierModel->GetPurchasedPackagesServices($where);

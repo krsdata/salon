@@ -241,9 +241,11 @@ class CashierModel extends CI_Model {
                     AND mss_customer_packages.salon_package_id = mss_salon_packages.salon_package_id
                     AND mss_services.service_sub_category_id = ".$this->db->escape($where['sub_category_id'])."
                     AND mss_customer_packages.customer_id = ".$this->db->escape($where['customer_id'])." 
+					AND mss_services.outlet_id = ".$this->db->escape($where['outlet_id'])." 
                     AND mss_customer_package_profile.service_count > 0
                     AND mss_customer_packages.package_expiry_date > DATE(NOW())";
-                        
+        
+         
         //execute the query
 		
 		$query = $this->db->query($sql);
@@ -653,18 +655,28 @@ class CashierModel extends CI_Model {
 								
 								$total_count		 = $customer_profile_record['res_arr'][0]['service_count'];
 								$customer_package_id = $customer_profile_record['res_arr'][0]['customer_package_id'];
+								$customer_total_redeem_count = $customer_profile_record['res_arr'][0]['total_count_of_redeem_services'];
+								$customer_total_redeem_count = ($customer_total_redeem_count!=0) ? $customer_total_redeem_count : (int)$data['cart_data'][$i]['service_quantity'];
+								/* Get Total Redeem count */ 
+								
+								$redeemQuery = $this->db->query("SELECT sum(`total_count_of_redeem_services`) as totalCount FROM `mss_customer_package_profile` WHERE `customer_package_id`=".$customer_package_id." ");
+								$totalCountOfRedeem = $redeemQuery->row_array();
+								$totalCountOfRedeem = (!empty($totalCountOfRedeem)) ? $totalCountOfRedeem['totalCount'] : 0;
 								
 								/* Get Package Total Service Count */
 								$sqlPackage = "SELECT total_count_of_services FROM `mss_salon_packages` WHERE `salon_package_id`= (SELECT `salon_package_id` FROM `mss_customer_packages` WHERE `customer_package_id`=".$customer_package_id.")";
 								
 								$packageInfo = $this->db->query($sqlPackage);
 								$packageInfo = $packageInfo->result_array();
-								$totalCountOfServices = $packageInfo[0]['total_count_of_services'];
+								/* This value set at the time of package creation as globally set for the individual package 
+								   It Always be greater than total redeem no. of services for the customer
+								*/
+								$totalCountOfPackage = $packageInfo[0]['total_count_of_services'];
 								
 								/* Get total taken services count for this customer */
-								//if($totalCountOfServices >=$data['cart_data'][$i]['service_quantity']){
+								if($totalCountOfPackage > $totalCountOfRedeem){
 									if($total_count >= $data['cart_data'][$i]['service_quantity']){
-										$update_query = "UPDATE mss_customer_package_profile SET service_count = service_count - ".(int)$data['cart_data'][$i]['service_quantity']." WHERE customer_package_profile_id = ".$customer_package_profile_id." ";
+										$update_query = "UPDATE mss_customer_package_profile SET total_count_of_redeem_services	= total_count_of_redeem_services + ".(int)$customer_total_redeem_count." , service_count = service_count - ".(int)$data['cart_data'][$i]['service_quantity']." WHERE customer_package_profile_id = ".$customer_package_profile_id." ";
 										$this->db->query($update_query);
 									}else{
 										return $this->ModelHelper(false,true,"You can't redeem more than the available services for redemption. Please select lesser count of Services");
@@ -678,10 +690,10 @@ class CashierModel extends CI_Model {
 									);
 
 									$insert_redemption = $this->Insert($package_redemption_data,'mss_package_redemption_history');
-								/*}else{
-									return $this->ModelHelper(false,true,"You can't redeem more than the available services for redemption. Please select lesser count of Services");
+								}else{
+									return $this->ModelHelper(false,true,"You can't redeem more than the available services for redemption.");
 									die;
-								} */
+								} 
 						}
 			       }
                 
