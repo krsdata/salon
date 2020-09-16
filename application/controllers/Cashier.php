@@ -1406,7 +1406,7 @@ class Cashier extends CI_Controller {
 				);
 				
 				$data = $this->CashierModel->GetPurchasedPackagesServices($where);
-				
+				//$this->PrettyPrintArray($data);
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
 				die;
@@ -3735,7 +3735,7 @@ class Cashier extends CI_Controller {
 		if($this->IsLoggedIn('cashier')){
 			$packageId = $this->uri->segment(3);
 			if(isset($packageId) && !empty($packageId)){
-				$data = $this->CashierModel->GetPackageDetails($packageId);
+				$data = $this->CashierModel->GetPackageDetails($packageId,$this->session->userdata['logged_in']['business_outlet_id']);
 				if(isset($data['res_arr']) && !empty($data['res_arr'])){
 					$this->load->view('cashier/cashier_packages_details_view',$data);	
 				}else{
@@ -3752,7 +3752,9 @@ class Cashier extends CI_Controller {
 	public function GetPackage(){
 		if($this->IsLoggedIn('cashier')){
 			if(isset($_GET) && !empty($_GET)){
-				$data = $this->CashierModel->GetPackageDetails($_GET['salon_package_id']);
+				
+				$data = $this->CashierModel->GetPackageDetails($_GET['salon_package_id'],$this->session->userdata['logged_in']['business_outlet_id']);
+				
 				if($data['success'] == 'true'){	
 					header("Content-type: application/json");
 					print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));

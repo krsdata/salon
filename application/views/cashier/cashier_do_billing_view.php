@@ -2278,9 +2278,17 @@
 			$.getJSON("<?=base_url()?>Cashier/GetPackageServices",parameters)
       .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row'>";
+			var grandTotalServiceCount = 0;
+			var redeemTotalCount = 0;
     		for(var i=0;i<data.length;i++){
+				if(data[i].salon_package_type == 'Services'){
+					redeemTotalCount = redeemTotalCount*1 + data[i].grand_total_service_count*1 ;	
+				}
+			}
+			grandTotalServiceCount = (data[0].grand_total_service_count*1 - redeemTotalCount*1);
+			for(var i=0;i<data.length;i++){
     			if(data[i].salon_package_type == 'Services'){
-	    			str += "<div class=\"col-md-4 col-sm-6\">\
+					str += "<div class=\"col-md-4 col-sm-6\">\
 											<a class=\"ChooseServiceFromPackage\" service-id=\""+data[i].service_id+"\" service-name=\""+data[i].service_name+"\" service-price-inr=\""+data[i].service_price_inr+"\" service-gst-percentage=\""+data[i].service_gst_percentage+"\" service-est-time=\""+data[i].service_est_time+"\" service-count=\""+data[i].service_count+"\" service-discount=\""+data[i].service_discount+"\" customer-id=\""+data[i].customer_id+"\" customer-package-profile-id=\""+data[i].customer_package_profile_id+"\" salon-package-name=\""+data[i].salon_package_name+"\">\
 												<div class=\"card customized-category-card-package\" style=\"background-color: #eb4153d9;\">\
 													<div class=\"card-body\" style=\"text-align: center;padding:.25rem!important;\">\
@@ -2288,6 +2296,7 @@
 														<p class=\"card-text mb-0\">Type : "+data[i].salon_package_type+"</p>\
 														<p class=\"card-text mb-0\">Discount : "+data[i].service_discount+"%</p>\
 														<p class=\"card-text mb-0\">Service Count : "+data[i].service_count+"</p>\
+														<p class=\"card-text mb-0\">Grand Total Service Count : "+grandTotalServiceCount+"</p>\
 													</div>\
 												</div>\
 											</a>\

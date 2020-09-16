@@ -651,6 +651,8 @@ class CashierModel extends CI_Model {
 								$total_count		 = $customer_profile_record['res_arr'][0]['service_count'];
 								$customer_package_id = $customer_profile_record['res_arr'][0]['customer_package_id'];
 								$customer_total_redeem_count = $customer_profile_record['res_arr'][0]['grand_total_service_count'];
+								$customer_total_redeem_count = ($customer_total_redeem_count!=0) ? $customer_total_redeem_count : (int)$data['cart_data'][$i]['service_quantity'];
+								
 								/* Get Total Redeem count */ 
 								
 								$redeemQuery = $this->db->query("SELECT sum(`grand_total_service_count`) as totalCount FROM `mss_customer_package_profile` WHERE `customer_package_id`=".$customer_package_id." ");
@@ -1022,15 +1024,17 @@ class CashierModel extends CI_Model {
     }
 	
 	public function GetPackageDetails($salon_package_id,$outlet_id){
-        //$sql = "SELECT * FROM mss_salon_packages,mss_salon_package_data,master_services WHERE mss_salon_packages.salon_package_id = mss_salon_package_data.salon_package_id AND mss_salon_package_data.service_id = master_services.service_id AND mss_salon_packages.salon_package_id = ".$this->db->escape($salon_package_id)."";
+       
+		//$sql = "SELECT * FROM mss_salon_packages,mss_salon_package_data,master_services WHERE mss_salon_packages.salon_package_id = mss_salon_package_data.salon_package_id AND mss_salon_package_data.service_id = master_services.service_id AND mss_salon_packages.salon_package_id = ".$this->db->escape($salon_package_id)."";
         $sql = "SELECT mss_salon_packages.*,mss_salon_package_data.*,mss_services.service_id as service_service_id,mss_services.*
 		FROM mss_salon_packages,
 				mss_salon_package_data,
 				mss_services WHERE 
 				mss_salon_packages.salon_package_id = mss_salon_package_data.salon_package_id AND  
-				(mss_salon_package_data.service_id = mss_services.service_id || mss_salon_package_data.master_service_id = mss_services.master_service_id) AND mss_salon_package_data.outlet_id=".$this->db->escape($outlet_id)." AND mss_salon_packages.salon_package_id = ".$this->db->escape($salon_package_id)."";
+				(mss_salon_package_data.service_id = mss_services.service_id || mss_salon_package_data.master_service_id = mss_services.master_service_id) AND mss_salon_package_data.outlet_id=".$this->db->escape($outlet_id)." AND mss_services.outlet_id = ".$this->db->escape($outlet_id)." AND mss_salon_packages.salon_package_id = ".$this->db->escape($salon_package_id)."";
 						$query = $this->db->query($sql);
-        if($query){
+       
+		if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
         }
         else{
