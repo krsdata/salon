@@ -3254,10 +3254,11 @@
       this.blur(); // Manually remove focus from clicked link.
 			package_profile_id=$(this).attr('package-profile-id');
 			// alert(package_profile_id);
-			if(package_profile_id>0){
-				alert("This is a Package Service. You can't Edit it;");
-			}
-			else if(package_profile_id == -9999)
+			// if(package_profile_id>0){
+			// 	alert("This is a Package Service. You can't Edit it;");
+			// }
+			// else 
+			if(package_profile_id == -9999)
       {
         $("#LoyaltyServiceEditDetails input[name=service_name]").val($(this).attr('service-name'));
         $("#LoyaltyServiceEditDetails input[name=service_price_inr]").val($(this).attr('service-price-inr'));
