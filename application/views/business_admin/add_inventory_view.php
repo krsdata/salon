@@ -275,7 +275,7 @@
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Freight">
+																				<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Extra Freight Charges">
 																			</div>
 																		</div>
 																	</div>
@@ -391,23 +391,25 @@
 																	</div>
 																	<div class="col-md-6">
 																		<div class="row">
-																			<div class="form-group col-md-6">
-																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
-																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
+																			
+																			<div class="form-group col-md-4">
 																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount">
 																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
+																			
+																			<div class="form-group col-md-4">
 																				<select name="payment_mode" class="form-control">
 																					<option value="" disabled="disabled" selected>Payment Mode</option>
 																					<option value="cash">Cash</option>
-																					<option value="card">Card</option>
+																					<option value="credit_card">Credit Card</option>
+																					<option value="debit_card">Debit Card</option>
+																					<option value="phonepe">Phonepe</option>
+																					<option value="google_pay">Google Pay</option>
+																					<option value="paytm">Paytm</option>
 																					<option value="bank">Bank A/C</option>
 																				</select>
+																			</div>
+																			<div class="form-group col-md-4">
+																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
 																			</div>
 																		</div>
 																	</div>
@@ -868,7 +870,7 @@
 			$("#addProductTable tr:last .product_type").val(service_type);
 			$("#addProductTable tr:last .product_barcode").val(service_barcode);
 			$("#addProductTable tr:last .sku_size").val(sku_size);
-			$("#addProductTable tr:last .mrp").val(sku_size);
+			$("#addProductTable tr:last .mrp").val(mrp);
       service_name = "";
 			product_id="";
 			service_type = "";
@@ -1031,7 +1033,7 @@
 			$("#transProductTable tr:last .product_type").val(service_type);
 			$("#transProductTable tr:last .product_barcode").val(service_barcode);
 			$("#transProductTable tr:last .sku_size").val(sku_size);
-			$("#transProductTable tr:last .mrp").val(sku_size);
+			$("#transProductTable tr:last .mrp").val(mrp);
 			$("#transProductTable tr:last .product_id").val(product_id);
 
       service_name = "";
@@ -1443,12 +1445,7 @@
 			}); 
     });
 </script>
-<script type="text/javascript">
-	<?php if($modal == 1) { ?>
-			$(document).ready(function(){        
-				$('#AddProduct').click();
-			}); 
-	<?php } ?>		
+<script type="text/javascript">		
 	$("input[name=\"expiry_date\"]").daterangepicker({
             singleDatePicker: true,
             showDropdowns: true,
@@ -1549,55 +1546,6 @@
 			link.click();
 			document.body.removeChild(link);
 		}
-</script>
-<script type="text/javascript">
-	$(".date").daterangepicker({
-		singleDatePicker: true,
-		showDropdowns: true,
-		autoUpdateInput : false,
-		locale: {
-      format: 'YYYY-MM-DD'
-		}
-	});
-
-	$('.date').on('apply.daterangepicker', function(ev, picker) {
-    $(this).val(picker.startDate.format('YYYY-MM-DD'));
-  });
-  $(".smartwizard-arrows-primary").smartWizard({
-			theme: "arrows",
-			showStepURLhash: false
-		});
-    $("#Service_SKU_Size").on('change',function(e){
-    	var parameters = {
-    		'item_id' :  $(this).val()
-    	};
-		// alert($(this).val());
-    	$.getJSON("<?=base_url()?>Cashier/GetProduct", parameters)
-      .done(function(data, textStatus, jqXHR) {
-          var mrp = parseInt(data.result[0]['service_price_inr'])+parseInt((data.result[0]['service_price_inr']*data.result[0]['service_gst_percentage'])/100);
-        //   alert(mrp);
-            document.getElementById("imrptemp").value = mrp;
-            document.getElementById("imrp").value = mrp;
-            document.getElementById("igsttemp").value = data.result[0]['service_gst_percentage'];
-            document.getElementById("igst").value = data.result[0]['service_gst_percentage'];
-            document.getElementById("ipricetemp").value = data.result[0]['service_price_inr'];
-    	})
-    	.fail(function(jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown.toString());
-   		});
-    });
-
-	$("#ibase_cost").on('keyup',function(e){
-    	
-		// alert($(this).val());
-        var sku=parseInt(document.getElementById("sku_count").value);
-        // document.getElementById("ibase_cost").value = baseamount;
-        var baseamount = sku * $(this).val();
-        var totalamount = parseInt( baseamount ) + parseInt((baseamount * document.getElementById("igsttemp").value)/100);
-        // alert(totalamount);
-        document.getElementById("itotal_cost").value = totalamount;
-        
-    });
 </script>
 <script type="text/javascript">
 	$(document).ready(function(){
