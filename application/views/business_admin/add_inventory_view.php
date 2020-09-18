@@ -84,29 +84,29 @@
 																	<div class="col-md-6">
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_number" placeholder="Invoice No." required>
+																			<input type="text" class="form-control" name="invoice_number" placeholder="Invoice No.">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date" required>
+																			<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value" required>
+																			<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Freight">
+																			<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Extra Freight Charges">
 																			</div>
 																		</div>
 																	</div>
 																	<div class="col-md-6">
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																				<select name="source_type" class="form-control" required>
+																				<select name="source_type" class="form-control">
 																					<option value="" disabled="disabled" selected>Select Source Type</option>
 																					<option value="warehouse">Warehouse</option>
 																					<option value="branch">Branch</option>
@@ -117,14 +117,14 @@
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																				<select name="source_name" class="form-control" required>
+																				<select name="source_name" class="form-control">
 																				
 																				</select>
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																				<select name="invoice_type" class="form-control" required>
+																				<select name="invoice_type" class="form-control">
 																				<option value="" disabled="disabled" selected>Select Invoice Type</option>
 																					<option value="tax">Tax Invoice</option>
 																					<option value="lumpsum">Lumpsum</option>
@@ -146,7 +146,7 @@
 																					<td>
 																						<div class="form-group">
 																							<label>Product Name</label>
-																							<input type="text" class="form-control searchProductByName" name="product_name[]" readonly required>
+																							<input type="text" class="form-control searchProductByName" name="product_name[]" readonly>
 																							<input type="hidden" class="product_id" name="product_id[]">
 																						</div>
 																					</td>
@@ -171,25 +171,25 @@
 																					<td>
 																						<div class="form-group">
 																							<label>Qty</label>
-																							<input type="text" class="form-control" name="product_qty[]" required>
+																							<input type="text" class="form-control" name="product_qty[]">
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
-																							<label>Cost</label>
-																							<input type="text" class="form-control" name="product_price[]" required>
+																							<label>Cost/Unit(<small>before tax</small>)</label>
+																							<input type="text" class="form-control" name="product_price[]">
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>GST %</label>
-																							<input type="text" class="form-control" name="product_gst[]" required>
+																							<input type="text" class="form-control" name="product_gst[]">
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>MRP</label>
-																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																							<input type="text" class="form-control mrp" name="product_mrp[]">
 																						</div>
 																					</td>
 																					<td>
@@ -215,23 +215,23 @@
 																	</div>
 																	<div class="col-md-6">
 																		<div class="row">
-																			<div class="form-group col-md-6">
-																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
+																			<div class="form-group col-md-4">
+																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount">
 																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
-																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount" required>
-																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
+																			<div class="form-group col-md-4">
 																				<select name="payment_mode" class="form-control">
 																				<option value="" disabled="disabled" selected>Payment Mode</option>
 																					<option value="cash">Cash</option>
-																					<option value="card">Card</option>
+																					<option value="credit_card">Credit Card</option>
+																					<option value="debit_card">Debit Card</option>
+																					<option value="phonepe">Phonepe</option>
+																					<option value="google_pay">Google Pay</option>
+																					<option value="paytm">Paytm</option>
 																					<option value="bank">Bank A/C</option>
 																				</select>
+																			</div>
+																			<div class="form-group col-md-4">
+																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
 																			</div>
 																		</div>
 																	</div>
@@ -260,29 +260,29 @@
 																	<div class="col-md-6">
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_number" placeholder="Tranf. Order" required>
+																			<input type="text" class="form-control" name="invoice_number" placeholder="Tranf. Order">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date" required>
+																			<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value" required>
+																			<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Freight">
+																				<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Extra Freight Charges">
 																			</div>
 																		</div>
 																	</div>
 																	<div class="col-md-6">
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																				<select name="destination_type" class="form-control" required>
+																				<select name="destination_type" class="form-control">
 																					<option value="" disabled="disabled" selected>Select Destination Type</option>
 																					<option value="warehouse">Warehouse</option>
 																					<option value="branch">Branch</option>
@@ -293,14 +293,14 @@
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																				<select name="destination_name" class="form-control" required>
+																				<select name="destination_name" class="form-control">
 																				
 																				</select>
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																				<select name="invoice_type" class="form-control" required>
+																				<select name="invoice_type" class="form-control">
 																				<option value="" disabled="disabled" selected>Select Invoice Type</option>
 																					<option value="tax">Tax Invoice</option>
 																					<option value="lumpsum">Lumpsum</option>
@@ -322,7 +322,7 @@
 																					<td>
 																						<div class="form-group">
 																							<label>Product Name</label>
-																							<input type="text" class="form-control searchProductByName" name="product_name[]" readonly required>
+																							<input type="text" class="form-control searchProductByName" name="product_name[]" readonly>
 																							<input type="hidden" class="product_id" name="product_id[]">
 																						</div>
 																					</td>
@@ -347,25 +347,25 @@
 																					<td>
 																						<div class="form-group">
 																							<label>Qty</label>
-																							<input type="text" class="form-control" name="product_qty[]" required>
+																							<input type="text" class="form-control" name="product_qty[]">
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
-																							<label>Cost</label>
-																							<input type="text" class="form-control" name="product_price[]" required>
+																							<label>Cost/Unit(<small>before tax</small>)</label>
+																							<input type="text" class="form-control" name="product_price[]">
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>GST %</label>
-																							<input type="text" class="form-control" name="product_gst[]" required>
+																							<input type="text" class="form-control" name="product_gst[]">
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>MRP</label>
-																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																							<input type="text" class="form-control mrp" name="product_mrp[]">
 																						</div>
 																					</td>
 																					<td>
@@ -391,23 +391,25 @@
 																	</div>
 																	<div class="col-md-6">
 																		<div class="row">
-																			<div class="form-group col-md-6">
-																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
+																			
+																			<div class="form-group col-md-4">
+																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount">
 																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
-																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount" required>
-																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
+																			
+																			<div class="form-group col-md-4">
 																				<select name="payment_mode" class="form-control">
 																					<option value="" disabled="disabled" selected>Payment Mode</option>
 																					<option value="cash">Cash</option>
-																					<option value="card">Card</option>
+																					<option value="credit_card">Credit Card</option>
+																					<option value="debit_card">Debit Card</option>
+																					<option value="phonepe">Phonepe</option>
+																					<option value="google_pay">Google Pay</option>
+																					<option value="paytm">Paytm</option>
 																					<option value="bank">Bank A/C</option>
 																				</select>
+																			</div>
+																			<div class="form-group col-md-4">
+																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
 																			</div>
 																		</div>
 																	</div>
@@ -429,7 +431,7 @@
 													<!-- <form action="#" class="form-inlne" method="POST">
 														<div class="form-row">
 															<div class="form-group col-md-2">
-																<input type="date" class="form-control" name="invoice_number" value="<?=date('Y-m-d');?>" required>
+																<input type="date" class="form-control" name="invoice_number" value="<?=date('Y-m-d');?>">
 															</div>										
 															<div class="form-group col-md-2">
 																<select name="" class="form-control" required>
@@ -459,10 +461,10 @@
 														</div>
 													</form> -->
 													<div class="row">
-														<div class="col-md-6">
+														<div class="col-md-10">
 															<h3>Available Stock</h3>
 														</div>
-														<div class="col-md-6">
+														<div class="col-md-2">
 														<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
 														</div>
 													</div>
@@ -476,8 +478,9 @@
 															<th>Barcode</th>
 															<th>SKU size</th>
 															<th>Total Stock</th>
-															<th>Entry Date</th>
+															<th>Last Updated</th>
 															<th>Location</th>
+															<th>Action</th>
 														</thead>
 														<tbody>
 															<?php $count=1; foreach($stock as $stock){ ?>
@@ -486,10 +489,13 @@
 																	<td><?=$stock['service_name'];?></td>
 																	<td><?=$stock['inventory_type'];?></td>
 																	<td><?=$stock['barcode'];?></td>
-																	<td><?=$stock['qty_per_item'];?></td>
+																	<td><?=$stock['qty_per_item'].' '.$stock['service_unit'];?></td>
 																	<td><?=$stock['total_stock'];?></td>
 																	<td><?=$stock['updated_on'];?></td>
 																	<td><?=$stock['business_outlet_name'];?></td>
+																	<td>
+																		<button class="btn btn-primary EditInventory" data-toggle="modal" id="" data-target="#ModalEditInventory" service_id="<?=$stock['service_id'];?>"><i class="fa fa-pen"></i></button>
+																	</td>
 																</tr>
 															<?php $count++; }?>
 														</tbody>
@@ -506,6 +512,7 @@
 													<table class="table table-hover datatables-basic" style="width: 100%;">
 														<thead>
 															<th>Sr. No.</th>
+															<th>Txn Id</th>
 															<th>Product Name</th>
 															<th>Type</th>
 															<th>Barcode</th>
@@ -521,18 +528,23 @@
 															<?php $count=1; foreach($stock_incoming as $incoming){ ?>
 																<tr>
 															<td><?=$count?></td>
+															<td><?=$incoming['inventory_transfer_data_id'];?></td>
 															<td><?=$incoming['product_name'];?></td>
 															<td><?=$incoming['product_type'];?></td>
 															<td><?=$incoming['product_barcode'];?></td>
-															<td><?=$incoming['sku_size'];?></td>
+															<td><?=$incoming['sku_size'].' '.$stock['service_unit'];?></td>
 															<td><?=$incoming['product_qty'];?></td>
 															<td><?=$incoming['product_mrp'];?></td>
 															<td><?=$incoming['invoice_date'];?></td>
 															<td><?=$incoming['source'];?></td>
 															<td><?=$incoming['destination'];?></td>
 															<td>
+																<?php if($incoming['transfer_status']==0){?>
 																<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
 																<button class='btn btn-danger rejectInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>'><i class='fa fa-times'>Reject</i></button>
+																<?php }else{?>
+																	Accepted
+																<?php }?>
 															</td>
 															</tr>
 															<?php $count++; }?>
@@ -565,7 +577,7 @@
 															<td><?=$outgoing['product_name'];?></td>
 															<td><?=$outgoing['product_type'];?></td>
 															<td><?=$outgoing['product_barcode'];?></td>
-															<td><?=$outgoing['sku_size'];?></td>
+															<td><?=$outgoing['sku_size'].' '.$stock['service_unit'];?></td>
 															<td><?=$outgoing['product_qty'];?></td>
 															<td><?=$outgoing['product_mrp'];?></td>
 															<td>
@@ -585,66 +597,140 @@
 											</div>
 										</div>
 										<div class="tab-pane" id="tab-6" role="tabpanel">
-										<div class="card">
-											<div class="card-header">
-												<h5 class="card-title">Inventory Health</h5>
+											<div class="card">
+												<div class="card-header">
+													<h5 class="card-title">Inventory Health</h5>
+												</div>
+												<div class="card-body">
+													<div class="row">
+														<div class="col-md-3">
+															<h5>Stock Value (MRP)</h5>
+															<label class="btn btn-danger" id="labeltotal" style="width:130px">Rs <?=$stockvalue?></label>
+														</div>
+														<div class="col-md-3">
+															<h5>Stock Status</h5>
+															<select id="status" name="status" class="form-control">
+																<option value="Regular">Regular Stock</option>
+																<option value="Dead">Dead Stock</option>
+																<option value="slow">Slow Moving</option>
+															</select>
+														</div>
+													</div>
+													<div class="row">
+															<div class="col-md-12">
+																	<table id="details" class="table table-striped" style="text-align:center">
+																			<thead>
+																					<th>Bucket</th>
+																					<th>Item Name</th>
+																					<th>Sub Category</th>
+																					<th>Category</th>
+																					<th>SKU Size</th>
+																					<th>Current Stock</th>
+																					<th>Stock In Regular-Stock Stage</th>
+																					<th>Entry Date</th>
+																					<th>No of Days since entry Date</th>
+																					<th>Total Revenue Stuck(Rs)</th>
+																			</thead>
+																				<?php
+																					foreach($stockdetails as $key=> $value){
+																						?>
+																						<tr>
+																							<td>Regular Stock</td>
+																							<td><?=$value['service_name']?></td>
+																							<td><?=$value['sub_category_name']?></td>
+																							<td><?=$value['category_name']?></td>
+																							<td><?=$value['sku_size']?></td>
+																							<td><?=$value['sku_count']?></td>
+																							<td><?=$value['deadstock']?></td>
+																							<td><?=$value['entrydate']?></td>
+																							<td><?=$value['days']?></td>
+																							<td><?=$value['Total']?></td>
+																						</tr>
+																						<?php
+																					}
+																				?>
+																	</table>
+															</div>
+													</div>
+												</div>
 											</div>
-											<div class="card-body">
-                        <div class="row">
-                          <div class="col-md-3">
-                            <h5>Stock Value (MRP)</h5>
-                            <label class="btn btn-danger" id="labeltotal" style="width:130px">Rs <?=$stockvalue?></label>
-													</div>
-													<div class="col-md-3">
-														<h5>Stock Status</h5>
-														<select id="status" name="status" class="form-control">
-															<option value="Regular">Regular Stock</option>
-															<option value="Dead">Dead Stock</option>
-															<option value="slow">Slow Moving</option>
-														</select>
-													</div>
-                        </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table id="details" class="table table-striped" style="text-align:center">
-                                            <thead>
-                                                <th>Bucket</th>
-                                                <th>Item Name</th>
-                                                <th>Sub Category</th>
-                                                <th>Category</th>
-                                                <th>SKU Size</th>
-                                                <th>Current Stock</th>
-                                                <th>Stock In Regular-Stock Stage</th>
-                                                <th>Entry Date</th>
-                                                <th>No of Days since entry Date</th>
-                                                <th>Total Revenue Stuck(Rs)</th>
-                                            </thead>
-											<?php
-												foreach($stockdetails as $key=> $value){
-													?>
-													<tr>
-														<td>Regular Stock</td>
-														<td><?=$value['service_name']?></td>
-														<td><?=$value['sub_category_name']?></td>
-														<td><?=$value['category_name']?></td>
-														<td><?=$value['sku_size']?></td>
-														<td><?=$value['sku_count']?></td>
-														<td><?=$value['deadstock']?></td>
-														<td><?=$value['entrydate']?></td>
-														<td><?=$value['days']?></td>
-														<td><?=$value['Total']?></td>
-													</tr>
-													<?php
-												}
-											?>
-                                        </table>
-                                    </div>
-                                </div>
-							</div>
-						</div>
 										</div>									
 									</div>
 								</div>
+								<!-- modal -->
+								<div class="modal fade" id="ModalEditInventory" tabindex="-1" role="dialog" aria-hidden="true">
+									<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title text-white">Edit Inventory</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">×</span>
+												</button>
+											</div>
+											<div class="modal-body">
+												<form id="EditInventory" method="POST" action="#">
+													<div class="form-row">
+														<div class="form-group col-md-4">
+															<label>Invoice Number</label>
+															<input type="text" class="form-control" placeholder="Invoice Number" name="invoice_number">
+														</div>
+														<div class="form-group col-md-4">
+															<label>Date</label>
+															<input type="date" class="form-control"  value="<?=date('Y-m-d');?>" name="invoice_date">
+														</div>													
+														<div class="form-group col-md-4">
+															<label>Product Name</label>
+															<input type="text" class="form-control" placeholder="Product Name" name="product_name" readonly>
+														</div>
+													</div>
+													<div class="form-row">
+														<div class="form-group col-md-4">
+															<label>Product Brand</label>
+															<input type="text" class="form-control" placeholder="Product Brand" name="product_brand" readonly>
+														</div>
+													
+														<div class="form-group col-md-4">
+															<label>SKU Size</label>
+															<input type="number" class="form-control" placeholder="SKU SIZE" name="sku_size" readonly>
+														</div>
+														<div class="form-group col-md-4">
+															<label>Product Qty</label>
+															<input type="number" class="form-control" placeholder="Quantity"  name="product_qty">
+														</div>
+													</div>
+													<div class="form-row">	
+														<div class="form-group col-md-4">
+															<label>Cost/Unit(<small>before tax</small>)</label>
+															<input type="number" class="form-control" name="product_price" placeholder="Cost/Unit">
+														</div>
+														<div class="form-group col-md-4">
+														<label class="form-label">Product gst</label>
+															<input type="number" class="form-control" name="product_gst" placeholder="GST">
+														</div>
+														<div class="form-group col-md-4">
+														<label class="form-label">Product MRP</label>
+															<input type="number" class="form-control" name="product_mrp" placeholder="Product MRP">
+														</div>
+													</div>
+													<div class="form-row">
+														<div class="form-group col-md-12">
+															<input type="hidden" name="service_id">
+															<button type="submit" class="btn btn-primary">Submit</button>
+														</div>
+													</div>
+												</form>
+												<div class="alert alert-dismissible feedback" role="alert" style="margin:0px;">
+													<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+													</button>
+													<div class="alert-message">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- end -->
 							</div>	
 						</div>
 					<?php
@@ -784,7 +870,7 @@
 			$("#addProductTable tr:last .product_type").val(service_type);
 			$("#addProductTable tr:last .product_barcode").val(service_barcode);
 			$("#addProductTable tr:last .sku_size").val(sku_size);
-			$("#addProductTable tr:last .mrp").val(sku_size);
+			$("#addProductTable tr:last .mrp").val(mrp);
       service_name = "";
 			product_id="";
 			service_type = "";
@@ -947,7 +1033,7 @@
 			$("#transProductTable tr:last .product_type").val(service_type);
 			$("#transProductTable tr:last .product_barcode").val(service_barcode);
 			$("#transProductTable tr:last .sku_size").val(sku_size);
-			$("#transProductTable tr:last .mrp").val(sku_size);
+			$("#transProductTable tr:last .mrp").val(mrp);
 			$("#transProductTable tr:last .product_id").val(product_id);
 
       service_name = "";
@@ -1159,6 +1245,65 @@
 			},
 		});
 
+
+		$(document).on('click','.EditInventory',function(event) {
+      event.preventDefault();
+      this.blur(); // Manually remove focus from clicked link.
+      var parameters = {
+            service_id : $(this).attr('service_id')
+      };
+      $.getJSON("<?=base_url()?>BusinessAdmin/EditInventory", parameters)
+        .done(function(data, textStatus, jqXHR) {            
+					// alert(data['service_name']);
+					mrp=(Number(data.message.service_price_inr)+Number(data.message.service_price_inr)*Number(.18));
+            $("#ModalEditInventory input[name=product_name]").attr('value',data.message.service_name);
+            $("#ModalEditInventory input[name=product_gst]").attr('value',data.message.service_gst_percentage);
+            $("#ModalEditInventory input[name=product_brand]").attr('value',data.message.service_brand);
+            $("#ModalEditInventory input[name=sku_size]").attr('value',data.message.qty_per_item);
+            $("#ModalEditInventory input[name=product_price]").attr('value',data.message.service_price_inr);
+            $("#ModalEditInventory input[name=service_id]").attr('value',data.message.service_id);
+						$("#ModalEditInventory input[name=product_mrp]").attr('value',mrp);
+            $("#ModalEditInventory").modal('show');
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown.toString());
+        });
+    	});
+
+
+		$("#EditInventory").validate({
+	  	errorElement: "div",
+	    rules: {
+	        "product_name" : {
+            required : true
+	        }    
+	    },
+	    submitHandler: function(form) {
+				var formData = $("#EditInventory").serialize(); 
+				$.ajax({
+		        url: "<?=base_url()?>BusinessAdmin/EditInventory",
+		        data: formData,
+		        type: "POST",
+						cache: false,
+		    		success: function(data) {
+              if(data.success == 'true'){
+								$("#ModalEditInventory").modal('hide');
+              	alert("Inventory Added");
+								window.location.reload();
+              }
+              else if (data.success == 'false'){                   
+                $('.alert-message').html("").html(data.message);
+								window.location.reload(); 
+              }
+            },
+            error: function(data){
+    					$('.feedback').addClass('alert-danger');
+    					$('.alert-message').html("").html(data.message); 
+            }
+				});
+			},
+		});
+
 	});
 
 	 //functionality for getting the dynamic input data
@@ -1300,12 +1445,7 @@
 			}); 
     });
 </script>
-<script type="text/javascript">
-	<?php if($modal == 1) { ?>
-			$(document).ready(function(){        
-				$('#AddProduct').click();
-			}); 
-	<?php } ?>		
+<script type="text/javascript">		
 	$("input[name=\"expiry_date\"]").daterangepicker({
             singleDatePicker: true,
             showDropdowns: true,
@@ -1406,55 +1546,6 @@
 			link.click();
 			document.body.removeChild(link);
 		}
-</script>
-<script type="text/javascript">
-	$(".date").daterangepicker({
-		singleDatePicker: true,
-		showDropdowns: true,
-		autoUpdateInput : false,
-		locale: {
-      format: 'YYYY-MM-DD'
-		}
-	});
-
-	$('.date').on('apply.daterangepicker', function(ev, picker) {
-    $(this).val(picker.startDate.format('YYYY-MM-DD'));
-  });
-  $(".smartwizard-arrows-primary").smartWizard({
-			theme: "arrows",
-			showStepURLhash: false
-		});
-    $("#Service_SKU_Size").on('change',function(e){
-    	var parameters = {
-    		'item_id' :  $(this).val()
-    	};
-		// alert($(this).val());
-    	$.getJSON("<?=base_url()?>Cashier/GetProduct", parameters)
-      .done(function(data, textStatus, jqXHR) {
-          var mrp = parseInt(data.result[0]['service_price_inr'])+parseInt((data.result[0]['service_price_inr']*data.result[0]['service_gst_percentage'])/100);
-        //   alert(mrp);
-            document.getElementById("imrptemp").value = mrp;
-            document.getElementById("imrp").value = mrp;
-            document.getElementById("igsttemp").value = data.result[0]['service_gst_percentage'];
-            document.getElementById("igst").value = data.result[0]['service_gst_percentage'];
-            document.getElementById("ipricetemp").value = data.result[0]['service_price_inr'];
-    	})
-    	.fail(function(jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown.toString());
-   		});
-    });
-
-	$("#ibase_cost").on('keyup',function(e){
-    	
-		// alert($(this).val());
-        var sku=parseInt(document.getElementById("sku_count").value);
-        // document.getElementById("ibase_cost").value = baseamount;
-        var baseamount = sku * $(this).val();
-        var totalamount = parseInt( baseamount ) + parseInt((baseamount * document.getElementById("igsttemp").value)/100);
-        // alert(totalamount);
-        document.getElementById("itotal_cost").value = totalamount;
-        
-    });
 </script>
 <script type="text/javascript">
 	$(document).ready(function(){

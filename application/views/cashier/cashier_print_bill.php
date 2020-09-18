@@ -60,7 +60,7 @@ class MYPDF extends TCPDF {
 		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM-40);
 	else
 		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-	$pdf->SetFont('helvetica', '', 6.5);
+	$pdf->SetFont('helvetica', 'B', 6.5);
 	$pdf->setFontSubsetting(false);
 	$pdf->AddPage('P','A7');
 
