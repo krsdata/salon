@@ -156,10 +156,10 @@ class Cashier extends CI_Controller {
 						 );
 			header("Content-type: application/json");
 			print(json_encode($data, JSON_PRETTY_PRINT));
-		}
+		} 
   }
 
-  //Testing Function
+  //  Testing Function
   private function PrettyPrintArray($data){
   	print("<pre>".print_r($data,true)."</pre>");
   	die;
@@ -2926,6 +2926,7 @@ class Cashier extends CI_Controller {
 
 								$data['stock_incoming']=$this->CashierModel->IncomingStock($where);
 								$data['stock_incoming']=	$data['stock_incoming']['res_arr'];
+								// $this->PrettyPrintArray($data['stock_incoming']);
 
 								$data['stock_outgoing']=$this->CashierModel->OutgoingStock($where);
 								$data['stock_outgoing']=	$data['stock_outgoing']['res_arr'];

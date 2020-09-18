@@ -10916,7 +10916,7 @@ public function InsertSalary(){
 							$data['stock_outgoing']=$this->CashierModel->OutgoingStock($where);
 							$data['stock_outgoing']=	$data['stock_outgoing']['res_arr'];
 
-                // $this->PrettyPrintArray($data['vendors']);
+                // $this->PrettyPrintArray($data['stock_incoming']);
                 // exit;
 							$data['categories']  = $this->GetCategoriesOtc($this->session->userdata['outlets']['current_outlet']);
 							$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['outlets']['current_outlet']);
@@ -12227,6 +12227,63 @@ public function daybook(){
 			}
 		}
 
+		public function EditInventory(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_GET) && !empty($_GET)){
+					$service_details=$this->CashierModel->DetailsById($_GET['service_id'],'mss_services','service_id');
+					$service_details=$service_details['res_arr'];
+					$this->ReturnJsonArray(true,false,$service_details);
+					die;
+				}else if(isset($_POST) && !empty($_POST)){
+					$service_details=$this->CashierModel->DetailsById($_POST['service_id'],'mss_services','service_id');
+					$service_details=$service_details['res_arr'];
+					$data=array(
+						'invoice_number'	=>	$_POST['invoice_number'],
+						'invoice_date'		=>	$_POST['invoice_date'],
+						'invoice_amount'	=>	$_POST['product_mrp'],
+						'invoice_tax'			=>	0,
+						'source'					=>	'branch',
+						'source_name'			=>	$this->session->userdata['outlets']['current_outlet'],
+						'invoice_type'		=>	'challan',
+						'amount_paid'			=>	0,
+						'payment_type'		=>	'',
+						'payment_status'	=>	'unpaid',
+						'notes'						=>	'Entry from stock level',
+						'business_outlet_id'	=> $this->session->userdata['outlets']['current_outlet']
+					);
+
+					$result=$this->CashierModel->Insert($data,'inventory');
+					
+					$data2=array(
+						'inventory_id'	=>	$result['res_arr']['insert_id'],
+						'service_id'	=>	$_POST['service_id'],
+						'product_name'	=>	$_POST['product_name'],
+						'product_type'	=> $service_details['inventory_type'],
+						'product_barcode'	=> $service_details['barcode'],
+						'sku_size'	=>	$_POST['sku_size'],
+						'product_qty'	=> $_POST['product_qty'],
+						'product_price'	=> $_POST['product_price'],
+						'product_gst'	=> $_POST['product_gst'],
+						'product_mrp'	=> $_POST['product_mrp'],
+						'expiry_date'	=> date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))))
+					);
+					$result=$this->CashierModel->Insert($data2,'inventory_data');
+					$data3=array(
+						'stock_service_id'=>$_POST['service_id'],
+						'total_stock'	=>$_POST['product_qty'],
+						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
+						'updated_on'	=>date('Y-m-d')
+					);
+					
+					$res=$this->CashierModel->UpdateInventoryStock($data3);
+					$this->ReturnJsonArray(true,false,"Stock Updated!");
+					die;
+				}else{
+					$this->ReturnJsonArray(false,true,"Wrong Method!");
+					die;
+				}
+			}
+		}
 		
 
 }
