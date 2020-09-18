@@ -441,6 +441,7 @@
 														<th>Barcode</th>
 														<th>SKU size</th>
 														<th>Total Stock</th>
+														<th>Stock in Unit</th>
 														<th>Last Updated</th>
 														<th>Location</th>
 													</thead>
@@ -453,6 +454,7 @@
 														<td><?=$stock['barcode'];?></td>
 														<td><?=$stock['qty_per_item'].' '.$stock['service_unit'] ; ?></td>
 														<td><?=$stock['total_stock'];?></td>
+														<td><?=$stock['stock_in_unit'];?></td>
 														<td><?=$stock['updated_on'];?></td>
 														<td><?=$stock['business_outlet_name'];?></td>
 														</tr>
@@ -496,8 +498,12 @@
 														<td><?=$incoming['source'];?></td>
 														<td><?=$incoming['destination'];?></td>
 														<td>
-															<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
+															<?php if($incoming['transfer_status']==0){?>
+															<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sku_size="<?=$incoming['sku_size']?>" sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
 															<button class='btn btn-danger rejectInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>'><i class='fa fa-times'>Reject</i></button>
+															<?php }else{?>
+																Accepted
+															<?php } ?>
 														</td>
 														</tr>
 														<?php $count++; }?>
@@ -521,6 +527,7 @@
 														<th>SKU size</th>
 														<th>Product Qty</th>
 														<th>MRP</th>
+														<th>Last Updated</th>
 														<th>Status</th>
 													</thead>
 													<tbody>
@@ -533,6 +540,8 @@
 														<td><?=$outgoing['sku_size'].' '.$stock['service_unit'];?></td>
 														<td><?=$outgoing['product_qty'];?></td>
 														<td><?=$outgoing['product_mrp'];?></td>
+														<td><?=$outgoing['invoice_date'];?></td>
+														
 														<td>
 															<?php if($outgoing['transfer_status']==0){?>
 															<button class='btn btn-warning' disabled>No action</button>
@@ -948,6 +957,7 @@
 			var parameters = {
 					transfer_data_id : $(this).attr('trans_data_id'),
 					total_stock : $(this).attr('total_stock'),
+					stock_in_unit:$(this).attr('sku_size'),
 					service_id	:	$(this).attr('stock_service_id'),
 					sender_outlet_id	:	$(this).attr('sender_outlet')
 			};	

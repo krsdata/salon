@@ -349,6 +349,7 @@
 											<th>Mobile</th>
 											<th>Landline</th>
 											<th>Action</th>
+											<th>SMS Status</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -362,9 +363,20 @@
 											<td><?=$outlet['business_outlet_mobile']?></td>
 											<td><?=$outlet['business_outlet_landline']?></td>
 											<td class="table-action">
-												<button type="button" class="btn btn-danger outlet-edit-btn" business_outlet_id="<?=$outlet['business_outlet_id']?>">
+												<button type="button" class="btn btn-primary outlet-edit-btn" business_outlet_id="<?=$outlet['business_outlet_id']?>">
 									        <i class="align-middle" data-feather="edit-2"></i>
-									      </button>
+												</button>
+											</td>
+											<td class="table-action">
+												<?php if($outlet['business_outlet_sms_status']==1){?>
+												<button type="button" class="btn btn-success sms_status" business_outlet_id="<?=$outlet['business_outlet_id']?>" sms_status="0">
+									        ON
+												</button>
+											<?php }else{?>
+												<button type="button" class="btn btn-danger sms_status" business_outlet_id="<?=$outlet['business_outlet_id']?>" sms_status="1">
+									        OFF
+												</button>
+											<?php }?>
 											</td>
 										</tr>	
 										<?php		
@@ -591,5 +603,31 @@
             console.log(errorThrown.toString());
         });
     });
+
+		$(document).on('click','.sms_status',function(event) {
+				event.preventDefault();
+				this.blur(); // Manually remove focus from clicked link.
+				var parameters = {
+					"business_outlet_id" : $(this).attr('business_outlet_id'),
+					"sms_status" : $(this).attr('sms_status')
+				};
+			
+				$.ajax({
+					url: "<?=base_url()?>BusinessAdmin/ChangeSmsStatus",
+					data: parameters,
+					type: "POST",
+					cache: false,
+					success: function(data) {
+								if(data.success == 'true'){
+									alert(data.message);
+									window.location.reload();
+								}else {
+									alert(data.message);
+									window.location.reload();
+								}
+							}
+				});
+			});
+
 	});
 </script>

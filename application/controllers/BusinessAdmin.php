@@ -321,7 +321,7 @@ class BusinessAdmin extends CI_Controller {
 								$data['sales_till_date']=$data['sales_till_date']['res_arr'][0]['sales_till_date'];
 								// $this->PrettyPrintArray($data['sales_till_date']);
                 $data['product_sales_till_date']=$this->BusinessAdminModel->GetMonthlyProductSalesTillDate($where);
-				$data['product_sales_till_date']=$data['product_sales_till_date']['res_arr'][0]['product_sales_till_date'];
+								$data['product_sales_till_date']=$data['product_sales_till_date']['res_arr'][0]['product_sales_till_date'];
                 $data['package_sales_till_date']=$this->BusinessAdminModel->PackageSalesTillDate($where);
                 $data['package_sales_till_date']=$data['package_sales_till_date']['res_arr'][0]['package_sales'];
                 
@@ -10828,8 +10828,8 @@ public function InsertSalary(){
     	public function AddInventory(){
         if($this->IsLoggedIn('business_admin')){
           if(isset($_POST) && !empty($_POST)){
-						$this->form_validation->set_rules('invoice_number','OTC Name', 'trim|required');
-						$this->form_validation->set_rules('invoice_date', 'SKU', 'trim|required');			
+						$this->form_validation->set_rules('invoice_number','Invoice Number', 'trim|required');
+						$this->form_validation->set_rules('invoice_date', 'Invoice Date', 'trim|required');			
 						if($this->form_validation->run() == FALSE){
 							$data = array(
 															'success' => 'false',
@@ -10877,6 +10877,7 @@ public function InsertSalary(){
 									$data4=array(
 										'stock_service_id' => $_POST['product_id'][$key],
 										'total_stock'=> $_POST['product_qty'][$key],
+										'stock_in_unit'	=>($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 										'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
 										'updated_on'	=>date('Y-m-d')
 									);
@@ -12031,8 +12032,8 @@ public function daybook(){
 		public function TransferInventory(){
 			if($this->IsLoggedIn('business_admin')){
 				if(isset($_POST) && !empty($_POST)){
-					$this->form_validation->set_rules('invoice_number','OTC Name', 'trim|required');
-					$this->form_validation->set_rules('invoice_date', 'SKU', 'trim|required');
+					$this->form_validation->set_rules('invoice_number','Invoice Number', 'trim|required');
+					$this->form_validation->set_rules('invoice_date', 'Date', 'trim|required');
 			
 					if ($this->form_validation->run() == FALSE){
 							$data = array(
@@ -12079,13 +12080,13 @@ public function daybook(){
 							$data4=array(
 								'stock_service_id' => $_POST['product_id'][$key],
 								'total_stock'=> $_POST['product_qty'][$key],
+								'stock_in_unit'  =>	($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 								'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
 								'updated_on'	=>date('Y-m-d')
 							);
 	
 							$stock_exist_for_transfer= $this->CashierModel->CheckStockExistForTransfer($data4);
 							if($stock_exist_for_transfer['success']=='true'){
-								// $update_stock=$this->CashierModel->UpdateInventoryStockTransfer($data4);
 								$this->CashierModel->Insert($data3,'inventory_transfer_data');							
 							}else{
 								$this->ReturnJsonArray(false,true,"Stock not available for transfer!");
@@ -12120,12 +12121,15 @@ public function daybook(){
 					$data=array(
 						'stock_service_id' => $_POST['service_id'],
 						'total_stock'=> $_POST['total_stock'],
+						'stock_in_unit'=>($_POST['stock_in_unit']*$_POST['total_stock']),
 						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
 						'updated_on'	=>date('Y-m-d')
 					);
+
 					$data2=array(
 						'stock_service_id' => $_POST['service_id'],
 						'total_stock'=> $_POST['total_stock'],
+						'stock_in_unit'=>($_POST['stock_in_unit']*$_POST['total_stock']),
 						'stock_outlet_id'	=> $_POST['sender_outlet_id'],
 						'updated_on'	=>date('Y-m-d')
 					);
@@ -12271,6 +12275,7 @@ public function daybook(){
 					$data3=array(
 						'stock_service_id'=>$_POST['service_id'],
 						'total_stock'	=>$_POST['product_qty'],
+						'stock_in_unit'	=>($_POST['product_qty']*$_POST['sku_size']),
 						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
 						'updated_on'	=>date('Y-m-d')
 					);
@@ -12285,6 +12290,25 @@ public function daybook(){
 			}
 		}
 		
+		public function ChangeSmsStatus(){
+			if($this->IsLoggedIn('business_admin')){
+				$where = array(
+					'business_outlet_id'=> $_POST['business_outlet_id'],
+					'business_outlet_sms_status' => $_POST['sms_status']
+				);
+				$data = $this->BusinessAdminModel->Update($where,'mss_business_outlets','business_outlet_id');
+				if($data['success'] == 'true'){	
+					$this->ReturnJsonArray(true,false,"SMS status Updated");
+					die;
+				}else{
+					$this->ReturnJsonArray(false,true,"Error in Updating status!");
+					die;
+				}
+			}
+			else{
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}		
+		}
 
 }
 
