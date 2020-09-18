@@ -2589,21 +2589,23 @@ class Cashier extends CI_Controller {
 					$customer_details = $this->GetCustomerBilling($_POST['customer_pending_data']['customer_id']);
 					//4.Send a msg
 					$this->session->set_userdata('bill_url',$bill_url);
-					if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
-						if($_POST['txn_data']['txn_value']==0){
-						$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}else{		
-						$this->SendCashbackSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$_POST['cashback'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}
-					}
-					//
-					if($_POST['send_sms'] === 'true' && $_POST['cashback']==0){
-						if($_POST['txn_data']['txn_value']==0){
-						$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}else{		
-						$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}
-					}
+					$sms_status = $this->db->select('business_outlet_sms_status')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+					// $this->PrettyPrintArray($sms_status);	
+					if($sms_status['business_outlet_sms_status']==1){
+							if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
+								if($_POST['txn_data']['txn_value']==0){
+								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}
+							}
+							//
+							if($_POST['send_sms'] === 'true' && $_POST['cashback']==0){
+								if($_POST['txn_data']['txn_value']==0){
+								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}else{		
+								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}
+							}
+					 	}
 					//
         
 					$this->ReturnJsonArray(true,false,"Transaction is successful!");
@@ -7017,8 +7019,8 @@ public function AddToCartRedeemPoints(){
 		public function AddInventory(){
 			if($this->IsLoggedIn('cashier')){
 				if(isset($_POST) && !empty($_POST)){
-					$this->form_validation->set_rules('invoice_number','OTC Name', 'trim|required');
-					$this->form_validation->set_rules('invoice_date', 'SKU', 'trim|required');
+					$this->form_validation->set_rules('invoice_number','Invoice Number', 'trim|required');
+					$this->form_validation->set_rules('invoice_date', 'Date', 'trim|required');
 			
 					if ($this->form_validation->run() == FALSE){
 							$data = array(
@@ -7060,6 +7062,7 @@ public function AddToCartRedeemPoints(){
 								'expiry_date'					=>$_POST['product_exp_date'][$key]
 							);
 							$this->CashierModel->Insert($data3,'inventory_data');
+
 							$where=array(
 								'stock_service_id' => $_POST['product_id'][$key],
 								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id']
@@ -7067,9 +7070,11 @@ public function AddToCartRedeemPoints(){
 							$data4=array(
 								'stock_service_id' => $_POST['product_id'][$key],
 								'total_stock'=> $_POST['product_qty'][$key],
+								'stock_in_unit'=>($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
 								'updated_on'	=>date('Y-m-d')
 							);
+					
 							$stock_exist= $this->CashierModel->CheckStockExist($where);
 							if($stock_exist['success']=='true'){
 								$update_stock=$this->CashierModel->UpdateInventoryStock($data4);
@@ -7140,6 +7145,7 @@ public function AddToCartRedeemPoints(){
 						$data4=array(
 							'stock_service_id' => $_POST['product_id'][$key],
 							'total_stock'=> $_POST['product_qty'][$key],
+							'stock_in_unit'	=> ($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 							'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
 							'updated_on'	=>date('Y-m-d')
 						);
@@ -7181,12 +7187,14 @@ public function AddToCartRedeemPoints(){
 				$data=array(
 					'stock_service_id' => $_POST['service_id'],
 					'total_stock'=> $_POST['total_stock'],
+					'stock_in_unit'=>($_POST['total_stock']*$_POST['stock_in_unit']),
 					'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
 					'updated_on'	=>date('Y-m-d')
 				);
 				$data2=array(
 					'stock_service_id' => $_POST['service_id'],
 					'total_stock'=> $_POST['total_stock'],
+					'stock_in_unit'=>($_POST['total_stock']*$_POST['stock_in_unit']),
 					'stock_outlet_id'	=> $_POST['sender_outlet_id'],
 					'updated_on'	=>date('Y-m-d')
 				);
