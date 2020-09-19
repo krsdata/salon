@@ -10840,6 +10840,7 @@ public function InsertSalary(){
 							print(json_encode($data, JSON_PRETTY_PRINT));
 							die;
 						}else{
+								$this->db->trans_start();
 								$data2=array(
 									'invoice_number'    =>  $this->input->post('invoice_number'),
 									'invoice_date'   		=>  $this->input->post('invoice_date'),
@@ -10887,6 +10888,34 @@ public function InsertSalary(){
 									}else{
 										$insert_stock=$this->CashierModel->Insert($data4,'inventory_stock');
 									}
+
+									//making entry i expense table
+									$data5=array(
+										'expense_unique_serial_id'	=>	'E1010Y',
+										'expense_date'							=>	date('Y-m-d'),
+										'expense_type_id'						=>	'10000',
+										'item_name'									=>	'Inventory',
+										'employee_name'							=>	$this->session->userdata['logged_in']['business_admin_name'],
+										'total_amount'							=>	$this->input->post('invoice_amount'),
+										'amount'										=>	$this->input->post('amount_paid'),
+										'payment_type'							=>	$this->input->post('source_type'),
+										'payment_to'								=>	$this->input->post('source_type'),
+										'payment_to_name'						=>	$this->input->post('source_name'),
+										'invoice_number'						=>	$this->input->post('invoice_number'),
+										'remarks'										=>	$this->input->post('note'),
+										'payment_mode'							=>	$this->input->post('payment_mode'),
+										'expense_status'						=>	$this->input->post('payment_status'),
+										'pending_amount'						=>	($this->input->post('invoice_amount')- $this->input->post('amount_paid')),
+										'bussiness_outlet_id'				=>	$this->session->userdata['outlets']['current_outlet']
+									);
+
+									$insert_expense=$this->CashierModel->Insert($data5,'mss_expenses');
+
+								}
+								$this->db->trans_complete();
+								if ($this->db->trans_status() === FALSE){
+									$this->ReturnJsonArray(false,true,"Error in Stock Addition!");
+									die;
 								}
 								$this->ReturnJsonArray(true,false,"Inventory added successfully!");
 								die;						
