@@ -530,7 +530,7 @@
 																							<select id="category_type1" multiple class="form-control" name="category_type1[]">
 																								<option value="Service">Service</option>
 																								<option value="Products">Product</option>
-																							</select>
+																							</select><input type="hidden" name="category_type1_index[]" />
 																						</div>
 																					</td>
 																					<td>
@@ -1182,7 +1182,7 @@
 			 var packageId = $(this).attr('salon_package_id');
 			 $("#hd_salon_package_id").val(packageId);
 			 /* Get Details from db */
-			  var parameters = {packageId:packageId};
+			  var parameters = {packageId:packageId,outletId:$("#Outlets-select").val()};
 				$.getJSON("<?=base_url()?>MasterAdmin/GetPackageDetailsById", parameters)
 				.done(function(data, textStatus, jqXHR) {
 					console.log(data.outletIds);
@@ -1810,6 +1810,9 @@
 					$("#discountCategoryBulkTable tr").each(function(i){
 						$(this).find('td input[name="service_discount_category_bulk_index[]"]').val($(this).find("td select[name='discount_service_category_bulk[]']").val());
 					});
+					$("#specialMembershipTable1 tr").each(function(i){
+						$(this).find('td input[name="category_type1_index[]"]').val($(this).find("td select[name='category_type1[]']").val());
+					});
 					
 					
 					var formData = $("#AddPackage").serialize(); 
@@ -1880,7 +1883,7 @@
 				if(rowno<=2){
 					var htmlContent = "";
 					htmlContent +='<tr><td><div class="form-group">';
-					htmlContent +='<select class="form-control" multiple name="category_type1[]"><option value="service" >Service</option><option value="otc">Products</option></select>';
+					htmlContent +='<select class="form-control" multiple name="category_type1[]"><option value="service" >Service</option><option value="otc">Products</option></select><input type="hidden" name="category_type1_index[]" />';
 					htmlContent +='</div></td><td><div class="form-group"><input type="number" class="form-control" min="0" name="min_price1[]" placeholder="Min price"></div></td>';
 					htmlContent +='<td><div class="form-group"><input type="number" class="form-control" min="0" name="max_price1[]" placeholder="Max price"></div></td>';
 					htmlContent +='<td><div class="form-group"><input type="number" min="0" placeholder="Discount % " class="form-control" name="special_discount1[]"></div></td></td></tr>';

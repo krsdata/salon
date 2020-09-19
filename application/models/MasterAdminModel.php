@@ -574,33 +574,129 @@ class MasterAdminModel extends CI_Model
         
         return $this->ModelHelper(true,false,'',array('insert_id'=>$last_insert_id));
     }
-  
+     public function ServiceBetweenPrice($data){
+		// $this->PrintArray($data);
+        $sql="SELECT 
+					master_services.service_id
+				FROM 
+					master_services,
+					mss_sub_categories,
+					master_categories
+				WHERE
+					master_services.service_type=".$this->db->escape($data['category_type'])." AND
+					master_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
+					mss_sub_categories.sub_category_category_id= master_categories.category_id AND
+					master_services.service_price_inr BETWEEN ".$this->db->escape($data['min_price'])." AND ".$this->db->escape($data['max_price'])." AND 
+					master_categories.master_id=".$this->db->escape($data['master_id'])." ";
+                    
+        $query = $this->db->query($sql);
+        
+        if($query){
+        return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+        return $this->ModelHelper(false,true,"DB error!");   
+        } 
+    }
+	  public function ServiceBetweenPrice2($data){
+		  // $this->PrintArray($data);
+        $sql="SELECT DISTINCT
+					master_services.service_id
+				FROM 
+					master_services,
+					mss_sub_categories,
+					master_categories
+				WHERE
+					master_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
+					mss_sub_categories.sub_category_category_id=  ".$this->db->escape($data['category_id'])." AND
+					master_services.service_price_inr BETWEEN ".$this->db->escape($data['min_price'])." AND ".$this->db->escape($data['max_price'])." AND 
+					master_categories.master_id=".$this->db->escape($data['master_id'])." ";
+                    
+        $query = $this->db->query($sql);
+        
+        if($query){
+        return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+        return $this->ModelHelper(false,true,"DB error!");   
+        } 
+    }
+
+    public function ServiceBetweenPrice3($data){
+		  // $this->PrintArray($data);
+        $sql="SELECT DISTINCT
+					master_services.service_id
+				FROM 
+					master_services,
+					mss_sub_categories,
+					master_categories
+				WHERE
+					master_services.service_sub_category_id= ".$this->db->escape($data['sub_category_id'])." AND
+					mss_sub_categories.sub_category_category_id= master_categories.category_id AND
+					master_services.service_price_inr BETWEEN ".$this->db->escape($data['min_price'])." AND ".$this->db->escape($data['max_price'])." AND 
+					master_categories.master_id=".$this->db->escape($data['master_id'])." ";
+                    
+        $query = $this->db->query($sql);
+        
+        if($query){
+        return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+        return $this->ModelHelper(false,true,"DB error!");   
+        } 
+    }
+    
+    public function ServiceBetweenPrice4($data){
+		  // $this->PrintArray($data);
+        $sql="SELECT 
+					master_services.service_id
+				FROM 
+					master_services
+				WHERE
+					master_services.service_type=".$this->db->escape($data['category_type'])." AND 
+					master_services.service_id= ".$this->db->escape($data['service_id'])." ";
+                    
+        $query = $this->db->query($sql);
+        
+        if($query){
+        return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+        return $this->ModelHelper(false,true,"DB error!");   
+        } 
+    }   
  //ServicePAckage
 	public function AddDiscountServicePackage($post,$data,$count,$where,$outletIds,$masterId){
-        // $this->PrintArray($_POST['category_type1']);
+        $categoryType1Index = $data['category_type1_index'];
+	    unset($data['category_type1_index']);
+		// $this->PrintArray($_POST);
 		$result = $this->Insert($data,'mss_salon_packages');
 		$last_insert_id = $result['res_arr']['insert_id'];	
 		$servicesIds = array();
         if(!empty($_POST['category_type1'])){
-            for($i=0;$i<count($_POST['category_type1']);$i++){
+		  foreach($outletIds as $outletId){
+			 for($i=0;$i<count($_POST['category_type1']);$i++){
                 $filter=array(
                     'category_type'=>$_POST['category_type1'][$i],
-                    'min_price'=>$_POST['min_price1'][0],
-                    'max_price'=>$_POST['max_price1'][0],
-                    'business_admin_id'=>$where['business_admin_id']
+                    'min_price'=>$_POST['min_price1'][$i],
+                    'max_price'=>$_POST['max_price1'][$i],
+					'master_id'=>$where['master_id']
+                    //'business_admin_id'=>$where['business_admin_id']
                     //'business_outlet_id'=>$where['business_outlet_id']
                 );
                 // $categories=$this->ServiceByPrice($co);
                 $result_2=$this->ServiceBetweenPrice($filter);
                 $result_2=$result_2['res_arr'];
-                // echo $result_2[1]['service_id'];
+                //$this->PrintArray($result_2);
+				// echo $result_2[1]['service_id'];
                 // exit;
-              foreach($outletIds as $outletId){  
+              	  	
 					for($k=0;$k< count($result_2);$k++){
+						
 						$data_2 = array(
 						'salon_package_id' => $last_insert_id,
 						'service_id' => 0,
-						'discount_percentage' => $_POST['special_discount1'][$i],
+						'discount_percentage' => (int) $_POST['special_discount1'][$i],
 						'service_monthly_discount'=>$_POST['package_monthly_discount'],
 						'birthday_discount' =>$_POST['birthday_discount'],
 						'anni_discount'	=> $_POST['anniversary_discount'],
@@ -612,23 +708,26 @@ class MasterAdminModel extends CI_Model
 						$result = $this->Insert($data_2,'mss_salon_package_data');
 						$servicesIds[] = $result_2[$k]['service_id'];					
 					}
-			   }
+				  
+			  } 
             }
         }        
         if(!empty($_POST['special_category_id2'])){
+		 foreach($outletIds as $outletId){	
             for($i=0;$i<count($_POST['special_category_id2']);$i++){
                 $filter2=array(
                     // 'category_type'=>$_POST['category_type2'],
                     'category_id'=>$_POST['special_category_id2'][$i],
-                    'min_price'=>$_POST['min_price2'][0],
-                    'max_price'=>$_POST['max_price2'][0],
+                    'min_price'=>$_POST['min_price2'][$i],
+                    'max_price'=>$_POST['max_price2'][$i],
+					'master_id'=>$where['master_id'],
                     'business_admin_id'=>$where['business_admin_id'],
                     'business_outlet_id'=>$where['business_outlet_id']
                 );
                 // $categories=$this->ServiceByPrice($co);
                 $result_3=$this->ServiceBetweenPrice2($filter2);
                 $result_3=$result_3['res_arr'];
-				foreach($outletIds as $outletId){  	
+				  	
 					for($k=0;$k< count($result_3);$k++){
 						$data_3 = array(
 						'salon_package_id' => $last_insert_id,
@@ -649,19 +748,21 @@ class MasterAdminModel extends CI_Model
             }
         }
         if(!empty($_POST['special_sub_category_id3'])){
+		  foreach($outletIds as $outletId){	
             for($i=0;$i< count($_POST['special_sub_category_id3']);$i++){
                 $filter3=array(
                     // 'category_type'=>$_POST['category_type3'],
                     'sub_category_id'=>$_POST['special_sub_category_id3'][$i],
                     'min_price'=>$_POST['min_price3'][$i],
                     'max_price'=>$_POST['max_price3'][$i],
+					'master_id'=>$where['master_id'],
                     'business_admin_id'=>$where['business_admin_id'],
                     'business_outlet_id'=>$where['business_outlet_id']
                 );
                 // $categories=$this->ServiceByPrice($co);
                 $result_3=$this->ServiceBetweenPrice3($filter3);
                 $result_3=$result_3['res_arr'];
-                foreach($outletIds as $outletId){
+                
 					for($k=0;$k< count($result_3);$k++){
 						$data_3 = array(
 						'salon_package_id' => $last_insert_id,
@@ -853,8 +954,7 @@ class MasterAdminModel extends CI_Model
     //create a services packages
 	 foreach($outletIds as $outletId){ 	
 		for ($i = 0; $i < count($services); $i++) {
-			
-		   $serviceCount = 0;
+			$serviceCount = 0;
 			 /* Find Count */
 			 if(!empty($serviceIdIndex)){
 				foreach($serviceIdIndex as $key=>$serviceGroup){
@@ -873,15 +973,12 @@ class MasterAdminModel extends CI_Model
 			'outlet_id' => $outletId
 		  );
 		  $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
-
-		  if ($result_2['success'] == 'true') {
-			$count = $count + 1;
-		  }
+		  
 		}
 	 }
-    if ($count  == count($services)) {
+    if ($last_insert_id>0) {
 	  /* Outlet_services */
-	  $this->AddServiceForOutlet($services,$outletIds);	
+	  //$this->AddServiceForOutlet($services,$outletIds);	
 	  $data = array('insert_id' => $last_insert_id);
       return $this->ModelHelper(true, false,'',$data);
     } else {
@@ -928,21 +1025,16 @@ class MasterAdminModel extends CI_Model
 		  );
 		  $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
 
-		  if ($result_2['success'] == 'true') {
-			$count = $count + 1;
-		  }
 		}
 	}
 
-    if ($count  == count($services)){ 
+    if ($last_insert_id>0){ 
       /* Outlet_services */
-	  $this->AddServiceForOutlet($services,$outletIds);			
+	  //$this->AddServiceForOutlet($services,$outletIds);			
       return $this->ModelHelper(true, false,'',array('insert_id' => $last_insert_id));
-    } elseif ($count == 0) {
+    } else{
       return $this->ModelHelper(false, true, "Cannot Process!");
-    } else {
-      return $this->ModelHelper(true, false, "Parially Processed,Consider deactivating package!");
-    }
+    } 
   }
   
   public function AddServiceForOutlet($servicesIds=array(),$outletIds=array()){
@@ -988,16 +1080,23 @@ class MasterAdminModel extends CI_Model
     }
   }
   
-  public function GetPackageDetailsByAssociationId($where)
+  public function GetPackageDetailsById($where)
   {
-    $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`association_id`=" . $this->db->escape($where['association_id']) . "  AND A.`package_id`=B.salon_package_id";
-	$query = $this->db->query($sql);
+    //$sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`association_id`=" . $this->db->escape($where['association_id']) . "  AND A.`package_id`=B.salon_package_id";
+	$sql = "SELECT mss_salon_packages.*,mss_salon_package_data.*
+		   FROM mss_salon_packages,
+				mss_salon_package_data
+				WHERE 
+				mss_salon_packages.salon_package_id = mss_salon_package_data.salon_package_id AND  
+				mss_salon_package_data.outlet_id=".$this->db->escape($where['outlet_id'])." AND mss_salon_packages.salon_package_id = ".$this->db->escape($where['salon_package_id'])."";
+				$query = $this->db->query($sql);
 	
-    if ($query) {
-      return $this->ModelHelper(true, false, '', $query->row_array());
-    } else {
-      return $this->ModelHelper(false, true, "DB error!");
-    }
+	if($query){
+		return $this->ModelHelper(true,false,'',$query->result_array());
+	}
+	else{
+		return $this->ModelHelper(false,true,"DB error!");   
+	}
   }
   
   

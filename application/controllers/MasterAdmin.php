@@ -145,21 +145,23 @@ class MasterAdmin extends CI_Controller {
 		}		
 	}
 	
-	private function getServiceDetailsByPackageId($packageId){
+	private function getServiceDetailsByPackageId($packageId,$outletId){
 	
 		$returnServiceRecords =$serviceRecords_2 = $serviceIds = $subCategoryIds = array();
 		if($this->IsLoggedIn('master_admin')){
 			$where = array(
 				'master_id' 	   => $this->session->userdata['logged_in']['master_admin_id'],
-				'salon_package_id' => $packageId
+				'salon_package_id' => $packageId,
+				'outlet_id' => $outletId
 			);
            
 			$data = $this->MasterAdminModel->MultiWhereSelect('mss_salon_package_data',$where);
 			
 			if($data['success'] == 'true' && !empty($data['res_arr'])){	
 				foreach($data['res_arr'] as $key=>$serviceRecords_1){
-					$serviceIds[] = $serviceRecords_1['service_id'];
+					$serviceIds[] = $serviceRecords_1['master_service_id'];
 				}
+				
 				/* Get Sub Category based on service Id */
 				$masterServiceDetails =$this->MasterAdminModel->getMasterServicesByIds(implode(',',$serviceIds));
 				
@@ -173,9 +175,11 @@ class MasterAdmin extends CI_Controller {
 																			'qty_per_item'=>$masterService['qty_per_item']
 																		  );
 					}
+					
 					/* Merge the service record 1,2 */
+					
 					foreach($data['res_arr'] as $key=>$serviceDetails){
-						$serviceDetails['service_id'] = (int) $serviceDetails['service_id'];
+						$serviceDetails['service_id'] = (int) $serviceDetails['master_service_id'];
 						$returnServiceRecords[] = array_merge($serviceDetails,$serviceRecords_2[$serviceDetails['service_id']]);
 					}
 					
@@ -4025,12 +4029,13 @@ class MasterAdmin extends CI_Controller {
 						$where=array(
 							// 'category_type'=> $_POST['category_type'],
 							// 'service_price_inr' 	=> $_POST['price_greater_than'],
-							'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+							'master_id'			 => $this->session->userdata['logged_in']['master_admin_id'],
+							'business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
 							'business_outlet_id' => $this->session->userdata['outlets']['current_outlet']
 						);
 						// $discounts =  $this->input->post('special_discount');
 						$counts = 100;
-					
+					   
 						if(!empty($counts)){
 							$result = $this->MasterAdminModel->AddDiscountServicePackage($_POST,$data,$counts,$where,$outletIds,$masterId);
 							/* Associate Package with multiple outlet*/ 
@@ -4087,17 +4092,22 @@ class MasterAdmin extends CI_Controller {
 		if($this->IsLoggedIn('master_admin')){
 			if(isset($_GET) && !empty($_GET)){
 				$where = array(
-					'package_id'  => $_GET['packageId']
+					'salon_package_id'=> $_GET['packageId'],
+					'outlet_id' => $_GET['outletId'],
 				);
 				
-				$packageDetails = $this->MasterAdminModel->GetPackageDetailsByAssociationId($where);
+				$packageDetails = $this->MasterAdminModel->GetPackageDetailsById($where);
+				//$this->PrettyPrintArray($packageDetails);
 				$outletIds = array();
 				if(!empty($packageDetails)){
-					$data = $packageDetails['res_arr'];
+					$packageData = $packageDetails['res_arr'];
+					if(!empty($packageData)){
+						$data = $packageData[0];
+					}
 					/* Get all Service Details which is assign to this package */
 					
-					$data['servicesDetails'] = $this->getServiceDetailsByPackageId($packageDetails['res_arr']['package_id']);
-					$data['outletIds'] = $this->MasterAdminModel->getOutletsByPackageId($packageDetails['res_arr']['package_id']);
+					$data['servicesDetails'] = $this->getServiceDetailsByPackageId($_GET['packageId'],$_GET['outletId']);
+					$data['outletIds'] = $this->MasterAdminModel->getOutletsByPackageId($_GET['packageId']);
 					if(!empty($data['outletIds']['res_arr'])){
 						foreach($data['outletIds']['res_arr'] as $outletId){
 							 if(!in_array($outletId['outlet_id'],$outletIds)) { $outletIds[] = $outletId['outlet_id']; }
