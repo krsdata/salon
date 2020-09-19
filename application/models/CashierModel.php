@@ -822,36 +822,19 @@ class CashierModel extends CI_Model {
                     'consumption_quantity' =>(int)$quantity
                 );
                 $this->UpdateStockFromOTC($temp);
-            }else{
-                $sql="Select * from mss_services where service_id =".$service_id."";
-                $query = $this->db->query($sql);
-                $data=$query->result_array();
-                $master_admin = $this->CashierModel->DetailsById($this->session->userdata['logged_in']['business_admin_id'],'mss_business_admin','business_admin_id');
-                $master_admin_id = $master_admin['res_arr']['business_master_admin_id'];
-                $service_details = $this->ServiceDetail($service_id);
-                $service_details = $service_details['res_arr'][0];
+            }else{                
                 $temp = array(
-                    'service_id' => $service_id,
-                    'master_admin_id'=>$master_admin_id,
-                    'business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id'],
-                    'outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id'],
-                    'barcode_id'=>$service_details['barcode_id'],
-                    'barcode'=>$data[0]['barcode'],
-                    'brand_name'=>$data[0]['service_brand'],
-                    'product_type'  => $service_details['sub_category_name'],
-                    'usg_category'=>$data[0]['inventory_type'],
-                    'sku_size'=>$data[0]['qty_per_item'],
-                    'unit'=>$data[0]['service_unit'],
-                    'mrp'  =>$service_details['service_price_inr']+($service_details['service_price_inr']*($service_details['service_gst_percentage']/100)),
-                    'sku_count'=>(int)0-(int)$quantity,
-                    'stock_level'=>'',
-                    'usg_category'=>'',
-                    'expiry'=>' ',
-                    'low_stock_level'=>' '
+                    'stock_service_id' => $service_id,
+					'total_stock'	=>0,
+					'stock_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id'],
+					'updated_on'=>date('Y-m-d')
                 );
-                $this->Insert($temp,'mss_inventory');
-                // $this->PrettyPrintArray($temp);
-                // $this->UpdateStockFromOTC1($temp);
+				$this->Insert($temp,'inventory_stock');
+				$temp1 = array(
+                    'otc_service_id' => $service_id,
+                    'consumption_quantity' =>(int)$quantity
+                );
+                $this->UpdateStockFromOTC($temp1);
             }
         }
 
@@ -926,8 +909,9 @@ class CashierModel extends CI_Model {
 
     private function UpdateStockFromOTC($data){
 		// $query1 = "UPDATE mss_inventory SET sku_count = sku_count  - ".(int)$data['consumption_quantity']." WHERE service_id = ".$data['otc_service_id']."";
+		
 		$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
-        $this->db->query($query1); 
+		$this->db->query($query1);
     }
 
     public function GetAllExpenses($where){
@@ -3309,9 +3293,15 @@ class CashierModel extends CI_Model {
 	}
 
 	public function AvailableStock($data){
-		$sql="SELECT mss_services.*, inventory_stock.* FROM	inventory_stock,
-				mss_services
+		$sql="SELECT mss_services.*, 
+			inventory_stock.*,
+			mss_business_outlets.business_outlet_name
+			FROM	
+			inventory_stock,
+			mss_services,
+			mss_business_outlets
 			WHERE inventory_stock.stock_service_id = mss_services.service_id AND
+			mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." AND
 			inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
@@ -3325,8 +3315,14 @@ class CashierModel extends CI_Model {
 
 
 	public function IncomingStock($data){
-		$sql="SELECT inventory_transfer.*,inventory_transfer_data.* FROM inventory_transfer, inventory_transfer_data
-		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND inventory_transfer_data.transfer_status=0 AND inventory_transfer.destination_name= ".$this->db->escape($data['business_outlet_id'])." ";
+		$sql="SELECT inventory_transfer.*,
+		inventory_transfer_data.*, 
+		mss_business_outlets.business_outlet_name AS 'source',
+		mss_business_outlets.business_outlet_name AS 'destination'
+		FROM inventory_transfer, inventory_transfer_data, mss_business_outlets
+		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND inventory_transfer_data.transfer_status=0 AND 
+		inventory_transfer.destination_name= mss_business_outlets.business_outlet_id AND 
+		inventory_transfer.destination_name= ".$this->db->escape($data['business_outlet_id'])." AND mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
         if($query){

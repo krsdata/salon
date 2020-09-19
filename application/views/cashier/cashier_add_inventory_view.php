@@ -423,10 +423,17 @@
 														</div>
 													</div>
 												</form> -->
-												<h3>Available Stock</h3>
+												<div class="row">
+													<div class="col-md-6">
+														<h3>Available Stock</h3>
+													</div>
+													<div class="col-md-6">
+													<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-download"></i> Download</button>
+													</div>
+												</div>												
 											</div>
 											<div class="card-body">
-												<table class="table table-hover datatables-basic" style="width: 100%;">
+												<table class="table table-hover datatables-basic" style="width: 100%;" id="availableStock">
 													<thead>
 														<th>Sr. No.</th>
 														<th>Product Name</th>
@@ -434,6 +441,7 @@
 														<th>Barcode</th>
 														<th>SKU size</th>
 														<th>Total Stock</th>
+														<th>Entry Date</th>
 														<th>Location</th>
 													</thead>
 													<tbody>
@@ -444,11 +452,9 @@
 														<td><?=$stock['inventory_type'];?></td>
 														<td><?=$stock['barcode'];?></td>
 														<td><?=$stock['qty_per_item'];?></td>
-														<!-- <td>200</td>
-														<td>150</td>
-														<td>50</td> -->
 														<td><?=$stock['total_stock'];?></td>
-														<td><?=$stock['service_name'];?></td>
+														<td><?=$stock['updated_on'];?></td>
+														<td><?=$stock['business_outlet_name'];?></td>
 														</tr>
 														<?php $count++; }?>
 													</tbody>
@@ -470,6 +476,10 @@
 														<th>Barcode</th>
 														<th>SKU size</th>
 														<th>Product Qty</th>
+														<th>MRP</th>
+														<th>Entry Date</th>
+														<th>Source</th>
+														<th>Destnation</th>
 														<th>Actions</th>
 													</thead>
 													<tbody>
@@ -481,6 +491,10 @@
 														<td><?=$incoming['product_barcode'];?></td>
 														<td><?=$incoming['sku_size'];?></td>
 														<td><?=$incoming['product_qty'];?></td>
+														<td><?=$incoming['product_mrp'];?></td>
+														<td><?=$incoming['invoice_date'];?></td>
+														<td><?=$incoming['source'];?></td>
+														<td><?=$incoming['destination'];?></td>
 														<td>
 															<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
 															<button class='btn btn-danger rejectInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>'><i class='fa fa-times'>Reject</i></button>
@@ -506,6 +520,7 @@
 														<th>Barcode</th>
 														<th>SKU size</th>
 														<th>Product Qty</th>
+														<th>MRP</th>
 														<th>Status</th>
 													</thead>
 													<tbody>
@@ -517,6 +532,7 @@
 														<td><?=$outgoing['product_barcode'];?></td>
 														<td><?=$outgoing['sku_size'];?></td>
 														<td><?=$outgoing['product_qty'];?></td>
+														<td><?=$outgoing['product_mrp'];?></td>
 														<td>
 															<?php if($outgoing['transfer_status']==0){?>
 															<button class='btn btn-warning' disabled>No action</button>
@@ -1452,4 +1468,36 @@
         document.getElementById("itotal_cost").value = totalamount;
         
     });
+</script>
+<script>
+	function exportTableToExcel(tableID, filename = ''){
+			var downloadLink;
+			var dataType = 'application/vnd.ms-excel';
+			var tableSelect = document.getElementById(tableID);
+			var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+			
+			// Specify file name
+			filename = filename?filename+'.xls':'excel_data.xls';
+			
+			// Create download link element
+			downloadLink = document.createElement("a");
+			
+			document.body.appendChild(downloadLink);
+			
+			if(navigator.msSaveOrOpenBlob){
+					var blob = new Blob(['\ufeff', tableHTML], {
+							type: dataType
+					});
+					navigator.msSaveOrOpenBlob( blob, filename);
+			}else{
+					// Create a link to the file
+					downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+			
+					// Setting the file name
+					downloadLink.download = filename;
+					
+					//triggering the function
+					downloadLink.click();
+			}
+	}
 </script>
