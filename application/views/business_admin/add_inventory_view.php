@@ -478,6 +478,7 @@
 															<th>Barcode</th>
 															<th>SKU size</th>
 															<th>Total Stock</th>
+															<th>Stock in Unit</th>
 															<th>Last Updated</th>
 															<th>Location</th>
 															<th>Action</th>
@@ -491,6 +492,7 @@
 																	<td><?=$stock['barcode'];?></td>
 																	<td><?=$stock['qty_per_item'].' '.$stock['service_unit'];?></td>
 																	<td><?=$stock['total_stock'];?></td>
+																	<td><?=$stock['stock_in_unit'];?></td>
 																	<td><?=$stock['updated_on'];?></td>
 																	<td><?=$stock['business_outlet_name'];?></td>
 																	<td>
@@ -540,7 +542,7 @@
 															<td><?=$incoming['destination'];?></td>
 															<td>
 																<?php if($incoming['transfer_status']==0){?>
-																<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
+																<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sku_size="<?=$incoming['sku_size']?>" sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
 																<button class='btn btn-danger rejectInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>'><i class='fa fa-times'>Reject</i></button>
 																<?php }else{?>
 																	Accepted
@@ -1139,6 +1141,7 @@
 			var parameters = {
 					transfer_data_id : $(this).attr('trans_data_id'),
 					total_stock : $(this).attr('total_stock'),
+					stock_in_unit:$(this).attr('sku_size'),
 					service_id	:	$(this).attr('stock_service_id'),
 					sender_outlet_id	:	$(this).attr('sender_outlet')
 			};	

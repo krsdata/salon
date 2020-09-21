@@ -342,8 +342,8 @@ class CashierModel extends CI_Model {
 
     public function CheckRmStockExists($where){
         $this->db->select('*');
-        $this->db->from('mss_raw_material_stock');
-        $this->db->where('rmc_id',$where['rmc_id']);
+        $this->db->from('inventory_stock');
+        $this->db->where('stock_service_id',$where['stock_service_id']);
         
         $query = $this->db->get();
 
@@ -762,8 +762,8 @@ class CashierModel extends CI_Model {
 
         for($i=0;$i<count($data['cart_data']);$i++){
             $service_data = array(
-                 'txn_service_service_id' => $data['cart_data'][$i]['service_id'],
-                 'txn_service_quantity'   => $data['cart_data'][$i]['service_quantity']
+                'txn_service_service_id' => $data['cart_data'][$i]['service_id'],
+                'txn_service_quantity'   => $data['cart_data'][$i]['service_quantity']
             );
             
             $this->UpdateStock($service_data);
@@ -792,19 +792,21 @@ class CashierModel extends CI_Model {
         if($service_details['service_type'] == 'service'){
             //Check whether service composition exists
             $where = array('service_id' => $service_id);
-            $CompositionExists = $this->CheckCompositionExists($where);
+			$CompositionExists = $this->CheckCompositionExists($where);
             if($CompositionExists['success'] == 'true'){
                 //Update the stock by the quantity
                 $service_composition = $this->GetCompostion($where);
+				// $this->PrintArray($service_composition);
 
                 //Again Check for each composition item whether its stock exists
                 //if exists then reduce it by the consumption quantity
                 foreach ($service_composition as $composition) {
-                    $result = $this->CheckRmStockExists(array('rmc_id' => $composition['rmc_id']));  
+					$result = $this->CheckRmStockExists(array('stock_service_id'=>$composition['rmc_id']));  
+					
                     if($result['success'] == 'true'){
                         //Subtract the composition consumption quantity from stock
                         $temp = array(
-                            'rmc_id' =>$composition['rmc_id'],
+                            'stock_service_id' =>$composition['rmc_id'],
                             'consumption_quantity' => (int)$composition['consumption_quantity'] * (int)$quantity
                         );
                         $this->UpdateStockFromComposition($temp);
@@ -903,7 +905,7 @@ class CashierModel extends CI_Model {
     }
 
     private function UpdateStockFromComposition($data){
-         $query = "UPDATE mss_raw_material_stock SET rm_stock = rm_stock  - ".(int)$data['consumption_quantity']." WHERE rmc_id = ".$data['rmc_id']."";
+         $query = "UPDATE inventory_stock SET stock_in_unit = stock_in_unit  - ".(int)$data['consumption_quantity']." WHERE stock_service_id = ".$data['stock_service_id']."";
         $this->db->query($query);  
     }
 
@@ -3328,7 +3330,7 @@ class CashierModel extends CI_Model {
 				mss_business_outlets t1 on inventory_transfer.business_outlet_id = 
 					t1.business_outlet_id            
 		WHERE  
-		inventory_transfer.business_outlet_id = ".$this->db->escape($data['business_outlet_id'])." ";
+		inventory_transfer.destination_name = ".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
         if($query){
@@ -3368,6 +3370,7 @@ class CashierModel extends CI_Model {
 	public function UpdateInventoryStock($data){
 		$sql="UPDATE inventory_stock 
 		SET inventory_stock.total_stock= (inventory_stock.total_stock +  ".$data['total_stock']."),
+		inventory_stock.stock_in_unit 	= (inventory_stock.stock_in_unit +  ".$data['stock_in_unit']."),
 		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
 		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
 		   
@@ -3386,6 +3389,7 @@ class CashierModel extends CI_Model {
 	public function UpdateSenderInventoryStock($data){
 		$sql="UPDATE inventory_stock 
 		SET inventory_stock.total_stock= (inventory_stock.total_stock -  ".$data['total_stock']."),
+		inventory_stock.stock_in_unit= (inventory_stock.stock_in_unit -  ".$data['stock_in_unit']."),
 		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
 		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
 		   
@@ -3417,6 +3421,7 @@ class CashierModel extends CI_Model {
 	public function UpdateInventoryStockTransfer($data){
 		$sql="UPDATE inventory_stock 
 		SET inventory_stock.total_stock= (inventory_stock.total_stock -  ".$data['total_stock']."),
+		inventory_stock.stock_in_unit 	= (inventory_stock.stock_in_unit -  ".$data['stock_in_unit']."),
 		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
 		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
 		   
