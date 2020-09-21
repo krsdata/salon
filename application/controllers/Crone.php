@@ -48,6 +48,10 @@ class Crone extends CI_Controller {
 			$data['package_Amt'] = $package_Amt;
 			$data['admin_name'] = $ol['business_admin_first_name']." ".$ol['business_admin_last_name'];
 			$data['business_outlet_name'] = $ol['business_outlet_name'];
+            $data['business_outlet_address'] = $ol['business_outlet_address'];
+            $data['business_outlet_state'] = $ol['business_outlet_state'];
+            $data['business_outlet_city'] = $ol['business_outlet_city'];
+            $data['business_outlet_country'] = $ol['business_outlet_country'];
 
 
 			// email send
@@ -56,7 +60,7 @@ class Crone extends CI_Controller {
 
 				      'protocol' => 'smtp',
 
-				      'smtp_host' => 'smtp.gmail.com',
+				      'smtp_host' => 'ssl://smtp.gmail.com',
 
 				      'smtp_port' => 465,
 
@@ -86,9 +90,9 @@ class Crone extends CI_Controller {
 
 				  $this->email->subject('Daily collection Report'); // replace it with relevant subject
 
-				  echo "<pre>";
-				  print_r($data);
-				  die;
+				  // echo "<pre>";
+				  // print_r($data);
+				  // die;
 
 				    $body = $this->load->view('kpi',$data,TRUE);
 

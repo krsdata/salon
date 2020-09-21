@@ -6,7 +6,7 @@ class CronModel extends CI_Model {
 	//Generic function which will give all details by primary key of table
 
     public function getOutLetsAdmin(){
-        $sql = "SELECT t1.business_admin_id,t2.business_outlet_id,t1.business_admin_email,t1.business_admin_first_name,t1.business_admin_last_name,t2.business_outlet_name FROM `mss_business_admin` t1 INNER JOIN mss_business_outlets t2 on t1.`business_admin_id` = t2.business_outlet_business_admin WHERE t2.business_outlet_status = 1 GROUP by t1.business_admin_email ORDER by t1.business_admin_id asc";
+        $sql = "SELECT t1.business_admin_id,t2.business_outlet_id,t1.business_admin_email,t1.business_admin_first_name,t1.business_admin_last_name,t2.business_outlet_name,t2.business_outlet_address,t2.business_outlet_state,t2.business_outlet_city,t2.business_outlet_country FROM `mss_business_admin` t1 INNER JOIN mss_business_outlets t2 on t1.`business_admin_id` = t2.business_outlet_business_admin WHERE t2.business_outlet_status = 1 GROUP by t1.business_admin_email ORDER by t1.business_admin_id asc";
         $query = $this->db->query($sql);
         if($query && $query->num_rows() > 0){
             return $this->ModelHelper(true,false,'',$query->result_array());

@@ -1,7 +1,8 @@
-<p>Dear <?php echo $admin_name?>,</p>
-<p>Attached is the Daily Business Update for <?php echo date('Y-m-d');?>, updated till 10PM for <?php echo $business_outlet_name?>,
-</p><p>#Location.</p>
-<table style="border-collapse:collapse;width:183pt" width="244" cellspacing="0" cellpadding="0" border="1">
+<p style="text-align:center;"><img src="<?php echo base_url('public/images/SALON FIRST FINAL LOGO.png')?>"></p>
+<p style="text-align:center;">Dear <?php echo $admin_name?>,</p>
+<p style="text-align:center;">Attached is the Daily Business Update for <?php echo date('Y-m-d');?>, updated till 10PM for <?php echo $business_outlet_name?>,
+</p><p style="text-align:center;"><?php echo $business_outlet_address?>,<?php echo $business_outlet_city?>,<?php echo $business_outlet_state?>,<?php echo $business_outlet_country?>.</p>
+<table style="border-collapse:collapse;width:183pt" align="center" width="244" cellspacing="0" cellpadding="0" border="1">
    <colgroup>
       <col style="width:119pt" width="158">
       <col style="width:64pt" width="86">
@@ -11,7 +12,7 @@
          <td style="height:13.2pt;width:119pt;color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)" width="158" height="18">Sales
             (Rs)<br>
          </td>
-         <td style="width:64pt;color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)" width="86">Today<br></td>
+         <td style="width:64pt;color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)" width="86"><?php echo date('Y-m-d'); ?><br></td>
       </tr>
       <tr style="height:13.8pt" height="18">
          <td style="height:13.8pt;color:white;font-size:11pt;font-weight:700;font-family:Cambria,serif;background:rgb(0,176,80)" height="18">Total Sales<br></td>
@@ -35,7 +36,7 @@
       </tr>
       <tr style="height:13.2pt" height="18">
          <td style="height:13.2pt;color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)" height="18">Collections (Rs)<br></td>
-         <td style="color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)">Today<br></td>
+         <td style="color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)"><?php echo date('Y-m-d'); ?><br></td>
       </tr>
       <?php
 		$total_o = 0;
@@ -92,7 +93,7 @@
 		foreach ($collection['p_mode'] as $key => $p) {
 			?>
 			<tr style="height:13.2pt" height="18">
-				<td style="height:13.2pt" height="18"><?php echo ucfirst(str_replace("_", " ", $p));?><br></td>
+				<td style="height:13.2pt" height="18"><?php echo $p_name = ucfirst(str_replace("_", " ", $p));?><br></td>
 				<?php $collection['opening_balance_data'][$p];
 				if($p == "virtual_wallet"){
 					$total_o = $total_o-$collection['opening_balance_data'][$p];
@@ -119,11 +120,19 @@
 					$total_e = $total_e-$collection['expenses_data'][$p];
 				}else{
 					$total_e = $total_e+$collection['expenses_data'][$p];
+				}
+				if('Virtual wallet' == $p_name){
+					?>
+					<td style="height:13.2pt" height="18"><span style="color:red;"><?php echo ($collection['opening_balance_data'][$p]+$collection['transaction_data'][$p]+$collection['pending_amount_data'][$p]-$collection['expenses_data'][$p]);?></span></td>
+					<?php
+				}else{
+					?>
+					<td style="height:13.2pt" height="18"><?php echo ($collection['opening_balance_data'][$p]+$collection['transaction_data'][$p]+$collection['pending_amount_data'][$p]-$collection['expenses_data'][$p]);?></td>
+					<?php
 				}												
-				?>
-				<td style="height:13.2pt" height="18"><?php echo ($collection['opening_balance_data'][$p]+$collection['transaction_data'][$p]+$collection['pending_amount_data'][$p]-$collection['expenses_data'][$p]);?></td>
+				?>				
 			</tr>
-			<?php
+		<?php
 		}
 		?>
       <tr style="height:13.2pt" height="18">
@@ -132,7 +141,7 @@
       </tr>
       <tr style="height:13.2pt" height="18">
          <td style="height:13.2pt;color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)" height="18">Customer Visits<br></td>
-         <td style="color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)">Today<br></td>
+         <td style="color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)"><?php echo date('Y-m-d'); ?><br></td>
       </tr>
       <tr style="height:13.8pt" height="18">
          <td style="height:13.8pt;color:white;font-size:11pt;font-weight:700;font-family:Cambria,serif;background:rgb(0,176,80)" height="18">Total Visits/Bills<br></td>
@@ -152,7 +161,7 @@
       </tr>	 -->
       <!-- <tr style="height:13.2pt" height="18">
          <td style="height:13.2pt;color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)" height="18">Due Amount<br></td>
-         <td style="color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)">Today<br></td>
+         <td style="color:white;font-weight:700;font-family:Cambria,serif;background:rgb(0,112,192)"><?php echo date('Y-m-d'); ?><br></td>
       </tr>
       <tr style="height:13.8pt" height="18">
          <td style="height:13.8pt;color:windowtext;font-size:11pt;font-family:Cambria,serif" height="18">Received<br></td>
@@ -166,8 +175,8 @@
 </table>
 
 
-<p>Please refer to the detailed reports from the business panel, for comprehensive data.</p>
-<p>In case of query, please feel free to reach out to us connect@salonfirst.in</p>
+<p style="text-align:center;">Please refer to the detailed reports from the business panel, for comprehensive data.</p>
+<p style="text-align:center;">In case of query, please feel free to reach out to us connect@salonfirst.in</p>
 
-<p><b>Regards</b></p>
-<p><b>Team Salonfirst</b></p
+<p style="text-align:center;"><b>Regards</b></p>
+<p style="text-align:center;"><b>Team Salonfirst</b>
