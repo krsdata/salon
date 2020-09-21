@@ -20,12 +20,12 @@ class Crone extends CI_Controller {
 			return true;
 
 		foreach ($outlets['res_arr'] as $key => $ol) {
-			$detail = $this->CronModel->DetailsById($ol['business_admin_id'],'2020-09-08');
+			$detail = $this->CronModel->DetailsById($ol['business_admin_id'],date('Y-m-d'));
 			$data['visit'] = 0;
 			if($detail['success'])
 				$data['visit'] = $detail['res_arr']['visit'];
 
-			$where = array('business_outlet_id'=>$ol['business_outlet_id'],'business_admin_id'=>$ol['business_admin_id'],'date'=>'2020-09-08');
+			$where = array('business_outlet_id'=>$ol['business_outlet_id'],'business_admin_id'=>$ol['business_admin_id'],'date'=>date('Y-m-d'));
 			$result = $this->CronModel->GetPaymentWiseReport($where);		
 			$service_Amt = 0;
 			if($result['success']){
@@ -39,7 +39,7 @@ class Crone extends CI_Controller {
 				$package_Amt = $result['res_arr'][0]['Bill Amount'];
 			}		
 			
-			$collection = $this->daybook('2020-07-16',$ol['business_outlet_id']);
+			$collection = $this->daybook(date('Y-m-d'),$ol['business_outlet_id']);
 			
 			$data['collection'] = $collection;
 			$data['service_Amt'] = $service_Amt;
