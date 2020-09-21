@@ -3778,9 +3778,9 @@ class MasterAdmin extends CI_Controller {
 			
 					$data = array(
 						'salon_package_name'        => $this->input->post('salon_package_name'),
-						'salon_package_price'       => $this->input->post('salon_package_price'),
-						'service_gst_percentage'    => $this->input->post('salon_package_gst'),
-						'salon_package_upfront_amt' => $this->input->post('salon_package_upfront_amt'),
+						'salon_package_price'       => round($this->input->post('salon_package_price'),2),
+						'service_gst_percentage'    => round($this->input->post('salon_package_gst'),2),
+						'salon_package_upfront_amt' => round($this->input->post('salon_package_upfront_amt'),2),
 						'salon_package_validity'    => $this->input->post('salon_package_validity'),
 						'salon_package_type' 	    => $this->input->post('salon_package_type'),
 						'business_admin_id'         => 0,
@@ -4456,11 +4456,13 @@ class MasterAdmin extends CI_Controller {
 							'salon_package_id'	    => $key+1,
 							'salon_package_name'    => $package['salon_package_name'],    
 							'salon_package_type'    => $package['salon_package_type'],    
-							'salon_package_date'    => $package['salon_package_date'],   
 							'salon_package_price'   => $package['salon_package_price'],    
-							'service_gst_percentage'=> ($package['service_gst_percentage']*$package['salon_package_price']/100),
-							'total'  			    => ($package['salon_package_price']+($package['service_gst_percentage']*$package['salon_package_price']/100)),
+							'service_gst_percentage'=> $package['service_gst_percentage'],
+							'total'  			    => $package['salon_package_upfront_amt'],
 							'salon_package_validity'=> $package['salon_package_validity'],
+							'salon_package_date'    => $package['salon_package_date'],  
+							'salon_package_end_date'    => $package['salon_package_end_date'],  
+							'outlet_valid_for'		=> '',
 							'package_active_status'  => $action
 							
 				   );

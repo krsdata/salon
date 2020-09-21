@@ -76,16 +76,16 @@ $this->load->view('master_admin/ma_header_view');
                     <table class="table table-striped datatables-basic" style="width: 100%;">
 											<thead>
 												<tr>
-													<th>Sno.</th>
+													<th>S.No.</th>
 													<th>Service Name</th>
 													<th>Service Gross Price</th>
 													<th>Service GST Percentage</th>
-													<th>Service Estimate Time (mins)</th>
 													<th>Service Description</th>
-													<th>Sub-Category</th>
-													<th>Category Type</th>
+													<th>Service Estimate Time (mins)</th>
+													<th>Outlets valid for</th>
+													<th>Type</th>
 													<th>Category</th>
-													
+													<th>Sub-Category</th>
 													<th width="100px">Actions</th>
 												</tr>
 											</thead>
@@ -101,11 +101,14 @@ $this->load->view('master_admin/ma_header_view');
 												<td><?=$service['service_name']?></td>
 												<td><?=$service['service_price_inr']?></td>
 												<td><?=$service['service_gst_percentage']?></td>
-												<td><?=$service['service_est_time']?></td>
 												<td><?=$service['service_description']?></td>
-												<td><?=$service['sub_category_name']?></td>
+												<td><?=$service['service_est_time']?></td>
+												<td></td>
 												<td><?=$service['category_type']?></td>
 												<td><?=$service['category_name']?></td>
+												<td><?=$service['sub_category_name']?></td>
+												
+												
 												
 												<td class="table-action">
 													<?php if($permission['categocategoryry_edit']==1){?>

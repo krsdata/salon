@@ -772,6 +772,7 @@ class MasterAdminModel extends CI_Model
 						'birthday_discount' =>$_POST['birthday_discount'],
 						'anni_discount'	=> $_POST['anniversary_discount'],
 						'service_count' => $count,
+						'master_id'=>$where['master_id'],
 						'master_service_id' => $result_3[$k]['service_id'],
 						'outlet_id' =>$outletId
 						);							
@@ -792,6 +793,7 @@ class MasterAdminModel extends CI_Model
 						'birthday_discount' =>$_POST['birthday_discount'],
 						'anni_discount'	=> $_POST['anniversary_discount'],
 						'service_count' => $count,
+						'master_id'=>$where['master_id'],
 						'master_service_id' => $_POST['special_service_id4'][$i],
 						'outlet_id' => $outletId
 					);							

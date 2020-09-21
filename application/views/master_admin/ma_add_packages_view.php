@@ -164,7 +164,7 @@
 																		</div>
 																		<div class="form-group col-md-3">
 																			<label>GST</label>
-																			<input type="number" class="form-control" placeholder="GST" name="salon_package_gst" step=".1">
+																			<input type="number" class="form-control" placeholder="GST" name="salon_package_gst" >
 																		</div>
 																		<div class="form-group col-md-3">
 																			<label>Total Amount(Rs.)</label>
@@ -733,15 +733,17 @@
 										<table class="table table-striped datatables-basic" id="customers-table" style="width:100%">
 											<thead>
 												<tr>
-													<th>Sno.</th>
+													<th>S.No.</th>
 													<th>Package Name</th>
 													<th>Package Type</th>
-													<th>Creation Date</th>
 													<!--<th>Current Status</th>-->
-													<th>Price</th>
-													<th>GST</th>
-													<th>Total</th>
-													<th>Validity (In Days)</th>
+													<th>Price(B/tax)</th>
+													<th>GST%</th>
+													<th>MRP(Rs)</th>
+													<th>Valid(Days)</th>
+													<th>Package Created on</th>
+													<th>Package End Date</th>
+													<th>Outlets valid for</th>
 													<th>Actions</th>
 												</tr>
 											</thead>
@@ -1586,11 +1588,13 @@
 				    { "data": "salon_package_id" },
 				 	{ "data": "salon_package_name" },
 					{ "data": "salon_package_type" },
-					{ "data": "salon_package_date" },
 					{ "data": "salon_package_price" },
 					{ "data": "service_gst_percentage" },
 					{ "data": "total" },
 					{ "data": "salon_package_validity" },
+					{ "data": "salon_package_date" },
+					{ "data": "salon_package_end_date" },
+					{ "data": "outlet_valid_for" },
 					{ "data": "package_active_status" }
 				]
 		});
