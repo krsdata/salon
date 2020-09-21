@@ -300,7 +300,7 @@ class MasterAdminModel extends CI_Model
   }
   
    public function getOutletsByPackageId($packageId=""){
-	   $sql = "SELECT outlet_id FROM `mss_package_outlet_association` WHERE `package_id`='".$packageId."' AND is_active = TRUE ";
+	   $sql = "SELECT outlet_id FROM `mss_salon_package_data` WHERE `salon_package_id`='".$packageId."' AND is_active = TRUE ";
 	   $query = $this->db->query($sql);
     
 		if ($query) {
@@ -455,14 +455,14 @@ class MasterAdminModel extends CI_Model
   }
   
    public function AssignPackageToMultipleOutlet($data,$outletIds){
-		$records = array();
+		/*$records = array();
 		if(!empty($outletIds)){
 			foreach($outletIds as $key=>$outlet_id){
 				$records[] = array('package_id'=>$data['package_id'],'outlet_id'=>$outlet_id,'master_id'=>$data['master_id']);
 			}
 			
 			$this->InsertBatch($records,'mss_package_outlet_association');
-		}
+		} */
 	}
   
    // Add category packages for salon
@@ -1111,7 +1111,7 @@ class MasterAdminModel extends CI_Model
 	$sql = "SELECT * FROM `mss_salon_packages` WHERE `salon_package_id` IN (SELECT DISTINCT `salon_package_id` FROM `mss_salon_package_data` WHERE `master_id`=" . $this->db->escape($where['master_id']) . " AND `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `is_active`=1) AND `is_active`=1";
 	
 	if(isset($filter['searchValue']) && $filter['searchValue']!=""){
-	 $sql .= "  AND  (B.salon_package_name like '%".$filter['searchValue']."%' or B.salon_package_type like '%".$filter['searchValue']."%' )";
+	 $sql .= "  AND  (salon_package_name like '%".$filter['searchValue']."%' or salon_package_type like '%".$filter['searchValue']."%' )";
 	}
 	if(!empty($filter['columnName'])){
 		$sql .= "  order by ".$filter['columnName']." ".$filter['columnSortOrder']; 
@@ -1131,15 +1131,14 @@ class MasterAdminModel extends CI_Model
   
   public function GetAllPackagesCountWithFilter($where,$filter=array())
   {
-    //$sql = "SELECT * FROM mss_salon_packages WHERE master_id = " . $this->db->escape($where['master_id']) . " AND business_outlet_id = " . $this->db->escape($where['business_outlet_id']) . "";
-    $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
-	
+    
+	$sql = "SELECT * FROM `mss_salon_packages` WHERE `salon_package_id` IN (SELECT DISTINCT `salon_package_id` FROM `mss_salon_package_data` WHERE `master_id`=" . $this->db->escape($where['master_id']) . " AND `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `is_active`=1) AND `is_active`=1";
 	
 	if(isset($filter['searchValue']) && $filter['searchValue']!=""){
-	 $sql .= "  AND  (B.salon_package_name like '%".$filter['searchValue']."%' or B.salon_package_type like '%".$filter['searchValue']."%' )";
+	 $sql .= "  AND  (salon_package_name like '%".$filter['searchValue']."%' or salon_package_type like '%".$filter['searchValue']."%' )";
 	}
+
 	$sql .= "  order by ".$filter['columnName']." ".$filter['columnSortOrder']." limit ".$filter['row'].",".$filter['rowperpage'];
-	
 	
 	
 	$query = $this->db->query($sql);
@@ -1152,13 +1151,12 @@ class MasterAdminModel extends CI_Model
   }
   
    public function GetAllPackagesCount($where,$filter=array()){
-        $sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
+       $sql = "SELECT * FROM `mss_salon_packages` WHERE `salon_package_id` IN (SELECT DISTINCT `salon_package_id` FROM `mss_salon_package_data` WHERE `master_id`=" . $this->db->escape($where['master_id']) . " AND `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `is_active`=1) AND `is_active`=1";
 		if(!empty($filter['searchValue'])){
 				if(isset($filter['searchValue']) && $filter['searchValue']!=""){
-				 $sql .= "  AND  (B.salon_package_name like '%".$filter['searchValue']."%' or B.salon_package_type like '%".$filter['searchValue']."%' )";
+				 $sql .= "  AND  (salon_package_name like '%".$filter['searchValue']."%' or salon_package_type like '%".$filter['searchValue']."%' )";
 				}
 				
-				//$sql .= "  order by ".$filter['columnName']." ".$filter['columnSortOrder']." limit ".$filter['row'].",".$filter['rowperpage'];
 		}
 		
 		$query = $this->db->query($sql);
