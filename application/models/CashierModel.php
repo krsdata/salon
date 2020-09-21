@@ -357,8 +357,8 @@ class CashierModel extends CI_Model {
 
     public function CheckOTCStockExists($where){
         $this->db->select('*');
-        $this->db->from('inventory_stock');
-        $this->db->where('stock_service_id',$where['service_id']);
+        $this->db->from('mss_inventory');
+        $this->db->where('service_id',$where['service_id']);
         
         $query = $this->db->get();
 
@@ -908,10 +908,9 @@ class CashierModel extends CI_Model {
     }
 
     private function UpdateStockFromOTC($data){
-		// $query1 = "UPDATE mss_inventory SET sku_count = sku_count  - ".(int)$data['consumption_quantity']." WHERE service_id = ".$data['otc_service_id']."";
-		
-		$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
-		$this->db->query($query1);
+		$query1 = "UPDATE mss_inventory SET sku_count = sku_count  - ".(int)$data['consumption_quantity']." WHERE service_id = ".$data['otc_service_id']."";
+		//$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
+        $this->db->query($query1); 
     }
 
     public function GetAllExpenses($where){
@@ -2548,6 +2547,7 @@ class CashierModel extends CI_Model {
         mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
         AND mss_transaction_services.txn_service_service_id = mss_services.service_id   
         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+		AND mss_services.inventory_type !='Raw Material'
         AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
         AND mss_categories.category_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']."
         AND mss_categories.category_business_outlet_id = ".$this->session->userdata['logged_in']['business_outlet_id']."
@@ -2820,10 +2820,9 @@ class CashierModel extends CI_Model {
                     AND mss_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
                     AND mss_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
                     AND mss_services.service_is_active = TRUE
-                    AND (mss_services.service_name LIKE '$search_term%' OR  mss_services.barcode LIKE '$search_term%')
-                    AND mss_services.service_type = 'otc'
-                    AND mss_services.inventory_type =  ".$this->db->escape($inventory_type)."
-                ORDER BY mss_services.service_name LIMIT 15";
+                    AND (mss_services.service_name LIKE '%$search_term%' OR  mss_services.barcode LIKE '$search_term%')
+                    AND mss_services.inventory_type != '' 
+                    ORDER BY mss_services.service_name LIMIT 15";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -3315,14 +3314,21 @@ class CashierModel extends CI_Model {
 
 
 	public function IncomingStock($data){
-		$sql="SELECT inventory_transfer.*,
+		$sql="SELECT inventory_transfer.*, 
 		inventory_transfer_data.*, 
-		mss_business_outlets.business_outlet_name AS 'source',
-		mss_business_outlets.business_outlet_name AS 'destination'
-		FROM inventory_transfer, inventory_transfer_data, mss_business_outlets
-		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND inventory_transfer_data.transfer_status=0 AND 
-		inventory_transfer.destination_name= mss_business_outlets.business_outlet_id AND 
-		inventory_transfer.destination_name= ".$this->db->escape($data['business_outlet_id'])." AND mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
+		mss_business_outlets.business_outlet_name AS 'destination' ,
+		t1.business_outlet_name AS 'source' 
+		FROM   inventory_transfer 
+		LEFT JOIN  inventory_transfer_data on inventory_transfer_data.inventory_transfer_id = 
+					inventory_transfer.inventory_transfer_id 
+		LEFT JOIN 
+				mss_business_outlets on inventory_transfer.destination_name = 
+					mss_business_outlets.business_outlet_id 
+		LEFT JOIN 
+				mss_business_outlets t1 on inventory_transfer.business_outlet_id = 
+					t1.business_outlet_id            
+		WHERE  
+		inventory_transfer.business_outlet_id = ".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
         if($query){
