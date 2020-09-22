@@ -171,7 +171,7 @@
 							<div class="card-body">
 								<!--MODAL AREA-------------------------------------->
 								<div class="modal fade" id="ModalViewComposition" tabindex="-1" role="dialog" aria-hidden="true">
-									<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+									<div class="modal-dialog modal-dialog-centered modal-md" role="document">
 										<div class="modal-content">
 											<div class="modal-header" style="background-color:#47bac1;">
 												<h5 class="modal-title text-white">View Composition</h5>
@@ -450,11 +450,11 @@
        	for(i=0;i<data.length;i++){
        		temp += "<tr>\
        							<td>"+(i+1)+"</td>\
-       							<td>"+data[i].service_name+"</td>\
-       							<td>"+data[i].service_name+"</td>\
+       							<td>"+data[i].service+"</td>\
+       							<td>"+data[i].product_name+"</td>\
        							<td>"+data[i].service_brand+"</td>\
        							<td>"+data[i].service_unit+"</td>\
-       							<td>"+data[i].consumption_quantity+"</td>\
+       							<td>"+data[i].consumption_quantity+' '+data[i].service_unit+"</td>\
        						</tr>";
        	}
        	$("#ViewParticularComposition").html("").html(temp);
