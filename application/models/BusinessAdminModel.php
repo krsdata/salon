@@ -3361,7 +3361,7 @@ class BusinessAdminModel extends CI_Model {
 		mss_services
 		WHERE
 		mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
-		-- AND mss_transactions.txn_customer_id = mss_customers.customer_id
+		AND mss_transactions.txn_customer_id = mss_customers.customer_id
 		AND mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id
 		AND mss_transaction_services.txn_service_service_id=mss_services.service_id
 		AND mss_services.service_type= 'service'
@@ -3714,17 +3714,19 @@ class BusinessAdminModel extends CI_Model {
 					mss_transaction_settlements,
 					mss_customers,
 					mss_transaction_services,
-					mss_services
+					mss_services,
+					mss_employees
 					WHERE
 					mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
 					AND mss_transactions.txn_customer_id = mss_customers.customer_id
+					AND mss_transactions.txn_cashier= mss_employees.employee_id
 					AND mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id
 					AND mss_transaction_services.txn_service_service_id=mss_services.service_id
 					AND mss_services.service_type= 'service'
 					AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH)
 					AND mss_transactions.txn_status=1
-					AND mss_customers.customer_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
-					AND mss_customers.customer_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."";
+					AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])." 
+					AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."";
 				//
 				
 				//
@@ -3768,8 +3770,6 @@ class BusinessAdminModel extends CI_Model {
 										return $this->ModelHelper(false,true,"Wrong choice!");
 										break;
 						}
-
-						
 					$query = $this->db->query($sql);
 							
 							if($query){
