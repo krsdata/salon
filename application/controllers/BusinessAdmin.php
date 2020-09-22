@@ -347,7 +347,7 @@ class BusinessAdmin extends CI_Controller {
                 
                 $data['package_payment_wise'] = $this->BusinessAdminModel->GetPackageSalesPaymentWiseData($where);
                 $data['package_payment_wise']=$data['package_payment_wise']['res_arr'];
-                // $this->PrettyPrintArray($data['package_payment_wise']);
+                // $this->PrettyPrintArray($data['cards_data']['last_month_sales']);
                 // exit;
                 $data['last_month_package_sales_payment_wise'] = $this->BusinessAdminModel->GetLastMonthPackageSalesPaymentWiseData($where);
                 $data['last_month_package_sales_payment_wise']=$data['last_month_package_sales_payment_wise']['res_arr'];
