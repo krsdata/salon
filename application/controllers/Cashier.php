@@ -2589,21 +2589,23 @@ class Cashier extends CI_Controller {
 					$customer_details = $this->GetCustomerBilling($_POST['customer_pending_data']['customer_id']);
 					//4.Send a msg
 					$this->session->set_userdata('bill_url',$bill_url);
-					if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
-						if($_POST['txn_data']['txn_value']==0){
-						$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}else{		
-						$this->SendCashbackSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$_POST['cashback'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}
-					}
-					//
-					if($_POST['send_sms'] === 'true' && $_POST['cashback']==0){
-						if($_POST['txn_data']['txn_value']==0){
-						$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}else{		
-						$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}
-					}
+					$sms_status = $this->db->select('business_outlet_sms_status')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+					// $this->PrettyPrintArray($sms_status);	
+					if($sms_status['business_outlet_sms_status']==1){
+							if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
+								if($_POST['txn_data']['txn_value']==0){
+								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}
+							}
+							//
+							if($_POST['send_sms'] === 'true' && $_POST['cashback']==0){
+								if($_POST['txn_data']['txn_value']==0){
+								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}else{		
+								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}
+							}
+					 	}
 					//
         
 					$this->ReturnJsonArray(true,false,"Transaction is successful!");
@@ -2949,7 +2951,7 @@ class Cashier extends CI_Controller {
                     $data['modal']=0;
 								}
 								$data['sidebar_collapsed'] = "true";
-								// $this->PrettyPrintArray($data['stock_incoming']);
+								// $this->PrettyPrintArray($this->session->userdata['logged_in']);
                 $this->load->view('cashier/cashier_add_inventory_view',$data);
             }
         }
@@ -7017,8 +7019,8 @@ public function AddToCartRedeemPoints(){
 		public function AddInventory(){
 			if($this->IsLoggedIn('cashier')){
 				if(isset($_POST) && !empty($_POST)){
-					$this->form_validation->set_rules('invoice_number','OTC Name', 'trim|required');
-					$this->form_validation->set_rules('invoice_date', 'SKU', 'trim|required');
+					$this->form_validation->set_rules('invoice_number','Invoice Number', 'trim|required');
+					$this->form_validation->set_rules('invoice_date', 'Date', 'trim|required');
 			
 					if ($this->form_validation->run() == FALSE){
 							$data = array(
@@ -7030,6 +7032,8 @@ public function AddToCartRedeemPoints(){
 							print(json_encode($data, JSON_PRETTY_PRINT));
 							die;
 					}else{
+
+						$this->db->trans_start();
 						$data2=array(
 								'invoice_number'    =>  $this->input->post('invoice_number'),
 								'invoice_date'   		=>  $this->input->post('invoice_date'),
@@ -7060,6 +7064,7 @@ public function AddToCartRedeemPoints(){
 								'expiry_date'					=>$_POST['product_exp_date'][$key]
 							);
 							$this->CashierModel->Insert($data3,'inventory_data');
+
 							$where=array(
 								'stock_service_id' => $_POST['product_id'][$key],
 								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id']
@@ -7067,15 +7072,45 @@ public function AddToCartRedeemPoints(){
 							$data4=array(
 								'stock_service_id' => $_POST['product_id'][$key],
 								'total_stock'=> $_POST['product_qty'][$key],
+								'stock_in_unit'=>($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
 								'updated_on'	=>date('Y-m-d')
 							);
+					
 							$stock_exist= $this->CashierModel->CheckStockExist($where);
 							if($stock_exist['success']=='true'){
 								$update_stock=$this->CashierModel->UpdateInventoryStock($data4);
 							}else{
 								$insert_stock=$this->CashierModel->Insert($data4,'inventory_stock');
 							}
+
+							//making entry i expense table
+							$data5=array(
+								'expense_unique_serial_id'	=>	'E1010Y',
+								'expense_date'							=>	date('Y-m-d'),
+								'expense_type_id'						=>	'10000',
+								'item_name'									=>	'Inventory',
+								'employee_name'							=>	$this->session->userdata['logged_in']['employee_name'],
+								'total_amount'							=>	$this->input->post('invoice_amount'),
+								'amount'										=>	$this->input->post('amount_paid'),
+								'payment_type'							=>	$this->input->post('source_type'),
+								'payment_to'								=>	$this->input->post('source_type'),
+								'payment_to_name'						=>	$this->input->post('source_name'),
+								'invoice_number'						=>	$this->input->post('invoice_number'),
+								'remarks'										=>	$this->input->post('note'),
+								'payment_mode'							=>	$this->input->post('payment_mode'),
+								'expense_status'						=>	$this->input->post('payment_status'),
+								'pending_amount'						=>	($this->input->post('invoice_amount')- $this->input->post('amount_paid')),
+								'bussiness_outlet_id'				=>	$this->session->userdata['logged_in']['business_outlet_id']
+							);
+
+							$insert_expense=$this->CashierModel->Insert($data5,'mss_expenses');
+
+						}
+						$this->db->trans_complete();
+						if ($this->db->trans_status() === FALSE){
+							$this->ReturnJsonArray(false,true,"Stock not available for transfer!");
+							die;
 						}
 						$this->ReturnJsonArray(true,false,"Inventory added successfully!");
 						die;						
@@ -7140,6 +7175,7 @@ public function AddToCartRedeemPoints(){
 						$data4=array(
 							'stock_service_id' => $_POST['product_id'][$key],
 							'total_stock'=> $_POST['product_qty'][$key],
+							'stock_in_unit'	=> ($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 							'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
 							'updated_on'	=>date('Y-m-d')
 						);
@@ -7181,12 +7217,14 @@ public function AddToCartRedeemPoints(){
 				$data=array(
 					'stock_service_id' => $_POST['service_id'],
 					'total_stock'=> $_POST['total_stock'],
+					'stock_in_unit'=>($_POST['total_stock']*$_POST['stock_in_unit']),
 					'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
 					'updated_on'	=>date('Y-m-d')
 				);
 				$data2=array(
 					'stock_service_id' => $_POST['service_id'],
 					'total_stock'=> $_POST['total_stock'],
+					'stock_in_unit'=>($_POST['total_stock']*$_POST['stock_in_unit']),
 					'stock_outlet_id'	=> $_POST['sender_outlet_id'],
 					'updated_on'	=>date('Y-m-d')
 				);
