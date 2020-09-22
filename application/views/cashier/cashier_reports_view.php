@@ -747,12 +747,11 @@
 												</h5>
 											</div>
 											<div class="card-body" style="margin-right:10px;">
-												<table class="table table-striped datatables-basic " style="width:100%;text-align:center">	
+												<table class="table table-striped datatables-basic " style="width:100%;text-align:center" id="txn200">	
 												<thead>
 													<tr>
-														
 														<th>Bill No.</th>
-														<th>Date</th>
+														<th>Date</th>																												
 														<th>Mobile No.</th>
 														<th>Name</th>
 														<th>Type</th>
@@ -766,7 +765,7 @@
 												</thead>
 												<tbody>
 													<?php foreach($last_txn as $txn){?>
-														<tr>															
+														<tr>																											
 															<td data-target="#BillModal" data-toggle="modal" class="showBilledServices" txn_id="<?=$txn['bill_no']?>" style="color:blue;"><?=$txn['txn_id']?></td>
 															<td><?=$txn['billing_date']?></td>
 															<td><?=$txn['mobile']?></td>
@@ -867,10 +866,10 @@
     });
   });
   $(".datatables-basic").DataTable({
-			responsive: true
+			responsive: true,
+			"order": [[ 1, "desc" ]]
 		});
 
-		
 	//
 	$(document).on('click',".showBilledServices",function(event){
 				event.preventDefault();
