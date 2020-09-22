@@ -12281,7 +12281,7 @@ public function daybook(){
 						'amount_paid'			=>	0,
 						'payment_type'		=>	'',
 						'payment_status'	=>	'unpaid',
-						'notes'						=>	'Entry from stock level',
+						'notes'						=>	$_POST['remarks'],
 						'business_outlet_id'	=> $this->session->userdata['outlets']['current_outlet']
 					);
 
@@ -12309,7 +12309,9 @@ public function daybook(){
 						'updated_on'	=>date('Y-m-d')
 					);
 					
-					$res=$this->CashierModel->UpdateInventoryStock($data3);
+					// $res=$this->CashierModel->UpdateInventoryStock($data3);
+					$res=$this->CashierModel->Update($data3,'inventory_stock','stock_service_id');
+
 					$this->ReturnJsonArray(true,false,"Stock Updated!");
 					die;
 				}else{
