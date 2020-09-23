@@ -543,7 +543,7 @@ die;
             $start_week = date('Y-m-01',strtotime('last month'));
             $end_week = date('Y-m-t',strtotime('last month'));
         }
-        $start_week = "2020-06-01";
+        #$start_week = "2020-06-01";
         #echo $start_week.' '.$end_week ;
         $outlets = $this->CronModel->getOutLetsAdmin();
         if(empty($outlets))
@@ -566,8 +566,8 @@ die;
                     Due Amt till dt: ".($total_due_amount-$pending_amount_received);
                     //echo $msg;
                     $this->sendMessage($ol['business_admin_mobile'],$msg);
-            echo $msg;
-            die;
+            #echo $msg;
+            #die;
         }
     }
 }
