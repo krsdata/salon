@@ -4339,7 +4339,7 @@ class MasterAdmin extends CI_Controller {
 					
 					foreach($outlets as $outletId){
 					  foreach($services as $serviceId){	
-						
+
 						/* Check this id exist or not, if already exist then skip else assign */
 						$where = array(
 							'service_id '       => $serviceId,
@@ -4347,6 +4347,12 @@ class MasterAdmin extends CI_Controller {
 						$record = $this->MasterAdminModel->MultiWhereSelect('master_services',$where);
 						
 						if(isset($record['res_arr']) && !empty($record['res_arr'])){
+
+						/* Check record exist or not if not then insert else skip that for same outlet and service */
+
+				        $checkExistance = $this->MasterAdminModel->MultiWhereSelect('mss_services',array('outlet_id'=>$outletId,'master_service_id'=>$record['res_arr'][0]['service_id']));	
+				       if(isset($checkExistance['res_arr']) && empty($checkExistance['res_arr'])){
+
 							$data[] = array(
 								'master_service_id'  		=> $record['res_arr'][0]['service_id'],
 								'outlet_id'  			    => $outletId,
@@ -4366,6 +4372,7 @@ class MasterAdmin extends CI_Controller {
 								'inventory_type_id'	 	 =>$record['res_arr'][0]['inventory_type_id'],
 								'created_by'		  	=>$this->session->userdata['logged_in']['master_admin_id']
 							);
+						  }
 						} 
 						
 					  }
@@ -4382,7 +4389,7 @@ class MasterAdmin extends CI_Controller {
 						die;
 					}
 				  }elseif(empty($data) && !empty($outlets) && !empty($serviceId)){
-					  $this->ReturnJsonArray(true,false,"Services has already assigned!");
+					  $this->ReturnJsonArray(false,true,"Services has already assigned!");
 					  die;
 				  }
 				}

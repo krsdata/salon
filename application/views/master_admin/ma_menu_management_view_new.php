@@ -74,8 +74,9 @@ $this->load->view('master_admin/ma_header_view');
 										<!-- end -->
 										
                     <table class="table table-striped datatables-basic" style="width: 100%;">
-											<thead>
+											<thead >
 												<tr>
+													<th></th>
 													<th>S.No.</th>
 													<th>Service Name</th>
 													<th>Service Gross Price</th>
@@ -89,14 +90,16 @@ $this->load->view('master_admin/ma_header_view');
 													<th width="100px">Actions</th>
 												</tr>
 											</thead>
-											<tbody>
+											<tbody id="serviceTbody">
                         
 											 <?php
+
 												$index = 1;
 												foreach ($services as $service):
 											?>
 					
 											<tr>
+												<td><input type="checkbox" id="service_chk_<?=$index;?>" name="service_chk[]" master_service_id="<?=$service['service_id']?>"></td>
 												<td><?=$index;?></td>
 												<td><?=$service['service_name']?></td>
 												<td><?=$service['service_price_inr']?></td>
@@ -1281,15 +1284,6 @@ $this->load->view('master_admin/ma_header_view');
 																	<form id="AssignServicesToOutlets" method="POST" action="#">
 																		<div class="row">
 																			<div class="form-group col-md-12">
-																				<label >Outlets</label>
-																				<select id="assign-outlet-select" name="assign_outlet_select[]" multiple="multiple" class="form-control float-right">
-																					<option value="">Select Outlets</option>
-																				</select>
-																			</div>
-
-																		  </div>
-																		   <div class="row">
-																			<div class="form-group col-md-12">
 																				<label >Services</label>
 																				<select id="assign-services-select" name="assign_Services_select[]" multiple="multiple" class="form-control float-right">
 																				    <?php
@@ -1301,10 +1295,20 @@ $this->load->view('master_admin/ma_header_view');
 																			</div>
 
 																		  </div>
+																		<div class="row">
+																			<div class="form-group col-md-12">
+																				<label >Outlets</label>
+																				<select id="assign-outlet-select" name="assign_outlet_select[]" multiple="multiple" class="form-control float-right">
+																					<option value="">Select Outlets</option>
+																				</select>
+																			</div>
+
+																		  </div>
+																		
 																		  <button type="submit" class="btn btn-primary mt-2">Submit</button>
 																	</form>
 																	<div class="alert alert-dismissible feedback" style="margin:0px;" role="alert">
-																		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+																		<button type="button" id="closeAssignServices" class="close" data-dismiss="alert" aria-label="Close">
 																			<span aria-hidden="true">&times;</span>
 																		</button>
 																		<div class="alert-message">
@@ -1445,6 +1449,11 @@ $(document).ready(function(){
 	  
     
 	 $(document).ready(function() {  
+
+	 	$("#closeAssignServices").on('click', function () {
+	 		//$('#AssignServicesToOutlets select[name="assign_Services_select[]"] option').prop('selected', false);
+           // $('#assign-services-select').multiselect( 'reload' );
+	 	});
 	   
 		/*$('#assign-services-select').multiselect({includeSelectAllOption: true,maxHeight: 150,
 										buttonWidth: 150,
@@ -1455,6 +1464,16 @@ $(document).ready(function(){
 		 $('#assign-outlet-select').multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
 		
 		$("#openAssignServices").on('click', function () {
+			  $('#AssignServicesToOutlets select[name="assign_Services_select[]"] option:selected').prop("selected", false);	
+		      var selectedServices=[];
+		      
+		      //$('#serviceTbody input[type="checkbox"]').each(function() {
+		      $('#serviceTbody').find('input[type="checkbox"]').each(function() {	
+		        if ($(this).is(":checked")) {
+		            selectedServices.push($(this).attr("master_service_id"));
+		        }
+		    });
+            console.log(selectedServices);
 			 var parameters = {};
 				var htmlContent="";
 				$.getJSON("<?=base_url()?>MasterAdmin/GetALLOutlets", parameters)
@@ -1467,6 +1486,15 @@ $(document).ready(function(){
 								
 								$('#assign-outlet-select').html("").html(options);
 								$('#assign-outlet-select').multiselect( 'reload' );
+
+								$.each(selectedServices, function(key, service) {		
+									 $('#AssignServicesToOutlets select[name="assign_Services_select[]"] option').filter(function() { 
+										return ($(this).val() == service); //To select dropdown record
+									 }).prop('selected', true);
+									
+								 });
+								$('#assign-services-select').multiselect( 'reload' );
+
 								/*$('#assign-outlet-select').multiselect({maxHeight: 150,
 										buttonWidth: 150,
 										numberDisplayed: 2,
@@ -1483,6 +1511,7 @@ $(document).ready(function(){
 		$("#openAssignServices").on('click', function () {
 			 $('#ModalAssignService').modal({ show: true });
 		});
+
 	 });
 	 
 	$(document).ready(function(){
