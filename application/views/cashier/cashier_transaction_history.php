@@ -30,9 +30,9 @@
             </li>
           </ul>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
           <div class="form-group">
-            <div class="input-group" style="margin-left:280px;margin-top:5px">
+            <div class="input-group" style="margin-left:0px;margin-top:5px">
               <input type="text" placeholder="Search Customer by name/contact no." class="form-control"
                 id="SearchCustomer">
               <span class="input-group-append">
@@ -90,10 +90,8 @@
                             <td><?=$txn['outlet_name']?></td>
                             <td><?php 
 															$a=$txn['txn_datetime'];
-															// echo gettype($a);
 															$a=strtotime($a);
 															echo date("d-m-Y",$a);
-															// echo date($txn['txn_datetime'])
 														?>
                             </td>
                             <td><?=$txn['txn_unique_serial_id']?></td>
@@ -1260,3 +1258,12 @@
     });
   });
   </script>
+<script>
+	var input = document.getElementById("SearchCustomer");
+	input.addEventListener("keyup", function(event) {
+		if (event.keyCode === 13) {
+		event.preventDefault();
+		document.getElementById("SearchCustomerButton").click();
+		}
+	});
+</script>

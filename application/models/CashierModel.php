@@ -1985,8 +1985,6 @@ class CashierModel extends CI_Model {
 					} 
 				}
 			public function ExpertWiseSale($data){
-                // $this->PrettyPrintArray($data);
-                // exit;
                     $sql="SELECT                    
                     mss_employees.employee_id AS 'emp_id',
                     mss_employees.employee_mobile,
@@ -3436,6 +3434,130 @@ class CashierModel extends CI_Model {
 			   return $this->ModelHelper(false,true,"Some DB Error!");
 		   } 
 	}
+
+	public function GetLastTransactions($where){
+		$sql="SELECT 
+		mss_transactions.txn_id AS 'bill_no',
+		mss_transactions.txn_unique_serial_id AS 'txn_id',
+		date(mss_transactions.txn_datetime) AS 'billing_date',
+		mss_customers.customer_mobile AS 'mobile',
+		mss_customers.customer_name AS 'name',
+        IF(mss_transactions.txn_id,'Service','Service') AS 'Type' ,
+		(mss_transactions.txn_discount+mss_transactions.txn_value) AS 'mrp_amt',
+		mss_transactions.txn_discount AS 'discount',
+		mss_transactions.txn_value AS 'net_amt',
+		mss_transactions.txn_total_tax AS 'total_tax',
+		mss_transactions.txn_pending_amount AS 'pending_amt',
+		mss_transaction_settlements.txn_settlement_way AS 'settlement_way',
+		mss_transaction_settlements.txn_settlement_payment_mode AS 'payment_way'
+		
+		FROM 
+		mss_customers,
+		mss_transactions,
+		mss_transaction_settlements,
+		mss_employees
+		WHERE 
+		mss_transactions.txn_customer_id = mss_customers.customer_id
+		AND mss_transactions.txn_status=1
+		AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+		AND mss_transactions.txn_cashier= mss_employees.employee_id
+		AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($where['from_date'])." AND 
+		".$this->db->escape($where['to_date'])." 
+		AND mss_employees.employee_business_admin = ".$this->session->userdata['logged_in']['business_admin_id']."
+		AND mss_employees.employee_business_outlet = ".$this->session->userdata['logged_in']['business_outlet_id']."		
+		ORDER BY 
+        mss_transactions.txn_id DESC LIMIT 100 ";
+
+        $query = $this->db->query($sql);
+        
+        if($query->num_rows()){
+                $result1 = $query->result_array();
+             $sql = "SELECT
+                    mss_package_transactions.package_txn_id AS 'bill_no',
+                    mss_package_transactions.package_txn_unique_serial_id AS 'txn_id',
+                    date(mss_package_transactions.datetime) AS 'billing_date',
+                    mss_customers.customer_mobile AS 'mobile',
+                    mss_customers.customer_name AS 'name',            
+                    IF(mss_package_transactions.package_txn_id,'Package','Package') AS 'Type' ,
+                    mss_package_transactions.package_txn_value AS 'mrp_amt',  
+                    mss_package_transactions.package_txn_discount AS 'discount',
+                    mss_package_transactions.package_txn_value AS 'net_amt',
+                    IF(mss_salon_packages.service_gst_percentage,'0','0') AS 'total_tax',
+                    mss_package_transactions.package_txn_pending_amount AS 'pending_amt',
+                     mss_package_transaction_settlements.settlement_way AS 'settlement_way',
+                    mss_package_transaction_settlements.payment_mode AS 'payment_way'                    
+                    
+                FROM
+                    mss_package_transactions,
+                    mss_customers,
+                    mss_salon_packages,
+                    mss_transaction_package_details,
+                    mss_employees,
+                    mss_package_transaction_settlements
+                WHERE
+                    mss_package_transactions.package_txn_id = mss_transaction_package_details.package_txn_id
+                    AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_txn_id
+                    AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
+                    AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
+                    AND mss_package_transactions.package_txn_expert= mss_employees.employee_id
+					AND date(mss_package_transactions.datetime) BETWEEN ".$this->db->escape($where['from_date'])." AND 
+										".$this->db->escape($where['to_date'])."
+                    AND mss_salon_packages.business_admin_id =  ".$this->db->escape($this->session->userdata['logged_in']['business_admin_id'])."
+                    AND mss_salon_packages.business_outlet_id =  ".$this->db->escape($this->session->userdata['logged_in']['business_outlet_id'])."                    
+                    ORDER BY
+                        mss_package_transactions.package_txn_id DESC limit 100";                        
+                    $query = $this->db->query($sql); 
+                    $result2 = $query->result_array();
+                    $result = array_merge($result1,$result2);
+                    
+          return $this->ModelHelper(true,false,'',$result);
+        }
+        else{
+          return $this->ModelHelper(true,false,'Database Error');   
+		} 
+	}
+
+	public function GetExpertTransactions($data){
+		$sql="SELECT                    
+		mss_employees.employee_id AS 'emp_id',
+		mss_employees.employee_mobile,
+		mss_employees.employee_first_name As 'expert_name',
+		SUM(mss_transaction_services.txn_service_quantity) AS 'count',
+		SUM(mss_transaction_services.txn_service_discounted_price) AS 'discounted_amt',
+		SUM(mss_transactions.txn_value) AS 'net_amt'
+		FROM
+		mss_transactions,
+		mss_transaction_services,
+		mss_employees,
+		mss_customers,
+		mss_categories,
+		mss_sub_categories,
+		mss_services
+		WHERE
+		mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+		AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+		AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+		AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+		AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+		AND mss_transactions.txn_customer_id = mss_customers.customer_id
+		AND mss_transactions.txn_status=1
+		AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND 
+		".$this->db->escape($data['to_date'])."
+		AND mss_employees.employee_business_outlet = ".$this->db->escape($this->session->userdata['logged_in']['business_outlet_id'])."
+		AND mss_employees.employee_business_admin = ".$this->db->escape($this->session->userdata['logged_in']['business_admin_id'])."
+		GROUP BY 
+			mss_employees.employee_id";
+		
+			$query = $this->db->query($sql);
+			
+			if($query->num_rows()){
+				return $this->ModelHelper(true,false,'',$query->result_array());
+			}
+			else{
+				return $this->ModelHelper(true,false,'Database Error');   
+			} 
+		}
+
 
 
 }

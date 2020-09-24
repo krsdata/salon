@@ -371,16 +371,28 @@
 										
 												<div class="accordion" id="accordionExample1">
 													<div class="card">
-														<div class="card-header" id="headingOneE">
-															<h5 class="card-title my-2">
-																<a href="#" data-toggle="collapse" data-target="#collapseOneE" aria-expanded="true" aria-controls="collapseOneE">
+														<div class="card-header" id="headingOneE">														
+															<div class="row">
+														<div class="col-md-3">
+														<h5 class="card-title my-2">
+														<a href="#" data-toggle="collapse" data-target="#collapseOneE" aria-expanded="true" aria-controls="collapseOneE">
 																	Service Transaction
 																</a>
-															</h5>
+																</h5>
+														</div>
+														<form class="form-inline" style="width:60%;" method="POST" action="#" id="txnExpertWise">
+															<div class="form-group col-md-3">
+																<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
+															</div>
+															<div class="form-group col-md-2">
+																<input type="submit" class="btn btn-primary" id="getExpertTxn"  value="Submit" />
+															</div>
+														</form>
+													</div>	
 														</div>
 														<div id="collapseOneE" class="collapse show" aria-labelledby="headingOneE" data-parent="#accordionExample1">
 															<div class="card-body" style="margin-right:10px;">
-															<table class="table table-striped datatables-basic" style="width: 100%;text-align:center">
+															<table class="table table-striped datatables-basic" style="width: 100%;text-align:center" id="expertWiseTable">
 																
 																<thead>
 																	<tr>
@@ -388,9 +400,7 @@
 																		<th>Emp-Id</th>
 																		<th>Mobile</th>
 																		<th>Revenue Today(Rs.)</th>
-																		<!-- <th>Revenue Yesterday(Rs.)</th> -->
 																		<th>Service Count</th>
-																		<!-- <th>Average Rating Today</th> -->
 																	</tr>
 																</thead>
 																<tbody>
@@ -401,9 +411,7 @@
 																		<td>EMP_0<?=$expert['emp_id']?></td>
 																		<td><?=$expert['employee_mobile']?></td>
 																		<td><?=$expert['discounted_amt']?></td>
-																		<!-- <td><?=$expert['net_amt']?></td> -->
 																		<td><?=$expert['count']?></td>
-																		<!-- <td><?=$expert['count']?></td> -->
 																		</tr>
 																	<?php 
 																}?>
@@ -742,12 +750,24 @@
 									<div class="tab-pane" id="tab-6" role="tabpanel">
 										<div class="card">
 											<div class="card-header">
-												<h5 class="card-title my-2">
+												<div class="card-title my-2">
+													<div class="row">
+														<div class="col-md-3">
 														Last 200 Transaction
-												</h5>
+														</div>
+														<form class="form-inline" style="width:60%;" method="POST" action="#" id="txn200">
+															<div class="form-group col-md-3">
+																<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
+															</div>
+															<div class="form-group col-md-2">
+																<input type="submit" class="btn btn-primary" id="get_txn"  value="Submit" />
+															</div>
+														</form>
+													</div>														
+												</div>
 											</div>
 											<div class="card-body" style="margin-right:10px;">
-												<table class="table table-striped datatables-basic " style="width:100%;text-align:center" id="txn200">	
+												<table class="table table-striped datatables-basic " style="width:100%;text-align:center" id="txnTable">	
 												<thead>
 													<tr>
 														<th>Bill No.</th>
@@ -848,6 +868,14 @@
 	});
   $("input[name=\"to_date\"]").daterangepicker({
 		singleDatePicker: true,
+		showDropdowns: true,
+		locale: {
+    format: 'YYYY-MM-DD'
+		}
+	});
+
+	$("input[name=\"daterange\"]").daterangepicker({
+		daterangepicker: true,
 		showDropdowns: true,
 		locale: {
     format: 'YYYY-MM-DD'
@@ -1150,6 +1178,79 @@
 				},
 			});
 		});
+
+		$(document).on('click',"#get_txn",function(event){
+    	event.preventDefault();
+      this.blur();
+			var dr=$("#txn200 input[name=daterange]").val();
+	      var parameters = {
+	        from_date : dr.substring(0, 10),
+					to_date :	dr.substring(12, 23)
+	      };
+				$.getJSON("<?=base_url()?>Cashier/GetLastTransactions", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					if(data.success == 'true'){
+						var str_2 = "";
+						// alert(data.service.res_arr.length);
+						for(var i=0;i< data.message.length;i++){
+							str_2+="<tr>";
+							str_2 += "<td>" + parseInt(i+1) + "</td>";
+							str_2 += "<td>" + data.message[i].txn_id + "</td>";
+							str_2 += "<td>" + data.message[i].billing_date + "</td>";
+							str_2 += "<td>" + data.message[i].mobile + "</td>";
+							str_2 += "<td>" + data.message[i].Type + "</td>";	
+							str_2 += "<td>" + data.message[i].mrp_amt + "</td>";
+							str_2 += "<td>" + data.message[i].discount + "</td>";
+							str_2 += "<td>" + data.message[i].net_amt + "</td>";
+							str_2 += "<td>" + data.message[i].total_tax + "</td>";
+							str_2 += "<td>" + data.message[i].pending_amt + "</td>";
+							if(data.message[i].Type=='Package'){
+								str_2 += "<td><button data-type='package' class='btn btn-warning sendSmsBtn'  txn_id='"+data.message[i].bill_no+"'><i class='fa fa-sms'></i></button> <a href=\"<?=base_url()?>Cashier/RePrintPackageBill/"+data.message[i].bill_no+"\" target=\"_blank\" class=\"btn btn-danger\" ><i class=\"fa fa-print\"></i></a></td>";
+							}else{
+								str_2 += "<td><button  data-type='service' class='btn btn-warning sendSmsBtn'  txn_id='"+data.message[i].bill_no+"'><i class='fa fa-sms'></i></button> <a href=\"<?=base_url()?>Cashier/RePrintBill/"+data.message[i].bill_no+"\" target='_blank' class='btn btn-danger' ><i class='fa fa-print'></i></a> </td>";
+							}
+							str_2+="</tr>";
+						}
+						$("#txnTable tbody tr").remove();
+						$("#txnTable tbody").append(str_2);
+					}
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+			});
+  	});
+
+		$(document).on('click',"#getExpertTxn",function(event){
+    	event.preventDefault();
+      this.blur();
+			var dr=$("#txnExpertWise input[name=daterange]").val();
+	      var parameters = {
+	        from_date : dr.substring(0, 10),
+					to_date :	dr.substring(12, 23)
+	      };
+				$.getJSON("<?=base_url()?>Cashier/GetExpertTransactions", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					if(data.success == 'true'){
+						var str_2 = "";
+						for(var i=0;i< data.message.length;i++){
+							str_2+="<tr>";
+							str_2 += "<td>" + data.message[i].expert_name + "</td>";
+							str_2 += "<td> EMP0" + data.message[i].emp_id + "</td>";
+							str_2 += "<td>" + data.message[i].employee_mobile + "</td>";
+							str_2 += "<td>" + data.message[i].net_amt + "</td>";	
+							str_2 += "<td>" + data.message[i].count + "</td>";
+							str_2+="</tr>";
+						}
+						$("#expertWiseTable tbody tr").remove();
+						$("#expertWiseTable tbody").append(str_2);
+					}
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+			});
+  	});
+
+
 	});
 </script>
 <script>
