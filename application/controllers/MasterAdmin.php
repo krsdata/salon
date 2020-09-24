@@ -30,6 +30,67 @@ class MasterAdmin extends CI_Controller {
         return $data;
     }
 	
+	private function assignService($outlets,$services){
+		$data = array();
+		/* Get Service Records */
+					$serviceDetails = $this->MasterAdminModel->getSalonPackageDataByIds(implode(',',$services));
+					
+					$serviceData = array();
+					if(!empty($serviceDetails['res_arr'])){
+						foreach($serviceDetails['res_arr'] as  $serviceRecords){
+							$serviceData[$serviceRecords['service_id']] = array('discount_percentage'=>$serviceRecords['discount_percentage'],
+																				'birthday_discount' =>$serviceRecords['birthday_discount'],				
+																				'anni_discount' =>$serviceRecords['anni_discount'],				
+																				'service_count' =>$serviceRecords['service_count']				
+																				);
+						}
+					}
+					
+					foreach($outlets as $outletId){
+					  foreach($services as $serviceId){	
+
+						/* Check this id exist or not, if already exist then skip else assign */
+						$where = array(
+							'service_id '       => $serviceId,
+						);
+						$record = $this->MasterAdminModel->MultiWhereSelect('master_services',$where);
+						
+						if(isset($record['res_arr']) && !empty($record['res_arr'])){
+
+						/* Check record exist or not if not then insert else skip that for same outlet and service */
+
+				        $checkExistance = $this->MasterAdminModel->MultiWhereSelect('mss_services',array('is_assign_to_outlet'=>'1','outlet_id'=>$outletId,'master_service_id'=>$record['res_arr'][0]['service_id']));	
+				       if(isset($checkExistance['res_arr']) && empty($checkExistance['res_arr'])){
+
+							$data[] = array(
+								'master_service_id'  		=> $record['res_arr'][0]['service_id'],
+								'outlet_id'  			    => $outletId,
+								'service_sub_category_id'   => $record['res_arr'][0]['service_sub_category_id'],
+								'inventory_type'		 =>$record['res_arr'][0]['inventory_type'],
+								'service_name'	 		 =>$record['res_arr'][0]['service_name'],
+								'service_price_inr'		 =>$record['res_arr'][0]['service_price_inr'],
+								'service_est_time'		 =>$record['res_arr'][0]['service_est_time'],
+								'service_description'	 =>$record['res_arr'][0]['service_description'],
+								'service_gst_percentage' =>$record['res_arr'][0]['service_gst_percentage'],
+								'service_type'		  	=>$record['res_arr'][0]['service_type'],
+								'barcode'		 	  	=>$record['res_arr'][0]['barcode'],
+								'barcode_id'		  	=>$record['res_arr'][0]['barcode_id'],
+								'service_unit'		  	=>$record['res_arr'][0]['service_unit'],
+								'service_brand'		  	=>$record['res_arr'][0]['service_brand'],
+								'qty_per_item'		  	=>$record['res_arr'][0]['qty_per_item'],
+								'inventory_type_id'	 	 =>$record['res_arr'][0]['inventory_type_id'],
+								'created_by'		  	=>$this->session->userdata['logged_in']['master_admin_id']
+							);
+						  }
+						} 
+						
+					  }
+					}
+					
+			return $data;		
+				
+	}
+	
   //constructor of the Alumni Controller
   public function __construct(){
        parent::__construct();
@@ -2649,6 +2710,65 @@ class MasterAdmin extends CI_Controller {
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		}	
 	}
+	public function DownloadService(){
+		if($this->IsLoggedIn('master_admin')){
+		   if(isset($_POST) && !empty($_POST)){
+			  $returnArray = $downloadReturnArray = array();
+			  $postServiceId = $this->input->post('master_service_id');
+			  if(!empty($postServiceId)){
+				  $serviceIds =  implode(',',$postServiceId);
+				  
+			  }else{
+				  $serviceIds = ""; /* Get for All */
+			  }
+			  $where['master_id']  =  $this->session->userdata['logged_in']['master_admin_id'];
+			  $where['service_id'] = $serviceIds;
+			  $where['service_is_active'] = TRUE;
+			  $where['service_type'] = $this->input->post('type');
+			  $result = $this->MasterAdminModel->DownloadMasterServices($where);
+			  if(!empty($result['res_arr'])){
+				   $outletIds = array();
+				   foreach($result['res_arr'] as $key=>$serviceDetails){
+					   if(!in_array($serviceDetails['outlet_id'],$outletIds)) {
+						   $outletIds[] = $serviceDetails['outlet_id'];
+					   }
+				   }
+				   $outletIds = implode(',',$outletIds);
+				   $outletData = array();
+				  /* Get Outlet Details */
+				   $outletResult = $this->MasterAdminModel->GetOutletDetailsByIds($outletIds,$where['master_id']);
+				   if(!empty($outletResult['res_arr'])){
+					  foreach($outletResult['res_arr'] as $outlet){
+						  $outletData[$outlet['business_outlet_id']] = $outlet['business_outlet_name'];
+					  }
+				   }
+				  foreach($result['res_arr'] as $key=>$serviceDetails){
+					  $returnArray['S.No.'] =  $key+1;
+					  $returnArray['Outlet'] =  isset($outletData[$serviceDetails['outlet_id']]) ? $outletData[$serviceDetails['outlet_id']] : "";
+					  $returnArray['Service Name'] =  $serviceDetails['service_name'];
+					  $returnArray['Price(B/tax)'] =  $serviceDetails['service_price_inr']+($serviceDetails['service_gst_percentage']*$serviceDetails['service_price_inr']/100) ;
+					  $returnArray['GST%'] =  $serviceDetails['service_gst_percentage'];
+					  $returnArray['MRP(Rs)'] =  $serviceDetails['service_price_inr'];
+					  $returnArray['Description'] =  $serviceDetails['service_description'];
+					  
+					  $returnArray['Est. Time'] =  $serviceDetails['service_est_time'];
+					  $returnArray['Type'] =  $serviceDetails['service_type'];
+					  $returnArray['Category'] =  $serviceDetails['category_name'];
+					  $returnArray['Sub-Category'] =  $serviceDetails['sub_category_name'];
+					  $downloadReturnArray[] =  $returnArray;
+				  }
+				  $this->ReturnJsonArray(true,false,$downloadReturnArray);
+				  die;	
+			  }else{
+				  $this->ReturnJsonArray(false,true,"Records not found!");
+				  die;
+			  }
+		   }
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+	
 	public function GetProductPublic(){
 		if($this->IsLoggedIn('master_admin')){
 			// $this->PrettyPrintArray($_POST);
@@ -2714,7 +2834,23 @@ class MasterAdmin extends CI_Controller {
 		
 		$data['business_admin_details'] = $this->MasterAdminModel->GetBusinessDetails($this->session->userdata['logged_in']['master_admin_id']);
 		$data['business_admin_details'] = $data['business_admin_details']['res_arr'];
-		//$this->PrettyPrintArray($data['services']);
+		
+		/* get  */
+		 $where['master_id']  = $this->session->userdata['logged_in']['master_admin_id'];
+		 $where['service_id'] = "";
+		 $where['service_is_active'] = TRUE;
+		 $where['service_type'] = 'service';
+		 $result = $this->MasterAdminModel->DownloadMasterServices($where);
+		 $outletIds = array();
+		 if(!empty($result['res_arr'])){
+			  foreach($result['res_arr'] as $key=>$serviceDetails){
+				   if(!in_array($serviceDetails['outlet_id'],$outletIds)) {
+					   $outletIds[$serviceDetails['master_service_id']][] = $serviceDetails['outlet_id'];
+				   }
+			   }
+		  }
+		$data['assignOutlets'] = $outletIds;
+		//$this->PrettyPrintArray($data);
 		
 		$this->load->view('master_admin/ma_menu_management_view_new', $data);
 		} else {
@@ -4304,6 +4440,46 @@ class MasterAdmin extends CI_Controller {
 		}
 	}
 	
+	public function MasterAdminAssignProducts(){
+		if($this->IsLoggedIn('master_admin')){
+			if(isset($_POST) && !empty($_POST)){
+				$this->form_validation->set_rules('assign_outlet_select[]', 'Outlets', 'trim|required');
+				$this->form_validation->set_rules('assign-products-select[]', 'Product', 'trim|required');
+				if ($this->form_validation->run() == FALSE) 
+				{
+					$data = array(
+									'success' => 'false',
+									'error'   => 'true',
+									'message' =>  validation_errors()
+								);
+					header("Content-type: application/json");
+					print(json_encode($data, JSON_PRETTY_PRINT));
+					die;
+				}else{
+					$outlets  = $this->input->post('assign_outlet_select');
+					$services  = $this->input->post('assign-products-select');
+					$data = $this->assignService($outlets,$services);
+						if(!empty($data)){	
+						$result = $this->MasterAdminModel->InsertBatch($data,'mss_services');
+						if($result['success'] == 'true'){
+							$this->ReturnJsonArray(true,false,"Product has assigned successfully!");
+							die;
+						}
+						elseif($result['error'] == 'true'){
+							$this->ReturnJsonArray(false,true,$result['message']);
+							die;
+						}
+					  }elseif(empty($data) && !empty($outlets) && !empty($serviceId)){
+						  $this->ReturnJsonArray(false,true,"Products has already assigned!");
+						  die;
+					  }
+				}
+			}
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
 	public function MasterAdminAssignServices(){
 		if($this->IsLoggedIn('master_admin')){
 			if(isset($_POST) && !empty($_POST)){
@@ -4321,63 +4497,10 @@ class MasterAdmin extends CI_Controller {
 					die;
 				}
 				else{
-					$data = array();
+					
 					$outlets  = $this->input->post('assign_outlet_select');
 					$services  = $this->input->post('assign_Services_select');
-					/* Get Service Records */
-					$serviceDetails = $this->MasterAdminModel->getSalonPackageDataByIds(implode(',',$services));
-					
-					$serviceData = array();
-					foreach($serviceDetails['res_arr'] as  $serviceRecords){
-						$serviceData[$serviceRecords['service_id']] = array('discount_percentage'=>$serviceRecords['discount_percentage'],
-																			'birthday_discount' =>$serviceRecords['birthday_discount'],				
-																			'anni_discount' =>$serviceRecords['anni_discount'],				
-																			'service_count' =>$serviceRecords['service_count']				
-																			);
-					}
-					
-					
-					foreach($outlets as $outletId){
-					  foreach($services as $serviceId){	
-
-						/* Check this id exist or not, if already exist then skip else assign */
-						$where = array(
-							'service_id '       => $serviceId,
-						);
-						$record = $this->MasterAdminModel->MultiWhereSelect('master_services',$where);
-						
-						if(isset($record['res_arr']) && !empty($record['res_arr'])){
-
-						/* Check record exist or not if not then insert else skip that for same outlet and service */
-
-				        $checkExistance = $this->MasterAdminModel->MultiWhereSelect('mss_services',array('outlet_id'=>$outletId,'master_service_id'=>$record['res_arr'][0]['service_id']));	
-				       if(isset($checkExistance['res_arr']) && empty($checkExistance['res_arr'])){
-
-							$data[] = array(
-								'master_service_id'  		=> $record['res_arr'][0]['service_id'],
-								'outlet_id'  			    => $outletId,
-								'service_sub_category_id'   => $record['res_arr'][0]['service_sub_category_id'],
-								'inventory_type'		 =>$record['res_arr'][0]['inventory_type'],
-								'service_name'	 		 =>$record['res_arr'][0]['service_name'],
-								'service_price_inr'		 =>$record['res_arr'][0]['service_price_inr'],
-								'service_est_time'		 =>$record['res_arr'][0]['service_est_time'],
-								'service_description'	 =>$record['res_arr'][0]['service_description'],
-								'service_gst_percentage' =>$record['res_arr'][0]['service_gst_percentage'],
-								'service_type'		  	=>$record['res_arr'][0]['service_type'],
-								'barcode'		 	  	=>$record['res_arr'][0]['barcode'],
-								'barcode_id'		  	=>$record['res_arr'][0]['barcode_id'],
-								'service_unit'		  	=>$record['res_arr'][0]['service_unit'],
-								'service_brand'		  	=>$record['res_arr'][0]['service_brand'],
-								'qty_per_item'		  	=>$record['res_arr'][0]['qty_per_item'],
-								'inventory_type_id'	 	 =>$record['res_arr'][0]['inventory_type_id'],
-								'created_by'		  	=>$this->session->userdata['logged_in']['master_admin_id']
-							);
-						  }
-						} 
-						
-					  }
-					}
-				
+					$data = $this->assignService($outlets,$services);
 				  if(!empty($data)){	
 					$result = $this->MasterAdminModel->InsertBatch($data,'mss_services');
 					if($result['success'] == 'true'){
@@ -4398,6 +4521,86 @@ class MasterAdmin extends CI_Controller {
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
+	
+    public function AssignOutletToService(){
+		if($this->IsLoggedIn('master_admin')){
+			 $recordNotExist = $insertRecords = $updateRecord = FALSE; 
+			 $masterServiceId = $this->input->post('master_service_id');
+			 $outletId    = $assignOutletIds   = $this->input->post('outlet_id');
+			 
+			 $notExist = array();
+			 
+			 $serviceDetails = $this->MasterAdminModel->DownloadMasterServices(array('master_id'=>$this->session->userdata['logged_in']['master_admin_id'],'service_is_active'=>TRUE,'service_type'=>'service'));
+			
+			 
+			 $serviceDetails = $serviceDetails['res_arr'];
+			 if(!empty($serviceDetails)){
+				 foreach($serviceDetails as $serviceData){
+					if(!empty($outletId)){	
+						foreach($outletId as $outlet){  
+							 if($serviceData['master_service_id']==$masterServiceId && in_array($serviceData['outlet_id'],$outletId)){
+								
+								while (($key = array_search($serviceData['outlet_id'], $assignOutletIds)) !== false){
+									unset($assignOutletIds[$key]);
+								}								
+
+							 }elseif($serviceData['master_service_id']==$masterServiceId && !in_array($serviceData['outlet_id'],$outletId)){
+								 /* Temp delete */
+								 $notExist[] = $serviceData['outlet_id'];
+							 }
+						}
+					 }else{
+							    $notExist[] = $serviceData['outlet_id'];
+					 }	
+				 }		
+				 
+			    if(!empty($notExist)){
+					$updateRecord = TRUE;
+					foreach($notExist as $outletId){
+						$this->MasterAdminModel->Update(array('is_assign_to_outlet'=>'0'),'mss_services',array('master_service_id'=>$masterServiceId,'outlet_id'=>$outletId));
+					}
+				} 		 
+				$insertRecords = (!empty($assignOutletIds)) ? TRUE : FALSE;
+			 }else{
+				$recordNotExist = TRUE; 
+			 }
+			
+			 if($recordNotExist || $insertRecords){
+				 
+				 /* assign service */
+				 $serviceId[] = $masterServiceId;
+				 if($insertRecords==TRUE){
+					 $outletId = $assignOutletIds;
+				 }
+				 
+				 $data = $this->assignService($outletId,$serviceId);
+				 
+				 if(!empty($data)){	
+					$result = $this->MasterAdminModel->InsertBatch($data,'mss_services');
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Service has been assigned successfully!");
+						die;
+					}
+					elseif($result['error'] == 'true'){
+						$this->ReturnJsonArray(false,true,$result['message']);
+						die;
+					}
+				  }elseif(empty($data) && !empty($outletId) && !empty($serviceId)){
+					  $this->ReturnJsonArray(false,true,"Service has already assigned!");
+				  }
+			 }
+				 
+			 if($updateRecord){
+				 $this->ReturnJsonArray(true,false,"Service has been Updated successfully!");
+				 die;
+			 }
+		 
+		
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
+	
 	/**
 	 *
 	 * @author	: Pinky Sahukar

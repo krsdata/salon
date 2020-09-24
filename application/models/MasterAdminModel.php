@@ -252,6 +252,19 @@ class MasterAdminModel extends CI_Model
       return $this->ModelHelper(false, true, "DB error!");
     }
   }
+  
+  
+   public function checkServiceAssignToOutlet($master_service_id,$outlet_ids){
+		$sql = "SELECT * FROM `mss_services` WHERE `master_service_id`='".$master_service_id."' AND `outlet_id` IN (".$outlet_ids.") AND is_assign_to_outlet=1";
+		$query = $this->db->query($sql);
+
+		if ($query) {
+		  return $this->ModelHelper(true, false, '', $query->result_array());
+		} else {
+		  return $this->ModelHelper(false, true, "DB error!");
+		}
+	  
+   }
  
    public function MasterServices($where,$service_id=0)
   {
@@ -266,6 +279,33 @@ class MasterAdminModel extends CI_Model
     } else {
       return $this->ModelHelper(false, true, "DB error!");
     }
+  }
+  
+   public function DownloadMasterServices($where)
+  {
+    $sql = "SELECT * FROM master_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.master_id = " . $this->db->escape($where['master_id']) . " AND C.service_is_active = " . $this->db->escape($where['service_is_active']) . "  AND C.	is_assign_to_outlet = 1 AND C.service_type = " . $this->db->escape($where['service_type']) . "";
+    if($where['service_id']!=""){
+		$sql .= " AND C.master_service_id IN (".$where['service_id'].")";
+	}
+	$sql .= "  ORDER BY C.outlet_id,A.category_name";
+    $query = $this->db->query($sql);
+    
+    if ($query) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, "DB error!");
+    }
+  }
+  
+  public function GetOutletDetailsByIds($outletIds="",$masterId){
+	    $sql = "SELECT * FROM `mss_business_outlets` WHERE `business_outlet_id` IN (".$outletIds.") AND master_id=".$masterId." ";
+	    $query = $this->db->query($sql);
+
+		if ($query) {
+		  return $this->ModelHelper(true, false, '', $query->result_array());
+		} else {
+		  return $this->ModelHelper(false, true, "DB error!");
+		}
   }
   
   public function getMasterServicesByIds($servicesIds=""){

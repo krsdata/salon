@@ -48,10 +48,10 @@ $this->load->view('master_admin/ma_header_view');
 													<button class="btn btn-primary" id="openAssignServices"><i class="fas fa-caret-square-right"></i> Assign Service</button>
 												</div>
 												
-												<!--<div class="col-md-2">
+												<div class="col-md-2">
 														<button class="btn btn-primary" onclick="exportTableToExcel('servicMenu','Menu')"><i class="fa fa-file-export"></i>Export</button>
 												</div>
-												<div class="col-md-4">
+												<!--<div class="col-md-4">
 													<button class="btn btn-primary DownloadSubCategories"><i class="fa fa-download"></i>Sub Category</button>
 													<a class="btn btn-primary" href="<?=base_url()?>public\format\ServiceUploadFormat.xlsx" download><i class="fa fa-download"></i> Format</a>
 												</div>
@@ -59,24 +59,24 @@ $this->load->view('master_admin/ma_header_view');
 													<form action="#" id="UploadServices">
 														<div class="form-row">
 															<div class="form-group col-md-6" style="overflow:hidden;">
-                                <input type="file" name="file" class="btn" /> 
-                                <input type="text" name="file_contents[]" class="form-control" readonly hidden id="file_contents">
+																<input type="file" name="file" class="btn" /> 
+																<input type="text" name="file_contents[]" class="form-control" readonly hidden id="file_contents">
 															</div>
 															<div class="form-group col-md-6">
 																<button type= "submit" class="btn btn-primary" ><i class="fa fa-upload"></i>Upload</button>
 															</div>
 														</div>
 													</form>
-												</div>
-												-->	
+												</div>-->
+												
 											</div> 
 											<br/>
 										<!-- end -->
 										
-                    <table class="table table-striped datatables-basic" style="width: 100%;">
+                                    <table class="table table-striped datatables-basic" style="width: 100%;">
 											<thead >
 												<tr>
-													<th></th>
+													<th width="90px"> <input type="checkbox" id="checkAll" /> <b>Check All</b></th>
 													<th>S.No.</th>
 													<th>Service Name</th>
 													<th>Service Gross Price</th>
@@ -106,7 +106,22 @@ $this->load->view('master_admin/ma_header_view');
 												<td><?=$service['service_gst_percentage']?></td>
 												<td><?=$service['service_description']?></td>
 												<td><?=$service['service_est_time']?></td>
-												<td></td>
+												<td> 
+												<select class="outlet_valid_for" multiple name="outlet_valid_for[]" master_service_id="<?=$service['service_id']?>">
+												 <?php if(!empty($business_outlet_details)){
+													 foreach($business_outlet_details as $outlet){
+														 $assignOutletIds = $assignOutlets[$service['service_id']];
+														
+														 if(in_array($outlet['business_outlet_id'],$assignOutletIds)){
+															 $selected = 'selected="selected"';
+														 }else{
+															 $selected = "";
+														 }
+														 echo '<option value="'.$outlet['business_outlet_id'].'" '.$selected.' >'.$outlet['business_outlet_name'].'</option>';
+													 }
+												 }?>
+												</select> 
+												</td>
 												<td><?=$service['category_type']?></td>
 												<td><?=$service['category_name']?></td>
 												<td><?=$service['sub_category_name']?></td>
@@ -144,13 +159,14 @@ $this->load->view('master_admin/ma_header_view');
 									<div class="tab-pane <?php echo (isset($_GET['tab']) && $_GET['tab']=='2') ? 'active' : ''; ?>" id="tab-2" role="tabpanel">
 										<!-- upload -->
 											<div class="row">
-												 <div class="col-md-2">
+												 <div class="col-md-4">
 													<button class="btn btn-primary" data-toggle="modal" data-target="#ModalAddOTC"><i class="fas fa-fw fa-plus"></i> Add Product</button>
+												    <button class="btn btn-primary" id="openAssignProduct"><i class="fas fa-caret-square-right"></i> Assign Product</button>
 												</div> 
-												<?php /* <div class="col-md-2">
+												 <div class="col-md-2">
 															<button class="btn btn-primary mb-2" onclick="exportTableToExcel('otcMenu','OTCMenu')"><i class="fa fa-file-export"></i>Product</button>
 												</div>
-												<div class="col-md-4">
+												<?php /*<div class="col-md-4">
 													<!-- <button class="btn btn-primary DownloadCategories"><i class="fa fa-download"></i> Category</button> -->
 													<button class="btn btn-primary DownloadSubCategories" ><i class="fa fa-download"></i>Sub Category</button>
 													<a class="btn btn-primary" href="<?=base_url()?>public\format\OTCUploadFormat.xlsx" download><i class="fa fa-download"></i> Format</a>
@@ -174,6 +190,7 @@ $this->load->view('master_admin/ma_header_view');
                     <table class="table table-striped datatables-basic" style="width: 100%;">
 											<thead>
 												<tr>
+												    <th width="90px"> <input type="checkbox" id="checkAllProduct" /> <b>Check All</b></th>
 													<th>Sno.</th>
 													<th>Product Name</th>
 													<th>Brand Name</th>
@@ -187,13 +204,14 @@ $this->load->view('master_admin/ma_header_view');
 													<th>Actions</th>
 												</tr>
 											</thead>
-											<tbody>
+											<tbody id="productTbody">
 											<?php
 													$index = 1;
 													foreach ($products as $product):
 											?>
                         
 												<tr>
+													<td><input type="checkbox" id="product_chk_<?=$index;?>" name="product_chk[]" master_service_id="<?=$service['service_id']?>"></td>
 													<td><?=$index;?></td>
 													<td><?=$product['service_name']?></td>
 													<td><?=$product['service_brand']?></td>
@@ -1321,6 +1339,57 @@ $this->load->view('master_admin/ma_header_view');
 											</div>
 										</div>
 										
+										<div class="modal" id="ModalAssignProduct" tabindex="-1" role="dialog" aria-hidden="true">
+											 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title text-white font-weight-bold">Assign Product</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span class="text-white" aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body m-3">
+														    <div class="row">
+																<div class="col-md-12">
+																	<form id="AssignProductsToOutlets" method="POST" action="#">
+																		<div class="row">
+																			<div class="form-group col-md-12">
+																				<label >Products</label>
+																				<select id="assign-products-select" name="assign-products-select[]" multiple="multiple" class="form-control float-right">
+																				    <?php
+																						foreach($products as $product):
+																					?>
+																					  <option value="<?php echo $product['service_id']; ?>" ><?php echo $product['service_name']; ?></option>
+																					<?php endforeach; ?>
+																				</select>
+																			</div>
+
+																		  </div>
+																		<div class="row">
+																			<div class="form-group col-md-12">
+																				<label >Outlets</label>
+																				<select id="assign-outlet-select-for-product" name="assign_outlet_select[]" multiple="multiple" class="form-control float-right">
+																					<option value="">Select Outlets</option>
+																				</select>
+																			</div>
+
+																		  </div>
+																		
+																		  <button type="submit" class="btn btn-primary mt-2">Submit</button>
+																	</form>
+																	<div class="alert alert-dismissible feedback" style="margin:0px;" role="alert">
+																		<button type="button" id="closeAssignServices" class="close" data-dismiss="alert" aria-label="Close">
+																			<span aria-hidden="true">&times;</span>
+																		</button>
+																		<div class="alert-message">
+																		</div>
+																	</div>
+																</div>
+															</div>	
+														</div>
+												   </div>			
+											</div>
+										</div>
 						<!-----END------>
           </div>
         
@@ -1434,7 +1503,13 @@ $this->load->view('master_admin/ma_header_view');
  });   
 	
 $(document).ready(function(){
-	
+	$("#checkAll").change(function () {
+		$("#serviceTbody input:checkbox").prop('checked', $(this).prop("checked"));
+	});
+	$("#checkAllProduct").change(function () {
+		$("#productTbody input:checkbox").prop('checked', $(this).prop("checked"));
+	});
+
 	$(document).ajaxStart(function() {
       $("#load_screen").show();
     });
@@ -1461,7 +1536,96 @@ $(document).ready(function(){
 										nSelectedText: 'selected'});
 		*/
 		 $('#assign-services-select').multiselect({columns: 1, selectAll: true,placeholder: 'Select Service'});
+		 $('#assign-products-select').multiselect({columns: 1, selectAll: true,placeholder: 'Select Product'});
 		 $('#assign-outlet-select').multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
+		 $('#assign-outlet-select-for-product').multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
+		 
+		
+		$('.outlet_valid_for').multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
+		
+		$(".outlet_valid_for").on('change', function (){ 
+		  var master_service_id = $(this).attr('master_service_id');
+		  var outlet_id = $(this).val();
+		  var formData = {'master_service_id':master_service_id,'outlet_id':outlet_id}; 
+			$.ajax({
+				url: "<?=base_url()?>MasterAdmin/AssignOutletToService",
+				data: formData,
+				type: "POST",
+				// crossDomain: true,
+				cache: false,
+				// dataType : "json",
+				success: function(data) {
+					if(data.success == 'true'){ 
+						$("#ModalAddPackage").modal('hide');
+							toastr["success"](data.message,"", {
+							positionClass: "toast-top-right",
+							progressBar: "toastr-progress-bar",
+							newestOnTop: "toastr-newest-on-top",
+							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+							timeOut: 1500
+						});
+						setTimeout(function () { location.reload(1); }, 1000);
+					}
+					else if (data.success == 'false'){                   
+						if($('.feedback').hasClass('alert-success')){
+							$('.feedback').removeClass('alert-success').addClass('alert-danger');
+						}
+						else{
+							$('.feedback').addClass('alert-danger');
+						}
+						$('.alert-message').html("").html(data.message); 
+					}
+					$(this).multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
+				},
+				error: function(data){
+					$('.feedback').addClass('alert-danger');
+					$('.alert-message').html("").html(data.message); 
+				}
+			});
+		  
+		});
+		
+		
+		$("#openAssignProduct").on('click', function () {
+			  $('#AssignProductsToOutlets select[name="assign-products-select[]"] option:selected').prop("selected", false);	
+		      var selectedServices=[];
+		      
+		      //$('#serviceTbody input[type="checkbox"]').each(function() {
+		      $('#productTbody').find('input[type="checkbox"]').each(function() {	
+		        if ($(this).is(":checked")) {
+		            selectedServices.push($(this).attr("master_service_id"));
+		        }
+		    });
+           
+			 var parameters = {};
+				var htmlContent="";
+				$.getJSON("<?=base_url()?>MasterAdmin/GetALLOutlets", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					 if(data.length>0){	
+							var options = ""; 
+								for(var i=0;i<data.length;i++){
+									options += "<option value="+data[i].business_outlet_id+">"+data[i].business_outlet_name+"</option>";
+								}
+								
+								$('#assign-outlet-select-for-product').html("").html(options);
+								$('#assign-outlet-select-for-product').multiselect( 'reload' );
+
+								$.each(selectedServices, function(key, service) {		
+									 $('#AssignProductsToOutlets select[name="assign-products-select[]"] option').filter(function() { 
+										return ($(this).val() == service); //To select dropdown record
+									 }).prop('selected', true);
+									
+								 });
+								$('#assign-services-select').multiselect( 'reload' );
+	
+					 }
+				})
+
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+				}); 
+			 
+		});
 		
 		$("#openAssignServices").on('click', function () {
 			  $('#AssignServicesToOutlets select[name="assign_Services_select[]"] option:selected').prop("selected", false);	
@@ -1511,6 +1675,10 @@ $(document).ready(function(){
 		$("#openAssignServices").on('click', function () {
 			 $('#ModalAssignService').modal({ show: true });
 		});
+		$("#openAssignProduct").on('click', function () {
+			 $('#ModalAssignProduct').modal({ show: true });
+		});
+		
 
 	 });
 	 
@@ -1569,7 +1737,56 @@ $(document).ready(function(){
 				}
 			});
 		},
-	 });	
+	 });
+
+     $("#AssignProductsToOutlets").validate({
+		errorElement: "div",
+		rules: {
+			"assign_outlet_select[]" : {
+				required : true
+			},
+			"assign_Services_select[]" : {
+				required : true
+			}
+		},
+		submitHandler: function(form) {
+			var formData = $("#AssignProductsToOutlets").serialize(); 
+			$.ajax({
+				url: "<?=base_url()?>MasterAdmin/MasterAdminAssignProducts",
+				data: formData,
+				type: "POST",
+				// crossDomain: true,
+				cache: false,
+				// dataType : "json",
+				success: function(data) {
+					if(data.success == 'true'){ 
+						$("#ModalAddPackage").modal('hide');
+							toastr["success"](data.message,"", {
+							positionClass: "toast-top-right",
+							progressBar: "toastr-progress-bar",
+							newestOnTop: "toastr-newest-on-top",
+							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+							timeOut: 1500
+						});
+						setTimeout(function () { location.reload(1); }, 1000);
+					}
+					else if (data.success == 'false'){                   
+						if($('.feedback').hasClass('alert-success')){
+							$('.feedback').removeClass('alert-success').addClass('alert-danger');
+						}
+						else{
+							$('.feedback').addClass('alert-danger');
+						}
+						$('.alert-message').html("").html(data.message); 
+					}
+				},
+				error: function(data){
+					$('.feedback').addClass('alert-danger');
+					$('.alert-message').html("").html(data.message); 
+				}
+			});
+		},
+	 });	 
 								
 		
 	$("#AddCategory").validate({
@@ -2854,26 +3071,23 @@ $(document).ready(function(){
 <script>
 	function exportTableToExcel(tableID, filename = ''){
     
-			checked = $("input[type=checkbox]:checked").length;
-		  var business_details=[];
+	  checked = $("input[type=checkbox]:checked").length;
+	  var business_details=[];
       if(tableID == 'servicMenu'){
-        for(var count = 1;count< <?=count($business_admin_details);?>;count++)
-        {
-          if($("#service"+count).is(":checked"))
-          {
-            business_admin_id : $("#service"+count).attr("business_admin_id");
-            business_outlet_id : $("#service"+count).attr("business_outlet_id");
-            business_details.push($("#service"+count).attr("business_outlet_id"));
-          }
-          
-          
-          // alert(business_details);    
-        }
-        var parameters = {"outlet_id" : business_details};
+       
+		var selectedServices=[];
+		  
+	    $('#serviceTbody').find('input[type="checkbox"]').each(function() {	
+		  if ($(this).is(":checked")) {
+			selectedServices.push($(this).attr("master_service_id"));
+		  }
+		});
+		console.log(selectedServices);
+		var parameters = {"master_service_id" : selectedServices,'type':'service'};
         event.preventDefault();
         $(this).blur();
         $.ajax({
-          url: "<?=base_url()?>MasterAdmin/GetServicePublic",
+          url: "<?=base_url()?>MasterAdmin/DownloadService",
           type: "POST",
           data : parameters,
           // crossDomain: true,
@@ -2896,23 +3110,20 @@ $(document).ready(function(){
         });
       }
       else if(tableID == 'otcMenu'){
-        for(var count = 1;count< <?=count($business_admin_details);?>;count++)
-        {
-          if($("#product"+count).is(":checked"))
-          {
-            business_admin_id : $("#product"+count).attr("business_admin_id");
-            business_outlet_id : $("#product"+count).attr("business_outlet_id");
-            business_details.push($("#product"+count).attr("business_outlet_id"));
-          }
-          
-          
-          // alert(business_details);    
-        }
-        var parameters = {"outlet_id" : business_details};
+        var selectedServices=[];
+		  
+	    $('#productTbody').find('input[type="checkbox"]').each(function() {	
+		  if ($(this).is(":checked")) {
+			selectedServices.push($(this).attr("master_service_id"));
+		  }
+		});
+		console.log(selectedServices);
+		var parameters = {"master_service_id" : selectedServices,'type':'otc'};
+       
         event.preventDefault();
         $(this).blur();
         $.ajax({
-          url: "<?=base_url()?>MasterAdmin/GetProductPublic",
+          url: "<?=base_url()?>MasterAdmin/DownloadService",
           type: "POST",
           data : parameters,
           // crossDomain: true,
