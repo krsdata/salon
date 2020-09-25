@@ -662,6 +662,7 @@ class Cashier extends CI_Controller {
 								$curr_sess_cust_data = $this->session->userdata['POS'];
 								array_push($curr_sess_cust_data, $sess_data);
 								$this->session->set_userdata('POS', $curr_sess_cust_data);
+
 							}
 							////////////////////////////////////////////////////////////
 
