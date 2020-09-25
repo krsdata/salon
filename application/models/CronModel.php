@@ -216,20 +216,35 @@ WHERE  Date(t1.txn_datetime) = "'.$date.'" and t3.employee_business_outlet = '.$
         }
     }
 
-    public function get30MinuteBeforeRecord(){
-        $sql = 'SELECT t1.*,t2.customer_name,t2.customer_mobile,t4.employee_first_name,t4.employee_mobile,t5.business_outlet_name,t5.business_outlet_address,t5.business_outlet_mobile  FROM mss_appointments as t1
-INNER JOIN mss_customers as t2 on t1.customer_id = t2.customer_id
-INNER JOIN mss_appointment_services t3 ON t1.appointment_id = t3.appointment_id
-INNER JOIN mss_employees t4 on t3.expert_id = t4.employee_id
-INNER JOIN mss_business_outlets t5 ON t4.employee_business_outlet = t5.business_outlet_id
-WHERE t1.appointment_date = "'.date('Y-m-d').'" and t1.appointment_status = 1 and DATE_FORMAT(`appointment_start_time`, "%H:%i") =  DATE_FORMAT(NOW() + INTERVAL 30 MINUTE, "%H:%i")';
+    public function getAppointmentRecord(){
+        $sql = 'SELECT t1.*, 
+       t2.customer_name, 
+       t2.customer_mobile, 
+       t4.employee_first_name, 
+       t4.employee_mobile, 
+       t5.business_outlet_name, 
+       t5.business_outlet_address, 
+       t5.business_outlet_mobile 
+FROM   mss_appointments AS t1 
+       inner join mss_customers AS t2 
+               ON t1.customer_id = t2.customer_id 
+       inner join mss_appointment_services t3 
+               ON t1.appointment_id = t3.appointment_id 
+       inner join mss_employees t4 
+               ON t3.expert_id = t4.employee_id 
+       inner join mss_business_outlets t5 
+               ON t4.employee_business_outlet = t5.business_outlet_id 
+WHERE  t1.appointment_date =  "'.date('Y-m-d').'"
+       AND t1.appointment_status = 1
+       AND Date_format( t1.`appointment_start_time` , "%h:%i") <= 
+           Date_format(Now() + interval 60 minute, "%h:%i")';
 
-$sql = 'SELECT t1.*,t2.customer_name,t2.customer_mobile,t4.employee_first_name,t4.employee_mobile,t5.business_outlet_name,t5.business_outlet_address,t5.business_outlet_mobile  FROM mss_appointments as t1
-INNER JOIN mss_customers as t2 on t1.customer_id = t2.customer_id
-INNER JOIN mss_appointment_services t3 ON t1.appointment_id = t3.appointment_id
-INNER JOIN mss_employees t4 on t3.expert_id = t4.employee_id
-INNER JOIN mss_business_outlets t5 ON t4.employee_business_outlet = t5.business_outlet_id
-WHERE t1.appointment_date = "'.date('Y-m-d').'" and t1.appointment_status = 1';
+// $sql = 'SELECT t1.*,t2.customer_name,t2.customer_mobile,t4.employee_first_name,t4.employee_mobile,t5.business_outlet_name,t5.business_outlet_address,t5.business_outlet_mobile  FROM mss_appointments as t1
+// INNER JOIN mss_customers as t2 on t1.customer_id = t2.customer_id
+// INNER JOIN mss_appointment_services t3 ON t1.appointment_id = t3.appointment_id
+// INNER JOIN mss_employees t4 on t3.expert_id = t4.employee_id
+// INNER JOIN mss_business_outlets t5 ON t4.employee_business_outlet = t5.business_outlet_id
+// WHERE t1.appointment_date = "'.date('Y-m-d').'" and t1.appointment_status = 1';
         $query = $this->db->query($sql);
         $data['appointment_record'] = $query->result_array();
         if($data){

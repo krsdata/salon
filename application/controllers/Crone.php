@@ -231,11 +231,11 @@ die;
 
     public function sendSMSBeforeAppointment(){
         $this->load->model('CronModel');
-        $result = $this->CronModel->get30MinuteBeforeRecord();
-        /*echo $this->db->last_query();
-        echo "<pre>";
-        print_r($result);
-        die;*/
+        $result = $this->CronModel->getAppointmentRecord();
+        // echo $this->db->last_query();
+        // echo "<pre>";
+        // print_r($result);
+        // die;
         if($result['success']){
             $record = $result['res_arr']['appointment_record'];
 
