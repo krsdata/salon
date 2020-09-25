@@ -567,7 +567,8 @@
 
     		success: function(data) {
             if(data.success == 'true'){
-							window.location.reload();
+							// window.location.reload();
+							window.location.href="<?=base_url()?>Cashier/PerformBilling/"+customer_id+"";
             }
             else if (data.success == 'false'){                   
         	    $('#centeredModalDanger').modal('show').on('shown.bs.modal', function (e) {
