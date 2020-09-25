@@ -399,7 +399,7 @@
 																		<th>Expert Name</th>
 																		<th>Emp-Id</th>
 																		<th>Mobile</th>
-																		<th>Revenue Today(Rs.)</th>
+																		<th>Revenue</th>
 																		<th>Service Count</th>
 																	</tr>
 																</thead>
@@ -791,9 +791,9 @@
 															<td><?=$txn['mobile']?></td>
 															<td><?=$txn['name']?></td>
 															<td><?=$txn['Type']?></td>
-															<td><?=$txn['mrp_amt']?></td>
-															<td><?=$txn['discount']?></td>
-															<td><?=$txn['net_amt']?></td>
+															<td><?=number_format($txn['mrp_amt'])?></td>
+															<td><?=number_format($txn['discount'])?></td>
+															<td><?=number_format($txn['net_amt'])?></td>
 															<td><?=$txn['total_tax']?></td>
 															<td><?=$txn['pending_amt']?></td>
 															<?php
@@ -1199,9 +1199,9 @@
 							str_2 += "<td>" + data.message[i].billing_date + "</td>";
 							str_2 += "<td>" + data.message[i].mobile + "</td>";
 							str_2 += "<td>" + data.message[i].Type + "</td>";	
-							str_2 += "<td>" + data.message[i].mrp_amt + "</td>";
+							str_2 += "<td>" + (new Intl.NumberFormat().format(data.message[i].mrp_amt)) + "</td>";
 							str_2 += "<td>" + data.message[i].discount + "</td>";
-							str_2 += "<td>" + data.message[i].net_amt + "</td>";
+							str_2 += "<td>" + (new Intl.NumberFormat().format(data.message[i].net_amt)) + "</td>";
 							str_2 += "<td>" + data.message[i].total_tax + "</td>";
 							str_2 += "<td>" + data.message[i].pending_amt + "</td>";
 							if(data.message[i].Type=='Package'){
@@ -1237,7 +1237,7 @@
 							str_2 += "<td>" + data.message[i].expert_name + "</td>";
 							str_2 += "<td> EMP0" + data.message[i].emp_id + "</td>";
 							str_2 += "<td>" + data.message[i].employee_mobile + "</td>";
-							str_2 += "<td>" + data.message[i].net_amt + "</td>";	
+							str_2 += "<td>" + (new Intl.NumberFormat().format(data.message[i].net_amt)) + "</td>";	
 							str_2 += "<td>" + data.message[i].count + "</td>";
 							str_2+="</tr>";
 						}
