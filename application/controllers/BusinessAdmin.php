@@ -2739,7 +2739,6 @@ class BusinessAdmin extends CI_Controller {
 	public function AddEmployee(){
 		if($this->IsLoggedIn('business_admin')){
 			// $this->PrettyPrintArray($_POST);
-			// exit;
 			if(isset($_POST) && !empty($_POST)){
 				$this->form_validation->set_rules('employee_first_name', 'Employee FirstName', 'trim|required|max_length[50]');
 				$this->form_validation->set_rules('employee_last_name', 'Employee Last Name', 'trim|required|max_length[50]');
@@ -2765,10 +2764,8 @@ class BusinessAdmin extends CI_Controller {
 					die;
 				}
 				else{
-					// $file=$_POST['myfile']['employee_resume'];
-					// $this->PrettyPrintArray($_POST);
-					// exit;
-                    if($_POST['nick_name'] == ''){
+					
+          if($_POST['nick_name'] == '' || empty($_POST['nick_name'])){
 						$_POST['nick_name']=$_POST['employee_first_name'].' '.$_POST['employee_last_name'];
 					}
 					$data = array(
@@ -2781,14 +2778,11 @@ class BusinessAdmin extends CI_Controller {
 						'employee_business_outlet' 	=> $this->input->post('employee_business_outlet'),
 						'employee_password' 	=> password_hash($this->input->post('employee_password'), PASSWORD_DEFAULT),
 						'employee_expertise' 	=> $this->input->post('employee_expertise'),
-				// 		'working_hours' =>$this->input->post('employee_work_hour'),
-				// 		'employee_over_time_rate' =>$this->input->post('employee_over_time_rate'),
 						'employee_role' 	=> $this->input->post('employee_role'),
 						'employee_date_of_joining' 	=> $this->input->post('employee_date_of_joining'),
 						'employee_business_admin' => $this->session->userdata['logged_in']['business_admin_id']
 					);
 					// $this->PrettyPrintArray($data);
-					// exit;
 					$result = $this->BusinessAdminModel->Insert($data,'mss_employees');
 						
 					if($result['success'] == 'true'){
@@ -3212,7 +3206,6 @@ class BusinessAdmin extends CI_Controller {
 	}
 
 	public function EditEmployee(){
-        // $this->PrettyPrintArray($_POST);
         if($this->IsLoggedIn('business_admin')){
             if(isset($_POST) && !empty($_POST)){
                 $this->form_validation->set_rules('employee_first_name', 'Employee FirstName', 'trim|required|max_length[50]');
@@ -3223,8 +3216,7 @@ class BusinessAdmin extends CI_Controller {
                 $this->form_validation->set_rules('employee_business_outlet', 'Employee Outlet Name', 'trim|required');
                 $this->form_validation->set_rules('employee_expertise', 'Employee Expertise', 'trim');
                 $this->form_validation->set_rules('employee_date_of_joining', 'Employee Date of Joining', 'trim|required');
-                if ($this->form_validation->run() == FALSE) 
-                {
+                if ($this->form_validation->run() == FALSE){
                     $data = array(
                                     'success' => 'false',
                                     'error'   => 'true',
@@ -3233,15 +3225,11 @@ class BusinessAdmin extends CI_Controller {
                     header("Content-type: application/json");
                     print(json_encode($data, JSON_PRETTY_PRINT));
                     die;
-                }
-                else{
-                    if(isset($_POST['employee_weekoff']))
-                    {   $count=0;
+                }else{
+                    if(isset($_POST['employee_weekoff'])){   
+											$count=0;
                         $temp=array_chunk($_POST['employee_weekoff'],5);
-                        // foreach($temp as $w=>$day){
-                        //  // $this->PrettyPrintArray($day);
-                        //  array_push($week,$day);
-                        // }
+                      
                         foreach($_POST['year'] as $key => $value){
                             $month=$_POST['month_name'][$key]."-".$value;
                             $data=array(
@@ -3270,55 +3258,30 @@ class BusinessAdmin extends CI_Controller {
                                 $weeklyoff=json_encode($temp[$key]);
                             }
                         }   
-                    }
-                    else{
+                    }else{
                         $employee_weekoff='null';
                     }
-                //upload    
-                // $this->PrettyPrintArray($_POST);
-                $path='';
-                // $this->PrettyPrintArray($_FILES);
-                if(isset($_FILES['cv']['name'])){
-                    if($_FILES['cv']['name'] != null){
-                        $errors= array();
-                        $file_name = $_FILES['cv']['name'];
-                        $file_size =$_FILES['cv']['size'];
-                        $file_tmp =$_FILES['cv']['tmp_name'];
-                        $file_type=$_FILES['cv']['type'];
-                        // $file_ext=strtolower(end(explode('.',$_FILES['cv']['name'])));
-                        $tmp = explode('.', $file_name);
-                        $file_ext = end($tmp);
-                        $extensions= array("jpeg","jpg","png","pdf","doc","docx");
-                        if(in_array($file_ext,$extensions)=== false){
-                           $errors[]="extension not allowed.";
-                        }
-                        if(empty($errors)==true){
-                            $file_name=$_POST['employee_mobile'].'.'.$file_ext;
-                            $filename=$_POST['employee_mobile'];
-                            $dir = 'upload';
-                            $files = glob("{$dir}/{$filename}.*");
-                            // if($files==null){
-                            // }
-                            $path="upload/".$file_name;
-                           move_uploaded_file($file_tmp,"/home/tamarufa/public_html/marks-retech.in/Login/upload/".$file_name);
-                        //    echo "Success";
-                        }else{
-                           print_r($errors);
-                        }
-                     }
-                }
-                     //  
+										 // for file upload
+										//  $this->PrettyPrintArray($_FILES);
+										$config['allowed_types']='jpg|png|pdf|docx|doc';
+										$config['upload_path']='./upload/';
+										$this->load->library('upload',$config);
+										$this->upload->do_upload('cv');
+										$path="upload/".$_FILES['cv']['name'];
+										 //
+										if($_POST['nick_name'] == '' || empty($_POST['nick_name'])){
+											$_POST['nick_name']=$_POST['employee_first_name'].' '.$_POST['employee_last_name'];
+										}
                     $data = array(
                         'employee_first_name'   => $this->input->post('employee_first_name'),
                         'employee_last_name'    => $this->input->post('employee_last_name'),
-                        'employee_nick_name'    => $this->input->post('employee_nick_name'),
+                        'employee_nick_name'    => $_POST['employee_nick_name'],
                         'employee_mobile'   => $this->input->post('employee_mobile'),
                         'employee_address'  => $this->input->post('employee_address'),
                         'employee_email'    => $this->input->post('employee_email'),
                         'employee_business_outlet'  => $this->input->post('employee_business_outlet'),
                         'employee_expertise'    => $this->input->post('employee_expertise'),
                         'employee_role'     => $this->input->post('employee_role'),
-                        // 'employee_password'  => password_hash('1111', PASSWORD_DEFAULT),
                         'employee_date_of_joining'  => $this->input->post('employee_date_of_joining'),
                         'employee_gross_salary'     => $this->input->post('employee_gross_salary'),
                         'employee_basic_salary'     => $this->input->post('employee_basic_salary'),
@@ -5471,7 +5434,8 @@ public function GetEmployee(){
                                 // if($files==null){
                                 // }
                                 $path="upload/".$file_name;
-                            move_uploaded_file($file_tmp,"/home/tamarufa/public_html/marks-retech.in/Login/upload/".$file_name);
+														$status=move_uploaded_file($file_tmp,$path);
+														$this->PrettyPrintArray($status);
                             //    echo "Success";
                             }else{
                             print_r($errors);

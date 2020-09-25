@@ -7335,4 +7335,49 @@ public function AddToCartRedeemPoints(){
 		echo $response;
 	}
 
+	public function GetLastTransactions(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_GET) && !empty($_GET)){
+				$where=array(
+					'from_date'	=>$_GET['from_date'],
+					'to_date'		=> $_GET['to_date']
+				);
+					$data=$this->CashierModel->GetLastTransactions($where);
+			
+					$this->ReturnJsonArray(true,false,$data['res_arr']);
+          die;
+			}else{
+				$this->ReturnJsonArray(false,true,"Wrong Method!");
+				die;
+			}						
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/");
+		}
+	}
+
+	// $data['expert']= $this->CashierModel->ExpertWiseSale($where);
+	// $data['expert']= $data['expert']['res_arr'];
+
+	public function GetExpertTransactions(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_GET) && !empty($_GET)){
+				$where=array(
+					'from_date'	=>$_GET['from_date'],
+					'to_date'		=> $_GET['to_date']
+				);
+					$data=$this->CashierModel->GetExpertTransactions($where);
+					$this->ReturnJsonArray(true,false,$data['res_arr']);
+          die;
+			}else{
+				$this->ReturnJsonArray(false,true,"Wrong Method!");
+				die;
+			}						
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/");
+		}
+	}
+
+
 }

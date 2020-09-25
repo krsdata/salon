@@ -20,17 +20,18 @@
 	<div class="navbar-collapse collapse">
 		<ul class="navbar-nav ml-auto">
 			<li class="nav-item" style="margin-top: 8px;margin-right: 16px;">
-			<a href="<?=base_url()?>Cashier/ReportsManagement/">
+			
 				<img src="<?=base_url()?>public/images/visit.jpg" class="avatar img-fluid rounded-circle mr-1" alt="Business Admin" /> 
 				<?php
 					echo "<span class=\"text-white font-weight-bold\">".$nav_details['visit']."</span>";
-				?></a>
+				?>
 			</li>
 			<li class="nav-item" style="margin-top: 8px;margin-right: 16px;">
+			<a href="<?=base_url()?>Cashier/ReportsManagement/">
 				<img src="<?=base_url()?>public/images/revenue.jpg" class="avatar img-fluid rounded-circle mr-1" alt="Business Admin" /> 
 				<?php
 					echo "<span class=\"text-white font-weight-bold\">".($nav_details['revenue']-($loyalty_payment+$cards_data['payment_wise']['others']))."</span>";
-				?>
+				?></a>
 			</li>
 			<li class="nav-item" style="margin-top: 8px;margin-right: 16px;">
 				<img src="<?=base_url()?>public/images/appointment.jpg" class="avatar img-fluid rounded-circle mr-1" alt="Business Admin" /> 
