@@ -546,7 +546,7 @@
       .done(function(data, textStatus, jqXHR) { 
         $("#EditEmployee input[name=employee_first_name]").attr('value',data.employee_first_name);
         $("#EditEmployee input[name=employee_last_name]").attr('value',data.employee_last_name);
-		$("#EditEmployee input[name=nick_name]").attr('value',data.employee_nick_name);
+				$("#EditEmployee input[name=nick_name]").attr('value',data.employee_nick_name);
         $("#EditEmployee input[name=employee_address]").attr('value',data.employee_address);
         $("#EditEmployee input[name=employee_email]").attr('value',data.employee_email);
         $("#EditEmployee input[name=employee_mobile]").attr('value',data.employee_mobile);
