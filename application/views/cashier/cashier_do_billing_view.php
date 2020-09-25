@@ -41,21 +41,19 @@
 							<div class="col-md-7">
 								<div class="tab">
 									<ul class="nav nav-pills" role="tablist">
-										<li class="nav-item"><a class="nav-link active" href="#tab-1" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;">Services</a></li>
-										<li class="nav-item"><a class="nav-link" href="#tab-4" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;">Retail Products</a></li>
-										<li class="nav-item"><a class="nav-link" href="#tab-2" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;">Packages</a></li>
+										<li class="nav-item"><a class="nav-link active" href="#tab-1" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;"><strong>Services</strong></a></li>
+										<li class="nav-item"><a class="nav-link" href="#tab-4" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;"><strong>Retail Products</strong></a></li>
+										<li class="nav-item"><a class="nav-link" href="#tab-2" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;"><strong>Packages</strong></a></li>
 										<?php foreach($business_admin_packages as $key => $value)
 										{
 											if($value == 'Marks360')
 											{
 											    ?>
-														<li class="nav-item"><a class="nav-link" href="#tab-3" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;">Redeem Points</a></li>
+														<li class="nav-item"><a class="nav-link" href="#tab-3" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;"><strong>Redeem Points</strong></a></li>
 												<?php
 										    }
-										}?>
-										
-										
-										<li class="nav-item"><a class="nav-link" href="#tab-5" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;">Customer coupon</a></li>
+										}?>										
+										<li class="nav-item"><a class="nav-link" href="#tab-5" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;"><strong>Customer coupon</strong></a></li>
 									</ul>
 									<div class="tab-content">
 										<div class="tab-pane active" id="tab-1" role="tabpanel">											
