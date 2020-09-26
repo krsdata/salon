@@ -11537,8 +11537,7 @@ public function InsertSalary(){
 					$where = array(
 							'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 							'is_active'         => TRUE,
-							'business_outlet_id'=> $outlet_id,
-							'category_for'			=> 1
+							'business_outlet_id'=> $outlet_id
 					);
 					$data = $this->BusinessAdminModel->GetRawMaterialsIn($where);
 					if($data['success'] == 'true'){ 
