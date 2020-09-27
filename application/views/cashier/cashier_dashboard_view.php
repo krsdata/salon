@@ -662,17 +662,16 @@
 	        url: "<?=base_url()?>Cashier/AddNewCustomer",
 	        data: formData,
 	        type: "POST",
-	        // crossDomain: true,
 					cache: false,
-	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalAddCustomer").modal('hide'); 
+							// alert(data.message.insert_id);
 							/*$('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
 								$("#SuccessModalMessage").html("").html(data.message);
 							}).on('hidden.bs.modal', function (e) {*/
 									// window.location.reload();
-									window.location.href="<?=base_url()?>Cashier/PerformBilling/<?=$customer['customer_id']?>";
+									window.location.href="<?=base_url()?>Cashier/PerformBilling/"+data.message.insert_id+"";
 							/*});	*/
             }
             else if (data.success == 'false'){                   

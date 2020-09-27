@@ -117,7 +117,8 @@ class Cashier extends CI_Controller {
                 $data['rules'] = ['res_arr'=>''];
                 $data['rules'] = $data['rules']['res_arr'];
               }
-        			$data['sidebar_collapsed'] = "true";
+							$data['sidebar_collapsed'] = "true";
+							// $this->PrettyPrintArray($data['customers']);
         			$this->load->view('cashier/cashier_dashboard_view',$data);
         		}
         		else{
@@ -425,7 +426,7 @@ class Cashier extends CI_Controller {
                 $data['rules'] = ['res_arr'=>''];
                 // $data['rules'] = $rules['res_arr'];
 						}	
-						 //$this->PrettyPrintArray($this->session->all_userdata());
+						//  $this->PrettyPrintArray($data['customers']);
 			$data['sidebar_collapsed'] = "true";
 			$this->load->view('cashier/cashier_dashboard_view',$data);
 		}
@@ -657,6 +658,7 @@ class Cashier extends CI_Controller {
 							if(!isset($this->session->userdata['POS'])){
 								array_push($curr_sess_cust_data, $sess_data);
 								$this->session->set_userdata('POS', $curr_sess_cust_data);
+								// $this->PrettyPrintArray($curr_sess_cust_data);
 							}
 							else{
 								$curr_sess_cust_data = $this->session->userdata['POS'];
@@ -666,7 +668,7 @@ class Cashier extends CI_Controller {
 							}
 							////////////////////////////////////////////////////////////
 
-							$this->ReturnJsonArray(true,false,"Customer added successfully!");
+							$this->ReturnJsonArray(true,false,$result['res_arr']);
 							die;
 	          }
 	          elseif($result['error'] == 'true'){
@@ -823,7 +825,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."BusinessAdmin/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
