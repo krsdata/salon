@@ -1,8 +1,47 @@
+<style>
+	.blink-bg{
+		color: #fff;
+		padding: 5px;
+		display: inline-block;
+		border-radius: 3px;
+		animation: blinkingBackground 2s infinite;
+	}
+	@keyframes blinkingBackground{
+		0%		{ background-color: #10c018;}
+		25%		{ background-color: #1056c0;}
+		50%		{ background-color: #ef0a1a;}
+		75%		{ background-color: #254878;}
+		100%	        { background-color: #04a1d5;}
+	}
+
+.rotate {
+  animation: rotation 2s;
+}
+
+.linear {
+  animation-timing-function: linear;
+}
+
+.infinite {
+  animation-iteration-count: infinite;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+
+</style>
 <nav class="navbar navbar-expand">
 	<a class="sidebar-toggle d-flex mr-2">
 		<i class="hamburger align-self-center"></i>
 	</a>&ensp;&ensp;&ensp;
-	<a class="text-white" href="<?=base_url()?>Cashier/Dashboard/" title="Billing"><i data-feather="shopping-cart" ></i></a>&ensp;&ensp;&ensp;
+	<a class="text-white" href="<?=base_url()?>Cashier/Dashboard/" title="Billing"><i data-feather="home" ></i></a>&ensp;&ensp;&ensp;
 	<a class="text-white" href="<?=base_url()?>Cashier/BuyPackages/" title="Packages"><i data-feather="gift"></i></a>&ensp;&ensp;&ensp;
 	
 	<?php
@@ -21,16 +60,25 @@
 		<ul class="navbar-nav ml-auto">
 			<li class="nav-item" style="margin-top: 8px;margin-right: 16px;">
 			
-				<img src="<?=base_url()?>public/images/visit.jpg" class="avatar img-fluid rounded-circle mr-1" alt="Business Admin" /> 
+				<!-- <img src="<?=base_url()?>public/images/visit.jpg" class="avatar img-fluid rounded-circle mr-1" alt="Business Admin" />  -->
+				<i class="fa fa-bell"></i>
+				<!-- <?php
+					echo "<span class=\"text-white font-weight-bold\">".$nav_details['visit']."</span>";
+				?> -->
+			</li>
+			<li class="nav-item" style="margin-top: 8px;margin-right: 16px;">
+			
+				<img src="<?=base_url()?>public/images/visit.jpg" class="avatar img-fluid blink rounded-circle mr-1" alt="Business Admin" /> 
 				<?php
 					echo "<span class=\"text-white font-weight-bold\">".$nav_details['visit']."</span>";
 				?>
 			</li>
-			<li class="nav-item" style="margin-top: 8px;margin-right: 16px;">
+			<li class="nav-item " style="margin-top: 8px;margin-right: 16px;">
 			<a href="<?=base_url()?>Cashier/ReportsManagement/">
-				<img src="<?=base_url()?>public/images/revenue.jpg" class="avatar img-fluid rounded-circle mr-1" alt="Business Admin" /> 
+				<img src="<?=base_url()?>public/images/revenue.jpg" class="avatar img-fluid rounded-circle mr-1 blink-bg" alt="Business Admin" /> 
+				<!-- rotate linear infinite  -->
 				<?php
-					echo "<span class=\"text-white font-weight-bold\">".($nav_details['revenue']-($loyalty_payment+$cards_data['payment_wise']['others']))."</span>";
+					echo "<span class=\"text-white font-weight-bold \">".($nav_details['revenue']-($loyalty_payment+$cards_data['payment_wise']['others']))."</span>";
 				?></a>
 			</li>
 			<li class="nav-item" style="margin-top: 8px;margin-right: 16px;">

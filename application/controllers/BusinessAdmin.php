@@ -3393,6 +3393,18 @@ class BusinessAdmin extends CI_Controller {
 			}
 			else{
 				$data = $this->GetDataForAdmin("Add Outlet");
+				$outlet_admin_id= $this->session->userdata['logged_in']['business_admin_id'];
+				$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
+
+					$query = $this->db->query($sql);
+					$result = $query->result_array();
+					if(empty($result)){
+						$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
+
+						$query = $this->db->query($sql);
+						$result = $query->result_array();
+					}
+					$data['logo'] = $result[0]['config_value'];
 				$this->load->view('business_admin/ba_add_outlet_view',$data);
 			}
 		}
@@ -3620,6 +3632,29 @@ public function GetEmployee(){
 					die;
 				}
 				else{
+
+					// for file upload
+					$config['allowed_types']='jpg|png|jpeg';
+					$config['upload_path']='./public/images/';
+					$this->load->library('upload',$config);
+					$this->upload->do_upload('business_outlet_logo');
+					$path=array(
+						'outlet_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+						'config_key'			=>'salon_logo',
+						'config_value' =>$_FILES['business_outlet_logo']['name']
+					);
+					$where=array(
+						'outlet_admin_id'=> $this->session->userdata['logged_in']['business_admin_id']
+					);
+					$logo_exist=$this->BusinessAdminModel->MultiWhereSelect('mss_config',$where);
+						if(empty($logo_exist['res_arr'])){
+						$update_logo=$this->BusinessAdminModel->Insert($path,'mss_config');
+						}else{
+							$update_logo=$this->BusinessAdminModel->Update($path,'mss_config','outlet_admin_id');
+						}
+
+						//
+
 					$data = array(
 						'business_outlet_id'    => $this->input->post('business_outlet_id'),
 						'business_outlet_name' 	=> $this->input->post('business_outlet_name'),
@@ -3643,7 +3678,7 @@ public function GetEmployee(){
 					
 					$result = $this->BusinessAdminModel->Update($data,'mss_business_outlets','business_outlet_id');
 						
-					if($result['success'] == 'true'){
+					if($result['success'] == 'true' || $update_logo){
 						$this->ReturnJsonArray(true,false,"Outlet details updated successfully!");
 						die;
           }

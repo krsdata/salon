@@ -204,7 +204,7 @@
 											<div class="modal-body m-3">
 												<div class="row">
 													<div class="col-md-12">
-														<form id="EditOutlet" method="POST" action="#">
+														<form id="EditOutlet" method="POST" action="#" enctype="multipart/form-data">
 															<div class="form-row">
 																<div class="form-group col-md-4">
 																	<label>Outlet Name</label>
@@ -313,13 +313,20 @@
 																</div>
 															</div>
 															<div class="form-row">
-															<div class="form-group col-md-6">
+															<div class="form-group col-md-4">
 																<label class="form-label">Latitude</label>
 																<input type="text" class="form-control" name="business_outlet_latitude" placeholder="Outlet Latitude">
 															</div>
-															<div class="form-group col-md-6">
+															<div class="form-group col-md-4">
 																<label class="form-label">Longitude</label>
 																<input type="text" class="form-control" name="business_outlet_longitude" placeholder="Outlet Longitude">
+															</div>
+															<div class="form-group col-md-2">
+																<label class="form-label">Upload Logo</label>
+																<input type="file" name="business_outlet_logo" >
+															</div>
+															<div class="col-md-2" id="outlet_logo">
+																<img class="img-responsive" src="../public/images/<?=$logo?>" width="100px" height="50px">
 															</div>
 														</div>
 															<div class="form-group">
@@ -486,89 +493,138 @@
 				});
 			},
 		});
-
-		$("#EditOutlet").validate({
-	  	errorElement: "div",
-	    rules: {
-	        "business_outlet_name" : {
-            required : true,
-            maxlength : 100
-	        },
-	        "business_outlet_address" : {
-	          required : true
-	        },
-	        "business_outlet_pincode" : {
-	        	required : true,
-	        	maxlength : 10,
-	        },
-	        "business_outlet_state" : {
-	        	required : true,
-	        	maxlength : 100,
-	        },
-	        "business_outlet_city" : {
-	        	required : true,
-	        	maxlength : 100,
-	        },
-	        "business_outlet_country" : {
-	        	required : true,
-	        	maxlength : 100,
-	        },
-	        "business_outlet_email" : {
-	        	email : true
-	        },
-	        "business_outlet_facebook_url":{
-	        	url : true
-	        },
-	        "business_outlet_instagram_url":{
-	        	url : true
-	        },
-	        "business_outlet_mobile":{
-	        	maxlength : 10,
-	        	maxlength : 10
-	        },
-	        "business_outlet_landline":{
-	        	maxlength: 10
-	        },
-	        "business_outlet_gst_in" : {
-	        	maxlength : 15,
-	        	minlength : 15
-	        }    
-	    },
-	    submitHandler: function(form) {
-				var formData = $("#EditOutlet").serialize(); 
+		// Edit outlet with Logo
+		$("form#EditOutlet").submit(function(form) {
+   			 form.preventDefault();    
+			
+				var formData = new FormData(this);
 				$.ajax({
 		        url: "<?=base_url()?>BusinessAdmin/EditOutlet",
 		        data: formData,
+						contentType: "application/octet-stream",
+						enctype: 'multipart/form-data',
+						contentType: false,
+						processData: false,
 		        type: "POST",
-		        // crossDomain: true,
 						cache: false,
-		        // dataType : "json",
 		    		success: function(data) {
               if(data.success == 'true'){
-              	$("#centeredModalDanger").modal('hide');
-								$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-									$("#SuccessModalMessage").html("").html(data.message);
-								}).on('hidden.bs.modal', function (e) {
-										window.location.reload();
+              	$("#ModalEditEmployee").modal('hide');
+								toastr["success"](data.message,"", {
+									positionClass: "toast-top-right",
+									progressBar: "toastr-progress-bar",
+									newestOnTop: "toastr-newest-on-top",
+									rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+									timeOut: 1000
 								});
+								setTimeout(function () { location.reload(1); }, 1000);
               }
-              else if (data.success == 'false'){                   
-          	    if($('.feedback').hasClass('alert-success')){
-                  $('.feedback').removeClass('alert-success').addClass('alert-danger');
-                }
-                else{
-                  $('.feedback').addClass('alert-danger');
-                }
-                $('.alert-message').html("").html(data.message); 
+              else if (data.success == 'false'){   
+								$("#ModalEditEmployee").modal('hide');                
+								toastr["error"](data.message,"", {
+									positionClass: "toast-top-right",
+									progressBar: "toastr-progress-bar",
+									newestOnTop: "toastr-newest-on-top",
+									rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+									timeOut: 1000
+								});
               }
             },
             error: function(data){
-    					$('.feedback').addClass('alert-danger');
-    					$('.alert-message').html("").html(data.message); 
+				toastr["error"](data.message,"", {
+									positionClass: "toast-top-right",
+									progressBar: "toastr-progress-bar",
+									newestOnTop: "toastr-newest-on-top",
+									rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+									timeOut: 1000
+								}); 
             }
 				});
-			},
 		});
+		//
+		// $("#EditOutlet").validate({
+	  // 	errorElement: "div",
+	  //   rules: {
+	  //       "business_outlet_name" : {
+    //         required : true,
+    //         maxlength : 100
+	  //       },
+	  //       "business_outlet_address" : {
+	  //         required : true
+	  //       },
+	  //       "business_outlet_pincode" : {
+	  //       	required : true,
+	  //       	maxlength : 10,
+	  //       },
+	  //       "business_outlet_state" : {
+	  //       	required : true,
+	  //       	maxlength : 100,
+	  //       },
+	  //       "business_outlet_city" : {
+	  //       	required : true,
+	  //       	maxlength : 100,
+	  //       },
+	  //       "business_outlet_country" : {
+	  //       	required : true,
+	  //       	maxlength : 100,
+	  //       },
+	  //       "business_outlet_email" : {
+	  //       	email : true
+	  //       },
+	  //       "business_outlet_facebook_url":{
+	  //       	url : true
+	  //       },
+	  //       "business_outlet_instagram_url":{
+	  //       	url : true
+	  //       },
+	  //       "business_outlet_mobile":{
+	  //       	maxlength : 10,
+	  //       	maxlength : 10
+	  //       },
+	  //       "business_outlet_landline":{
+	  //       	maxlength: 10
+	  //       },
+	  //       "business_outlet_gst_in" : {
+	  //       	maxlength : 15,
+	  //       	minlength : 15
+	  //       }    
+	  //   },
+	  //   submitHandler: function(form) {
+		// 		// var formData = $("#EditOutlet").serialize(); 
+		// 		var formData = new FormData(this);
+		// 		$.ajax({
+		//         url: "<?=base_url()?>BusinessAdmin/EditOutlet",
+		//         data: formData,
+		// 				contentType: "application/octet-stream",
+		// 				enctype: 'multipart/form-data',
+		//         type: "POST",
+		// 				cache: false,
+		//     		success: function(data) {
+    //           if(data.success == 'true'){
+    //           	$("#centeredModalDanger").modal('hide');
+		// 						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
+		// 							$("#SuccessModalMessage").html("").html(data.message);
+		// 						}).on('hidden.bs.modal', function (e) {
+		// 								window.location.reload();
+		// 						});
+    //           }
+    //           else if (data.success == 'false'){                   
+    //       	    if($('.feedback').hasClass('alert-success')){
+    //               $('.feedback').removeClass('alert-success').addClass('alert-danger');
+    //             }
+    //             else{
+    //               $('.feedback').addClass('alert-danger');
+    //             }
+    //             $('.alert-message').html("").html(data.message); 
+    //           }
+    //         },
+    //         error: function(data){
+    // 					$('.feedback').addClass('alert-danger');
+    // 					$('.alert-message').html("").html(data.message); 
+    //         }
+		// 		});
+		// 	},
+		// });
 
 		$(document).on('click','.outlet-edit-btn',function(event) {
       event.preventDefault();

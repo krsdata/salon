@@ -672,7 +672,8 @@
 							/*$('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
 								$("#SuccessModalMessage").html("").html(data.message);
 							}).on('hidden.bs.modal', function (e) {*/
-									window.location.reload();
+									// window.location.reload();
+									window.location.href="<?=base_url()?>Cashier/PerformBilling/<?=$customer['customer_id']?>";
 							/*});	*/
             }
             else if (data.success == 'false'){                   
