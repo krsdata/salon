@@ -489,7 +489,7 @@
     {
       source: SearchCustomer,
       templates: {
-      	header: ' <button data-toggle="modal" data-target="#ModalAddCustomer" class="btn btn-primary"><i class="fa fa-plus"></i> New Customer</button>',
+      	header: ' <span data-toggle="modal" data-target="#ModalAddCustomer" style="border-bottom: 1px solid black;margin-bottom:5px;cursor:pointer;"><i class="fa fa-plus"></i> New Customer</span>',
         empty: 'No Customer Found!',
         suggestion: _.template("<p class='customer_search'><%- customer_name %>, <%- customer_mobile %></p>"),
       }
@@ -498,8 +498,7 @@
     var to_fill = '';
 
     $("#SearchCustomer").on("typeahead:selected", function(eventObject, suggestion, name) {
-      var loc = "#SearchCustomer";
-      to_fill = "Test111111111111";
+      var loc = "#SearchCustomer";      
       to_fill = suggestion.customer_name+","+suggestion.customer_mobile;
       setVals(loc,to_fill,suggestion.customer_id);
     });
