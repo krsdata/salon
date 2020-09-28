@@ -48,7 +48,7 @@ class Crone extends CI_Controller {
 			$data['package_Amt'] = $package_Amt;
 			$data['admin_name'] = $ol['business_admin_first_name']." ".$ol['business_admin_last_name'];
 			$data['business_outlet_name'] = $ol['business_outlet_name'];
-            $data['business_outlet_address'] = $ol['business_outlet_address'];
+            $data['business_outlet_location'] = $ol['business_outlet_location'];
             $data['business_outlet_state'] = $ol['business_outlet_state'];
             $data['business_outlet_city'] = $ol['business_outlet_city'];
             $data['business_outlet_country'] = $ol['business_outlet_country'];
@@ -224,7 +224,7 @@ die;
         $data['pending_amount_data'] = $pending_amount_data;
         $data['expenses_data'] = $expenses_data;
         $data['transaction_data'] = $transaction_data;
-        $data['date'] = $date;
+        $data['date'] = $date;        
         return $data;        
         //$this->load->view('cashier/cashier_book_view',$data);
     }
@@ -249,9 +249,9 @@ die;
                 
                 $this->sendMessage($r['employee_mobile'],$exp_message);
 
-                $customer_message = "Dear ".$r['customer_name'].",You've an upcoming appointment with ".$r['business_outlet_name']." in 30mins. Look forward to ur patronage. Team ".$r['business_outlet_name']." ".$r['business_outlet_mobile']." ".$r['business_outlet_address'];
-
-                $this->sendMessage($r['customer_mobile'],$customer_message);                
+                $customer_message = "Dear ".$r['customer_name'].",You've an upcoming appointment with ".$r['business_outlet_name']." in 30mins. Look forward to ur patronage. Team ".$r['business_outlet_name']." ".$r['business_outlet_mobile']." ".$r['business_outlet_location'];
+                $this->sendMessage($r['customer_mobile'],$customer_message);
+                #$this->sendWatsupMessage($r['customer_mobile'],$customer_message);                
             }
            
         die;
@@ -276,19 +276,39 @@ die;
         return json_encode($data);
     }
 
+    function sendWatsupMessage($mobile,$message){        
+        $authKey = "JH3E76DHNYeIcwD";
+        $clientId = "0rfMvmvjSxODwIp";        
+        $userId = "9";        
+         $msg = rawurlencode($message); //This for encode your message content
+         $mobile = '7415493261';
+         // API
+        $url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":"'.$userId.'","clientId":"'.$clientId.'","authKey":"'.$authKey.'"}';
+                                    
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch,CURLOPT_POST,1);
+        curl_setopt($ch,CURLOPT_POSTFIELDS,"");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
+        
+        $data = curl_exec($ch);
+        return json_encode($data);
+    }
+
     public function dayClosingReport(){
         $this->load->model('CronModel');
-        $outlets = $this->CronModel->getOutLetsAdmin();
+        $outlets = $this->CronModel->getOutLetsAdmin();                    
         if(empty($outlets))
             return true;
+        $date = date('Y-m-d');
         foreach ($outlets['res_arr'] as $key => $ol) {
             
-            $detail = $this->CronModel->DetailsById($ol['business_admin_id'],date('Y-m-d'));
+            $detail = $this->CronModel->DetailsById($ol['business_admin_id'],$date);            
             $data['visit'] = 0;
             if($detail['success'])
                 $data['visit'] = $detail['res_arr']['visit'];
 
-            $where = array('business_outlet_id'=>$ol['business_outlet_id'],'business_admin_id'=>$ol['business_admin_id'],'date'=>date('Y-m-d'));
+            $where = array('business_outlet_id'=>$ol['business_outlet_id'],'business_admin_id'=>$ol['business_admin_id'],'date'=>$date);
             $result = $this->CronModel->GetPaymentWiseReport($where);       
             $service_Amt = 0;
             if($result['success']){
@@ -302,7 +322,7 @@ die;
                 $package_Amt = $result['res_arr'][0]['Bill Amount'];
             }       
             
-            $collection = $this->daybook(date('Y-m-d'),$ol['business_outlet_id']);
+            $collection = $this->daybook($date,$ol['business_outlet_id']);
             
             $data['collection'] = $collection;
             $data['service_Amt'] = $service_Amt;
@@ -311,7 +331,7 @@ die;
             $data['package_Amt'] = $package_Amt;
             $data['admin_name'] = $ol['business_admin_first_name']." ".$ol['business_admin_last_name'];
             $data['business_outlet_name'] = $ol['business_outlet_name'];
-            $data['business_outlet_address'] = $ol['business_outlet_address'];
+            $data['business_outlet_location'] = $ol['business_outlet_location'];
             $data['business_outlet_state'] = $ol['business_outlet_state'];
             $data['business_outlet_city'] = $ol['business_outlet_city'];
             $data['business_outlet_country'] = $ol['business_outlet_country'];
@@ -338,7 +358,7 @@ die;
                     $total_p = $total_p-$collection['pending_amount_data'][$p];
                 }else{
                     $total_p = $total_p+$collection['pending_amount_data'][$p];
-                }                                               
+                }
                 $collection['expenses_data'][$p];
                 if($p == "virtual_wallet"){
                     $total_e = $total_e-$collection['expenses_data'][$p];
@@ -346,20 +366,18 @@ die;
                     $total_e = $total_e+$collection['expenses_data'][$p];
                 }
             }
-
-            $where = array('business_outlet_id'=>$ol['business_outlet_id'],'business_admin_id'=>$ol['business_admin_id'],'date'=>date('Y-m-d'));
+#echo "<pre>";print_r($total_t);die;
+            $where = array('business_outlet_id'=>$ol['business_outlet_id'],'business_admin_id'=>$ol['business_admin_id'],'date'=>$date);
             $result = $this->CronModel->GetPaymentWiseReport($where);       
             $service_Amt = '0';
             if($result['success']){
                 $service_Amt = !empty($result['res_arr'][0]['Total Amount'])?$result['res_arr'][0]['Total Amount']:0;
             }            
 
-            $msg = "Hi ".$ol['business_outlet_name'].", ".$ol['business_outlet_address']." ! Business Update till 10pm
-            Sales: Rs.$service_Amt
-            Collection: Rs.$total_t
-            Expenses : Rs.$total_e
-            Due Amt : Rs.$total_p
-            Visits:".$data['visit'];
+            $msg = "Hi ".$ol['business_outlet_name'].", ".$ol['business_outlet_location']." ! Business Update till 10pm
+            Sales: Rs.$service_Amt, Collection: Rs.$total_t, Expenses : Rs.$total_e, Due Amt : Rs.$total_p          Visits:".$data['visit'];
+
+            //echo $msg."<br><br>";
             $this->sendMessage($ol['business_admin_mobile'],$msg);            
         }
         die;
@@ -515,7 +533,7 @@ die;
             if($detail['success'])
                 $visit = $detail['res_arr']['visit'];
 
-            $msg = "Hi ".$ol['business_outlet_name'].", ".$ol['business_outlet_address']."!
+            $msg = "Hi ".$ol['business_outlet_name'].", ".$ol['business_outlet_location']."!
             Business Update: From $start_week - To $end_week
             Sales: Rs.$total_t
             Collection: Rs.$total_t
@@ -548,7 +566,8 @@ die;
             $end_week = date('Y-m-t',strtotime('last month'));
         }
         #$start_week = "2020-06-01";
-        #echo $start_week.' '.$end_week ;
+        // echo $start_week.' '.$end_week ;
+        // die;
         $outlets = $this->CronModel->getOutLetsAdmin();
         if(empty($outlets))
             return true;
@@ -564,13 +583,13 @@ die;
             
             $pending_amount_received=$this->CronModel->GetPendingAmountReceived($where);
             $pending_amount_received=$pending_amount_received['res_arr'][0]['pending_amount_received'];
-            $msg = "Pending Amount Update,  ".$ol['business_outlet_name'].", ".$ol['business_outlet_address'].", Duration: $start_week- $end_week 
+            $msg = "Pending Amount Update,  ".$ol['business_outlet_name'].", ".$ol['business_outlet_location'].", Duration: $start_week- $end_week 
                     Generated:Rs.$total_due_amount
                     Received: Rs.$pending_amount_received
-                    Due Amt till dt: ".($total_due_amount-$pending_amount_received);
+                    Due Amt till dt: ".(-$total_due_amount+$pending_amount_received);
                     //echo $msg;
-                    $this->sendMessage($ol['business_admin_mobile'],$msg);
-            #echo $msg;
+            $this->sendMessage($ol['business_admin_mobile'],$msg);
+            #echo $msg."<br><br>";
             #die;
         }
     }

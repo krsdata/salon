@@ -305,7 +305,7 @@
 							</div>
 						</div>
 
-						<!----MODAL AREA END--->
+						<!--MODAL AREA END-->
 					</div>
 				</div>
 				
@@ -489,15 +489,16 @@
     {
       source: SearchCustomer,
       templates: {
-        empty: "No Customer Found!",
-        suggestion: _.template("<p class='customer_search'><%- customer_name %>, <%- customer_mobile %></p>")
+      	header: ' <span data-toggle="modal" data-target="#ModalAddCustomer" style="border-bottom: 1px solid black;margin-bottom:5px;cursor:pointer;"><i class="fa fa-plus"></i> New Customer</span>',
+        empty: 'No Customer Found!',
+        suggestion: _.template("<p class='customer_search'><%- customer_name %>, <%- customer_mobile %></p>"),
       }
     });
        
-    var to_fill = "";
+    var to_fill = '';
 
     $("#SearchCustomer").on("typeahead:selected", function(eventObject, suggestion, name) {
-      var loc = "#SearchCustomer";
+      var loc = "#SearchCustomer";      
       to_fill = suggestion.customer_name+","+suggestion.customer_mobile;
       setVals(loc,to_fill,suggestion.customer_id);
     });
@@ -510,7 +511,7 @@
 
     $("#SearchCustomer").blur(function(){
       $("#SearchCustomer").val(to_fill);
-      to_fill = "";
+      to_fill = '';
     });
 
     function SearchCustomer(query, cb){
@@ -662,17 +663,16 @@
 	        url: "<?=base_url()?>Cashier/AddNewCustomer",
 	        data: formData,
 	        type: "POST",
-	        // crossDomain: true,
 					cache: false,
-	        // dataType : "json",
 	    		success: function(data) {
             if(data.success == 'true'){
             	$("#ModalAddCustomer").modal('hide'); 
+							// alert(data.message.insert_id);
 							/*$('#centeredModalSuccess').modal('show').on('shown.bs.modal', function (e){
 								$("#SuccessModalMessage").html("").html(data.message);
 							}).on('hidden.bs.modal', function (e) {*/
 									// window.location.reload();
-									window.location.href="<?=base_url()?>Cashier/PerformBilling/<?=$customer['customer_id']?>";
+									window.location.href="<?=base_url()?>Cashier/PerformBilling/"+data.message.insert_id+"";
 							/*});	*/
             }
             else if (data.success == 'false'){                   

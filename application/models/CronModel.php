@@ -223,7 +223,7 @@ WHERE  Date(t1.txn_datetime) = "'.$date.'" and t3.employee_business_outlet = '.$
        t4.employee_first_name, 
        t4.employee_mobile, 
        t5.business_outlet_name, 
-       t5.business_outlet_address, 
+       t5.business_outlet_location, 
        t5.business_outlet_mobile 
 FROM   mss_appointments AS t1 
        inner join mss_customers AS t2 
