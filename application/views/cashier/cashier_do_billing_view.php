@@ -3916,7 +3916,7 @@
       // },
     // });
   }
-
+/*
 setTimeout(function(){
 	if(localStorage.getItem("category_id")){
   		$('[category-id="'+localStorage.getItem("category_id")+'"]').click();
@@ -3937,5 +3937,5 @@ setTimeout(function(){
 		$('#collapseTwo').addClass('show');		
 	}
 },1500);
-  		
+*/  		
 </script>
