@@ -9,32 +9,10 @@
 	@keyframes blinkingBackground{
 		0%		{ background-color: #10c018;}
 		25%		{ background-color: #1056c0;}
-		50%		{ background-color: #ef0a1a;}
+		50%		{ background-color: orange;}
 		75%		{ background-color: #254878;}
-		100%	        { background-color: #04a1d5;}
+		100%	{ background-color: #04a1d5;}
 	}
-
-.rotate {
-  animation: rotation 2s;
-}
-
-.linear {
-  animation-timing-function: linear;
-}
-
-.infinite {
-  animation-iteration-count: infinite;
-}
-
-@keyframes rotation {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(359deg);
-  }
-}
-
 
 </style>
 <nav class="navbar navbar-expand">
