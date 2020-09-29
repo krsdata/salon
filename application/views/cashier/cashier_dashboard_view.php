@@ -489,7 +489,7 @@
     {
       source: SearchCustomer,
       templates: {
-      	header: ' <span data-toggle="modal" data-target="#ModalAddCustomer" style="border-bottom: 1px solid black;margin-bottom:5px;cursor:pointer;"><i class="fa fa-plus"></i> New Customer</span>',
+      	header: ' <span data-toggle="modal" data-target="#ModalAddCustomer" style="border-bottom: 1px solid black;margin-bottom:5px;cursor:pointer;"><i class="fa fa-plus"></i> Add New Customer</span>',
         empty: 'No Customer Found!',
         suggestion: _.template("<p class='customer_search'><%- customer_name %>, <%- customer_mobile %></p>"),
       }
