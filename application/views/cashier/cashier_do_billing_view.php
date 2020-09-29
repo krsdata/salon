@@ -11,26 +11,10 @@
 		?>
 		<main class="content">
 			<div class="container-fluid p-0">
-				<div class="row">
-					<div class="col-md-1 mt-1">
-						<button class="btn btn-primary btn-lg EditViewCustomer" CustomerId="<?=$individual_customer['customer_id']?>"><?=$individual_customer['customer_name']?></button><br>
-						<p class="ClearPendingAmount" customer_id="<?=$individual_customer['customer_id']?>" pending_amount="<?=$individual_customer['customer_pending_amount']?>" style="color:red;">Due : Rs. <?=$individual_customer['customer_pending_amount']?></p>
-					</div>
-					<div class="col-md-1 mt-1">
-						<p class="font-weight-bold" style="text-decoration:underline;" id="SwapWithExistingCustomer" CustomerId="<?=$individual_customer['customer_id']?>"><i>Swap</i></p>
-					</div>
-					<div class="col-md-5 mt-1">
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" placeholder="Search Service By Name" class="form-control" id="SearchServiceByName">
-								<span class="input-group-append">
-									<button class="btn btn-success ProvideServiceDetails" type="button" id="SearchServiceButton" service-id="Na" service-name="Na" service-price-inr="Na" service-gst-percentage="Na" service-est-time="Na">Go</button>
-								</span>
-							</div>
-						</div>
-					</div>
+				<!-- <div class="row">
 					
-				</div>
+										
+				</div> -->
 				<div class="row">
 					<?php
 						$this->load->view('cashier/cashier_success_modal_view');
@@ -104,11 +88,11 @@
 																							</div>
 																							<div class="form-group col-md-4">
 																								<label>Date of Birth</label>
-																								<input type="text" class="form-control" placeholder="Date of Birth" name="customer_dob">
+																								<input type="text" class="form-control date" placeholder="Date of Birth" name="customer_dob">
 																							</div>
 																							<div class="form-group col-md-4">
 																								<label>Date Of Anniversary</label>
-																								<input type="text" class="form-control" placeholder="Date of Addition" name="customer_doa">
+																								<input type="text" class="form-control date" placeholder="Date of Anniversary" name="customer_doa">
 																							</div>
 																							
 																						</div>
@@ -844,7 +828,7 @@
                                     <strong>No Rules Defined !</strong>
                                   </div>
                                 </div>
-                    <?php
+                    	<?php
                         }
                       ?>
                          </div>
@@ -1287,17 +1271,13 @@
 									</div>
 									<!--  -->
 								</div>
-								  
-
-                  	           <div class="row" style="margin-left:0px;">										
-										<div class="card" style="padding:1.25rem;">
-											<div class="card-header">
-													<h5>Quick Bill</h5>
-											</div>
+								<!-- <div class="row" style="margin-left:0px;">										
+									<div class="card" style="padding:1.25rem;">
+										<div class="card-header">
+											<h5>Quick Bill</h5>
+										</div>
 											<?php
 											$cust_id=$individual_customer['customer_id'];
-								// 			print_r($cust_id);
-								// 			print_r($_SESSION['recommended_ser']);
 											if($_SESSION['recommended_ser'][$cust_id] != 0){
 												$recommended=$_SESSION['recommended_ser'][$cust_id];
 											?>
@@ -1305,10 +1285,10 @@
 													<div class="row">							
 														<?php		
 														if(isset($recommended['res_arr'])){
-														    $recommended=$recommended['res_arr'];
+																$recommended=$recommended['res_arr'];
 														}
 														if ($recommended != 0) {
-														  //  print_r($recommended);
+															//  print_r($recommended);
 															foreach ($recommended as $data) { ?>
 																<div class="col-md-2 col-sm-4" style="margin-right:0px">
 																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'].', '.round($data['service_price_inr'])?>">
@@ -1330,10 +1310,8 @@
 											else{
 											?>
 												<div class="card-body"  >	
-													<div class="row">							
-														
-														<?php
-																			
+													<div class="row">															
+														<?php																			
 														if ($recommended != 0) {
 															foreach ($recommended as $data) { ?>
 																<div class="col-md-2 col-sm-4">
@@ -1353,14 +1331,83 @@
 												</div>
 											<?php
 											}
-											?>
-											
-										</div>								
-				  				</div>
-				  <div class="col-md-2 col-sm-4"></div>
-                  <br>
+											?>											
+									</div>								
+								</div> -->
 							</div>
 							<div class="col-md-5">
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group ">
+											<div class="input-group">
+												<input type="text" placeholder="Search Service By Name" class="form-control" id="SearchServiceByName">
+												<span class="input-group-append">
+													<button class="btn btn-success ProvideServiceDetails" type="button" id="SearchServiceButton" service-id="Na" service-name="Na" service-price-inr="Na" service-gst-percentage="Na" service-est-time="Na">Go</button>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+											<?php
+											$cust_id=$individual_customer['customer_id'];
+											if($_SESSION['recommended_ser'][$cust_id] != 0){
+												$recommended=$_SESSION['recommended_ser'][$cust_id];
+											?>
+												<div class="card-body"  >	
+													<div class="row">							
+														<?php		
+														if(isset($recommended['res_arr'])){
+																$recommended=$recommended['res_arr'];
+														}
+														if ($recommended != 0) {
+															//  print_r($recommended);
+															foreach ($recommended as $data) { ?>
+																<div class="col-md-2 col-sm-4" style="margin-right:0px">
+																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'].', '.round($data['service_price_inr'])?>">
+																		<div class="card customized-category-card">
+																			<div class="card-body" style="text-align: center;padding:.2rem!important;background-color:white;border-radius:1px;">
+																				<p class="card-text" style="color: black;" ><?= $data['service_name'] ?></p>
+																			</div>
+																		</div>
+																	</a>
+																</div>
+														<?php
+															}
+														}
+														?>
+													</div>
+												</div>
+											<?php
+											}
+											else{
+											?>
+												<div class="card-body"  >	
+													<div class="row">															
+														<?php																			
+														if ($recommended != 0) {
+															foreach ($recommended as $data) { ?>
+																<div class="col-md-2 col-sm-4">
+																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'].',  '.round($data['service_price_inr']) ?>">
+																		<div class="card customized-category-card border-dark" style="width:100%">
+																			<div class="card-body" style="text-align: center;padding:.5rem!important;background-color:white;  border-radius:5px;">
+																				<p class="card-text" style="color: black;" ><?= $data['service_name'] ?></p>
+																			</div>
+																		</div>
+																	</a>
+																</div>
+														<?php
+															}
+														}
+														?>
+													</div>
+												</div>
+											<?php
+											}
+											?>	
+									</div>
+								</div>
 								<?php
 									if(!isset($cart) || empty($cart)){
 								?>
@@ -1789,25 +1836,19 @@
 												<div class="mb-3">
 													<table class="table table-hover table-sm" style="max-height: 200px;">
 														<tbody>
-														<tr>
-																<td colspan="2">
-												<label class="custom-control custom-checkbox">
+															<!-- <tr>
+																<td colspan="2"> -->
+																	<!-- <label class="custom-control custom-checkbox">
 								              		<input type="checkbox" class="custom-control-input" checked="true" id="cashback">
 								              		<span class="custom-control-label">Credit Rewards</span>
-																</label>																
+																</label>																 -->
 
 																<label style="display:none;" class="custom-control custom-checkbox">
 								              		<input type="checkbox" class="custom-control-input" checked="true" id="SendSMS">
 								              		<span class="custom-control-label">Send SMS</span>
 																</label>
-																</td>
-																<td colspan="2">
-															<!--	<label style="display:none;" class="custom-control custom-checkbox">
-								              		<input type="checkbox" class="custom-control-input" checked="true" id="cashback">
-								              		<span class="custom-control-label">Credit Rewards</span>
-																</label>-->
-																</td>
-															</tr>
+																<!-- </td>
+															</tr> -->
 															<tr>
 															<tr>
 																<td>Total Bill</td>
@@ -1960,10 +2001,29 @@
 												<?php
 													endif;
 												?>
-												</div>
+												</div>												
 											</div>
 										</div>
 									</div>
+									<!--  -->
+									<div class="col-md-12">
+										<div class="row"  style="background-color:white;">
+											<div class="col-md-4 ml-2">
+												<label class="custom-control custom-checkbox">
+													<input type="checkbox" class="custom-control-input" checked="true" id="cashback">
+													<span class="custom-control-label">Credit Rewards</span>
+												</label>
+											</div>
+											<div class="col-md-3 mt-1">
+												<button class="btn btn-primary btn-lg EditViewCustomer" CustomerId="<?=$individual_customer['customer_id']?>"><?=$individual_customer['customer_name']?></button><br>
+												<p class="ClearPendingAmount" customer_id="<?=$individual_customer['customer_id']?>" pending_amount="<?=$individual_customer['customer_pending_amount']?>" style="color:red;">Due : Rs. <?=$individual_customer['customer_pending_amount']?></p>
+											</div>
+											<div class="col-md-3 mt-1">
+												<p class="font-weight-bold" style="text-decoration:underline;" id="SwapWithExistingCustomer" CustomerId="<?=$individual_customer['customer_id']?>"><i>Swap</i></p>
+											</div>
+										</div>
+									</div>
+									<!--  -->
 								</div>
 							</div>
 						</div>

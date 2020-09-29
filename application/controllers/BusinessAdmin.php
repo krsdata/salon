@@ -8859,18 +8859,25 @@ public function InsertSalary(){
                     die;
                 }
                 else{
+									if($_POST['otc_inventory_type']=='Retail Product'){
+										$inventory_type_id = 2;
+									}else{
+										$inventory_type_id = 1;
+									}
                     $data = array(
                         'service_name'          => $this->input->post('otc_item_name'),
                         'service_brand'         => $this->input->post('otc_brand'),
-                        // 'service_sub_category_id'=>$this->input->post('otc_sub_category_id'),
+                        'service_sub_category_id'=>$this->input->post('otc_sub_category_id'),
                         'service_unit'          => $this->input->post('otc_unit'),
                         'service_id'          => $this->input->post('otc_service_id'),
                         'barcode'   =>  $this->input->post('otc_barcode'),
                         'inventory_type'    =>  $this->input->post('otc_inventory_type'),
                         'service_price_inr'                 => $this->input->post('otc_price_inr'),
                         'service_gst_percentage'        => $this->input->post('otc_gst_percentage'),
-                        'qty_per_item'      => $this->input->post('sku_size')
-                    );
+												'qty_per_item'      => $this->input->post('sku_size'),
+												'inventory_type_id'	=>	$inventory_type_id
+										);
+										// $this->PrettyPrintArray($_POST);
                     $result = $this->BusinessAdminModel->Update($data,'mss_services','service_id');
                     if($result['success'] == 'true'){
                         $this->ReturnJsonArray(true,false,"OTC item updated successfully!");
@@ -9287,7 +9294,9 @@ public function InsertSalary(){
                     $data=array(
                         'r1'=>$_POST['r1'],
                         'r2'=>$_POST['r2'],
-                        'regular_cust'=>$_POST['reg_cust'],
+												'regular_cust'=>$_POST['reg_cust'],
+												'no_risk'			=>$_POST['no_risk'],
+												'dormant'			=>$_POST['dormant'],
                         'at_risk_cust'=>$_POST['risk_cust'],
                         'lost_customer'=>$_POST['lost_cust'],
                         'business_outlet_id'=>$this->session->userdata['outlets']['current_outlet'],
@@ -9296,11 +9305,14 @@ public function InsertSalary(){
                     );
                     $result = $this->BusinessAdminModel->Insert($data,'mss_customer_timeline_setup');
                 }else{
+                // $this->PrettyPrintArray($_POST);
                         $data=array(
                             'id'=>$_POST['id'],
                             'r1'=>$_POST['r1'],
                             'r2'=>$_POST['r2'],
-                            'regular_cust'=>$_POST['reg_cust'],
+														'regular_cust'=>$_POST['reg_cust'],
+														'no_risk'			=>$_POST['no_risk'],
+														'dormant'			=>$_POST['dormant'],
                             'at_risk_cust'=>$_POST['risk_cust'],
                             'lost_customer'=>$_POST['lost_cust'],
                             'business_outlet_id'=>$this->session->userdata['outlets']['current_outlet'],
@@ -9309,7 +9321,6 @@ public function InsertSalary(){
                         );
                         $result = $this->BusinessAdminModel->Update($data,'mss_customer_timeline_setup','id');
                     }
-                // $this->PrettyPrintArray($_POST);
               if($result['success'] == 'true'){
                 $this->ReturnJsonArray(true,false,"Data Added successfully!");
                 die;
