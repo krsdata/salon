@@ -8846,7 +8846,7 @@ public function InsertSalary(){
                 $this->form_validation->set_rules('otc_gst_percentage', 'OTC GST Percentage', 'trim|required');
                 $this->form_validation->set_rules('otc_price_inr', 'OTC Gross Price', 'trim|required');
                 $this->form_validation->set_rules('otc_inventory_type', 'Inventory Type', 'trim|required');
-                $this->form_validation->set_rules('otc_barcode', 'Barcode', 'trim|required');
+                // $this->form_validation->set_rules('otc_barcode', 'Barcode', 'trim|required');
                 if ($this->form_validation->run() == FALSE) 
                 {
                     $data = array(
@@ -8869,7 +8869,8 @@ public function InsertSalary(){
                         'service_brand'         => $this->input->post('otc_brand'),
                         'service_sub_category_id'=>$this->input->post('otc_sub_category_id'),
                         'service_unit'          => $this->input->post('otc_unit'),
-                        'service_id'          => $this->input->post('otc_service_id'),
+												'service_id'          => $this->input->post('otc_service_id'),
+												'service_is_active'	=>1,
                         'barcode'   =>  $this->input->post('otc_barcode'),
                         'inventory_type'    =>  $this->input->post('otc_inventory_type'),
                         'service_price_inr'                 => $this->input->post('otc_price_inr'),
@@ -9147,9 +9148,13 @@ public function InsertSalary(){
                 $res=array(
                      'id' => $data['timeline']['res_arr']['id'],
                      'r1' => $data['timeline']['res_arr']['r1'],
-                     'r2' => $data['timeline']['res_arr']['r2'],
-                     'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
-                     'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'r2' => $data['timeline']['res_arr']['r2'],
+										 'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
+										 'no_risk' => $data['timeline']['res_arr']['no_risk'],
+										 'dormant_r1' => $data['timeline']['res_arr']['dormant_r1'],
+										 'dormant_r2' => $data['timeline']['res_arr']['dormant_r2'],
+										 'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
                      'lost_customer' => $data['timeline']['res_arr']['lost_customer']
                 );
             }
@@ -9158,8 +9163,12 @@ public function InsertSalary(){
                     'id' => 0,
                     'r1' => 2,
                     'r2' => 5,
-                    'regular_cust' => 5,
-                    'at_risk_cust' => 30,
+										'regular_cust' => 5,
+										'no_risk'	=>30,
+										'dormant_r1'	=> 31,
+										'dormant_r2'	=>60,
+										'at_risk_cust' => 61,
+										'at_risk_cust2' => 90,
                     'lost_customer' => 90
                );
             }
@@ -9198,6 +9207,20 @@ public function InsertSalary(){
             }
             else{
                 $data['regular']=0;
+						}
+						$data['no_risk']=$this->BusinessAdminModel->NoRiskCustomer($res);
+            if($data['no_risk']['success'] == 'true'){
+                $data['no_risk']=count($data['no_risk']['res_arr']);
+            }
+            else{
+                $data['no_risk']=0;
+						}
+						$data['dormant']=$this->BusinessAdminModel->DormantCustomer($res);
+            if($data['dormant']['success'] == 'true'){
+                $data['dormant']=count($data['dormant']['res_arr']);
+            }
+            else{
+                $data['dormant']=0;
             }
             $data['risk']=$this->BusinessAdminModel->RiskCustomerService($res);
             if($data['risk']['success']='true'){
@@ -9231,9 +9254,13 @@ public function InsertSalary(){
                 $res=array(
                      'id' => $data['timeline']['res_arr']['id'],
                      'r1' => $data['timeline']['res_arr']['r1'],
-                     'r2' => $data['timeline']['res_arr']['r2'],
+										 'r2' => $data['timeline']['res_arr']['r2'],
+										 'no_risk' => $data['timeline']['res_arr']['no_risk'],
+										 'dormant_r1' => $data['timeline']['res_arr']['dormant_r1'],
+										 'dormant_r2' => $data['timeline']['res_arr']['dorant_r2'],
                      'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
-                     'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
                      'lost_customer' => $data['timeline']['res_arr']['lost_customer']
                 );
             }
@@ -9242,8 +9269,12 @@ public function InsertSalary(){
                     'id' => 0,
                     'r1' => 2,
                     'r2' => 5,
-                    'regular_cust' => 5,
-                    'at_risk_cust' => 30,
+										'regular_cust' => 5,
+										'no_risk'	=> 30,
+										'dormant_r1'=>31,
+										'dormant_r2'=>60,
+										'at_risk_cust' => 60,
+										'at_risk_cust2'	=>90,
                     'lost_customer' => 90
                );
             }
@@ -9267,7 +9298,23 @@ public function InsertSalary(){
             }
             else{
                 $data['regular']=0;
+						}
+						
+						$data['no_risk']=$this->BusinessAdminModel->NoRiskCustomer($res);
+            if($data['no_risk']['success'] == 'true'){
+                $data['no_risk']=count($data['no_risk']['res_arr']);
             }
+            else{
+                $data['no_risk']=0;
+						}
+						$data['dormant']=$this->BusinessAdminModel->DormantCustomer($res);
+            if($data['dormant']['success'] == 'true'){
+                $data['dormant']=count($data['dormant']['res_arr']);
+            }
+            else{
+                $data['dormant']=0;
+            }
+
             $data['risk']=$this->BusinessAdminModel->RiskCustomerService($res);
             if($data['risk']['success']='true'){
                 $data['risk']=count($data['risk']['res_arr']);
@@ -9296,8 +9343,10 @@ public function InsertSalary(){
                         'r2'=>$_POST['r2'],
 												'regular_cust'=>$_POST['reg_cust'],
 												'no_risk'			=>$_POST['no_risk'],
-												'dormant'			=>$_POST['dormant'],
-                        'at_risk_cust'=>$_POST['risk_cust'],
+												'dormant_r1'			=>$_POST['dormant_r1'],
+												'dormant_r2'			=>$_POST['dormant_r2'],
+												'at_risk_cust'=>$_POST['at_risk_r1'],
+												'at_risk_cust2'=>$_POST['at_risk_r2'],
                         'lost_customer'=>$_POST['lost_cust'],
                         'business_outlet_id'=>$this->session->userdata['outlets']['current_outlet'],
                         'business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id'],
@@ -9312,8 +9361,10 @@ public function InsertSalary(){
                             'r2'=>$_POST['r2'],
 														'regular_cust'=>$_POST['reg_cust'],
 														'no_risk'			=>$_POST['no_risk'],
-														'dormant'			=>$_POST['dormant'],
-                            'at_risk_cust'=>$_POST['risk_cust'],
+														'dormant_r1'			=>$_POST['dormant_r1'],
+														'dormant_r2'			=>$_POST['dormant_r2'],
+														'at_risk_cust'=>$_POST['at_risk_r1'],
+														'at_risk_cust2'=>$_POST['at_risk_r2'],
                             'lost_customer'=>$_POST['lost_cust'],
                             'business_outlet_id'=>$this->session->userdata['outlets']['current_outlet'],
                             'business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id'],
@@ -10949,7 +11000,7 @@ public function InsertSalary(){
 
 							$data['stock']=$this->CashierModel->AvailableStock($where);
 							$data['stock']=	$data['stock']['res_arr'];
-
+							// $this->PrettyPrintArray($data['stock']);
 							$data['stock_incoming']=$this->CashierModel->IncomingStock($where);
 							$data['stock_incoming']=	$data['stock_incoming']['res_arr'];
 

@@ -3292,16 +3292,25 @@ class CashierModel extends CI_Model {
 	}
 
 	public function AvailableStock($data){
-		$sql="SELECT mss_services.*, 
-			inventory_stock.*,
-			mss_business_outlets.business_outlet_name
-			FROM	
-			inventory_stock,
-			mss_services,
-			mss_business_outlets
-			WHERE inventory_stock.stock_service_id = mss_services.service_id AND
-			mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." AND
-			inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
+		$sql="Select X.*, Y.*, SUM(Y.total_stock) From 
+			(
+			SELECT mss_services.* FROM mss_services, mss_sub_categories,mss_categories, mss_business_outlets WHERE
+			mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
+			mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
+			mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id AND
+			mss_categories.category_business_outlet_id =".$this->db->escape($data['business_outlet_id'])." AND
+			mss_services.inventory_type_id > 0 AND
+			mss_services.service_is_active = 1
+			)
+
+			AS  X
+			left outer JOIN
+			( 
+			Select inventory_stock.* From inventory_stock, mss_business_outlets WHERE
+			inventory_stock.stock_outlet_id= mss_business_outlets.business_outlet_id AND 
+    		mss_business_outlets.business_outlet_id=".$this->db->escape($data['business_outlet_id']).") AS Y
+    		ON X.service_id = Y.stock_service_id
+    		GROUP BY X.service_id, Y.stock_service_id,X.service_name ";
         $query = $this->db->query($sql);
 
         if($query){
