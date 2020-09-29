@@ -143,7 +143,7 @@
 																	</div>
 																	<div class="form-group col-md-4">
 																		<label>Date of Anniversary</label>
-																		<input type="text" class="form-control date" placeholder="Date of Addition" name="customer_doa">
+																		<input type="text" class="form-control date" placeholder="Date of Anniversary" name="customer_doa">
 																	</div>
 																</div>
 																<div class="form-row">
@@ -432,7 +432,7 @@
 	        $("#EditCustomerDetails input[name=customer_name]").attr('value',data.customer_name);
 	        $("#EditCustomerDetails input[name=customer_mobile]").attr('value',data.customer_mobile);
 	        $("#EditCustomerDetails input[name=customer_doa]").attr('value',moment(data.customer_doa).format('DD-MM-YYYY'));
-            $("#EditCustomerDetails input[name=customer_dob]").attr('value',moment(data.customerdob).format('DD-MM-YYYY'));
+          $("#EditCustomerDetails input[name=customer_dob]").attr('value',moment(data.customer_dob).format('DD-MM-YYYY'));
 	        $("#EditCustomerDetails input[name=customer_pending_amount]").attr('value',data.customer_pending_amount);
 	        $("#EditCustomerDetails input[name=customer_virtual_wallet]").attr('value',data.customer_virtual_wallet);
 	        $("#EditCustomerDetails input[name=customer_wallet_expiry_date]").attr('value',moment(data.customer_wallet_expiry_date).format('DD-MM-YYYY'));
