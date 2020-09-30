@@ -2140,6 +2140,7 @@
 			event.preventDefault();
 			$(this).blur();
 			var parameters = {category_id : $(this).attr('category-id')};
+			localStorage.setItem("category_id",$(this).attr('category-id'));
 			$.getJSON("<?=base_url()?>Cashier/GetSubCategoriesByCatId",parameters)
       .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row' style='margin-right:10px;'>";
@@ -2262,6 +2263,7 @@
 			event.preventDefault();
 			$(this).blur();
 			var parameters = {sub_category_id : $(this).attr('sub-category-id')};
+			localStorage.setItem('sub_category_id',$(this).attr('sub-category-id'));
 			$.getJSON("<?=base_url()?>Cashier/GetServicesBySubCatId",parameters)
       .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row' style='margin-right:10px;'>";
@@ -3970,4 +3972,26 @@
       // },
     // });
   }
+
+setTimeout(function(){
+	if(localStorage.getItem("category_id")){
+  		$('[category-id="'+localStorage.getItem("category_id")+'"]').click();
+	}
+
+},500);
+
+setTimeout(function(){	
+	if(localStorage.getItem("sub_category_id")){
+		$('[sub-category-id="'+localStorage.getItem("sub_category_id")+'"]').click();	
+		$('#collapseOne').addClass('show');
+	}
+},1000);
+
+setTimeout(function(){	
+	if(localStorage.getItem("sub_category_id")){		
+		$('#collapseOne').addClass('show');
+		$('#collapseTwo').addClass('show');		
+	}
+},1500);
+  		
 </script>
