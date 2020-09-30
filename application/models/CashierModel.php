@@ -3294,7 +3294,7 @@ class CashierModel extends CI_Model {
 	public function AvailableStock($data){
 		$sql="Select X.*, Y.*, SUM(Y.total_stock) From 
 			(
-			SELECT mss_services.* FROM mss_services, mss_sub_categories,mss_categories, mss_business_outlets WHERE
+			SELECT mss_services.*,mss_business_outlets.business_outlet_name FROM mss_services, mss_sub_categories,mss_categories, mss_business_outlets WHERE
 			mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
 			mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
 			mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id AND
@@ -3378,6 +3378,25 @@ class CashierModel extends CI_Model {
 		$sql="UPDATE inventory_stock 
 		SET inventory_stock.total_stock= (inventory_stock.total_stock +  ".$data['total_stock']."),
 		inventory_stock.stock_in_unit 	= (inventory_stock.stock_in_unit +  ".$data['stock_in_unit']."),
+		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
+		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
+		   
+		   $query = $this->db->query($sql);
+		   if($this->db->affected_rows() > 0){
+			 return $this->ModelHelper(true,false);    
+		   }
+		   elseif($this->db->affected_rows() == 0){
+			   return $this->ModelHelper(true,false,"No row updated!");   
+		   }
+		   else{
+			   return $this->ModelHelper(false,true,"Some DB Error!");
+		   } 
+	}
+
+	public function UpdateInventoryStockForAdmin($data){
+		$sql="UPDATE inventory_stock 
+		SET inventory_stock.total_stock	= ".$data['total_stock'].",
+		inventory_stock.stock_in_unit 	= ".$data['stock_in_unit'].",
 		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
 		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
 		   
