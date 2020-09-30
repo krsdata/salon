@@ -10123,17 +10123,26 @@ WHERE  Date(t1.txn_datetime) = "'.$date.'" GROUP  BY t2.txn_settlement_txn_id';
         }
     }
 
-     public function getOpeningRecord($date){
+     public function getOpeningRecord($date,$checkCashInOut = 0){
         if(!empty($this->session->userdata['outlets']['current_outlet'])){
             $outlet_id = $this->session->userdata['outlets']['current_outlet'];
         }elseif(!empty($this->session->userdata['logged_in']['business_outlet_id'])){
             $outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
         }
-    if(!empty($outlet_id)){
-            $sql = "select * from mss_opening_balance where opening_date='".$date."' and business_outlet_id = ".$outlet_id;
+        if($checkCashInOut == 0){
+            if(!empty($outlet_id)){
+                $sql = "select * from mss_opening_balance where opening_date='".$date."' and business_outlet_id = ".$outlet_id." and amount_data is null";
+            }else{
+                $sql = "select * from mss_opening_balance where opening_date='".$date."' and amount_data is null";
+            }
         }else{
-            $sql = "select * from mss_opening_balance where opening_date='".$date."'";
-        }        $query = $this->db->query($sql);
+            if(!empty($outlet_id)){
+                $sql = "select * from mss_opening_balance where opening_date='".$date."' and business_outlet_id = ".$outlet_id." and amount_data is not null";
+            }else{
+                $sql = "select * from mss_opening_balance where opening_date='".$date."' and amount_data is not null";
+            }
+        }
+        $query = $this->db->query($sql);
         $data['opening_balance'] = $query->result_array();
         if($data){
             return $this->ModelHelper(true,false,'',$data);
@@ -10293,5 +10302,18 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
             return $this->ModelHelper(false,true,"Can't Update!");        
         }
 	}
+
+    public function GetPaymentMode(){
+        $sql = "SELECT `txn_settlement_payment_mode`,txn_settlement_amount_received AS total_price  FROM `mss_transaction_settlements` WHERE `txn_settlement_payment_mode` not in ('Split Payment','Virtual_Wallet','loyalty_wallet','Select payment method') GROUP BY `txn_settlement_payment_mode`
+";
+        
+        $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
 
 }

@@ -11832,27 +11832,109 @@ public function daybook(){
                 $key_info['keys'][3] = $temp;
 
 
-                $p_mode = [];
-                foreach ($key_info as $key => $k) {
-                    foreach ($k as $key => $keys) {
-                        if(!in_array($keys, $p_mode)){
-                            $p_mode[] = $keys;
-                        }
-                    }                                    
-                }
+                // $p_mode = [];
+                // foreach ($key_info as $key => $k) {
+                //     foreach ($k as $key => $keys) {
+                //         if(!in_array($keys, $p_mode)){
+                //             $p_mode[] = $keys;
+                //         }
+                //     }                                    
+                // }
 
         }
         
-        $p_mode = array_filter($p_mode);        
+        // $p_mode = array_filter($p_mode);        
+        // $p_mode = call_user_func_array('array_merge', $p_mode);
+        // $p_mode = array_unique($p_mode);
+        // $p_mode = array_values($p_mode);        
+        // $data['p_mode'] = $p_mode;
+        // $data['opening_balance_data'] = $opening_balance_data;
+        // $data['pending_amount_data'] = $pending_amount_data;
+        // $data['expenses_data'] = $expenses_data;
+        // $data['transaction_data'] = $transaction_data;
+        // $data['date'] = $date;
+        $result = $this->BusinessAdminModel->GetPaymentMode();
+        if($result['success']){
+            $mode = $result['res_arr'];
+            
+            foreach ($mode as $key => $value) {
+                if(!empty($value['txn_settlement_payment_mode'])){                        
+                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
+                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
+                    }else{
+                        $result = json_decode($value['txn_settlement_payment_mode']);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
+                        }else{
+                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
+                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
+                        }                            
+                    }
+                }                        
+            }                
+            if(!empty($json_data)){                    
+                foreach ($json_data as $key => $j) {
+                    foreach ($j as $key => $t) {
+                      if(in_array(strtolower($t['payment_type']), $temp)){
+                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
+                        }else{
+                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
+                            $temp[] = strtolower($t['payment_type']);
+                        }  
+                    }                       
+                }
+            }
+        }
+        $data['payment_type_arr'] = $temp;       
+        $result = $this->BusinessAdminModel->getOpeningRecord($date,1);        
+
+        $cashin = [];
+        $cashout = [];
+        $temp1 = [];
+        $temp2 = [];
+        if($result['success']){
+            $cashinout = $result['res_arr']['opening_balance'];
+
+            foreach ($cashinout as $key => $value) {
+                if($value['amount_data'] == 'CashIn'){
+                    if(in_array(strtolower($value['payment_mode']), $temp1)){
+                        $cashin[strtolower($value['payment_mode'])] += $value['amount'];
+                        }else{
+                            $cashin[strtolower($value['payment_mode'])] = $value['amount'];
+                            $temp1[] = strtolower($value['payment_mode']);
+                        }  
+                    }elseif($value['amount_data'] == 'CashOut'){
+                        if(in_array(strtolower($value['payment_mode']), $temp2)){
+                        $cashout[strtolower($value['payment_mode'])] += $value['amount'];
+                        }else{
+                            $cashout[strtolower($value['payment_mode'])] = $value['amount'];
+                            $temp2[] = strtolower($value['payment_mode']);
+                        }
+                    }               
+            }           
+        }        
+        $key_info['keys'][4] = $temp1;
+        $key_info['keys'][5] = $temp2;
+        $p_mode = [];
+        foreach ($key_info as $key => $k) {
+            foreach ($k as $key => $keys) {
+                if(!in_array($keys, $p_mode)){
+                    $p_mode[] = $keys;
+                }
+            }                                    
+        }
+         $p_mode = array_filter($p_mode);        
         $p_mode = call_user_func_array('array_merge', $p_mode);
         $p_mode = array_unique($p_mode);
-        $p_mode = array_values($p_mode);        
+        $p_mode = array_values($p_mode);              
         $data['p_mode'] = $p_mode;
         $data['opening_balance_data'] = $opening_balance_data;
         $data['pending_amount_data'] = $pending_amount_data;
         $data['expenses_data'] = $expenses_data;
         $data['transaction_data'] = $transaction_data;
         $data['date'] = $date;
+        $data['cashin'] = $cashin;
+        $data['cashout'] = $cashout;
         $this->load->view('business_admin/ba_expense_view',$data);
     }
 
@@ -12410,6 +12492,32 @@ public function daybook(){
 				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}		
 		}
+
+        public function AddCashIn(){
+        if($this->IsLoggedIn('business_admin')){
+            $post['amount'] = $_POST['cash_in'];
+            $post['opening_date'] = date('Y-m-d');
+            $post['amount_data'] = 'CashIn';
+            $post['payment_mode'] = 'Cash';
+            $post['business_outlet_id'] = $this->session->userdata['outlets']['current_outlet'];
+            $data=$this->CashierModel->Insert($post,'mss_opening_balance');            
+            $this->ReturnJsonArray(true,false,$data['res_arr']);
+            die;
+        }
+    }
+    
+    public function AddCashOut(){
+        if($this->IsLoggedIn('business_admin')){
+            $post['amount'] = $_POST['cash_out'];
+            $post['opening_date'] = date('Y-m-d');
+            $post['amount_data'] = 'CashOut';
+            $post['payment_mode'] = $_POST['paymod_mode'];
+            $post['business_outlet_id'] = $this->session->userdata['outlets']['current_outlet'];
+            $data=$this->CashierModel->Insert($post,'mss_opening_balance');
+            $this->ReturnJsonArray(true,false,$data['res_arr']);
+            die;
+        }
+    }
 
 }
 
