@@ -12361,6 +12361,10 @@ public function daybook(){
 						'expiry_date'	=> date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))))
 					);
 					$result=$this->CashierModel->Insert($data2,'inventory_data');
+					$where=array(
+						'stock_service_id' => $_POST['service_id'],
+						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet']
+					);
 					$data3=array(
 						'stock_service_id'=>$_POST['service_id'],
 						'total_stock'	=>$_POST['product_qty'],
@@ -12368,9 +12372,15 @@ public function daybook(){
 						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
 						'updated_on'	=>date('Y-m-d')
 					);
-					
+
+						$stock_exist= $this->CashierModel->CheckStockExist($where);
+						if($stock_exist['success']=='true'){
+							$update_stock=$this->CashierModel->UpdateInventoryStockForAdmin($data3);
+						}else{
+							$insert_stock=$this->CashierModel->Insert($data3,'inventory_stock');
+						}					
 					// $res=$this->CashierModel->UpdateInventoryStock($data3);
-					$res=$this->CashierModel->Update($data3,'inventory_stock','stock_service_id');
+					// $res=$this->CashierModel->Update($data3,'inventory_stock','stock_service_id');
 
 					$this->ReturnJsonArray(true,false,"Stock Updated!");
 					die;
