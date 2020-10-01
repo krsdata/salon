@@ -117,7 +117,8 @@ class Cashier extends CI_Controller {
                 $data['rules'] = ['res_arr'=>''];
                 $data['rules'] = $data['rules']['res_arr'];
               }
-        			$data['sidebar_collapsed'] = "true";
+							$data['sidebar_collapsed'] = "true";
+							// $this->PrettyPrintArray($data['customers']);
         			$this->load->view('cashier/cashier_dashboard_view',$data);
         		}
         		else{
@@ -425,7 +426,7 @@ class Cashier extends CI_Controller {
                 $data['rules'] = ['res_arr'=>''];
                 // $data['rules'] = $rules['res_arr'];
 						}	
-						 //$this->PrettyPrintArray($this->session->all_userdata());
+						//  $this->PrettyPrintArray($data['customers']);
 			$data['sidebar_collapsed'] = "true";
 			$this->load->view('cashier/cashier_dashboard_view',$data);
 		}
@@ -657,6 +658,7 @@ class Cashier extends CI_Controller {
 							if(!isset($this->session->userdata['POS'])){
 								array_push($curr_sess_cust_data, $sess_data);
 								$this->session->set_userdata('POS', $curr_sess_cust_data);
+								// $this->PrettyPrintArray($curr_sess_cust_data);
 							}
 							else{
 								$curr_sess_cust_data = $this->session->userdata['POS'];
@@ -666,7 +668,7 @@ class Cashier extends CI_Controller {
 							}
 							////////////////////////////////////////////////////////////
 
-							$this->ReturnJsonArray(true,false,"Customer added successfully!");
+							$this->ReturnJsonArray(true,false,$result['res_arr']);
 							die;
 	          }
 	          elseif($result['error'] == 'true'){
@@ -691,8 +693,7 @@ class Cashier extends CI_Controller {
 				$this->form_validation->set_rules('customer_mobile', 'Customer Mobile', 'trim|required|max_length[10]|min_length[10]');
 				$this->form_validation->set_rules('customer_dob', 'Customer date of birth', 'trim');
 				$this->form_validation->set_rules('customer_doa', 'Customer date of anniversary', 'trim');
-				if ($this->form_validation->run() == FALSE) 
-				{
+				if ($this->form_validation->run() == FALSE){
 					$data = array(
 									'success' => 'false',
 									'error'   => 'true',
@@ -716,7 +717,6 @@ class Cashier extends CI_Controller {
 						);
 						
 						$customerExists = $this->CashierModel->CheckCustomerExists($where);
-						
 						if($customerExists['success'] == 'false' && $customerExists['error'] == 'true' ){
 							$this->ReturnJsonArray(false,true,$customerExists['message']);
 							die;
@@ -758,14 +758,16 @@ class Cashier extends CI_Controller {
 						}
 					}
 					else{					
+						// echo $this->input->post('customer_dob');
 						
 						$data = array(
 							'customer_id'     => $this->input->post('customer_id'),
 							'customer_title' 	=> $this->input->post('customer_title'),
 							'customer_name' 	=> $this->input->post('customer_name'),
-							'customer_dob'    => $this->input->post('customer_dob'),
-							'customer_doa' 		=> $this->input->post('customer_doa')
+							'customer_dob'    => date('Y-m-d',strtotime($this->input->post('customer_dob'))),
+							'customer_doa' 		=> date('Y-m-d',strtotime($this->input->post('customer_doa')))
 						);
+					// $this->PrettyPrintArray($data);
 
 						$result = $this->CashierModel->Update($data,'mss_customers','customer_id');
 						if($result['success'] == 'true'){
@@ -795,7 +797,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."BusinessAdmin/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
@@ -823,7 +825,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."BusinessAdmin/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 

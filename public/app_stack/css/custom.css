@@ -1,10 +1,10 @@
 #login_page{
-	background-image: url('https://marks-retech.in/Login/public/images/login_back.jpeg');
+	background-image: url('http://localhost/salon/public/images/login_back.jpeg');
 	background-position: center;
 	/* background-repeat: no-repeat; */
 }
 #client_book_appointment_page{
-	background-image: url('https://marks-retech.in/Login/public/images/client_background.jpg');
+	background-image: url('http://localhost/salon/public/images/client_background.jpg');
 	background-position: center;
 	/* background-repeat: no-repeat; */
 }
@@ -59,11 +59,12 @@
 }
 
 .customized-category-card{
-   border-radius: 8px;
-    color: #ffffff;
-    text-overflow: clip;
-    height: 50px;
-  width:100px;
+  border-radius: 8px;
+  color: #ffffff;
+  text-overflow: clip;
+  height: 30px;
+	width:70px;
+	font-size: 10px;
   background-color: #0070c0;
   word-wrap: break-word;
   overflow: hidden;
