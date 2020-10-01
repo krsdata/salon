@@ -1961,7 +1961,8 @@ class CashierModel extends CI_Model {
 					mss_package_transactions.package_txn_value,
 					mss_salon_packages.salon_package_name,
 					mss_customers.customer_name,
-					mss_employees.employee_first_name
+					mss_employees.employee_first_name,
+					'package'
 				FROM
 					mss_customers,
 					mss_employees,
@@ -2391,7 +2392,8 @@ class CashierModel extends CI_Model {
 		mss_transaction_services.txn_service_discounted_price,
 		mss_transaction_settlements.txn_settlement_way,
 		mss_transaction_settlements.txn_settlement_payment_mode,
-		mss_transaction_settlements.txn_settlement_amount_received
+		mss_transaction_settlements.txn_settlement_amount_received,
+		'service'
 	FROM
 		mss_transactions,
 		mss_transaction_settlements,
@@ -2416,6 +2418,8 @@ class CashierModel extends CI_Model {
            return $this->ModelHelper(false,true,"No Data Found!");
         } 
 	}
+
+	
 	
 	//
 	public function ExpertWisePackageSale($data){
