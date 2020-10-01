@@ -3736,7 +3736,11 @@ class Cashier extends CI_Controller {
 	public function GetBilledServices(){
 		if($this->IsLoggedIn('cashier')){
 			if(isset($_GET) && !empty($_GET)){
+				if($_GET['type']=="Package"){
+					$data = $this->CashierModel->GetBilledPackagesByTxnId($_GET['txn_id']);
+				}else{
 				$data = $this->CashierModel->GetBilledServicesByTxnId($_GET['txn_id']);
+				}
 				if($data['success'] == 'true'){	
 					header("Content-type: application/json");
 					print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
