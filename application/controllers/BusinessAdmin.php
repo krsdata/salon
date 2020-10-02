@@ -12458,5 +12458,31 @@ public function daybook(){
         }
     }
 
+    public function AddMessageTrigger(){
+        if($this->IsLoggedIn('business_admin')){
+            $data['trigger_name'] = $_POST['trigger_name'];
+            $data['trigger_description'] = $_POST['trigger_discription'];
+            $data['mode'] = $_POST['mode'];
+            $data['outlet_id'] = $_POST['business_outlet_id'];
+            $data['recipient'] = $_POST['reciptents'];
+            $date = explode("-", $_POST['dates']);
+            $data['start_date'] = date("Y-m-d", strtotime($date[0]) );
+            $data['expiry_date'] = date("Y-m-d", strtotime($date[1]) );
+            $data['set_frequency'] = $_POST['ftype'];
+            //$data['trigger_name'] = $_POST['frequency_detail'];
+            $data['sms'] = $_POST['message'];
+            $data['created_by'] = $this->session->userdata['logged_in']['business_admin_id'];
+            $result = $this->BusinessAdminModel->Insert($data,'sms_trigger');
+            if($result['success']){
+                $id = $result['res_arr']['insert_id'];
+                foreach ($_POST['frequency_detail'] as $key => $frequency_detail) {
+                    $this->BusinessAdminModel->Insert(array('trigger_id'=>$id,'frequency_detail'=>$frequency_detail),'sms_frequency_detail');
+                }
+            }
+            $this->ReturnJsonArray(true,false,"Trigger Saved SuccessFully");
+            die;
+        }
+    }
+
 }
 
