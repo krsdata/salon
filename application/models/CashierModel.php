@@ -1961,7 +1961,8 @@ class CashierModel extends CI_Model {
 					mss_package_transactions.package_txn_value,
 					mss_salon_packages.salon_package_name,
 					mss_customers.customer_name,
-					mss_employees.employee_first_name
+					mss_employees.employee_first_name,
+					'package'
 				FROM
 					mss_customers,
 					mss_employees,
@@ -2391,7 +2392,8 @@ class CashierModel extends CI_Model {
 		mss_transaction_services.txn_service_discounted_price,
 		mss_transaction_settlements.txn_settlement_way,
 		mss_transaction_settlements.txn_settlement_payment_mode,
-		mss_transaction_settlements.txn_settlement_amount_received
+		mss_transaction_settlements.txn_settlement_amount_received,
+		'service'
 	FROM
 		mss_transactions,
 		mss_transaction_settlements,
@@ -2416,6 +2418,8 @@ class CashierModel extends CI_Model {
            return $this->ModelHelper(false,true,"No Data Found!");
         } 
 	}
+
+	
 	
 	//
 	public function ExpertWisePackageSale($data){
@@ -3292,16 +3296,25 @@ class CashierModel extends CI_Model {
 	}
 
 	public function AvailableStock($data){
-		$sql="SELECT mss_services.*, 
-			inventory_stock.*,
-			mss_business_outlets.business_outlet_name
-			FROM	
-			inventory_stock,
-			mss_services,
-			mss_business_outlets
-			WHERE inventory_stock.stock_service_id = mss_services.service_id AND
-			mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." AND
-			inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
+		$sql="Select X.*, Y.*, SUM(Y.total_stock) From 
+			(
+			SELECT mss_services.*,mss_business_outlets.business_outlet_name FROM mss_services, mss_sub_categories,mss_categories, mss_business_outlets WHERE
+			mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
+			mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
+			mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id AND
+			mss_categories.category_business_outlet_id =".$this->db->escape($data['business_outlet_id'])." AND
+			mss_services.inventory_type_id > 0 AND
+			mss_services.service_is_active = 1
+			)
+
+			AS  X
+			left outer JOIN
+			( 
+			Select inventory_stock.* From inventory_stock, mss_business_outlets WHERE
+			inventory_stock.stock_outlet_id= mss_business_outlets.business_outlet_id AND 
+    		mss_business_outlets.business_outlet_id=".$this->db->escape($data['business_outlet_id']).") AS Y
+    		ON X.service_id = Y.stock_service_id
+    		GROUP BY X.service_id, Y.stock_service_id,X.service_name ";
         $query = $this->db->query($sql);
 
         if($query){
@@ -3369,6 +3382,25 @@ class CashierModel extends CI_Model {
 		$sql="UPDATE inventory_stock 
 		SET inventory_stock.total_stock= (inventory_stock.total_stock +  ".$data['total_stock']."),
 		inventory_stock.stock_in_unit 	= (inventory_stock.stock_in_unit +  ".$data['stock_in_unit']."),
+		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
+		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
+		   
+		   $query = $this->db->query($sql);
+		   if($this->db->affected_rows() > 0){
+			 return $this->ModelHelper(true,false);    
+		   }
+		   elseif($this->db->affected_rows() == 0){
+			   return $this->ModelHelper(true,false,"No row updated!");   
+		   }
+		   else{
+			   return $this->ModelHelper(false,true,"Some DB Error!");
+		   } 
+	}
+
+	public function UpdateInventoryStockForAdmin($data){
+		$sql="UPDATE inventory_stock 
+		SET inventory_stock.total_stock	= ".$data['total_stock'].",
+		inventory_stock.stock_in_unit 	= ".$data['stock_in_unit'].",
 		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
 		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
 		   

@@ -491,12 +491,12 @@
 																	<td><?=$stock['inventory_type'];?></td>
 																	<td><?=$stock['barcode'];?></td>
 																	<td><?=$stock['qty_per_item'].' '.$stock['service_unit'];?></td>
-																	<td><?=$stock['total_stock'];?></td>
-																	<td><?=$stock['stock_in_unit']." ".$stock['service_unit'];?></td>
+																	<td><?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?></td>
+																	<td><?php if(empty($stock['stock_in_unit']) || $stock['stock_in_unit']==""){echo "0"." ".$stock['service_unit'];}else{echo $stock['stock_in_unit']." ".$stock['service_unit'];} ?></td>
 																	<td><?=$stock['updated_on'];?></td>
 																	<td><?=$stock['business_outlet_name'];?></td>
 																	<td>
-																		<button class="btn btn-primary EditInventory" data-toggle="modal" id="" data-target="#ModalEditInventory" service_id="<?=$stock['service_id'];?>" product_qty="<?=$stock['total_stock']?>"><i class="fa fa-pen"></i></button>
+																		<button class="btn btn-primary EditInventory" data-toggle="modal" id="" data-target="#ModalEditInventory" service_id="<?=$stock['service_id'];?>" product_qty="<?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?>"><i class="fa fa-pen"></i></button>
 																	</td>
 																</tr>
 															<?php $count++; }?>
