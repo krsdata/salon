@@ -6602,15 +6602,18 @@ public function GetAttendanceAll($data){
     }
     public function RepeatingCustomerService($data){
         $sql="SELECT 
-                mss_transactions_replica.txn_customer_id,count(mss_transactions_replica.txn_customer_id) 
+                mss_transactions_replica.txn_customer_id,
+				count(mss_transactions_replica.txn_customer_id) 
             from 
-            mss_transactions_replica,mss_customers 
+            mss_transactions_replica,
+			mss_customers 
             WHERE 
                 mss_transactions_replica.txn_customer_id = mss_customers.customer_id
-                AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
+            AND mss_customers.customer_business_outlet_id= ".$this->session->userdata['outlets']['current_outlet']."
             GROUP BY mss_transactions_replica.txn_customer_id
             HAVING 
-                count(mss_transactions_replica.txn_customer_id) >= ".$this->db->escape($data['r1'])." AND COUNT(mss_transactions_replica.txn_customer_id) <= ".$this->db->escape($data['r2'])."
+                count(mss_transactions_replica.txn_customer_id) >= ".$this->db->escape($data['r1'])." AND 
+				COUNT(mss_transactions_replica.txn_customer_id) <= ".$this->db->escape($data['r2'])."
             ";
         $query = $this->db->query($sql);
         if($query){
@@ -6622,12 +6625,14 @@ public function GetAttendanceAll($data){
     }
     public function RegularCustomer($data){
         $sql="SELECT 
-                mss_transactions_replica.txn_customer_id,count(mss_transactions_replica.txn_customer_id) 
+                mss_transactions_replica.txn_customer_id,
+				count(mss_transactions_replica.txn_customer_id) 
             from 
-                mss_transactions_replica,mss_customers 
+                mss_transactions_replica,
+				mss_customers 
             WHERE 
                 mss_transactions_replica.txn_customer_id = mss_customers.customer_id
-                AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
+            AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
             GROUP BY mss_transactions_replica.txn_customer_id
             HAVING 
                 count(mss_transactions_replica.txn_customer_id) > ".$this->db->escape($data['regular_cust'])." 
@@ -6641,7 +6646,7 @@ public function GetAttendanceAll($data){
         }
     }
     public function RiskCustomerService($data){
-        $sql = "(SELECT 
+        $sql = "SELECT 
            	GROUP_CONCAT(mss_transactions_replica.txn_customer_id) as customer_id
 			FROM   mss_transactions_replica, 
 				mss_transaction_settlements, 
@@ -6659,16 +6664,16 @@ public function GetAttendanceAll($data){
 			AND mss_business_outlets.business_outlet_business_admin = 
 			mss_business_admin.business_admin_id 
 			AND mss_business_admin.business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." 
-			AND Date(mss_transactions_replica.txn_datetime) > 
-			CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust'])." day)";
-	$sql = str_replace(",)",")",$sql);
+			AND Date(mss_transactions_replica.txn_datetime) BETWEEN 
+			CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust'])." day AND  CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust2'])." day";
+	// $sql = str_replace(",)",")",$sql);
         $query = $this->db->query($sql);
 		if($query){
             $result = $query->result_array();
             $customer_id = $result[0]['customer_id'];
             if(!empty($customer_id)){
                  $sql = "SELECT mss_customers.customer_id FROM mss_customers WHERE mss_customers.customer_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND mss_customers.customer_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." AND mss_customers.customer_id NOT IN ($customer_id)";
-                    $sql = str_replace(",)",")",$sql);
+                    // $sql = str_replace(",)",")",$sql);
                     $query = $this->db->query($sql);
             }
            
@@ -6679,7 +6684,8 @@ public function GetAttendanceAll($data){
         else{
             return $this->ModelHelper(false,true,"DB error!");   
         }
-    }
+	}
+	
     public function RiskCustomerPackage($data){
         $sql="SELECT mss_customers.customer_id
         FROM
@@ -6873,6 +6879,57 @@ $sql = str_replace(",)",")",$sql);
         else{
             return $this->ModelHelper(false,true,"DB error!");   
         }
+	}
+	
+	public function NoRiskCustomer($data){
+        $sql="SELECT 
+            mss_customers.customer_name as 'Name',mss_customers.customer_mobile as 'Mobile',
+			'No Risk' as 'Category',
+			SUM(mss_transactions_replica.txn_value) as 'Total_Spend',
+			Max(mss_transactions_replica.txn_datetime) as 'Last_Visit_Date' 
+            from 
+            mss_transactions_replica,
+			mss_customers 
+            WHERE 
+            mss_transactions_replica.txn_customer_id = mss_customers.customer_id
+            AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
+            GROUP BY mss_transactions_replica.txn_customer_id
+            HAVING 
+            count(mss_transactions_replica.txn_customer_id) > ".$this->db->escape($data['regular_cust'])."
+        ";
+        $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	
+	public function DormantCustomer($data){
+        $sql="SELECT 
+            mss_customers.customer_name as 'Name',
+			mss_customers.customer_mobile as 'Mobile',
+			'Regular' as 'Category',
+			SUM(mss_transactions_replica.txn_value) as 'Total_Spend',
+			Max(mss_transactions_replica.txn_datetime) as 'Last_Visit_Date' 
+            from 
+            mss_transactions_replica,
+			mss_customers 
+            WHERE 
+            mss_transactions_replica.txn_customer_id = mss_customers.customer_id
+            AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
+            GROUP BY mss_transactions_replica.txn_customer_id
+            HAVING 
+            count(mss_transactions_replica.txn_customer_id) > ".$this->db->escape($data['regular_cust'])."
+        ";
+        $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
     }
     public function ReportRiskSCustomer($data){
         // $this->PrettyPrintArray($data);
@@ -6929,11 +6986,14 @@ $sql = str_replace(",)",")",$sql);
     }
     public function SearchCustomerTimeline($data){
         // $this->PrettyPrintArray($data);
-        $sql="SELECT mss_customers.customer_name as 'Name',mss_customers.customer_mobile as 'Mobile',count(mss_transactions.txn_id) as 'Category',sum(mss_transactions.txn_value) as 'Total_Spend',Max(date(mss_transactions.txn_datetime)) as 'Last_Visit_Date'
+        $sql="SELECT mss_customers.customer_name as 'Name',
+		mss_customers.customer_mobile as 'Mobile',
+		count(mss_transactions.txn_id) as 'Category',
+		sum(mss_transactions.txn_value) as 'Total_Spend',
+		Max(date(mss_transactions.txn_datetime)) as 'Last_Visit_Date'
         FROM mss_transactions,mss_customers 
         WHERE mss_transactions.txn_customer_id = mss_customers.customer_id
-             AND mss_customers.customer_id=$data
-             ";
+        AND mss_customers.customer_id=$data ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -9558,10 +9618,13 @@ $sql = str_replace(",)",")",$sql);
     }
     
     public function SubCategoriesOtc(){
-        $sql = "SELECT * FROM mss_categories,mss_sub_categories
-        WHERE mss_categories.category_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-        AND mss_categories.category_id=mss_sub_categories.sub_category_category_id
-        ";
+        $sql = "SELECT mss_sub_categories.* FROM mss_categories,
+		mss_sub_categories
+        WHERE 
+		mss_sub_categories.sub_category_category_id = mss_categories.category_id AND
+		mss_sub_categories.sub_category_is_active=1 AND
+		mss_categories.category_is_active=1 AND
+		mss_categories.category_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']." ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());

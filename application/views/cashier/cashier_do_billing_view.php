@@ -11,10 +11,6 @@
 		?>
 		<main class="content">
 			<div class="container-fluid p-0">
-				<!-- <div class="row">
-					
-										
-				</div> -->
 				<div class="row">
 					<?php
 						$this->load->view('cashier/cashier_success_modal_view');
@@ -1364,15 +1360,15 @@
 														if ($recommended != 0) {
 															//  print_r($recommended);
 															foreach ($recommended as $data) { ?>
-																<div class="col-md-2 col-sm-4" style="margin-right:0px">
+																<!-- <div class="col-md-3 col-sm-4" style="margin-right:0px"> -->
 																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'].', '.round($data['service_price_inr'])?>">
-																		<div class="card customized-category-card">
-																			<div class="card-body" style="text-align: center;padding:.2rem!important;background-color:white;border-radius:1px;">
-																				<p class="card-text" style="color: black;" ><?= $data['service_name'] ?></p>
-																			</div>
-																		</div>
-																	</a>
-																</div>
+																		<!-- <div class="card"> -->
+																			<!-- <div class="card-body" style="text-align: center;padding:.2rem!important;background-color:white;border-radius:1px;"> -->
+																				<p class="card-text" style="color: black;" ><?= $data['service_name']." || " ?></p>
+																			<!-- </div> -->
+																		<!-- </div> -->
+																	</a> 
+																<!-- </div> -->
 														<?php
 															}
 														}
