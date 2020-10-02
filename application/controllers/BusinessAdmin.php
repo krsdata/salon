@@ -5574,6 +5574,12 @@ public function GetEmployee(){
 					$data['upcomingDate']=$data['upcomingDate']['res_arr'];
 					// $this->PrettyPrintArray($data['upcomingDate']);
 					// exit;
+                    $trigger_detail =$this->BusinessAdminModel->GetTrigger();
+                    $data['trigger_detail'] = [];
+                    if($trigger_detail['success']){
+                        $data['trigger_detail'] = $trigger_detail['res_arr'];
+                    }                    
+
 					$this->load->view('business_admin/ba_autoEngage_view',$data);
 			}
 			else{
@@ -12483,6 +12489,49 @@ public function daybook(){
             die;
         }
     }
+
+    //delete trigger
+        public function CancelSMSTrigger(){
+            if($this->IsLoggedIn('business_admin')){
+                // $this->PrettyPrintArray($_POST);
+                // exit;
+                if(isset($_POST) && !empty($_POST)){
+                    $this->form_validation->set_rules('auto_engage_id', 'Auto Engage', 'trim|required');            
+    
+                    if ($this->form_validation->run() == FALSE) 
+                    {
+                        $data = array(
+                                        'success' => 'false',
+                                        'error'   => 'true',
+                                        'message' =>  validation_errors()
+                                    );
+                        header("Content-type: application/json");
+                        print(json_encode($data, JSON_PRETTY_PRINT));
+                        die;
+                    }
+                    else{
+                        $data = array(
+                            'id'    => $this->input->post('auto_engage_id'),
+                            'is_active'=>$this->input->post('is_active')
+                        );
+    
+                        $result = $this->BusinessAdminModel->Update($data,'sms_trigger','id');
+                            
+                        if($result['success'] == 'true'){
+                            $this->ReturnJsonArray(true,false,"Trigger Updated Successfully!");
+                            die;
+                        }
+                        elseif($result['error'] == 'true'){
+                            $this->ReturnJsonArray(false,true,$result['message']);
+                            die;
+                        }
+                    }
+                }
+            }
+            else{
+                $this->LogoutUrl(base_url()."BusinessAdmin/");
+            }   
+        }
 
 }
 

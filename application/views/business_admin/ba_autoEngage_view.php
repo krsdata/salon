@@ -18,6 +18,13 @@
 			$days = array(1=>'Monday',2=>'Tuesday',3=>'WednesDay',4=>'Thursday',5=>'Friday',6=>'Satarday',7=>'Sunday');
 			$interval = array('reminder'=>$reminder,'ongoing'=>$days);
 			$interval = json_encode($interval);
+			$mode = array(1=>'SMS',2=>'WhatsApp');
+			$frequency = array(1=>'Reminder /Approaching Type',2=>'Regular /Ongoing');
+			
+			$outlets = [];
+			foreach ($business_outlet_details as $key => $b) {
+				$outlets[$b['business_outlet_id']] = $b['business_outlet_name'];
+			}			 
 		?>
 		<main class="content">
 			<div class="container-fluid p-0">
@@ -97,18 +104,47 @@
 																<th>SMS/WA</th>
 																<th>Outlet Applicable</th>
 																<th>frequency Type</th>
-																<th>frequency Details</th>
+																<th>Start Date</th>
+																<th>Expiry Date</th>
 																<th>Action</th>
 															</thead>
 															<tbody>
-																<td></td>
-																<td></td>
-																<td></td>
-																<td></td>
-																<td></td>
-																<td></td>
-																<td></td>
-																<td></td>
+																<?php
+																	$index = 1;
+																	if(!empty($trigger_detail)){
+																		foreach ($trigger_detail as $key => $t) {
+																			?>
+																			<tr>
+																			<td><?php echo ++$i?></td>
+																			<td><?php echo $t['trigger_name']?></td>
+																			<td><?php echo $t['trigger_description']?></td>
+																			<td><?php echo $mode[$t['mode']]?></td>
+																			<td><?php echo $outlets[$t['outlet_id']]?></td>
+																			<td><?php echo $frequency[$t['set_frequency']]?></td>
+																			<td><?php echo $t['start_date']?></td>
+																			<td><?php echo $t['expiry_date']?></td>
+																			<td><?php
+																				if($t['is_active'] == 1){
+																			?>
+																				<button type="button" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?=$t['id']?>" is_active="0">
+																					<i class="align-middle" data-feather="unlock"></i>
+																				</button>
+																			<?php
+																				}
+																				else{
+																			?>
+																				<button type="button" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?=$t['id']?>" is_active="1">
+																					<i class="align-middle" data-feather="lock"></i>
+																				</button>
+																			<?php
+																				}
+																			?></td>
+																		</tr>
+																			<?php
+																		}
+																	}
+																?>
+																
 															</tbody>
 														</table>
 													</div>
@@ -408,7 +444,7 @@
 															<option value="Daily Update Expert">Daily Update Expert</option>
 															<!-- <option value="Appointment Reminder">Appointment Reminder</option>
 															<option value="Package Expiry">Package Expiry</option>
-															<option value="Pending Amount">Pending Amount</option> -->
+																<option value="Pending Amount">Pending Amount</option> -->
 														</select>
 													</div>
 													<div class="form-group col-md-3">
@@ -1013,4 +1049,55 @@ $(function() {
     }
   });
 });
+
+
+$(document).on('click','.deleteSMSTrigBtn',function(event) {
+      event.preventDefault();
+      this.blur(); // Manually remove focus from clicked link.
+				
+      var parameters = {
+        auto_engage_id : $(this).attr('auto_engage_id'),
+				is_active			 : $(this).attr('is_active')
+			
+      };
+			$.ajax({
+				url: "<?=base_url()?>BusinessAdmin/CancelSMSTrigger",
+				data: parameters,
+				type: "POST",
+				// crossDomain: true,
+				cache: false,
+				// dataType : "json",
+				success: function(data) {
+					if(data.success == 'true'){ 
+						var message2 = data.message;
+						var title2 = "";
+						var type = "success";
+						toastr[type](message2, title2, {
+							positionClass: "toast-top-right",
+							progressBar: "toastr-progress-bar",
+							newestOnTop: "toastr-newest-on-top",
+							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+							timeOut: 1000
+						});
+						setTimeout(function () { location.reload(1); }, 1000);
+					}
+					else if (data.success == 'false'){   
+						if($('.feedback').hasClass('alert-success')){
+						$('.feedback').removeClass('alert-success').addClass('alert-danger');
+						}
+						else{
+							$('.feedback').addClass('alert-danger');
+						}
+						$('.alert-message').html("").html(data.message); 
+						}
+					
+				},
+				error: function(data){
+					$('.feedback').addClass('alert-danger');
+					$('.alert-message').html("").html(data.message); 
+				}
+			});
+		});	
+		
+	
 </script>

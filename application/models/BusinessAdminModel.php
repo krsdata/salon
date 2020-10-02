@@ -10253,4 +10253,15 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
         }
     }
 
+    public function GetTrigger(){
+        $sql = "SELECT * FROM `V_SMS_TRIGGER` where created_by ='".$this->session->userdata['logged_in']['business_admin_id']."'";
+         $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
+
 }
