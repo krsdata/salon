@@ -8846,7 +8846,7 @@ public function InsertSalary(){
                 $this->form_validation->set_rules('otc_gst_percentage', 'OTC GST Percentage', 'trim|required');
                 $this->form_validation->set_rules('otc_price_inr', 'OTC Gross Price', 'trim|required');
                 $this->form_validation->set_rules('otc_inventory_type', 'Inventory Type', 'trim|required');
-                $this->form_validation->set_rules('otc_barcode', 'Barcode', 'trim|required');
+                // $this->form_validation->set_rules('otc_barcode', 'Barcode', 'trim|required');
                 if ($this->form_validation->run() == FALSE) 
                 {
                     $data = array(
@@ -8869,7 +8869,8 @@ public function InsertSalary(){
                         'service_brand'         => $this->input->post('otc_brand'),
                         'service_sub_category_id'=>$this->input->post('otc_sub_category_id'),
                         'service_unit'          => $this->input->post('otc_unit'),
-                        'service_id'          => $this->input->post('otc_service_id'),
+												'service_id'          => $this->input->post('otc_service_id'),
+												'service_is_active'	=>1,
                         'barcode'   =>  $this->input->post('otc_barcode'),
                         'inventory_type'    =>  $this->input->post('otc_inventory_type'),
                         'service_price_inr'                 => $this->input->post('otc_price_inr'),
@@ -9147,9 +9148,13 @@ public function InsertSalary(){
                 $res=array(
                      'id' => $data['timeline']['res_arr']['id'],
                      'r1' => $data['timeline']['res_arr']['r1'],
-                     'r2' => $data['timeline']['res_arr']['r2'],
-                     'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
-                     'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'r2' => $data['timeline']['res_arr']['r2'],
+										 'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
+										 'no_risk' => $data['timeline']['res_arr']['no_risk'],
+										 'dormant_r1' => $data['timeline']['res_arr']['dormant_r1'],
+										 'dormant_r2' => $data['timeline']['res_arr']['dormant_r2'],
+										 'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
                      'lost_customer' => $data['timeline']['res_arr']['lost_customer']
                 );
             }
@@ -9158,8 +9163,12 @@ public function InsertSalary(){
                     'id' => 0,
                     'r1' => 2,
                     'r2' => 5,
-                    'regular_cust' => 5,
-                    'at_risk_cust' => 30,
+										'regular_cust' => 5,
+										'no_risk'	=>30,
+										'dormant_r1'	=> 31,
+										'dormant_r2'	=>60,
+										'at_risk_cust' => 61,
+										'at_risk_cust2' => 90,
                     'lost_customer' => 90
                );
             }
@@ -9198,6 +9207,20 @@ public function InsertSalary(){
             }
             else{
                 $data['regular']=0;
+						}
+						$data['no_risk']=$this->BusinessAdminModel->NoRiskCustomer($res);
+            if($data['no_risk']['success'] == 'true'){
+                $data['no_risk']=count($data['no_risk']['res_arr']);
+            }
+            else{
+                $data['no_risk']=0;
+						}
+						$data['dormant']=$this->BusinessAdminModel->DormantCustomer($res);
+            if($data['dormant']['success'] == 'true'){
+                $data['dormant']=count($data['dormant']['res_arr']);
+            }
+            else{
+                $data['dormant']=0;
             }
             $data['risk']=$this->BusinessAdminModel->RiskCustomerService($res);
             if($data['risk']['success']='true'){
@@ -9231,9 +9254,13 @@ public function InsertSalary(){
                 $res=array(
                      'id' => $data['timeline']['res_arr']['id'],
                      'r1' => $data['timeline']['res_arr']['r1'],
-                     'r2' => $data['timeline']['res_arr']['r2'],
+										 'r2' => $data['timeline']['res_arr']['r2'],
+										 'no_risk' => $data['timeline']['res_arr']['no_risk'],
+										 'dormant_r1' => $data['timeline']['res_arr']['dormant_r1'],
+										 'dormant_r2' => $data['timeline']['res_arr']['dorant_r2'],
                      'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
-                     'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
                      'lost_customer' => $data['timeline']['res_arr']['lost_customer']
                 );
             }
@@ -9242,8 +9269,12 @@ public function InsertSalary(){
                     'id' => 0,
                     'r1' => 2,
                     'r2' => 5,
-                    'regular_cust' => 5,
-                    'at_risk_cust' => 30,
+										'regular_cust' => 5,
+										'no_risk'	=> 30,
+										'dormant_r1'=>31,
+										'dormant_r2'=>60,
+										'at_risk_cust' => 60,
+										'at_risk_cust2'	=>90,
                     'lost_customer' => 90
                );
             }
@@ -9267,7 +9298,23 @@ public function InsertSalary(){
             }
             else{
                 $data['regular']=0;
+						}
+						
+						$data['no_risk']=$this->BusinessAdminModel->NoRiskCustomer($res);
+            if($data['no_risk']['success'] == 'true'){
+                $data['no_risk']=count($data['no_risk']['res_arr']);
             }
+            else{
+                $data['no_risk']=0;
+						}
+						$data['dormant']=$this->BusinessAdminModel->DormantCustomer($res);
+            if($data['dormant']['success'] == 'true'){
+                $data['dormant']=count($data['dormant']['res_arr']);
+            }
+            else{
+                $data['dormant']=0;
+            }
+
             $data['risk']=$this->BusinessAdminModel->RiskCustomerService($res);
             if($data['risk']['success']='true'){
                 $data['risk']=count($data['risk']['res_arr']);
@@ -9296,8 +9343,10 @@ public function InsertSalary(){
                         'r2'=>$_POST['r2'],
 												'regular_cust'=>$_POST['reg_cust'],
 												'no_risk'			=>$_POST['no_risk'],
-												'dormant'			=>$_POST['dormant'],
-                        'at_risk_cust'=>$_POST['risk_cust'],
+												'dormant_r1'			=>$_POST['dormant_r1'],
+												'dormant_r2'			=>$_POST['dormant_r2'],
+												'at_risk_cust'=>$_POST['at_risk_r1'],
+												'at_risk_cust2'=>$_POST['at_risk_r2'],
                         'lost_customer'=>$_POST['lost_cust'],
                         'business_outlet_id'=>$this->session->userdata['outlets']['current_outlet'],
                         'business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id'],
@@ -9312,8 +9361,10 @@ public function InsertSalary(){
                             'r2'=>$_POST['r2'],
 														'regular_cust'=>$_POST['reg_cust'],
 														'no_risk'			=>$_POST['no_risk'],
-														'dormant'			=>$_POST['dormant'],
-                            'at_risk_cust'=>$_POST['risk_cust'],
+														'dormant_r1'			=>$_POST['dormant_r1'],
+														'dormant_r2'			=>$_POST['dormant_r2'],
+														'at_risk_cust'=>$_POST['at_risk_r1'],
+														'at_risk_cust2'=>$_POST['at_risk_r2'],
                             'lost_customer'=>$_POST['lost_cust'],
                             'business_outlet_id'=>$this->session->userdata['outlets']['current_outlet'],
                             'business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id'],
@@ -10949,7 +11000,7 @@ public function InsertSalary(){
 
 							$data['stock']=$this->CashierModel->AvailableStock($where);
 							$data['stock']=	$data['stock']['res_arr'];
-
+							// $this->PrettyPrintArray($data['stock']);
 							$data['stock_incoming']=$this->CashierModel->IncomingStock($where);
 							$data['stock_incoming']=	$data['stock_incoming']['res_arr'];
 
@@ -11781,27 +11832,109 @@ public function daybook(){
                 $key_info['keys'][3] = $temp;
 
 
-                $p_mode = [];
-                foreach ($key_info as $key => $k) {
-                    foreach ($k as $key => $keys) {
-                        if(!in_array($keys, $p_mode)){
-                            $p_mode[] = $keys;
-                        }
-                    }                                    
-                }
+                // $p_mode = [];
+                // foreach ($key_info as $key => $k) {
+                //     foreach ($k as $key => $keys) {
+                //         if(!in_array($keys, $p_mode)){
+                //             $p_mode[] = $keys;
+                //         }
+                //     }                                    
+                // }
 
         }
         
-        $p_mode = array_filter($p_mode);        
+        // $p_mode = array_filter($p_mode);        
+        // $p_mode = call_user_func_array('array_merge', $p_mode);
+        // $p_mode = array_unique($p_mode);
+        // $p_mode = array_values($p_mode);        
+        // $data['p_mode'] = $p_mode;
+        // $data['opening_balance_data'] = $opening_balance_data;
+        // $data['pending_amount_data'] = $pending_amount_data;
+        // $data['expenses_data'] = $expenses_data;
+        // $data['transaction_data'] = $transaction_data;
+        // $data['date'] = $date;
+        $result = $this->BusinessAdminModel->GetPaymentMode();
+        if($result['success']){
+            $mode = $result['res_arr'];
+            
+            foreach ($mode as $key => $value) {
+                if(!empty($value['txn_settlement_payment_mode'])){                        
+                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
+                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
+                    }else{
+                        $result = json_decode($value['txn_settlement_payment_mode']);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
+                        }else{
+                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
+                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
+                        }                            
+                    }
+                }                        
+            }                
+            if(!empty($json_data)){                    
+                foreach ($json_data as $key => $j) {
+                    foreach ($j as $key => $t) {
+                      if(in_array(strtolower($t['payment_type']), $temp)){
+                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
+                        }else{
+                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
+                            $temp[] = strtolower($t['payment_type']);
+                        }  
+                    }                       
+                }
+            }
+        }
+        $data['payment_type_arr'] = $temp;       
+        $result = $this->BusinessAdminModel->getOpeningRecord($date,1);        
+
+        $cashin = [];
+        $cashout = [];
+        $temp1 = [];
+        $temp2 = [];
+        if($result['success']){
+            $cashinout = $result['res_arr']['opening_balance'];
+
+            foreach ($cashinout as $key => $value) {
+                if($value['amount_data'] == 'CashIn'){
+                    if(in_array(strtolower($value['payment_mode']), $temp1)){
+                        $cashin[strtolower($value['payment_mode'])] += $value['amount'];
+                        }else{
+                            $cashin[strtolower($value['payment_mode'])] = $value['amount'];
+                            $temp1[] = strtolower($value['payment_mode']);
+                        }  
+                    }elseif($value['amount_data'] == 'CashOut'){
+                        if(in_array(strtolower($value['payment_mode']), $temp2)){
+                        $cashout[strtolower($value['payment_mode'])] += $value['amount'];
+                        }else{
+                            $cashout[strtolower($value['payment_mode'])] = $value['amount'];
+                            $temp2[] = strtolower($value['payment_mode']);
+                        }
+                    }               
+            }           
+        }        
+        $key_info['keys'][4] = $temp1;
+        $key_info['keys'][5] = $temp2;
+        $p_mode = [];
+        foreach ($key_info as $key => $k) {
+            foreach ($k as $key => $keys) {
+                if(!in_array($keys, $p_mode)){
+                    $p_mode[] = $keys;
+                }
+            }                                    
+        }
+         $p_mode = array_filter($p_mode);        
         $p_mode = call_user_func_array('array_merge', $p_mode);
         $p_mode = array_unique($p_mode);
-        $p_mode = array_values($p_mode);        
+        $p_mode = array_values($p_mode);              
         $data['p_mode'] = $p_mode;
         $data['opening_balance_data'] = $opening_balance_data;
         $data['pending_amount_data'] = $pending_amount_data;
         $data['expenses_data'] = $expenses_data;
         $data['transaction_data'] = $transaction_data;
         $data['date'] = $date;
+        $data['cashin'] = $cashin;
+        $data['cashout'] = $cashout;
         $this->load->view('business_admin/ba_expense_view',$data);
     }
 
@@ -12310,6 +12443,10 @@ public function daybook(){
 						'expiry_date'	=> date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))))
 					);
 					$result=$this->CashierModel->Insert($data2,'inventory_data');
+					$where=array(
+						'stock_service_id' => $_POST['service_id'],
+						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet']
+					);
 					$data3=array(
 						'stock_service_id'=>$_POST['service_id'],
 						'total_stock'	=>$_POST['product_qty'],
@@ -12317,9 +12454,15 @@ public function daybook(){
 						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
 						'updated_on'	=>date('Y-m-d')
 					);
-					
+
+						$stock_exist= $this->CashierModel->CheckStockExist($where);
+						if($stock_exist['success']=='true'){
+							$update_stock=$this->CashierModel->UpdateInventoryStockForAdmin($data3);
+						}else{
+							$insert_stock=$this->CashierModel->Insert($data3,'inventory_stock');
+						}					
 					// $res=$this->CashierModel->UpdateInventoryStock($data3);
-					$res=$this->CashierModel->Update($data3,'inventory_stock','stock_service_id');
+					// $res=$this->CashierModel->Update($data3,'inventory_stock','stock_service_id');
 
 					$this->ReturnJsonArray(true,false,"Stock Updated!");
 					die;
@@ -12349,6 +12492,32 @@ public function daybook(){
 				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}		
 		}
+
+        public function AddCashIn(){
+        if($this->IsLoggedIn('business_admin')){
+            $post['amount'] = $_POST['cash_in'];
+            $post['opening_date'] = date('Y-m-d');
+            $post['amount_data'] = 'CashIn';
+            $post['payment_mode'] = 'Cash';
+            $post['business_outlet_id'] = $this->session->userdata['outlets']['current_outlet'];
+            $data=$this->CashierModel->Insert($post,'mss_opening_balance');            
+            $this->ReturnJsonArray(true,false,$data['res_arr']);
+            die;
+        }
+    }
+    
+    public function AddCashOut(){
+        if($this->IsLoggedIn('business_admin')){
+            $post['amount'] = $_POST['cash_out'];
+            $post['opening_date'] = date('Y-m-d');
+            $post['amount_data'] = 'CashOut';
+            $post['payment_mode'] = $_POST['paymod_mode'];
+            $post['business_outlet_id'] = $this->session->userdata['outlets']['current_outlet'];
+            $data=$this->CashierModel->Insert($post,'mss_opening_balance');
+            $this->ReturnJsonArray(true,false,$data['res_arr']);
+            die;
+        }
+    }
 
 }
 

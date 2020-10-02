@@ -2100,7 +2100,7 @@
 				$("#EditOTCCategory input[select=otc_inventory_type]").val(data.inventory_type);//select
 	    	$("#EditOTCCategory select[name=category_id]").val(data.category_id);
         // 		$("#EditOTCCategory select[name=otc_sub_category_id]").val(data.service_sub_category_id);
-        $("#EditOTCCategory select[name=otc_sub_category_id]").append('<option value='+data.sub_category_category_id+' selected>'+data.sub_category_name+'</option>');
+        $("#EditOTCCategory select[name=otc_sub_category_id]").append('<option value='+data.sub_category_id+' selected>'+data.sub_category_name+'</option>');
        
         $("#ModalEditOTC").modal('show');
     	})

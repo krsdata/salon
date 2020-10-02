@@ -112,7 +112,6 @@
 										<a class="nav-link" data-toggle="tab" href="#tab-6">Last 200 Transactions</a>
 									</li>
 								</ul>
-
 							</div>
 							<div class="card-body">
 								<div class="tab-content">
@@ -786,7 +785,7 @@
 												<tbody>
 													<?php foreach($last_txn as $txn){?>
 														<tr>																											
-															<td data-target="#BillModal" data-toggle="modal" class="showBilledServices" txn_id="<?=$txn['bill_no']?>" style="color:blue;"><?=$txn['txn_id']?></td>
+															<td class="showBilledServices" txn_id="<?=$txn['bill_no']?>" bill_type="<?=$txn['Type']?>" style="color:blue;"><?=$txn['txn_id']?></td>
 															<td><?=$txn['billing_date']?></td>
 															<td><?=$txn['mobile']?></td>
 															<td><?=$txn['name']?></td>
@@ -850,6 +849,35 @@
 										</div>
 									</div>
 								</div>
+								<div class="modal" id="BillModal2" tabindex="-1" role="dialog" aria-hidden="true">	
+									<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title text-white">Package Bill Details</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">
+											<table id="show_Bill2" style="width:100%;text-align:center">
+												<thead>
+													<tr>
+														<th>Package Name</th>
+														<th>Type</th>
+														<th>Txn Value</th>
+														<th>Discount</th>
+														<th>Customer Name</th>
+														<th>Expert</th>
+													</tr>
+												</thead>
+												<tbody id="tabid2">
+													
+												</tbody>
+											</table>
+											</div>
+										</div>
+									</div>
+								</div>
 							<!-- end -->
 						</div>
 					</div>
@@ -903,24 +931,41 @@
 				event.preventDefault();
 				this.blur();
 	      var parameters = {
-	        txn_id: $(this).attr('txn_id')
+	        txn_id: $(this).attr('txn_id'),
+					type : $(this).attr('bill_type')
 	      };
 	    //  alert($(this).attr('txn_id'));
 					$.getJSON("<?=base_url()?>Cashier/GetBilledServices", parameters)
 					.done(function(data, textStatus, jqXHR) { 
-						var str_2 = "";	
-						for(var i=0;i<data.length;i++){						
-							str_2 += "<tr>";
-							str_2 += "<td>"+data[i].service_name+"</td>";
-							str_2 += "<td>"+data[i].txn_service_discounted_price+"</td>";
-							str_2 += "<td>"+data[i].disc1+"</td>";
-							str_2 += "<td>"+data[i].disc2+"</td>";
-							str_2 += "<td>"+data[i].txn_service_quantity+"</td>";
-							str_2 += "<td>"+data[i].employee_first_name+"</td>";
-							str_2 += "</tr>";
-						}				
-						$("#tabid").html(str_2);
-						$("#BillModal").modal('show');
+						if(data[0].service=='service'){
+							var str_2 = "";	
+							for(var i=0;i<data.length;i++){						
+								str_2 += "<tr>";
+								str_2 += "<td>"+data[i].service_name+"</td>";
+								str_2 += "<td>"+data[i].txn_service_discounted_price+"</td>";
+								str_2 += "<td>"+data[i].disc1+"</td>";
+								str_2 += "<td>"+data[i].disc2+"</td>";
+								str_2 += "<td>"+data[i].txn_service_quantity+"</td>";
+								str_2 += "<td>"+data[i].employee_first_name+"</td>";
+								str_2 += "</tr>";
+							}				
+							$("#tabid").html(str_2);
+							$("#BillModal").modal('show');
+						}else{
+							var str_2 = "";	
+							for(var i=0;i<data.length;i++){						
+								str_2 += "<tr>";
+								str_2 += "<td>"+data[0].salon_package_name+"</td>";
+								str_2 += "<td>"+data[0].package+"</td>";
+								str_2 += "<td>"+data[0].package_txn_value+"</td>";
+								str_2 += "<td>"+data[0].package_txn_discount+"</td>";
+								str_2 += "<td>"+data[0].customer_name+"</td>";
+								str_2 += "<td>"+data[0].employee_first_name+"</td>";
+								str_2 += "</tr>";
+							}				
+							$("#tabid2").html(str_2);
+							$("#BillModal2").modal('show');
+						}
 					})
 					.fail(function(jqXHR, textStatus, errorThrown) {
 						console.log(errorThrown.toString());
@@ -982,7 +1027,7 @@
 		 						setTimeout(function () { location.reload(1); }, 500);
 	            }else if (data.success == 'false'){   
 								$("#ModalCancelBill").modal('hide');    
-	            	$("#ErrorModalMessage").html("").html(data.message);            
+	            	$("#ErrorMod	alMessage").html("").html(data.message);            
 	        	    $("#defaultModalDanger").modal('show');
 	            }
 	          },
