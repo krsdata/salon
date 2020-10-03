@@ -19,12 +19,12 @@ class MasterAdmin extends CI_Controller {
 				}
     }
     private function GetDataForMasterAdmin($title){
-		$data = array();
-        $data['title'] = $title;
-         $data['business_master_admin_packages'] = $this->GetMasterAdminPackages();
-         $data['master_admin_details'] 			 = $this->GetMasterAdminDetails();
-         $data['business_outlet_details'] 		 = $this->GetMasterOutlets();
-        // if(isset($this->session->userdata['outlets'])){
+		 $data = array();
+         $data['title'] = $title;
+		 $data['business_master_admin_packages'] = $this->GetMasterAdminPackages();
+		 $data['master_admin_details'] 			 = $this->GetMasterAdminDetails();
+		 $data['business_outlet_details'] 		 = $this->GetMasterOutlets();
+		// if(isset($this->session->userdata['outlets'])){
         //  $data['selected_outlet']      = $this->GetCurrentOutlet($this->session->userdata['outlets']['current_outlet']);
         // }
         return $data;
@@ -101,6 +101,7 @@ class MasterAdmin extends CI_Controller {
        $this->load->model('CashierModel');
        $this->load->model('POSModel');
        $this->load->model('MasterAdminModel');
+	   $this->load->helper('common_helper');
   }
   public function ReturnJsonArray($success,$error,$message){
     if($success == true && $error == false){
@@ -188,12 +189,12 @@ class MasterAdmin extends CI_Controller {
 		}	
 	}
 	
-	private function ActivePackages($outlet_id){
+	private function ActivePackages($outlet_id=0){
 		if($this->IsLoggedIn('master_admin')){
-			$where = array(
-				'master_id'  => $this->session->userdata['logged_in']['master_admin_id'],
-				'business_outlet_id' => $outlet_id
-			);
+			$where = array('master_id'  => $this->session->userdata['logged_in']['master_admin_id']);
+			if($outlet_id>0){
+				$where['business_outlet_id'] =  $outlet_id;
+			}
 
 			$data = $this->MasterAdminModel->GetAllPackages($where);
 			
@@ -213,7 +214,8 @@ class MasterAdmin extends CI_Controller {
 			$where = array(
 				'master_id' 	   => $this->session->userdata['logged_in']['master_admin_id'],
 				'salon_package_id' => $packageId,
-				'outlet_id' => $outletId
+				//'outlet_id' => $outletId,
+				'is_active' =>'1'
 			);
            
 			$data = $this->MasterAdminModel->MultiWhereSelect('mss_salon_package_data',$where);
@@ -2721,11 +2723,16 @@ class MasterAdmin extends CI_Controller {
 			  }else{
 				  $serviceIds = ""; /* Get for All */
 			  }
+			  $outletIds = $this->input->post('outlet_ids');
+			  
 			  $where['master_id']  =  $this->session->userdata['logged_in']['master_admin_id'];
 			  $where['service_id'] = $serviceIds;
 			  $where['service_is_active'] = TRUE;
 			  $where['service_type'] = $this->input->post('type');
-			  $result = $this->MasterAdminModel->DownloadMasterServices($where);
+            if(!empty($outletIds)){
+			  $where['outlet_ids'] = implode(',',$outletIds);
+			}
+			 $result = $this->MasterAdminModel->DownloadMasterServices($where);
 			  if(!empty($result['res_arr'])){
 				   $outletIds = array();
 				   foreach($result['res_arr'] as $key=>$serviceDetails){
@@ -2745,7 +2752,7 @@ class MasterAdmin extends CI_Controller {
 				  foreach($result['res_arr'] as $key=>$serviceDetails){
 					  $returnArray['S.No.'] =  $key+1;
 					  $returnArray['Outlet'] =  isset($outletData[$serviceDetails['outlet_id']]) ? $outletData[$serviceDetails['outlet_id']] : "";
-					  $returnArray['Service Name'] =  $serviceDetails['service_name'];
+					  $returnArray['Name'] =  $serviceDetails['service_name'];
 					  $returnArray['Price(B/tax)'] =  $serviceDetails['service_price_inr']+($serviceDetails['service_gst_percentage']*$serviceDetails['service_price_inr']/100) ;
 					  $returnArray['GST%'] =  $serviceDetails['service_gst_percentage'];
 					  $returnArray['MRP(Rs)'] =  $serviceDetails['service_price_inr'];
@@ -3362,10 +3369,10 @@ class MasterAdmin extends CI_Controller {
 				else{
 					$data = array(
 						'service_name' 			=> $this->input->post('service_name'),
-						'service_price_inr' 	=> $this->input->post('service_price_inr'),
+						'service_price_inr' 	=> getActualPrice($this->input->post('service_price_inr')),
 						'service_est_time' 		=> $this->input->post('service_est_time'),
 						'service_description' 	=> $this->input->post('service_description'),
-						'service_gst_percentage' 	=> $this->input->post('service_gst_percentage'),
+						'service_gst_percentage' 	=> getActualPrice($this->input->post('service_gst_percentage')),
 						'service_sub_category_id' 	=> $this->input->post('service_sub_category_id'),
 						'service_type'				=> 'service',	
 						'created_by'				=> $this->session->userdata['logged_in']['master_admin_id'],	
@@ -3417,13 +3424,14 @@ class MasterAdmin extends CI_Controller {
 					die;
 				}
 				else{
+
 					$data = array(
 						'service_id'    => $this->input->post('service_id'),
 						'service_name' 	=> $this->input->post('service_name'),
-						'service_price_inr' 	=> $this->input->post('service_price_inr'),
+						'service_price_inr' 	=> getActualPrice($this->input->post('service_price_inr')),
 						'service_est_time' 	=> $this->input->post('service_est_time'),
 						'service_description' 	=> $this->input->post('service_description'),
-						'service_gst_percentage' 	=> $this->input->post('service_gst_percentage'),
+						'service_gst_percentage' 	=> getActualPrice($this->input->post('service_gst_percentage')),
 						'service_sub_category_id' 	=> $this->input->post('service_sub_category_id'),
 						'service_type'				=> 'service',	
 						'created_by'				=> $this->session->userdata['logged_in']['master_admin_id'],
@@ -3517,10 +3525,10 @@ class MasterAdmin extends CI_Controller {
             if(isset($_POST) && !empty($_POST)){
                 $this->form_validation->set_rules('otc_item_name', 'otc Item Name', 'trim|required|max_length[100]');
                 $this->form_validation->set_rules('otc_brand', 'Otc brand', 'trim|required|max_length[100]');
-                $this->form_validation->set_rules('otc_unit', 'Otc unit', 'trim|required|max_length[50]');
+                $this->form_validation->set_rules('otc_unit[]', 'Otc unit', 'trim|required|max_length[50]');
                 $this->form_validation->set_rules('otc_sub_category_id', 'Otc Sub-Category Name', 'trim|required');
-                $this->form_validation->set_rules('otc_gst_percentage', 'OTC GST Percentage', 'trim|required');
-                $this->form_validation->set_rules('otc_price_inr', 'OTC Gross Price', 'trim|required');
+                $this->form_validation->set_rules('otc_gst_percentage[]', 'OTC GST Percentage', 'trim|required');
+                $this->form_validation->set_rules('otc_price_inr[]', 'OTC Gross Price', 'trim|required');
                 if ($this->form_validation->run() == FALSE) 
                 {
 				    $data = array(
@@ -3533,6 +3541,17 @@ class MasterAdmin extends CI_Controller {
                     die;
                 }
                 else{
+
+                	   $barcode_id = $this->MasterAdminModel->DetailsById($_POST['otc_barcode'],'master_services','barcode');
+                        // $barcode_id = $barcode_id['res_arr']; 
+						$barcode_id=count($barcode_id)-3;
+						
+						$inv=0;
+						if($_POST['otc_inventory_type'] == 'Raw Material'){
+							$inv=1;
+						}else{
+							$inv=2;
+						}
 					
                         //$barcode_id = $this->MasterAdminModel->DetailsById($_POST['otc_barcode'],'master_services','barcode');
                         //$barcode_id = $barcode_id['res_arr']; 
@@ -3544,40 +3563,23 @@ class MasterAdmin extends CI_Controller {
 						}else{
 							$inv=2;
 						}
-						/*
-                        foreach($_POST['qty_per_item'] as $key=>$value){
+						foreach($_POST['qty_per_item'] as $key=>$value){
                             $data = array(
                                 'inventory_type'                => $this->input->post('otc_inventory_type'),
-                                'service_name'                  => $this->input->post('otc_item_name'),
-                                'service_sub_category_id'  		=> $this->input->post('otc_sub_category_id'),
-                                'service_brand'                 => $this->input->post('otc_brand'),
-                                'barcode'      					=> $this->input->post('otc_barcode'),
-                                'barcode_id'    				=>$this->input->post('otc_barcode')."-".$barcode_id,
-                                'qty_per_item'                  => $_POST['qty_per_item'][$key],
-                                'service_price_inr'              => $_POST['otc_price_inr'][$key],
+                                'service_name'                          => $this->input->post('otc_item_name'),
+                                'service_sub_category_id'   => $this->input->post('otc_sub_category_id'),
+                                'service_brand'                         => $this->input->post('otc_brand'),
+                                'barcode'       => $this->input->post('otc_barcode'),
+                                'barcode_id'    =>$this->input->post('otc_barcode')."-".$barcode_id,
+                                'qty_per_item'                          => $_POST['qty_per_item'][$key],
+                                'service_price_inr'                 => $_POST['otc_price_inr'][$key],
                                 'service_gst_percentage'        => $_POST['otc_gst_percentage'][$key],
-                                'service_unit'                  => $_POST['otc_unit'][$key],
-                                'service_type'                  => "otc"
+                                'service_unit'                          => $_POST['otc_unit'][$key],
+                                'service_type'              => "otc"
                             );
                             // $this->PrettyPrintArray($data);
-                            $result = $this->MasterAdminModel->Insert($data,'master_services');
-                        }   */
-						
-						$data = array(
-                                'inventory_type'                => $this->input->post('otc_inventory_type'),
-                                'service_name'                  => $this->input->post('otc_item_name'),
-                                'service_sub_category_id'  		=> $this->input->post('otc_sub_category_id'),
-                                'service_brand'                 => $this->input->post('otc_brand'),
-                                //'barcode'      					=> $this->input->post('otc_barcode'),
-                                //'barcode_id'    				=> $this->input->post('otc_barcode')."-".$barcode_id,
-                                'qty_per_item'                  => $_POST['qty_per_item'],
-                                'service_price_inr'              =>$_POST['otc_price_inr'],
-                                'service_gst_percentage'        => $_POST['otc_gst_percentage'],
-                                'service_unit'                  => $_POST['otc_unit'],
-                                'service_type'                  => "otc"
-                            );
-                            // $this->PrettyPrintArray($data);
-                            $result = $this->MasterAdminModel->Insert($data,'master_services');
+                            $result = $this->MasterAdminModel->Insert($data,'mss_services');
+                        } 
 							
                     if($result['success'] == 'true'){
                         $this->ReturnJsonArray(true,false,"OTC item added successfully!");
@@ -3623,16 +3625,17 @@ class MasterAdmin extends CI_Controller {
                     die;
                 }
                 else{
+
                     $data = array(
                         'service_name'          => $this->input->post('otc_item_name'),
                         'service_brand'         => $this->input->post('otc_brand'),
                         'service_sub_category_id'=>$this->input->post('otc_sub_category_id'),
                         'service_unit'          => $this->input->post('otc_unit'),
                         'service_id'          	=> $this->input->post('otc_service_id'),
-                        //'barcode'   			=>  $this->input->post('otc_barcode'),
-                        //'inventory_type'    	=>  $this->input->post('otc_inventory_type'),
-                        'service_price_inr'     => $this->input->post('otc_price_inr'),
-                        'service_gst_percentage'        => $this->input->post('otc_gst_percentage'),
+                        'barcode'   			=>  $this->input->post('otc_barcode'),
+                        'inventory_type'    	=>  $this->input->post('otc_inventory_type'),
+                        'service_price_inr'     => getActualPrice($this->input->post('otc_price_inr')),
+                        'service_gst_percentage'=> getActualPrice($this->input->post('otc_gst_percentage')),
                         'qty_per_item'      => $this->input->post('sku_size')
                     );
                     $result = $this->MasterAdminModel->Update($data,'master_services','service_id');
@@ -3911,7 +3914,7 @@ class MasterAdmin extends CI_Controller {
 					die;
 				}
 				else{
-			
+					
 					$data = array(
 						'salon_package_name'        => $this->input->post('salon_package_name'),
 						'salon_package_price'       => round($this->input->post('salon_package_price'),2),
@@ -3927,57 +3930,52 @@ class MasterAdmin extends CI_Controller {
 						'total_count_of_services' 	=> $this->input->post('total_no_of_services')
 					);
 					
-					$outletIds = $this->input->post('salon_package_outlet');
-					$masterId = $this->session->userdata['logged_in']['master_admin_id'];
+					$outletIds 		 = $this->input->post('salon_package_outlet');
+					$masterId 		 = $this->session->userdata['logged_in']['master_admin_id'];
+					$packageId 		 = $this->input->post('packageId');
+					$packageOutletId = $this->input->post('packageOutletId');
+			
 					if($data['salon_package_type'] == "Wallet"){
-							//Only one insert required
+						//Only one insert required
 						if(empty($this->input->post("virtual_wallet_money_absolute")) && empty($this->input->post("virtual_wallet_money_percentage"))){
 							$this->ReturnJsonArray(false,true,"Please fill virtual money value!");
 							die;
-						}
-						else{
-							
-							if(!empty($this->input->post("virtual_wallet_money_absolute"))){
+						}else{
+							if(!empty($this->input->post("virtual_wallet_money_absolute")) && $this->input->post("virtual_wallet_money_absolute")>0){
 								$data['virtual_wallet_money'] = $this->input->post("virtual_wallet_money_absolute");
+							}elseif(!empty($this->input->post("virtual_wallet_money_percentage")) && $this->input->post("virtual_wallet_money_percentage")>0){
+								$data['virtual_wallet_money'] = (($this->input->post("virtual_wallet_money_percentage")/100) * $data['salon_package_upfront_amt']) ;
+							}
+						}
+							
+							if(!empty($data['virtual_wallet_money'])){
+																
+								/* if package Id has 0 value then Insert new package else update */
 								
-								$result = $this->MasterAdminModel->Insert($data,'mss_salon_packages');
+								if($packageId>0 && $packageId!=""){
+									
+									$result = $this->MasterAdminModel->UpdateWalletPackageForSalon($data,$outletIds,$masterId,$packageId);
+									$message = $result['res_arr']['message']!="" ? $result['res_arr']['message'] : "Package Updated successfully!";
+
+								}else{
+									$result = $this->MasterAdminModel->AddWalletPackageForSalon($data,$outletIds,$masterId);
+									
+									/* Associate Package with multiple outlet*/ 
+									$packageId = $result['res_arr']['insert_id'];
+									$message = ($result['res_arr']['message']!="") ? $result['res_arr']['message'] : "Package added successfully!";
+								}
 								
-								/* Associate Package with multiple outlet*/ 
-								$packageId = $result['res_arr']['insert_id'];
-								
-								$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+								//$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
 								
 								if($result['success'] == 'true'){
-									$this->ReturnJsonArray(true,false,"Package added successfully!");
+									$this->ReturnJsonArray(true,false,$message);
 									die;
-								}
-								elseif($result['error'] == 'true'){
+								}elseif($result['error'] == 'true'){
 									$this->ReturnJsonArray(false,true,$result['message']);
 									die;
 								}
 							}
 
-							if(!empty($this->input->post("virtual_wallet_money_percentage"))){
-								$data['virtual_wallet_money'] = (($this->input->post("virtual_wallet_money_percentage")/100) * $data['salon_package_upfront_amt']) ;
-								
-								$result = $this->MasterAdminModel->Insert($data,'mss_salon_packages');
-								
-								/* Associate Package with multiple outlet*/ 
-								$packageId = $result['res_arr']['insert_id'];
-								
-								$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
-								 	
-								
-								if($result['success'] == 'true'){
-									$this->ReturnJsonArray(true,false,"Package added successfully!");
-									die;
-								}
-								elseif($result['error'] == 'true'){
-									$this->ReturnJsonArray(false,true,$result['message']);
-									die;
-								}
-							}
-						}
 					}
 					elseif($data['salon_package_type'] == "Services"){
 						$data['salon_package_type_selected'] = $data['salon_package_type'];
@@ -3986,23 +3984,27 @@ class MasterAdmin extends CI_Controller {
 						$services = $this->input->post('service_id');
 						$counts   = $this->input->post('count_service');
 						if(!empty($services) && !empty($counts)){
-							$result = $this->MasterAdminModel->AddServicePackageForSalon($data,$services,$counts,$outletIds,$masterId);
-							/* Associate Package with multiple outlet*/ 
-							$packageId = $result['res_arr']['insert_id'];
-							
-							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
-							 
-							
+							    if($packageId>0 && $packageId!=""){
+									
+									$result = $this->MasterAdminModel->UpdateServicePackageForSalon($data,$services,$counts,$outletIds,$masterId,$packageId);
+									$message = $result['res_arr']['message']!="" ? $result['res_arr']['message'] : "Package Updated successfully!";
+
+								}else{
+									$result = $this->MasterAdminModel->AddServicePackageForSalon($data,$services,$counts,$outletIds,$masterId);
+									/* Associate Package with multiple outlet*/ 
+									$packageId = $result['res_arr']['insert_id'];
+									$message = "Package added successfully!";
+									//$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+							   }	 
+								
 							if($result['success'] == 'true'){
-								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								$this->ReturnJsonArray(true,false,$message);
 								die;
-							}
-							elseif($result['error'] == 'true'){
+							}elseif($result['error'] == 'true'){
 								$this->ReturnJsonArray(false,true,$result['message']);
 								die;
 							}
-						}
-						else{
+						}else{
 							$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
 							die;
 						}
@@ -4016,14 +4018,24 @@ class MasterAdmin extends CI_Controller {
 						$counts = $this->input->post('count_discount');
 						
 						if(!empty($services) && !empty($discounts) && !empty($counts)){
-							$result = $this->MasterAdminModel->AddDiscountPackageForSalon($data,$services,$discounts,$counts,$outletIds,$masterId);
-							/* Associate Package with multiple outlet*/ 
-							$packageId = $result['res_arr']['insert_id'];
 							
-							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+						  if($packageId>0 && $packageId!=""){
+								
+								$result = $this->MasterAdminModel->UpdateDiscountPackageForSalon($data,$services,$discounts,$counts,$outletIds,$masterId,$packageId);
+								$message = $result['res_arr']['message']!="" ? $result['res_arr']['message'] : "Package Updated successfully!";
+
+							}else{	
+
+								$result = $this->MasterAdminModel->AddDiscountPackageForSalon($data,$services,$discounts,$counts,$outletIds,$masterId);
+								/* Associate Package with multiple outlet*/ 
+								$packageId = $result['res_arr']['insert_id'];
+								$message = "Package added successfully!";
+							}
+
+							//$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
 							
 							if($result['success'] == 'true'){
-								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								$this->ReturnJsonArray(true,false,$message);
 								die;
 							}
 							elseif($result['error'] == 'true'){
@@ -4044,15 +4056,25 @@ class MasterAdmin extends CI_Controller {
 						$sub_categories = $this->input->post('service_sub_category_bulk'); 
 						$counts = $this->input->post('count_service_subcategory_bulk');
 						
-						if(!empty($sub_categories) && !empty($counts)){
-							
-							$result = $this->MasterAdminModel->AddServiceSubCategoryBulkPackage($data,$sub_categories,$counts,$outletIds,$masterId);
-							/* Associate Package with multiple outlet*/ 
-							$packageId = $result['res_arr']['insert_id'];
-							
-							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
-							
-							if($result['success'] == 'true'){
+						
+						if($packageId>0 && $packageId!=""){
+									
+							//$result = $this->MasterAdminModel->UpdateServiceSubCategoryBulkPackage($data,$sub_categories,$counts,$outletIds,$masterId,$packageId);
+							//$message = $result['res_arr']['message']!="" ? $result['res_arr']['message'] : "Package Updated successfully!";
+
+						}else{
+							if(!empty($sub_categories) && !empty($counts)){
+								
+								$result = $this->MasterAdminModel->AddServiceSubCategoryBulkPackage($data,$sub_categories,$counts,$outletIds,$masterId);
+								/* Associate Package with multiple outlet*/ 
+								$packageId = $result['res_arr']['insert_id'];
+								
+								$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+								
+							}
+						}						
+
+						    if($result['success'] == 'true'){
 								$this->ReturnJsonArray(true,false,"Package added successfully!");
 								die;
 							}
@@ -4060,7 +4082,7 @@ class MasterAdmin extends CI_Controller {
 								$this->ReturnJsonArray(false,true,$result['message']);
 								die;
 							}
-						}
+						
 						else{
 							$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
 							die;
@@ -4198,16 +4220,28 @@ class MasterAdmin extends CI_Controller {
 			else{
 				$data = $this->GetDataForMasterAdmin("Create Packages");
 					
-				$data['selectedOutlets'] =  "";
-				if(!empty($data['business_outlet_details'])){
-					$data['selectedOutlets'] = $data['business_outlet_details'][0]['business_outlet_id'];
-				}
+				/* Get All Outlet */
+				$business_outlet_details  = $this->GetMasterOutlets();
 					
 				$data['categories']     = $this->GetMasterCategories($this->session->userdata['logged_in']['master_admin_id']);
 				$data['sub_categories'] = $this->GetMasterSubCategories($this->session->userdata['logged_in']['master_admin_id']);
 				$data['services']       = $this->GetMasterServices($this->session->userdata['logged_in']['master_admin_id']);
-				$data['packages']       = $this->ActivePackages($data['selectedOutlets']);
-									
+				$data['packages']       = $this->ActivePackages();
+				$data['business_outlet_details'] = $business_outlet_details;
+				/* GET Data from package Data Table for already assign */
+				
+				$assignOutlets = array();
+				$packageDataRecords = $this->MasterAdminModel->MultiWhereSelect('mss_salon_package_data',array('master_id'=>$this->session->userdata['logged_in']['master_admin_id'],'is_active'=>'1'));
+				
+				if(!empty($packageDataRecords['res_arr'])){
+					foreach($packageDataRecords['res_arr'] as $key=>$value){
+					  if(!in_array($value['outlet_id'],$assignOutlets[$value['salon_package_id']])){	
+						$assignOutlets[$value['salon_package_id']][] = $value['outlet_id'];
+					  }
+					}
+				}	
+				
+                $data['assignOutlets'] = 	$assignOutlets;			
 				/*if(isset($data['selected_outlet']) || !empty($data['selected_outlet'])){
 					$data['services']        = $this->GetServices($this->session->userdata['outlets']['current_outlet']);
 					$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['outlets']['current_outlet']); 
@@ -4230,6 +4264,7 @@ class MasterAdmin extends CI_Controller {
 				$where = array(
 					'salon_package_id'=> $_GET['packageId'],
 					'outlet_id' => $_GET['outletId'],
+					'master_id' => $this->session->userdata['logged_in']['master_admin_id']
 				);
 				
 				$packageDetails = $this->MasterAdminModel->GetPackageDetailsById($where);
@@ -4295,11 +4330,11 @@ class MasterAdmin extends CI_Controller {
 				if($this->input->post('activate') == 'true' && $this->input->post('deactivate') == 'false'){
 					//Activate
 					$data = array(
-					  "association_id"          => $this->input->post('salon_package_association_id'),
-					  "is_active"   => TRUE
+					  "salon_package_id"          => $this->input->post('salon_package_id'),
+					  "is_active"   => FALSE
 					);
 
-					$status = $this->MasterAdminModel->Update($data,'mss_package_outlet_association','association_id');
+					$status = $this->MasterAdminModel->Update($data,'mss_salon_packages','salon_package_id');
 					if($status['success'] == 'true'){
 						$this->ReturnJsonArray(true,false,"Activated successfully!");
 						die;
@@ -4308,15 +4343,14 @@ class MasterAdmin extends CI_Controller {
 						$this->ReturnJsonArray(false,true,$status['message']);
 						die;
 					}
-				}	
-				elseif($this->input->post('activate') == 'false' && $this->input->post('deactivate') == 'true'){
+				}elseif($this->input->post('activate') == 'false' && $this->input->post('deactivate') == 'true'){
 					//Deactivate the Employee
 					$data = array(
-						"association_id" => $this->input->post('salon_package_association_id'),	
-						"is_active"   => FALSE
+						"salon_package_id" => $this->input->post('salon_package_id'),	
+						"is_active"   => TRUE
 					);
 
-					$status = $this->MasterAdminModel->Update($data,'mss_package_outlet_association','association_id');
+					$status = $this->MasterAdminModel->Update($data,'mss_salon_packages','salon_package_id');
 					
 					if($status['success'] == 'true'){
 						$this->ReturnJsonArray(true,false,"Deactivated successfully!");
@@ -4601,6 +4635,125 @@ class MasterAdmin extends CI_Controller {
 		}
 	}
 	
+	public function AssignOutletToPackage(){
+		if($this->IsLoggedIn('master_admin')){
+			 $recordNotExist = $insertRecords = $updateRecord = FALSE; 
+			 $salonPackageId = $this->input->post('salon_package_id');
+			 $outletId    = $assignOutletIds   = $this->input->post('outlet_id');
+			 
+			 $notExist = array();
+			 
+			 $packageDetails = $this->MasterAdminModel->MultiWhereSelect('mss_salon_package_data',array('master_id'=>$this->session->userdata['logged_in']['master_admin_id'],'is_active'=>TRUE,'salon_package_id'=>$salonPackageId));
+			
+			 $serviceDetails = $masterServiceDetails = array();
+			 $storeOutletId = "";
+			
+			 if(!empty($packageDetails['res_arr'])){
+				foreach($packageDetails['res_arr'] as $packageData){
+				
+				  $storeOutletId = $packageData['outlet_id'];	
+				  
+				  $serviceDetails[$packageData['outlet_id']][] = $packageData['master_service_id'];
+				  
+				  $masterServiceDetails[$packageData['outlet_id']][] =  array('discount_percentage'=>$packageData['discount_percentage'],
+																					'service_monthly_discount'=>$packageData['service_monthly_discount'],
+																					'birthday_discount'=>$packageData['birthday_discount'],
+																					'anni_discount'=>$packageData['anni_discount'],
+																					'service_count'=>$packageData['service_count'],
+																					'master_service_id' =>$packageData['master_service_id']
+																					);
+				  
+				} 
+			 }
+			
+			 $packageDetails = $packageDetails['res_arr'];
+			
+			 if(!empty($packageDetails)){
+				 foreach($packageDetails as $packageData){
+					if(!empty($outletId)){	
+						foreach($outletId as $outlet){  
+							 if($packageData['salon_package_id']==$salonPackageId && in_array($packageData['outlet_id'],$outletId)){
+								
+								while (($key = array_search($packageData['outlet_id'], $assignOutletIds)) !== false){
+									unset($assignOutletIds[$key]);
+								}								
+
+							 }elseif($packageData['salon_package_id']==$salonPackageId && !in_array($packageData['outlet_id'],$outletId)){
+								 /* Temp delete */
+								 $notExist[] = $packageData['outlet_id'];
+							 }
+						}
+					 }else{
+							    $notExist[] = $packageData['outlet_id'];
+					 }	
+				 }		
+				
+			    if(!empty($notExist)){
+					$updateRecord = TRUE;
+					foreach($notExist as $outletId){
+						$this->MasterAdminModel->Update(array('is_active'=>'0'),'mss_salon_package_data',array('salon_package_id'=>$salonPackageId,'outlet_id'=>$outletId));
+					}
+				} 		 
+				$insertRecords = (!empty($assignOutletIds)) ? TRUE : FALSE;
+			 }else{
+				$recordNotExist = TRUE; 
+			 }
+			
+			 if($recordNotExist || $insertRecords){
+				 
+				 /* assign Product */
+				
+				 if($insertRecords==TRUE){
+					 $outletId = $assignOutletIds;
+				 }
+				
+				 $data = array();
+				 
+			  foreach($outletId as $outlet){
+                    $copyRecordsFrom = current($masterServiceDetails);
+					if(!empty($copyRecordsFrom)){
+						foreach($copyRecordsFrom as $packageDataValue){
+							
+						$data[] = array('master_id'					=>$this->session->userdata['logged_in']['master_admin_id'],
+										'salon_package_id'			=>$salonPackageId,
+										'master_service_id'			=>$packageDataValue['master_service_id'],
+										'outlet_id'					=>$outlet,
+										'discount_percentage'		=>$packageDataValue['discount_percentage'],
+										'service_monthly_discount'  =>$packageDataValue['service_monthly_discount'],
+										'birthday_discount'		    =>$packageDataValue['birthday_discount'],
+										'anni_discount'			    =>$packageDataValue['anni_discount'],
+										'service_count'			    =>$packageDataValue['service_count']);
+						}
+					}	 
+			  }
+			
+				
+				 if(!empty($data)){	
+					$result = $this->MasterAdminModel->InsertBatch($data,'mss_salon_package_data');
+					if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Package has been assigned successfully!");
+						die;
+					}
+					elseif($result['error'] == 'true'){
+						$this->ReturnJsonArray(false,true,$result['message']);
+						die;
+					}
+				  }elseif(empty($data) && !empty($outletId) && !empty($salonPackageId)){
+					  $updateRecord = false;
+					  $this->ReturnJsonArray(false,true,"Something Went Wrong!Please try again later!");
+				  }
+			 }
+				 
+			 if($updateRecord){
+				 $this->ReturnJsonArray(true,false,"Package has been Updated successfully!");
+				 die;
+			 }
+		 
+		
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
+	}
 	/**
 	 *
 	 * @author	: Pinky Sahukar
@@ -4609,9 +4762,11 @@ class MasterAdmin extends CI_Controller {
 	public function GetMasterPackages(){
 	
 		if($this->IsLoggedIn('master_admin')){
-			
 					
 			$records = array();
+			
+			/* Get All Outlet */
+			$business_outlet_details  = $this->GetMasterOutlets();
 			
 			## Read value
 			$draw = $_POST['draw'];
@@ -4643,37 +4798,64 @@ class MasterAdmin extends CI_Controller {
 			
 			$data['packages'] = $this->MasterAdminModel->GetAllPackages($where,$filterData);
 			
+			/* GET Data from package Data Table for already assign */
+			$assignOutlets = array();
+			$packageDataRecords = $this->MasterAdminModel->MultiWhereSelect( 'mss_salon_package_data',array('master_id'=>$this->session->userdata['logged_in']['master_admin_id'],'is_active'=>'1'));
+			if(!empty($packageDataRecords['res_arr'])){
+				foreach($packageDataRecords['res_arr'] as $key=>$value){
+				  if(!in_array($value['outlet_id'],$assignOutlets[$value['salon_package_id']])){	
+					$assignOutlets[$value['salon_package_id']][] = $value['outlet_id'];
+				  }
+				}
+			}
 			
 			if(!empty($data['packages']['res_arr'])){
 				
 			    foreach($data['packages']['res_arr'] as $key=>$package){
+					
+					$options = '';
+					 if(!empty($business_outlet_details)){
+						 foreach($business_outlet_details as $outlet){
+							 $assignOutletIds = $assignOutlets[$package['salon_package_id']];
+							
+							 if(in_array($outlet['business_outlet_id'],$assignOutletIds)){
+								 $selected = 'selected="selected"';
+							 }else{
+								 $selected = "";
+							 }
+							 $options .= '<option value="'.$outlet['business_outlet_id'].'" '.$selected.' >'.$outlet['business_outlet_name'].'</option>';
+						 }
+					 }
+					
+					$action ='<span  class="btn package-edit-btn" salon_package_id="'.$package['salon_package_id'].'">';
+								$action .='<i class="fas fa-edit"></i>';
+								$action .='</span>';
 					if($package['package_active_status'] == 1){
-							$action = "";
-							$action .='<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'.$package['association_id'].'">';
+						
+							$action .='<button type="button" class="btn btn-success package-deactivate-btn" salmoneyFormaton_package_id="'.$package['salon_package_id'].'">';
 							$action .='<i class="align-middle" data-feather="package"></i>';
 							$action .='</button>';
 					}
 					else{
-								$action = "";
+								
 								$action .='<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'.$package['salon_package_id'].'">';
-								$action .='<i class="align-middle" data-feather="package"></i>';
+								$action .='<i class="fas fa-ban align-middle" ></i>';
 								$action .='</button>';
 					}
-					$action .='<button type="button" class="btn package-edit-btn" salon_package_id="'.$package['salon_package_id'].'">';
-								$action .='<i class="fa fa-pencil" aria-hidden="true">edit</i>';
-								$action .='</button>';
+				 				 
 				  $records[] = array( 
 							'salon_package_id'	    => $key+1,
 							'salon_package_name'    => $package['salon_package_name'],    
 							'salon_package_type'    => $package['salon_package_type'],    
-							'salon_package_price'   => $package['salon_package_price'],    
-							'service_gst_percentage'=> $package['service_gst_percentage'],
-							'total'  			    => $package['salon_package_upfront_amt'],
+							'salon_package_price'   => moneyFormat($package['salon_package_price']),    
+							'service_gst_percentage'=> moneyFormat($package['service_gst_percentage']),
+							'total'  			    => moneyFormat($package['salon_package_upfront_amt']),
 							'salon_package_validity'=> $package['salon_package_validity'],
 							'salon_package_date'    => $package['salon_package_date'],  
-							'salon_package_end_date'    => $package['salon_package_end_date'],  
-							'outlet_valid_for'		=> '',
-							'package_active_status'  => $action
+							'salon_package_end_date'=> $package['salon_package_end_date'],  
+							'outlet_valid_for'		=> ($package['type']==1) ? '<select class="outlet_valid_for" multiple name="outlet_valid_for[]" salon_package_id="'.$package['salon_package_id'].'">'.$options.'</select>' : '--',
+							'outlet_created_by'     => ($package['type']==1) ? 'Master Admin' : ($package['type']==2 ? 'Business Admin' : ''), 
+							'package_active_status' => $action
 							
 				   );
 				}
@@ -4692,5 +4874,72 @@ class MasterAdmin extends CI_Controller {
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
+
+	public function EditPackage(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_POST) && !empty($_POST)){
+					$this->form_validation->set_rules('salon_package_name', 'Package Name', 'trim|required|max_length[50]');
+					$this->form_validation->set_rules('salon_package_price', 'Package Price', 'trim|required');
+					$this->form_validation->set_rules('salon_package_gst', 'Package GST', 'trim|required');
+					$this->form_validation->set_rules('salon_package_upfront_amt', 'Upfront Amount', 'trim|required');
+					$this->form_validation->set_rules('salon_package_validity', 'Validity', 'trim|required|is_natural_no_zero');
+					$this->form_validation->set_rules('salon_package_type', 'Package Type', 'trim|required|max_length[50]');
+					if ($this->form_validation->run() == FALSE) 
+					{
+						$data = array(
+										'success' => 'false',
+										'error'   => 'true',
+										'message' =>  validation_errors()
+									);
+						header("Content-type: application/json");
+						print(json_encode($data, JSON_PRETTY_PRINT));
+						die;
+					}
+					else{
+				
+						$data = array(
+							'salon_package_name' => $this->input->post('salon_package_name'),
+							'salon_package_price' => $this->input->post('salon_package_price'),
+							'service_gst_percentage' => $this->input->post('salon_package_gst'),
+							'salon_package_upfront_amt' => $this->input->post('salon_package_upfront_amt'),
+							'salon_package_validity'=> $this->input->post('salon_package_validity'),
+							'salon_package_type' 	=> $this->input->post('salon_package_type'),
+							'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+							'business_outlet_id' => $this->session->userdata['outlets']['current_outlet'],
+							'salon_package_id'	=> $this->input->post('salon_package_id')
+						);
+						if($data['salon_package_type'] == "Discount"){	
+							$services = $this->input->post('service_id');
+							$discounts =  $this->input->post('discount');
+							$counts = $this->input->post('count_discount');
+							$salon_package_id = $this->input->post('salon_package_id');
+							// $this->PrettyPrintArray($services);
+							if(!empty($services) && !empty($discounts) && !empty($counts) && (count($services) == count($counts)) && (count($counts) == count($discounts))){
+								$result = $this->BusinessAdminModel->UpdateDiscountPackageForSalon($data,$services,$discounts,$counts,$salon_package_id);
+								if($result['success'] == 'true'){
+									$this->ReturnJsonArray(true,false,"Package updated successfully!");
+									die;
+								}
+								elseif($result['error'] == 'true'){
+									$this->ReturnJsonArray(false,true,$result['message']);
+									die;
+								}
+							}
+							else{
+								$this->ReturnJsonArray(false,true,"Wrong way of data filling!");
+								die;
+							}
+						}
+					}
+				}
+				else{
+					$this->ReturnJsonArray(false,true,"Error in Package Update");
+					die;
+				}
+			}
+			else{
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}
+		}
 
 }

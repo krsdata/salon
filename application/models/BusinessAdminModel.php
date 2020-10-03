@@ -169,6 +169,19 @@ class BusinessAdminModel extends CI_Model {
             return $this->ModelHelper(false,true,"DB error!");   
         }
     }
+	
+	public function GetCategoriesForAdmin($where){
+		$sql = "SELECT * FROM `master_categories` WHERE ((`category_business_admin_id`=".$this->db->escape($where['category_business_admin_id'])." AND `category_business_outlet_id`=".$this->db->escape($where['category_business_outlet_id']).") OR `master_id`=".$this->db->escape($where['master_id'])." ) AND  `category_is_active`=".$this->db->escape($where['category_is_active'])." ";
+        $query = $this->db->query($sql);
+        
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	
     public function GetMasterCategories($where){
 		$sql = "SELECT * FROM `master_categories` WHERE ((`category_business_admin_id`=".$this->db->escape($where['category_business_admin_id'])." AND `category_business_outlet_id`=".$this->db->escape($where['category_business_outlet_id']).") OR `master_id`!=0 ) AND `category_type`=".$this->db->escape($where['category_type'])." AND `category_is_active`=".$this->db->escape($where['category_is_active'])." ";
         $query = $this->db->query($sql);
@@ -182,7 +195,7 @@ class BusinessAdminModel extends CI_Model {
 	}
 	
     public function SubCategories($where){
-       $sql = "SELECT sub_category_id,sub_category_category_id,sub_category_name,sub_category_is_active,sub_category_description,category_name,category_type FROM mss_sub_categories AS A,master_categories AS B WHERE A.sub_category_category_id = B.category_id AND B.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND sub_category_is_active = ".$this->db->escape($where['sub_category_is_active'])." AND B.category_business_outlet_id=".$this->db->escape($where['category_business_outlet_id'])."";
+       $sql = "SELECT sub_category_id,sub_category_category_id,sub_category_name,sub_category_is_active,sub_category_description,category_name,category_type,category_business_admin_id FROM mss_sub_categories AS A,master_categories AS B WHERE A.sub_category_category_id = B.category_id AND ( (B.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND B.category_business_outlet_id=".$this->db->escape($where['category_business_outlet_id']).") OR  A.master_id=".$this->db->escape($where['master_id']).") AND A.sub_category_is_active = ".$this->db->escape($where['sub_category_is_active'])." ";
         
         $query = $this->db->query($sql);
         
@@ -195,10 +208,14 @@ class BusinessAdminModel extends CI_Model {
     }
 
     public function Services($where){
-       $sql = "SELECT * FROM master_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND A.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND C.service_is_active = ".$this->db->escape($where['service_is_active'])." AND A.category_business_outlet_id = ".$this->db->escape($where['category_business_outlet_id'])." AND C.service_type = ".$this->db->escape($where['service_type'])."";
-        
+       $sql = "SELECT * FROM master_categories AS A,mss_sub_categories AS B,mss_services AS C WHERE A.category_id = B.sub_category_category_id AND B.sub_category_id = C.service_sub_category_id AND C.service_is_active = ".$this->db->escape($where['service_is_active'])." AND C.outlet_id = ".$this->db->escape($where['category_business_outlet_id'])." AND C.service_type = ".$this->db->escape($where['service_type'])."";
+       if(isset($where['master_id'])){
+		   $sql .= " AND (A.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." OR A.master_id = ".$where['master_id'].")";
+	   }else{
+		   $sql .= " AND (A.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id']).")";
+	   }  
         $query = $this->db->query($sql);
-        
+       
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
         }
@@ -739,7 +756,7 @@ class BusinessAdminModel extends CI_Model {
     }
 
     public function GetAllPackages($where){
-        $sql = "SELECT * FROM mss_salon_packages WHERE business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND business_outlet_id = ".$this->db->escape($where['business_outlet_id'])."";
+        $sql = "SELECT * FROM mss_salon_packages WHERE ((business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND  business_outlet_id = ".$this->db->escape($where['business_outlet_id']).") or master_id=".$this->db->escape($where['master_id']).") ";
 
         $query = $this->db->query($sql);
         

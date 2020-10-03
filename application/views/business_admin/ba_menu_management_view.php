@@ -133,12 +133,13 @@
 													<td><?=$service['sub_category_name']?></td>
 													<td><?=$service['service_price_inr']?></td>
 													<td><?=$service['service_gst_percentage']." %"?></td>
-												  <td><?=round(number_format((($service['service_gst_percentage']*$service['service_price_inr'])/100),2))?></td>
+												    <td><?=round(number_format((($service['service_gst_percentage']*$service['service_price_inr'])/100),2))?></td>
 													<td>
 														<?=round($service['service_price_inr'] + (($service['service_gst_percentage']*$service['service_price_inr']/100)))?>
-												</td>
+													</td>
 													<td class="table-action">
-														<?php if($permission['service_edit']==1){?>
+													<?php if($service['master_service_id']==0){ ?>	
+													  <?php if($permission['service_edit']==1){?>
 														<button type="button" class="btn service-edit-btn" service_id="<?=$service['service_id']?>">
 															<i class="align-middle" data-feather="edit-2"></i>
 														</button>
@@ -156,6 +157,9 @@
 															<i class="align-middle" data-feather="trash-2"></i>
 														</button>
 															<?php }?>
+														<?php }else{
+															echo '--';
+														}?>	
 													</td>
 												</tr>	
 												<?php	
@@ -233,6 +237,7 @@
 													<td><?=(($otc['service_gst_percentage']/100)*$otc['service_price_inr'])?></td>
 													<td><?=round($otc['service_price_inr'] + (($otc['service_gst_percentage']/100)*$otc['service_price_inr']))?></td>
 													<td class="table-action"  style="text-align:center">
+													  <?php if($otc['master_service_id']==0){ ?>	
 														<?php if($permission['product_edit']==1){?>
 														<button type="button" class="btn otc-edit-btn mb-1" otc_service_id="<?=$otc['service_id']?>">
 															<i class="align-middle" data-feather="edit-2"></i>
@@ -251,6 +256,9 @@
 																<i class="align-middle" data-feather="trash-2"></i>
 															</button>
 															<?php }?>
+													  <?php  }else{
+														  echo '--';
+													  }?>	
 													</td>
 												</tr>	
 												<?php	
@@ -307,6 +315,7 @@
 													<td><?=$category['category_type']?></td>
 													<td><?=$category['category_description']?></td>
 													<td class="table-action">
+														<?php if($category['category_business_admin_id']>0){ ?>
 														<?php if($permission['category_edit']==1){?>
 															<button type="button" class="btn category-edit-btn" category_id="<?=$category['category_id']?>">
 																<i class="align-middle" data-feather="edit-2"></i>
@@ -325,6 +334,9 @@
 																	<i class="align-middle" data-feather="trash-2"></i>
 																</button>
 																<?php }?>
+													<?php }else{
+															echo '--';
+													} ?>		
 													</td>
 												</tr>	
 												<?php		
@@ -382,6 +394,7 @@
 													<td><?=$sub_category['category_name']?></td>
 													<td><?=$sub_category['sub_category_description']?></td>
 													<td class="table-action">
+													 <?php if($sub_category['category_business_admin_id']>0){ ?>
 														<?php if($permission['sub_category_edit']==1){?>
 															<button type="button" class="btn sub-category-edit-btn" sub_category_id="<?=$sub_category['sub_category_id']?>">
 																<i class="align-middle" data-feather="edit-2"></i>
@@ -400,7 +413,7 @@
 																<i class="align-middle" data-feather="trash-2"></i>
 															</button>
 															<?php }?> 
-
+													 <?php }else{echo '--';} ?>	
 													</td>
 												</tr>	
 												<?php		

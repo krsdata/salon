@@ -172,6 +172,34 @@ class MasterAdminModel extends CI_Model
     }
   }
 
+  public function AddServiceForOutlet($servicesIds=array(),$outletIds=array()){
+    return true;
+    /*if(!empty($servicesIds)){
+      // get service details from service master table 
+      $servicesIds = implode(',',$servicesIds);
+      $servicesDetails = $this->getMasterServicesByIds($servicesIds);
+      if(!empty($servicesDetails['res_arr'])){
+        $multipleInsertRecords = array();
+         foreach($outletIds as $outletId){  
+          foreach($servicesDetails['res_arr'] as $key=>$service){
+            
+            $insertRecords = array();
+            $insertRecords['outlet_id'] = $outletId;
+            $insertRecords['master_service_id'] = $service['service_id'];
+            unset($service['service_id']);
+            unset($service['created_by']);
+            $multipleInsertRecords[]=array_merge($insertRecords,$service);
+            
+          }
+         }
+         // Insert the records 
+         $this->InsertBatch($multipleInsertRecords,'outlet_services');
+      }
+      
+    } */
+  }
+  
+
   public function MasterAdminPackages($master_id)
   {
 
@@ -185,6 +213,8 @@ class MasterAdminModel extends CI_Model
       return $this->ModelHelper(false, true, "DB error!");
     }
   }
+
+
 
   public function SubCategories($where)
   {
@@ -287,6 +317,9 @@ class MasterAdminModel extends CI_Model
     if($where['service_id']!=""){
 		$sql .= " AND C.master_service_id IN (".$where['service_id'].")";
 	}
+	if(isset($where['outlet_ids']) && !empty($where['outlet_ids'])){
+		$sql .= "  AND C.outlet_id IN (".$where['outlet_ids'].")";
+	}
 	$sql .= "  ORDER BY C.outlet_id,A.category_name";
     $query = $this->db->query($sql);
     
@@ -351,7 +384,7 @@ class MasterAdminModel extends CI_Model
   }
   
    public function getSalonPackageDataByIds($servicesIds=""){
-	   $sql = "SELECT * FROM `mss_salon_package_data` WHERE `service_id` IN (".$servicesIds.")";
+	   $sql = "SELECT * FROM `mss_salon_package_data` WHERE `service_id` IN (".$servicesIds.") AND is_active = TRUE ";
 	   $query = $this->db->query($sql);
  	   
 		if ($query) {
@@ -493,6 +526,7 @@ class MasterAdminModel extends CI_Model
 
     return $this->ModelHelper(true, false);
   }
+
   
    public function AssignPackageToMultipleOutlet($data,$outletIds){
 		/*$records = array();
@@ -979,20 +1013,253 @@ class MasterAdminModel extends CI_Model
 	}
 	return $services;
   }
+ 
+ public function AddWalletPackageForSalon($data,$outletIds,$masterId,$packageId=0){
+   if($packageId==0){
+     $result = $this->MasterAdminModel->Insert($data,'mss_salon_packages');
+     $last_insert_id = $result['res_arr']['insert_id']; 
+   }else{
+     $last_insert_id = $packageId;
+   }
+   //create a services packages
+   foreach($outletIds as $outletId){  
+      $data_2 = array(
+      'salon_package_id' => $last_insert_id,
+      'service_id' => 0,
+      'master_service_id' => 0,
+      'discount_percentage' => 0,
+      'service_count' => 0,
+      'master_id' => $masterId,
+      'outlet_id' => $outletId
+      );
+      $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+   }
 
-  public function AddServicePackageForSalon($data, $services, $count_service,$outletIds,$masterId)
-  {
+   if ($last_insert_id>0) {
+      $data = array('insert_id' => $last_insert_id);
+      return $this->ModelHelper(true, false,'',$data);
+    } else {
+      return $this->ModelHelper(false, true, "Cannot Process!");
+    }
+ }
+ 
+  /* Get all records from package data table for given package Id */
+  /* Search records from existing records which one (outlet Id) is exist for give package Id */
+  /* Skip those Outlet Ids which are exist if not then Temp Delete from package data Table */
+  public function UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$type,$insertData=array()){
+      $messge = "";
+      $notExist = $notExistServiceId = $masterServiceOutletId  = array();
+      $recordNotExist = $insertRecords = $updateRecord = FALSE; 
+      $result = $this->MultiWhereSelect('mss_salon_package_data', array('salon_package_id'=>$packageId,'master_id'=>$masterId,'is_active'=>'1'));
+
+      $assignOutletIds   = $outletIds;
+      $assignServiceIds  = $insertData;
+     /* Insert data if empty */
+      if(empty($result['res_arr'])){
+        if($type=='Wallet'){
+           $result = $this->AddWalletPackageForSalon($data,$outletIds,$masterId,$packageId);
+        }elseif($type=='Services'){
+          $result = $this->AddServicePackageForSalon($data,$outletIds,$masterId,$packageId);
+        }elseif($type=='Discount'){
+          $result = $this->AddDiscountPackageForSalon($data,$outletIds,$masterId,$packageId);
+        }
+        if($result['success'] == 'true'){
+          $messge = "Product has been Updated successfully!";
+         }elseif($result['error'] == 'true'){
+          $messge = 'error';
+         }
+      }else{
+       $updateRecords = $masterServiceIdNotExist = array();
+       $packageDataDetails = $result['res_arr'];
+       if(!empty($packageDataDetails)){
+      
+         foreach($packageDataDetails as $packageData){
+              if(!empty($outletIds)){  
+            
+                   if(in_array($packageData['outlet_id'],$outletIds)){
+                    
+                    if($type=='Wallet'){
+                      while (($key = array_search($packageData['outlet_id'], $assignOutletIds)) !== false){
+                        unset($assignOutletIds[$key]);
+                      }  
+                     }elseif($type=='Services' || $type=='Discount'){
+                      /* Check master Service id  */
+                       if(!empty($insertData)){
+                         
+                         $masterServiceIdNotExist[$packageData['outlet_id']][] = $packageData['master_service_id'];
+                          foreach ($insertData as $insertKey => $value) {
+                            if($packageData['master_service_id']==$value['master_service_id'] && $packageData['outlet_id']==$value['outlet_id']){
+                              /* UPDATE The Records */
+
+                              $this->Update($value,'mss_salon_package_data',array('master_id'=>$masterId,'outlet_id'=>$packageData['outlet_id'],'salon_package_id'=>$packageId,'master_service_id'=>$packageData['master_service_id'],'is_active'=>'1'));
+                             
+                              unset($assignServiceIds[$insertKey]);
+                              foreach($masterServiceIdNotExist[$value['outlet_id']] as $searchKey => $searchValue) {
+                               unset($masterServiceIdNotExist[$value['outlet_id']][$searchKey]);
+                              }
+                            }//END IF
+
+                         } // END LOOP
+                       }else{
+                             /* Temp delete */
+                             if(!in_array($packageData['master_service_id'],$masterServiceIdNotExist[$packageData['outlet_id']])){ 
+                               $masterServiceIdNotExist[$packageData['outlet_id']][] = $packageData['master_service_id'];
+                            }
+                            
+                       }
+                   }           
+
+                 }elseif(!in_array($packageData['outlet_id'],$outletIds)){
+                   /* Temp delete */
+                   $notExist[] = $packageData['outlet_id'];
+                 }
+                
+               }else{
+                      $notExist[] = $packageData['outlet_id'];
+               }  
+             }/* End Loop */    
+            
+            /* TEMP DELETE */ 
+            if(!empty($notExist)){
+                $updateRecord = TRUE;
+                foreach($notExist as $outletId){
+                  $this->Update(array('is_active'=>'0'),'mss_salon_package_data',array('master_id'=>$masterId,'outlet_id'=>$outletId,'salon_package_id'=>$packageId));
+                }
+            }  
+           /* TEMP DELETE */
+            if(!empty($masterServiceIdNotExist)){
+                $updateRecord = TRUE;
+                foreach($masterServiceIdNotExist as $outlet_id => $masterServiceIds){
+                  foreach ($masterServiceIds as $masterServiceId) {
+                    $this->Update(array('is_active'=>'0'),'mss_salon_package_data',array('master_id'=>$masterId,'outlet_id'=>$outlet_id,'salon_package_id'=>$packageId,'master_service_id'=>$masterServiceId));
+                  }
+                }
+            }  
+
+            if($type=='Wallet'){
+               $insertRecords = (!empty($assignOutletIds)) ? TRUE : FALSE;
+            }elseif($type=='Services' || $type=='Discount'){
+               $insertRecords = (!empty($assignServiceIds)) ? TRUE : FALSE;
+            }
+           
+           }else{
+                $recordNotExist = TRUE; 
+           }
+
+           if($recordNotExist || $insertRecords){
+               $insertData = $recordInsert =  array();
+               
+               /* assign service */
+               if($insertRecords==TRUE && $type=='Wallet'){
+                 $outletIds = $assignOutletIds;
+               }elseif($insertRecords==TRUE && $type=='Services' || $type=='Discount'){
+                 $outletIds = $assignServiceIds;
+               }
+                   
+                 if($type=='Wallet'){
+                   foreach ($outletIds as $key => $value) {
+                      $insertData['outlet_id'] = $value;
+                      $insertData['salon_package_id'] = $packageId;
+                      $insertData['master_id'] = $masterId;
+                      $recordInsert[] = $insertData;
+                    }// End Loop
+                 }elseif($type=='Services' || $type=='Discount'){
+                    $recordInsert = $assignServiceIds;
+                 }
+                 
+               if(!empty($recordInsert)){ 
+                  $result = $this->InsertBatch($recordInsert,'mss_salon_package_data');
+                  if($result['success'] == 'true'){
+                    $messge = "Product has been Updated successfully!";
+                   }
+                  elseif($result['error'] == 'true'){
+                    $messge = "error";
+                   }
+                }elseif(empty($recordInsert) && !empty($outletIds) && !empty($packageId)){
+                  $messge = "Product has been Updated successfully! & Services has already assigned for this package!";
+                }
+         } 
+
+      }
+      return $messge;
+  }
+
+ public function UpdateWalletPackageForSalon($data,$outletIds,$masterId,$packageId){
+    $result = $this->Update($data,'mss_salon_packages',array('salon_package_id'=>$packageId,'master_id'=>$masterId));
+    $type = 'Wallet';
+    $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$type);
+  
+    if($messge == 'error'){
+      return $this->ModelHelper(false,true,'',array('messge' => "Somthing went wrong!Please try again later"));
+      die;
+    }else{
+      return $this->ModelHelper(true,false,'',array('messge' => $messge));
+      die;
+    }
+              
+ } 
+
+
+ public function UpdateServicePackageForSalon($data, $services, $count_service,$outletIds,$masterId,$packageId){
+    
+    $serviceIdIndex = $data['service_id_index'];
+    unset($data['service_id_index']);
+    
+    $result = $this->Update($data,'mss_salon_packages',array('salon_package_id'=>$packageId,'master_id'=>$masterId));
+        
+    /* Copy all master services which are bind to this package to the service table */  
+   //$services = $this->copyMasterServicesToServiceTable($masterServices);
+   
+    $count = 0;
+    $data_2 = array();
+      //create a services packages
+     foreach($outletIds as $outletId){  
+      for ($i = 0; $i < count($services); $i++) {
+        $serviceCount = 0;
+         /* Find Count */
+         if(!empty($serviceIdIndex)){
+          foreach($serviceIdIndex as $key=>$serviceGroup){
+            if($serviceGroup!="" && in_array($services[$i],explode(',',$serviceGroup))){
+              $serviceCount = (int) $count_service[$key];
+            }
+          }
+        } 
+        $data_2[] = array(
+        'salon_package_id' => $packageId,
+        'service_id' => 0,
+        'master_service_id' => (int) $services[$i],
+        'discount_percentage' => 100,
+        'service_count' => $serviceCount,
+        'master_id' => $masterId,
+        'outlet_id' => $outletId
+        );
+
+      }/* End For */
+    }/* End Foreach Loop */
+    
+    $type = 'Services';
+    $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$type,$data_2);
+    if($messge == 'error'){
+      return $this->ModelHelper(false,true,'',array('messge' => "Somthing went wrong!Please try again later"));
+      die;
+    }else{
+      return $this->ModelHelper(true,false,'',array('messge' => $messge));
+      die;
+    }
+  }
+
+  public function AddServicePackageForSalon($data, $services, $count_service,$outletIds,$masterId){
     $serviceIdIndex = $data['service_id_index'];
 	
-	unset($data['service_id_index']);
+  	unset($data['service_id_index']);
     $result = $this->Insert($data, 'mss_salon_packages');
-	$last_insert_id = $result['res_arr']['insert_id'];
+	  $last_insert_id = $result['res_arr']['insert_id'];
     
     /* Copy all master services which are bind to this package to the service table */	
-	//$services = $this->copyMasterServicesToServiceTable($masterServices);
+	 //$services = $this->copyMasterServicesToServiceTable($masterServices);
 	 
-    $count = 0;
-
+   $count = 0;
+   $data_2 = array();
     //create a services packages
 	 foreach($outletIds as $outletId){ 	
 		for ($i = 0; $i < count($services); $i++) {
@@ -1000,12 +1267,12 @@ class MasterAdminModel extends CI_Model
 			 /* Find Count */
 			 if(!empty($serviceIdIndex)){
 				foreach($serviceIdIndex as $key=>$serviceGroup){
-					if(in_array($services[$i],explode(',',$serviceGroup))){
+					if($serviceGroup!="" && in_array($services[$i],explode(',',$serviceGroup))){
 						$serviceCount = (int) $count_service[$key];
 					}
 				}
 			}	
-		  $data_2 = array(
+		  $data_2[] = array(
 			'salon_package_id' => $last_insert_id,
 			'service_id' => 0,
 			'master_service_id' => (int) $services[$i],
@@ -1014,22 +1281,78 @@ class MasterAdminModel extends CI_Model
 			'master_id'	=> $masterId,
 			'outlet_id' => $outletId
 		  );
-		  $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
 		  
 		}
 	 }
+   if(!empty($data_2)){
+      $result_2 = $this->InsertBatch($data_2, 'mss_salon_package_data');
+   }
     if ($last_insert_id>0) {
-	  /* Outlet_services */
-	  //$this->AddServiceForOutlet($services,$outletIds);	
-	  $data = array('insert_id' => $last_insert_id);
+  	  /* Outlet_services */
+  	  //$this->AddServiceForOutlet($services,$outletIds);	
+  	  $data = array('insert_id' => $last_insert_id,'message'=>'Package added successfully!');
       return $this->ModelHelper(true, false,'',$data);
     } else {
       return $this->ModelHelper(false, true, "Cannot Process!");
     }
   }
 
-  public function AddDiscountPackageForSalon($data, $services, $discounts, $count_discount,$outletIds,$masterId)
-  {
+ public function UpdateDiscountPackageForSalon($data, $services, $discounts, $count_discount,$outletIds,$masterId,$packageId){
+    $serviceIdIndex = $data['service_id_index'];
+  
+    unset($data['service_id_index']);  
+    $result = $this->Update($data,'mss_salon_packages',array('salon_package_id'=>$packageId,'master_id'=>$masterId));
+    
+    $last_insert_id = $packageId;
+  /* Copy all master services which are bind to this package to the service table */  
+  //$services = $this->copyMasterServicesToServiceTable($masterServices);
+   
+
+    $count = 0; $data_2=array();
+    //create a discounts packages
+    foreach($outletIds as $outletId){    
+    for ($i = 0; $i < count($services); $i++) {
+      
+          $serviceCount = 0;
+          $serviceDiscount = 0;
+         /* Find Count */
+         if(!empty($serviceIdIndex)){
+          foreach($serviceIdIndex as $key=>$serviceDiscountGroup){
+            if($serviceDiscountGroup!="" && in_array($services[$i],explode(',',$serviceDiscountGroup))){
+              $serviceCount    = (int) $count_discount[$key];
+              $serviceDiscount = (int) $discounts[$key];
+            }
+          }
+        }   
+          $data_2[] = array(
+          'salon_package_id' => $last_insert_id,
+          'service_id' => 0,
+          'discount_percentage' => $serviceDiscount,
+          'service_count' => $serviceCount,
+          'master_id' => $masterId,
+          'master_service_id' => (int) $services[$i],
+          'outlet_id' => $outletId
+          );
+          //$result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+
+        }
+      }/* End Foreach Loop */
+    
+      $type = 'Discount';
+      $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$type,$data_2);
+      if($messge == 'error'){
+        return $this->ModelHelper(false,true,'',array('messge' => "Somthing went wrong!Please try again later"));
+        die;
+      }else{
+        return $this->ModelHelper(true,false,'',array('messge' => $messge));
+        die;
+      }
+
+  }
+  
+  
+
+public function AddDiscountPackageForSalon($data, $services, $discounts, $count_discount,$outletIds,$masterId){
 	$serviceIdIndex = $data['service_id_index'];
 	
 	unset($data['service_id_index']);  
@@ -1045,30 +1368,30 @@ class MasterAdminModel extends CI_Model
     foreach($outletIds as $outletId){ 	 
 		for ($i = 0; $i < count($services); $i++) {
 		  
-		  $serviceCount = 0;
-		  $serviceDiscount = 0;
-		 /* Find Count */
-		 if(!empty($serviceIdIndex)){
-			foreach($serviceIdIndex as $key=>$serviceDiscountGroup){
-				if(in_array($services[$i],explode(',',$serviceDiscountGroup))){
-					$serviceCount 	 = (int) $count_discount[$key];
-					$serviceDiscount = (int) $discounts[$key];
-				}
-			}
-		}		
-		  $data_2 = array(
-			'salon_package_id' => $last_insert_id,
-			'service_id' => 0,
-			'discount_percentage' => $serviceDiscount,
-			'service_count' => $serviceCount,
-			'master_id'	=> $masterId,
-			'master_service_id' => (int) $services[$i],
-			'outlet_id' => $outletId
-		  );
-		  $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+    		  $serviceCount = 0;
+    		  $serviceDiscount = 0;
+    		 /* Find Count */
+    		 if(!empty($serviceIdIndex)){
+    			foreach($serviceIdIndex as $key=>$serviceDiscountGroup){
+    				if($serviceDiscountGroup!="" && in_array($services[$i],explode(',',$serviceDiscountGroup))){
+    					$serviceCount 	 = (int) $count_discount[$key];
+    					$serviceDiscount = (int) $discounts[$key];
+    				}
+    			}
+    		}		
+    		  $data_2 = array(
+    			'salon_package_id' => $last_insert_id,
+    			'service_id' => 0,
+    			'discount_percentage' => $serviceDiscount,
+    			'service_count' => $serviceCount,
+    			'master_id'	=> $masterId,
+    			'master_service_id' => (int) $services[$i],
+    			'outlet_id' => $outletId
+    		  );
+    		  $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
 
-		}
-	}
+    		}
+    	}
 
     if ($last_insert_id>0){ 
       /* Outlet_services */
@@ -1079,38 +1402,15 @@ class MasterAdminModel extends CI_Model
     } 
   }
   
-  public function AddServiceForOutlet($servicesIds=array(),$outletIds=array()){
-		return true;
-		/*if(!empty($servicesIds)){
-			// get service details from service master table 
-			$servicesIds = implode(',',$servicesIds);
-			$servicesDetails = $this->getMasterServicesByIds($servicesIds);
-			if(!empty($servicesDetails['res_arr'])){
-				$multipleInsertRecords = array();
-			   foreach($outletIds as $outletId){	
-					foreach($servicesDetails['res_arr'] as $key=>$service){
-						
-						$insertRecords = array();
-						$insertRecords['outlet_id'] = $outletId;
-						$insertRecords['master_service_id'] = $service['service_id'];
-						unset($service['service_id']);
-						unset($service['created_by']);
-						$multipleInsertRecords[]=array_merge($insertRecords,$service);
-						
-					}
-			   }
-			   // Insert the records 
-			   $this->InsertBatch($multipleInsertRecords,'outlet_services');
-		  }
-			
-		} */
-  }
-	
+ 
+
+  
   private function CheckIfPackageServiceExists($insert_id, $service_id)
   {
     $this->db->select('*');
     $this->db->from('mss_salon_package_data');
     $this->db->where('salon_package_id', $insert_id);
+    $this->db->where('is_active', '1');
     $this->db->where('service_id', $service_id);
 
     $query = $this->db->get();
@@ -1125,20 +1425,24 @@ class MasterAdminModel extends CI_Model
   public function GetPackageDetailsById($where)
   {
     //$sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`association_id`=" . $this->db->escape($where['association_id']) . "  AND A.`package_id`=B.salon_package_id";
-	$sql = "SELECT mss_salon_packages.*,mss_salon_package_data.*
-		   FROM mss_salon_packages,
-				mss_salon_package_data
-				WHERE 
-				mss_salon_packages.salon_package_id = mss_salon_package_data.salon_package_id AND  
-				mss_salon_package_data.outlet_id=".$this->db->escape($where['outlet_id'])." AND mss_salon_packages.salon_package_id = ".$this->db->escape($where['salon_package_id'])."";
-				$query = $this->db->query($sql);
-	
-	if($query){
-		return $this->ModelHelper(true,false,'',$query->result_array());
-	}
-	else{
-		return $this->ModelHelper(false,true,"DB error!");   
-	}
+  	$sql = "SELECT mss_salon_packages.*,mss_salon_package_data.*
+  		   FROM mss_salon_packages,
+  				mss_salon_package_data
+  				WHERE 
+  				`mss_salon_packages`.salon_package_id = `mss_salon_package_data`.salon_package_id AND  
+  				`mss_salon_package_data`.is_active=1 AND     `mss_salon_packages`.salon_package_id = ".$this->db->escape($where['salon_package_id'])."";
+  				if(isset($where['master_id'])){
+            $sql .= "  AND `mss_salon_package_data`.master_id = ".$this->db->escape($where['master_id'])."";
+          }
+        
+          $query = $this->db->query($sql);
+  	
+  	if($query){
+  		return $this->ModelHelper(true,false,'',$query->result_array());
+  	}
+  	else{
+  		return $this->ModelHelper(false,true,"DB error!");   
+  	}
   }
   
   
@@ -1148,8 +1452,11 @@ class MasterAdminModel extends CI_Model
     //$sql = "SELECT * FROM mss_salon_packages WHERE salon_package_id IN (SELECT package_id FROM `mss_package_outlet_association` WHERE `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `master_id`=" . $this->db->escape($where['master_id']) . ")";
 	//$sql = "SELECT A.association_id,A.package_id,A.outlet_id,A.is_active as package_active_status,B.* FROM `mss_package_outlet_association` as A,mss_salon_packages as B WHERE A.`outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND A.`master_id`=" . $this->db->escape($where['master_id']) . " AND A.`package_id`=B.salon_package_id";
 	
-	$sql = "SELECT * FROM `mss_salon_packages` WHERE `salon_package_id` IN (SELECT DISTINCT `salon_package_id` FROM `mss_salon_package_data` WHERE `master_id`=" . $this->db->escape($where['master_id']) . " AND `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `is_active`=1) AND `is_active`=1";
-	
+	if(!empty($where['business_outlet_id'])){
+		$sql = "SELECT * FROM `mss_salon_packages` WHERE `salon_package_id` IN (SELECT DISTINCT `salon_package_id` FROM `mss_salon_package_data` WHERE `master_id`=" . $this->db->escape($where['master_id']) . " AND `outlet_id`=" . $this->db->escape($where['business_outlet_id']) . " AND `is_active`=1) AND `is_active`=1";
+	}else{
+		$sql = "SELECT * FROM mss_salon_packages WHERE master_id = " . $this->db->escape($where['master_id']) . " AND is_active = 1 ";
+    }
 	if(isset($filter['searchValue']) && $filter['searchValue']!=""){
 	 $sql .= "  AND  (salon_package_name like '%".$filter['searchValue']."%' or salon_package_type like '%".$filter['searchValue']."%' )";
 	}

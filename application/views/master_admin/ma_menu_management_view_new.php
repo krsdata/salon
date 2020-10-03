@@ -48,37 +48,51 @@ $this->load->view('master_admin/ma_header_view');
 													<button class="btn btn-primary" id="openAssignServices"><i class="fas fa-caret-square-right"></i> Assign Service</button>
 												</div>
 												
-												<div class="col-md-2">
-														<button class="btn btn-primary" onclick="exportTableToExcel('servicMenu','Menu')"><i class="fa fa-file-export"></i>Export</button>
+												<div class="col-md-3">
+												 <select id="outlet_id_dropdown" multiple>
+													 <?php if(!empty($business_admin_details)){ 
+															 foreach($business_admin_details as $outlet){
+															 ?>	
+															 	  <option value="<?php echo $outlet['business_outlet_id']; ?>"><?php echo $outlet['business_outlet_name']; ?></option>
+																
+													 <?php } 
+													 }
+													 ?>
+												 </select>		 
 												</div>
-												<!--<div class="col-md-4">
-													<button class="btn btn-primary DownloadSubCategories"><i class="fa fa-download"></i>Sub Category</button>
-													<a class="btn btn-primary" href="<?=base_url()?>public\format\ServiceUploadFormat.xlsx" download><i class="fa fa-download"></i> Format</a>
-												</div>
-												<div class="col-md-4">
-													<form action="#" id="UploadServices">
-														<div class="form-row">
-															<div class="form-group col-md-6" style="overflow:hidden;">
-																<input type="file" name="file" class="btn" /> 
-																<input type="text" name="file_contents[]" class="form-control" readonly hidden id="file_contents">
-															</div>
-															<div class="form-group col-md-6">
-																<button type= "submit" class="btn btn-primary" ><i class="fa fa-upload"></i>Upload</button>
-															</div>
-														</div>
-													</form>
-												</div>-->
+												<div class="col-md-3">
+													<button class="btn btn-primary" onclick="exportTableToExcel('servicMenu','Menu')"><i class="fa fa-file-export"></i>Export</button>
+										        </div>
 												
 											</div> 
 											<br/>
+											<!--<div class="row col-md-12">
+												 <div class="col-md-9">
+														<form action="#" id="UploadServices">
+															<div class="form-row">
+																<div class="form-group col-md-3" style="overflow:hidden;">
+																	<input type="file" name="file" class="btn" /> 
+																	<input type="text" name="file_contents[]" class="form-control" readonly hidden id="file_contents">
+																</div>
+																<div class="form-group col-md-2">
+																	<button type= "submit" class="btn btn-primary" ><i class="fa fa-upload"></i>Upload</button>
+																</div>
+															</div>
+														</form>
+													</div>
+													<div class="col-md-3">
+														<button class="btn btn-primary DownloadSubCategories"><i class="fa fa-download"></i>Sub Category</button>
+														<a class="btn btn-primary" href="<?=base_url()?>public\format\ServiceUploadFormat.xlsx" download><i class="fa fa-download"></i> Format</a>
+													</div>
+											</div>-->
 										<!-- end -->
 										
                                     <table class="table table-striped datatables-basic" style="width: 100%;">
 											<thead >
 												<tr>
-													<th width="90px"> <input type="checkbox" id="checkAll" /> <b>Check All</b></th>
+													<th > <input type="checkbox" id="checkAll" />All</th>
 													<th>S.No.</th>
-													<th>Service Name</th>
+													<th>Name</th>
 													<th>Service Gross Price</th>
 													<th>Service GST Percentage</th>
 													<th>Service Description</th>
@@ -87,7 +101,7 @@ $this->load->view('master_admin/ma_header_view');
 													<th>Type</th>
 													<th>Category</th>
 													<th>Sub-Category</th>
-													<th width="100px">Actions</th>
+													<th width="110px">Actions</th>
 												</tr>
 											</thead>
 											<tbody id="serviceTbody">
@@ -102,8 +116,8 @@ $this->load->view('master_admin/ma_header_view');
 												<td><input type="checkbox" id="service_chk_<?=$index;?>" name="service_chk[]" master_service_id="<?=$service['service_id']?>"></td>
 												<td><?=$index;?></td>
 												<td><?=$service['service_name']?></td>
-												<td><?=$service['service_price_inr']?></td>
-												<td><?=$service['service_gst_percentage']?></td>
+												<td><?=moneyFormat($service['service_price_inr'])?></td>
+												<td><?=moneyFormat($service['service_gst_percentage'])?></td>
 												<td><?=$service['service_description']?></td>
 												<td><?=$service['service_est_time']?></td>
 												<td> 
@@ -159,12 +173,26 @@ $this->load->view('master_admin/ma_header_view');
 									<div class="tab-pane <?php echo (isset($_GET['tab']) && $_GET['tab']=='2') ? 'active' : ''; ?>" id="tab-2" role="tabpanel">
 										<!-- upload -->
 											<div class="row">
-												 <div class="col-md-4">
+												 <div class="col-md-6">
 													<button class="btn btn-primary" data-toggle="modal" data-target="#ModalAddOTC"><i class="fas fa-fw fa-plus"></i> Add Product</button>
 												    <button class="btn btn-primary" id="openAssignProduct"><i class="fas fa-caret-square-right"></i> Assign Product</button>
 												</div> 
-												 <div class="col-md-2">
-															<button class="btn btn-primary mb-2" onclick="exportTableToExcel('otcMenu','OTCMenu')"><i class="fa fa-file-export"></i>Product</button>
+												
+												<div class="col-md-3">
+												 <select id="outlet_id_otc_dropdown" multiple>
+													 <?php if(!empty($business_admin_details)){ 
+															 foreach($business_admin_details as $outlet){
+															 ?>	
+															 	  <option value="<?php echo $outlet['business_outlet_id']; ?>"><?php echo $outlet['business_outlet_name']; ?></option>
+																
+													 <?php } 
+													 }
+													 ?>
+												 </select>		 
+												</div>
+										
+												 <div class="col-md-3">
+															<button class="btn btn-primary mb-2" onclick="exportTableToExcel('otcMenu','OTCMenu')"><i class="fa fa-file-export"></i>Export</button>
 												</div>
 												<?php /*<div class="col-md-4">
 													<!-- <button class="btn btn-primary DownloadCategories"><i class="fa fa-download"></i> Category</button> -->
@@ -192,13 +220,14 @@ $this->load->view('master_admin/ma_header_view');
 												<tr>
 												    <th width="90px"> <input type="checkbox" id="checkAllProduct" /> <b>Check All</b></th>
 													<th>Sno.</th>
-													<th>Product Name</th>
+													<th>Name</th>
 													<th>Brand Name</th>
 													<th>Product Gross Price</th> 
 													<th>Product GST Percentage</th> 
 													<th>SKU Size</th> 
-													<th>Unit</th> 
-													<th>Category Type</th> 
+													<th>Unit</th>
+													<th>Outlets Valid for</th>			
+													<th>Type</th> 
 													<th>Category</th> 
 													<th>Sub-Category</th> 
 													<th>Actions</th>
@@ -215,10 +244,26 @@ $this->load->view('master_admin/ma_header_view');
 													<td><?=$index;?></td>
 													<td><?=$product['service_name']?></td>
 													<td><?=$product['service_brand']?></td>
-													<td><?=$product['service_price_inr']?></td>
-													<td><?=$product['service_gst_percentage']?></td>
+													<td><?=moneyFormat($product['service_price_inr'])?></td>
+													<td><?=moneyFormat($product['service_gst_percentage'])?></td>
 													<td><?=$product['qty_per_item']?></td>
 													<td><?=$product['service_unit']?></td>
+													<td>
+													<select class="outlet_valid_for" multiple name="outlet_valid_for[]" master_service_id="<?=$service['service_id']?>">
+													 <?php if(!empty($business_outlet_details)){
+														 foreach($business_outlet_details as $outlet){
+															 $assignOutletIds = $assignOutlets[$service['service_id']];
+															
+															 if(in_array($outlet['business_outlet_id'],$assignOutletIds)){
+																 $selected = 'selected="selected"';
+															 }else{
+																 $selected = "";
+															 }
+															 echo '<option value="'.$outlet['business_outlet_id'].'" '.$selected.' >'.$outlet['business_outlet_name'].'</option>';
+														 }
+													 }?>
+													</select> 
+													</td>
 													<td><?=$product['category_type']?></td>
 													<td><?=$product['category_name']?></td>
 													<td><?=$product['sub_category_name']?></td>
@@ -994,8 +1039,8 @@ $this->load->view('master_admin/ma_header_view');
                         </div>
                       </div>
 
-			 <div class="modal" id="ModalAddOTC" tabindex="-1" role="dialog" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+			 <div class="modal" id="ModalAddOTC" tabindex="-1" role="dialog" aria-hidden="true" >
+              <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title text-white">Add Product</h5>
@@ -1007,78 +1052,115 @@ $this->load->view('master_admin/ma_header_view');
                     <div class="row">
                       <div class="col-md-12">
                         <form id="AddOTCCategory" method="POST" action="#">
+                           <div class="row">
+								<div class="form-group col-md-3">
+									<label>Inventory Type</label>
+									<select class="form-control" name="otc_inventory_type" id="otc_inventory_type" required>
+											<option value="" selected disabled>Select</option>
+											<option value="Retail Product">Retail Product</option>
+											<option value="Raw Material">Raw Material</option>
+									</select>
+								</div>
+ 						
+							</div>
+
                           <div class="row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-3">
                               <label>Product Name</label>
                               <input type="text" class="form-control" placeholder="Item Name" name="otc_item_name">
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-3">
+	                              <label>Category Type</label>
+	                              <select class="form-control" name="Otc-Category-Type" id='Otc-Category-Type' onchange="GetCategory(this.value,'AddOTCCategory','','dropdownOnChange')">
+	                                <option value="" selected></option>
+	                                <option value="Service">Service</option>
+	                                <option value="Products">Product</option>
+	                              </select>
+	                          </div> 
+							  <div class="form-group col-md-3">
+		                              <label>Category</label>
+		                              <select class="form-control" name="category_id" id="OTC-Category-Id">
+		                                <option value="" selected></option>
+		                                <?php
+		                                 /* foreach ($categories as $category) {
+		                                    echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
+		                                  } */
+		                                ?>
+		                              </select>
+                        		</div>
+								<div class="form-group col-md-3">
+	                                <label>Sub-Category</label>
+	                                <select class="form-control" name="otc_sub_category_id" id="OTC-Sub-Category-Id">
+	                                </select>
+	                            </div> 
+                                                       
+                          </div>
+                          <div class="row">
+                          	<div class="form-group col-md-3">
+								<label>Item Name</label>
+								<input type="text" class="form-control" placeholder="Item Name" name="item_name" id="ServiceName">		
+							</div>
+                          	<div class="form-group col-md-6">
                               <label>Brand</label>
                               <input class="form-control" placeholder="Brand Name" name="otc_brand">
-                            </div>                            
+                            </div> 
+	                         <div class="form-group col-md-3">
+								<label>BarCode</label>
+								<input class="form-control" placeholder="Barcode" name="otc_barcode" id="otc_barcode">
+							</div>  
+
                           </div>
-                          <div class="row">
-                          <div class="form-group col-md-6">
-                              <label>Category Type</label>
-                              <select class="form-control" name="Otc-Category-Type" id='Otc-Category-Type' onchange="GetCategory(this.value,'AddOTCCategory','','dropdownOnChange')">
-                                <option value="" selected></option>
-                                <option value="Service">Service</option>
-                                <option value="Products">Product</option>
-                              </select>
-                          </div>                            
-                          <div class="form-group col-md-6">
-                              <label>Category</label>
-                              <select class="form-control" name="category_id" id="OTC-Category-Id">
-                                <option value="" selected></option>
-                                <?php
-                                 /* foreach ($categories as $category) {
-                                    echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
-                                  } */
-                                ?>
-                              </select>
-                          </div>
-                          </div>
-                          <div class="row">
-                            <div class="form-group col-md-6">
-                                <label>Sub-Category</label>
-                                <select class="form-control" name="otc_sub_category_id" id="OTC-Sub-Category-Id">
-                                </select>
-                              </div>                            
-                            <div class="form-group col-md-6">
-                              <label>Product Gross Price</label>
-                              <input type="text" class="form-control" placeholder="OTC Gross Price" name="otc_price_inr" onkeypress="return validateFloatKeyPress(this,event);">
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="form-group col-md-6">
-                              <label>Product GST Percentage</label>
-                              <input type="number" class="form-control" placeholder="% Value Only" name="otc_gst_percentage">
-                            </div>                            
-                            <div class="form-group col-md-6">
-                              <label>SKU Size</label>
-                              <input type="number" class="form-control" placeholder="Quantity Per Item" name="qty_per_item">
-                            </div>
-                            <!-- <div class="form-group col-md-6">
-                            <label>SKU Size</label>
-                            <input type="number" class="form-control" placeholder="Enter SKU Size" name="otc_sku_size">
-                          </div> -->
-                        </div>
-                        <div class="row">
-                          <div class="form-group col-md-6">
-                              <label>Unit</label>
-                              <select class="form-control" name="otc_unit" >
-                                <option value="mL">mL</option>
-                                <option value="gms">gms</option>
-                                <option value="Kg">Kg</option>
-                                <option value="Ltr">Ltr</option>
-                              </select>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-12">
-                          <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                        </div>
+                          
+                        <div class="form-row">
+								<div class="form-group col-md-12">
+									<table class="table table-hover" id="InventoryAddProducts">
+										<tr>  
+											<td>
+												<div class="form-group">
+													<label>SKU Size 1</label>
+													<input type="number" class="form-control" id="q1" placeholder="Quantity Per Item" name="qty_per_item[]">
+												</div>
+											</td>
+											<td>		
+												<div class="form-group">
+													<label>Unit</label>
+													<select class="form-control" id="u1" name="otc_unit[]">
+														<option value="mL">mL</option>
+														<option value="gms">gms</option>
+														<option value="Pcs">Pcs</option>
+														<!--<option value="Ltr">ltr</option>-->
+													</select>
+												</div>                           
+											</td>
+											<td>	
+												<div class="form-group">
+													<label>Product Gross Price</label>
+													<input type="text" class="form-control" id="price" placeholder="OTC Gross Price" name="otc_price_inr[]" onkeypress="return validateFloatKeyPress(this,event);">
+												</div>
+											</td>
+											<td>	
+												<div class="form-group">
+													<label>GST</label>
+													<input type="number" class="form-control" id="gst" placeholder="Percentage" name="otc_gst_percentage[]" onkeyup="toTotalstatic()">
+												</div>                            
+											</td>
+											<td>	
+												<div class="form-group">
+													<label>Total</label>
+													<input type="number" class="form-control" id="total" placeholder="Total" name="otc_total[]">
+												</div>
+											</td>
+										</tr>	
+									</table>
+								</div>						
+								<div class="row">
+									<div class="col-md-12">
+										<button type="button" class="btn btn-success" id="AddRow">Add <i class="fa fa-plus" aria-hidden="true"></i></button>
+										<button type="button" class="btn btn-danger" id="DeleteRow">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>				
+										<button type="submit" class="btn btn-primary">Submit</button>
+									</div>
+								</div>
+							</div>
                         </form>
                         <div class="alert alert-dismissible feedback" style="margin:0px;" role="alert">
                           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -1094,7 +1176,7 @@ $this->load->view('master_admin/ma_header_view');
               </div>
             </div>
 						<div class="modal" id="ModalEditOTC" tabindex="-1" role="dialog" aria-hidden="true">
-							<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+							<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
 										<h5 class="modal-title text-white">Edit OTC</h5>
@@ -1485,6 +1567,12 @@ $this->load->view('master_admin/ma_header_view');
     link.click();
     document.body.removeChild(link);
 }
+
+function priceConvertor(price){
+var x = price;	
+return x.toString().split('.')[0].length > 3 ? x.toString().substring(0,x.toString().split('.')[0].length-3).replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + x.toString().substring(x.toString().split('.')[0].length-3): x.toString();
+}
+
 </script>
 <script type="text/javascript">
  var basePath = '<?php echo base_url() ?>';
@@ -1535,10 +1623,12 @@ $(document).ready(function(){
 										numberDisplayed: 2,
 										nSelectedText: 'selected'});
 		*/
-		 $('#assign-services-select').multiselect({columns: 1, selectAll: true,placeholder: 'Select Service'});
-		 $('#assign-products-select').multiselect({columns: 1, selectAll: true,placeholder: 'Select Product'});
-		 $('#assign-outlet-select').multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
-		 $('#assign-outlet-select-for-product').multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
+		$("#outlet_id_dropdown").multiselect({columns: 1, selectAll: true,placeholder: 'Select Outlet'});
+		$("#outlet_id_otc_dropdown").multiselect({columns: 1, selectAll: true,placeholder: 'Select Outlet'});
+		$('#assign-services-select').multiselect({columns: 1, selectAll: true,placeholder: 'Select Service'});
+		$('#assign-products-select').multiselect({columns: 1, selectAll: true,placeholder: 'Select Product'});
+		$('#assign-outlet-select').multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
+		$('#assign-outlet-select-for-product').multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
 		 
 		
 		$('.outlet_valid_for').multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
@@ -2422,8 +2512,12 @@ $(document).ready(function(){
 				GetService(data.category_id,'EditService',data.sub_category_id,'service_sub_category_id');
 					
 				$("#EditService input[name=service_name]").attr('value',data.service_name);
-				$("#EditService input[name=service_price_inr]").attr('value',data.service_price_inr);
-				$("#EditService input[name=service_gst_percentage]").attr('value',data.service_gst_percentage);
+				var servicePrice = priceConvertor(data.service_price_inr);
+
+				$("#EditService input[name=service_price_inr]").attr('value',servicePrice);
+				var gstPrice = priceConvertor(data.service_gst_percentage);
+
+				$("#EditService input[name=service_gst_percentage]").attr('value',gstPrice);
 				$("#EditService textarea[name=service_description]").val(data.service_description);
 				$("#EditService select[name=category_id]").val(data.category_id);
 				$("#EditService input[name=service_est_time]").attr('value',data.service_est_time);
@@ -2449,8 +2543,10 @@ $(document).ready(function(){
 				
 				
 				$("#EditOTCCategory input[name=otc_brand]").val(data.service_brand);
-				$("#EditOTCCategory input[name=otc_price_inr]").attr('value',data.service_price_inr);
-				$("#EditOTCCategory input[name=otc_gst_percentage]").attr('value',data.service_gst_percentage);
+				var price = priceConvertor(data.service_price_inr);
+				$("#EditOTCCategory input[name=otc_price_inr]").attr('value',price);
+				var gstPrice = priceConvertor(data.service_gst_percentage);
+				$("#EditOTCCategory input[name=otc_gst_percentage]").attr('value',gstPrice);
 				
 				$("#EditOTCCategory input[name=sku_size]").attr('value',data.qty_per_item);
 				$("#EditOTCCategory input[name=otc_service_id]").attr('value',data.service_id);
@@ -2477,8 +2573,10 @@ $(document).ready(function(){
         $("#EditOTCCategory input[name=otc_brand]").attr('value',data.service_brand);
         $("#EditOTCCategory select[name=otc_unit]").attr('value',data.service_unit);
         $("#EditOTCCategory input[name=otc_service_id]").attr('value',data.service_id);
-        $("#EditOTCCategory input[name=otc_price_inr]").attr('value',data.service_price_inr);
-        $("#EditOTCCategory input[name=otc_gst_percentage]").attr('value',data.service_gst_percentage);
+        var servicePrice = priceConvertor(data.service_price_inr);
+        $("#EditOTCCategory input[name=otc_price_inr]").attr('value',servicePrice);
+        var serviceGstPrice = priceConvertor(data.service_gst_percentage);
+        $("#EditOTCCategory input[name=otc_gst_percentage]").attr('value',serviceGstPrice);
 		$("#EditOTCCategory input[name=sku_size]").attr('value',data.qty_per_item);
        
         $("#ModalEditOTC").modal('show');
@@ -3070,11 +3168,12 @@ $(document).ready(function(){
 </script>
 <script>
 	function exportTableToExcel(tableID, filename = ''){
-    
+		
+      
 	  checked = $("input[type=checkbox]:checked").length;
 	  var business_details=[];
       if(tableID == 'servicMenu'){
-       
+        var outletIds = $("#outlet_id_dropdown").val();
 		var selectedServices=[];
 		  
 	    $('#serviceTbody').find('input[type="checkbox"]').each(function() {	
@@ -3083,7 +3182,7 @@ $(document).ready(function(){
 		  }
 		});
 		console.log(selectedServices);
-		var parameters = {"master_service_id" : selectedServices,'type':'service'};
+		var parameters = {"master_service_id" : selectedServices,'type':'service','outlet_ids':outletIds};
         event.preventDefault();
         $(this).blur();
         $.ajax({
@@ -3110,6 +3209,7 @@ $(document).ready(function(){
         });
       }
       else if(tableID == 'otcMenu'){
+		var outletIds = $("#outlet_id_otc_dropdown").val();
         var selectedServices=[];
 		  
 	    $('#productTbody').find('input[type="checkbox"]').each(function() {	
@@ -3118,7 +3218,7 @@ $(document).ready(function(){
 		  }
 		});
 		console.log(selectedServices);
-		var parameters = {"master_service_id" : selectedServices,'type':'otc'};
+		var parameters = {"master_service_id" : selectedServices,'type':'otc','outlet_ids':outletIds};
        
         event.preventDefault();
         $(this).blur();
@@ -3292,4 +3392,124 @@ $(document).ready(function(){
 			return o.value.lastIndexOf(r.text)
 		} else return o.selectionStart
 	}
+
+	$("#AddRow").click(function(event){
+    	event.preventDefault();
+      this.blur();
+      var rowno = $("#InventoryAddProducts tr").length;
+    //   alert("dfhbgkj");
+      rowno = rowno+1;
+    
+		if(rowno < 9){
+		$("#InventoryAddProducts tr:last").after("<tr><td><div class=\"form-group\"><label>SKU Size " +rowno+ "</label><input type=\"number\" class=\"form-control\" name=\"qty_per_item[]\" required /></div></td><td><div class=\"form-group\"><label>Unit</label><select class=\"form-control\"  name=\"otc_unit[]\"><option value=\"mL\">mL</option><option value=\"gms\">gms</option><option value=\"Pcs\">Pcs</option><!--<option value=\"Ltr\">Ltr</option>--></select></div></td><td><div class=\"form-group\"><label>Product Gross Price</label><input type=\"text\" class=\"form-control\" id=\"price"+rowno+"\" name=\"otc_price_inr[]\"/></div></td><td><div class=\"form-group\"><label>GST</label><input type=\"number\" id=\"gst"+rowno+"\" onkeyup=\"toTotal("+rowno+")\" class=\"form-control\" name=\"otc_gst_percentage[]\" required /></div></td><td><div class=\"form-group\"><label>Total</label><input type=\"number\" id=\"total"+rowno+"\" class=\"form-control\" name=\"otc_total[]\" required /></div></tr>");	
+		}
+		else{
+			alert("Maximum Number of sizes Defined");
+		}
+    });
+
+    $("#DeleteRow").click(function(event){
+    	event.preventDefault();
+      this.blur();
+      var rowno = $("#InventoryAddProducts tr").length;
+      if(rowno > 1){
+      	$('#InventoryAddProducts tr:last').remove();
+    	}
+    });
+
+</script>
+<script type="text/javascript">
+function toTotal(no){
+	var t2 = parseFloat(document.getElementById("price"+no).value);
+	var t1 = parseFloat(document.getElementById("gst"+no).value);
+	var t3 = t2+(t2 * (t1/100));
+	//   alert(t2);
+document.getElementById("total"+no).value = t3;
+}
+function toTotalstatic(){
+	var t2 = parseFloat(document.getElementById("price").value);
+	var t1 = parseFloat(document.getElementById("gst").value);
+	var t3 = t2+(t2 * (t1/100));
+	//   alert(t2);
+document.getElementById("total").value = t3;
+}
+
+ //functionality for getting the dynamic input data
+ $("#SearchServiceByName").typeahead({
+      autoselect: true,
+      highlight: true,
+      minLength: 1
+     },
+     {
+      source: SearchServiceByName,
+      templates: {
+        empty: "No Services Found!",
+        suggestion: _.template("<p class='service_search'><%- brandname %>, (<%- product_type %>), <%- mrp %>,<%- gst %>,<%- sku_size %> </p>")
+      }
+    });
+       
+    var to_fill = "";
+
+    $("#SearchServiceByName").on("typeahead:selected", function(eventObject, suggestion, name) {
+      var loc = "#SearchServiceByName";
+      to_fill = suggestion.service_name;
+      setVals(loc,to_fill,suggestion);
+    });
+
+    $("#SearchServiceByName").blur(function(){
+      $("#SearchServiceByName").val(to_fill);
+      to_fill = "";
+    });
+
+    function SearchServiceByName(query, cb){
+		var inventory = document.getElementById("otc_inventory_type").value;
+      var parameters = {
+        query : query,
+		inventory_type : inventory
+      };
+      
+      $.ajax({
+        url: "<?=base_url()?>BusinessAdmin/GetProductDataDetails",
+        data: parameters,
+        type: "GET",
+        crossDomain: true,
+				cache: false,
+        dataType : "json",
+        global : false,
+    		success: function(data) {
+         	cb(data.message);
+        },
+        error: function(data){
+					console.log("Some error occured!");
+        }
+			});
+    }  
+
+    function setVals(element,fill,suggestion){
+      $(element).attr('value',fill);
+      $(element).val(fill);	
+	  document.getElementById('ServiceName').value = suggestion.item_name;
+      document.getElementById('otc_barcode').value = suggestion.barcode;
+	  document.getElementById('otc_brand').value = suggestion.brandname;
+	  document.getElementById('q1').value = suggestion.sku_size;
+	  document.getElementById('u1').value = suggestion.unit;
+	  document.getElementById('price').value = suggestion.mrp;
+	  document.getElementById('gst').value = suggestion.gst;
+	  document.getElementById('total').value = parseInt(suggestion.mrp)+(suggestion.mrp*(suggestion.gst/100));
+		for(var i=0;i<=suggestion.length;i++){
+			var rowno = $("#InventoryAddProducts tr").length;
+				//   alert("dfhbgkj");
+			rowno = rowno+1;
+		
+			if(rowno < 9){
+			$("#InventoryAddProducts tr:last").after("<tr><td><div class=\"form-group\"><label>SKU Size " +rowno+ "</label><input type=\"number\" class=\"form-control\" name=\"qty_per_item[]\" required /></div></td><td><div class=\"form-group\"><label>Unit</label><select class=\"form-control\"  name=\"otc_unit[]\"><option value=\"mL\">mL</option><option value=\"gms\">gms</option><option value=\"Pcs\">Pcs</option><!--<option value=\"Ltr\">Ltr</option>--></select></div></td><td><div class=\"form-group\"><label>Product Gross Price</label><input type=\"text\" class=\"form-control\" id=\"price"+rowno+"\" name=\"otc_price_inr[]\"/></div></td><td><div class=\"form-group\"><label>GST</label><input type=\"number\" id=\"gst"+rowno+"\" onkeyup=\"toTotal("+rowno+")\" class=\"form-control\" name=\"otc_gst_percentage[]\" required /></div></td><td><div class=\"form-group\"><label>Total</label><input type=\"number\" id=\"total"+rowno+"\" class=\"form-control\" name=\"otc_total[]\" required /></div></tr>");	
+			}
+			else{
+				alert("Maximum Number of sizes Defined");
+			}
+		}
+   
+    }
+
+	
 </script>

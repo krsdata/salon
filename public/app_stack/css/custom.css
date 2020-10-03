@@ -8,15 +8,32 @@
 	background-position: center;
 	/* background-repeat: no-repeat; */
 }
+button.multiselect {
+    font-size: 9px;
+}
+select {
+  font-size: 9px;
+}
+.multi_narrow{
+    height: 62px;
+    font-size: 10px !important;
+}
+.package-content{
+  font-size: 10px !important;
+}
 #AddPackage{
-	font-size: 10px !important;
+	font-size: 9px !important;
 }
 #AddPackage ::placeholder{
-	font-size: 10px !important;
+	font-size: 9px !important;
 }
 #AddPackage select{
-	font-size: 10px !important;
+	font-size: 9px !important;
 }
+#AddPackage select multiple{
+  font-size: 9px !important;
+}
+
 #load_screen{
     background: #ffffff;
     opacity: 0.6;

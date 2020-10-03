@@ -2308,6 +2308,7 @@ class BusinessAdmin extends CI_Controller {
 				'category_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 				'category_is_active'         => TRUE,
 				'category_business_outlet_id'=> $this->session->userdata['outlets']['current_outlet'],
+				'master_id' =>$this->session->userdata['logged_in']['master_admin_id']
 				// 'category_type'=>'Products'
 			);
 
@@ -3719,11 +3720,13 @@ public function GetEmployee(){
 		if($this->IsLoggedIn('business_admin')){
 			$where = array(
 				'category_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+				'master_id' => $this->session->userdata['logged_in']['master_admin_id'],
 				'category_is_active'         => TRUE,
 				'category_business_outlet_id'=> $outlet_id
 			);
 
-			$data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
+			$data = $this->BusinessAdminModel->GetCategoriesForAdmin($where);
+			
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
 			}
@@ -3813,10 +3816,12 @@ public function GetEmployee(){
 			$where = array(
 				'category_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 				'sub_category_is_active'     => TRUE,
-				'category_business_outlet_id'=>$outlet_id
+				'category_business_outlet_id'=>$outlet_id,
+				'master_id' =>$this->session->userdata['logged_in']['master_admin_id']
 			);
 
 			$data = $this->BusinessAdminModel->SubCategories($where);
+			
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
 			}
@@ -3829,6 +3834,7 @@ public function GetEmployee(){
 	private function GetServices($outlet_id){
 		if($this->IsLoggedIn('business_admin')){
 			$where = array(
+			    'master_id' => $this->session->userdata['logged_in']['master_admin_id'],
 				'category_business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
 				'service_is_active'           => TRUE,
 				'category_business_outlet_id' => $outlet_id,
@@ -3848,6 +3854,7 @@ public function GetEmployee(){
 	private function GetOTCServices($outlet_id){
 		if($this->IsLoggedIn('business_admin')){
 			$where = array(
+				'master_id' => $this->session->userdata['logged_in']['master_admin_id'],
 				'category_business_admin_id'   => $this->session->userdata['logged_in']['business_admin_id'],
 				'service_is_active'            => TRUE,
 				'category_business_outlet_id'  => $outlet_id,
@@ -4372,6 +4379,7 @@ public function GetEmployee(){
 	private function ActivePackages($outlet_id){
 		if($this->IsLoggedIn('business_admin')){
 			$where = array(
+			    'master_id' =>$this->session->userdata['logged_in']['master_admin_id'],
 				'business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
 				'business_outlet_id' => $outlet_id
 			);

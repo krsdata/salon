@@ -5,7 +5,7 @@
 	<?php
 		$this->load->view('master_admin/ma_nav_view');
 	?>
-	<div class="main">
+	<div class="main package-content">
 		<?php
 			$this->load->view('master_admin/ma_top_nav_view');
 		?>
@@ -25,13 +25,13 @@
 								<div class="card-body">
 									<p>Please add outlet to proceed.</p>
 								</div>
-							</div>
+							</div>F
 						</div>
 					<?php
 						}else{
 					?>
 					<div class="col-md-12">
-					<div class="row">
+					<!--<div class="row">
 						 <div class="col-md-6">
 							<label for="Outlets-select">Outlets</label>
 							 
@@ -45,7 +45,7 @@
 								</select>
 							
 						 </div>	
-					</div>
+					</div>-->
 								
 						<div class="card">
 							<div class="card-header">
@@ -55,7 +55,7 @@
 										<h5 class="card-title">Active Packages</h5>
 									</div>	
 									<div class="col-md-6">
-										 <button class="btn btn-success float-right"  id="openAssignPackages" style="margin-left:1vw;"><i class="fas fa-caret-square-right"></i> Assign Package</button>
+										 <!--<button class="btn btn-success float-right"  id="openAssignPackages" style="margin-left:1vw;"><i class="fas fa-caret-square-right"></i> Assign Package</button>-->
 										<button class="btn btn-success float-right"  id="openAddPackageWindow" ><i class="fas fa-fw fa-plus"></i>Create New Package</button>
 									
 										
@@ -152,7 +152,9 @@
 														<div class="row">
 															<div class="col-md-12">
 																<form id="AddPackage" method="POST" action="#">
-																	<input type="hidden" id="hd_salon_package_id" value="0" name="hd_salon_package_id" />
+																	
+																	<input type="hidden" id="hd_salon_package_outlet_id" name="packageOutletId" >
+																	<input type="hidden" id="hd_salon_package_id" value="0" name="packageId" />
 																	<div class="row">
 																		<div class="form-group col-md-3">
 																			<label>Package Name</label>
@@ -744,10 +746,69 @@
 													<th>Package Created on</th>
 													<th>Package End Date</th>
 													<th>Outlets valid for</th>
-													<th>Actions</th>
+													<th>Created By</th>
+													<th style="width:90px;">Actions</th>
 												</tr>
 											</thead>
-											<tbody id="package-content"></tbody>
+											<tbody id="package-content">
+											 <?php if(!empty($packages)){
+												
+												 foreach($packages as $key=>$value){
+													 $options = '';$assignOutletIdsforPackages=array();
+													 if(!empty($business_outlet_details)){
+														 foreach($business_outlet_details as $outlet){
+															 $assignOutletIdsforPackages = $assignOutlets[$value['salon_package_id']];
+															
+																if(in_array($outlet['business_outlet_id'],$assignOutletIdsforPackages)){
+																	 $selected = 'selected="selected"';
+																 }else{
+																	 $selected = "";
+																 }
+																
+																 $options .= '<option value="'.$outlet['business_outlet_id'].'" '.$selected.' >'.$outlet['business_outlet_name'].'</option>';
+															
+														 }
+													 }
+																	
+													 ?>
+													 <tr>
+													   <td><?=($key+1); ?></td>
+													   <td><?=$value['salon_package_name'];?></td>
+													   <td><?=$value['salon_package_type'];?></td>
+													   <td><?=$value['salon_package_price'];?></td>
+													   <td><?=$value['service_gst_percentage'];?></td>
+													   <td><?=$value['salon_package_upfront_amt'];?></td>
+													   <td><?=$value['salon_package_validity'];?></td>
+													   <td><?=$value['salon_package_date'];?></td>
+													   <td><?=$value['salon_package_end_date'];?></td>
+													   <td><?=($value['type']==1) ? '<select class="outlet_valid_for" multiple name="outlet_valid_for[]" salon_package_id="'.$value['salon_package_id'].'">'.$options.'</select>' : '--';?></td>
+													   <td ><?php echo ($value['type']==1) ? 'Master Admin' : 'Business Admin';?></td>
+													   <?php 
+													   
+															$action ='<span  class="btn package-edit-btn" salon_package_id="'.$value['salon_package_id'].'">';
+																		$action .='<i class="fas fa-edit"></i>';
+																		$action .='</span>';
+															if($value['package_active_status'] == 1){
+																
+																	$action .='<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'.$value['salon_package_id'].'">';
+																	$action .='<i class="align-middle" data-feather="package"></i>';
+																	$action .='</button>';
+															}
+															else{
+																		
+																		$action .='<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'.$value['salon_package_id'].'">';
+																		$action .='<i class="fas fa-ban align-middle" ></i>';
+																		$action .='</button>';
+															}
+													   ?>
+													   
+													   <td style="width:90px;"><?=$action?></td>
+													 
+													 </tr>
+												 <?php }
+												 
+											 } ?>
+											</tbody>
 											
 										</table>										
 									</div>					
@@ -811,6 +872,55 @@
 	
 	var	multiSelectParamsCategoryTpe = { maxHeight:150,numberDisplayed: 2,nSelectedText: 'selected' ,includeSelectAllOption: true,buttonWidth: 120,nonSelectedText:'Category Type'};
 	
+	initializeAllDropDown(isClearSelection=false,multiSelectParamsDataForOutlets,multiSelectParamsData,multiSelectParamsData1,multiSelectParamsCategoryTpe);
+   function initializeAllDropDown(isClearSelection=false,multiSelectParamsDataForOutlets,multiSelectParamsData,multiSelectParamsData1,multiSelectParamsCategoryTpe){
+
+   		if(isClearSelection){
+			$('#serviceTable tr:last select[name="service_sub_category_id[]"]').multiselect('clearSelection');
+		    $('#serviceTable tr:last select[name="service_id[]"]').multiselect('clearSelection');
+        }else{ 
+
+        	$('#salon_package_outlet_ids').multiselect(multiSelectParamsDataForOutlets);
+		     $('#assign-Outlets-select').multiselect(multiSelectParamsData);
+			 $('#service_sub_category_bulk').multiselect(multiSelectParamsData);	
+
+		 	$('#serviceTable tr:last select[name="service_sub_category_id[]"]').multiselect(multiSelectParamsData);
+			 	    
+			$('#serviceTable tr:last select[name="service_id[]"]').multiselect(multiSelectParamsData);
+			$('#discountTable tr:last select[name="service_sub_category_id[]"]').multiselect(multiSelectParamsData);
+			
+			$('#service_sub_category_bulk_discount').multiselect(multiSelectParamsData);
+			
+			$('#discountCategoryBulkTable tr:last select[name="discount_service_category_bulk[]"]').multiselect(multiSelectParamsData);
+			$('#service_id_discount').multiselect(multiSelectParamsData);
+			$('#service_category_bulk_1').multiselect(multiSelectParamsData);
+			$('#specialMembershipTable1 tr:last select[name="category_type1[]"]').multiselect(multiSelectParamsCategoryTpe);
+			$('#specialMembershipTable2 tr:last select[name="category_type2[]"]').multiselect(multiSelectParamsCategoryTpe);	
+			$('#specialMembershipTable3 tr:last select[name="category_type3[]"]').multiselect(multiSelectParamsCategoryTpe);	
+			$('#specialMembershipTable4 tr:last select[name="category_type4[]"]').multiselect(multiSelectParamsCategoryTpe);										
+			
+			$('#specialMembershipTable2 tr:last select[name="special_category_id2[]"]').multiselect(multiSelectParamsData);											
+												
+			$('#specialMembershipTable3 tr:last select[name="special_category_id3[]"]').multiselect(multiSelectParamsData);
+											
+
+	       	$('#specialMembershipTable3 tr:last select[name="special_sub_category_id3[]"]').multiselect(multiSelectParamsData);	
+		   
+		   
+		  	$('#specialMembershipTable4 tr:last select[name="special_category_id4[]"]').multiselect(multiSelectParamsData1);
+											
+
+	       	$('#specialMembershipTable4 tr:last select[name="special_sub_category_id4[]"]').multiselect(multiSelectParamsData1);									
+
+	        											
+			$('#specialMembershipTable4 tr:last select[name="special_service_id4[]"]').multiselect(multiSelectParamsData1);
+	         
+	        
+        }	
+
+
+}
+
 	function getCategoryTypeRecords(parameters,subCatObj,event){	
 			var options = ""; 
 				$.getJSON("<?=base_url()?>MasterAdmin/GetCategoriesByCategoryTypes", parameters)
@@ -1123,6 +1233,8 @@
 	}
 			
 	$(document).on('click','.package-edit-btn',function(event) {
+		$("#hd_salon_package_id").val($(this).attr('salon_package_id'));
+		$("#hd_salon_package_outlet_id").val($("#Outlets-select").val());
 		event.preventDefault();	
 		
 		/* trigger delete rows  */
@@ -1180,7 +1292,7 @@
 		}
 		
 				
-			$("#ModalAddPackage").find('.modal-title').html('Edit Package'); 
+		    $("#ModalAddPackage").find('.modal-title').html('Edit Package'); 
 			 var packageId = $(this).attr('salon_package_id');
 			 $("#hd_salon_package_id").val(packageId);
 			 /* Get Details from db */
@@ -1372,50 +1484,33 @@
 			 $('#ModalAddPackage').modal({ show: true });
 			 
 		});
-		
+   
+
+
     $(document).ready(function() {  
 	    
 		 $('.datepicker').datepicker({
 			startDate: '+2d'
 		});
-				
-		 $('#salon_package_outlet_ids').multiselect(multiSelectParamsDataForOutlets);
-		 $('#assign-Outlets-select').multiselect(multiSelectParamsData);
-		 $('#serviceTable tr:last select[name="service_sub_category_id[]"]').multiselect(multiSelectParamsData);
-		 
 	    
-		$('#serviceTable tr:last select[name="service_id[]"]').multiselect(multiSelectParamsData);
-		$('#discountTable tr:last select[name="service_sub_category_id[]"]').multiselect(multiSelectParamsData);
-		$('#service_sub_category_bulk').multiselect(multiSelectParamsData);
-		$('#service_sub_category_bulk_discount').multiselect(multiSelectParamsData);
-		
-		$('#discountCategoryBulkTable tr:last select[name="discount_service_category_bulk[]"]').multiselect(multiSelectParamsData);
-		$('#service_id_discount').multiselect(multiSelectParamsData);
-		$('#service_category_bulk_1').multiselect(multiSelectParamsData);
-		$('#specialMembershipTable1 tr:last select[name="category_type1[]"]').multiselect(multiSelectParamsCategoryTpe);
-		$('#specialMembershipTable2 tr:last select[name="category_type2[]"]').multiselect(multiSelectParamsCategoryTpe);	
-		$('#specialMembershipTable3 tr:last select[name="category_type3[]"]').multiselect(multiSelectParamsCategoryTpe);	
-		$('#specialMembershipTable4 tr:last select[name="category_type4[]"]').multiselect(multiSelectParamsCategoryTpe);										
-		
-		$('#specialMembershipTable2 tr:last select[name="special_category_id2[]"]').multiselect(multiSelectParamsData);											
-											
-		$('#specialMembershipTable3 tr:last select[name="special_category_id3[]"]').multiselect(multiSelectParamsData);
-										
+	     
 
-       	$('#specialMembershipTable3 tr:last select[name="special_sub_category_id3[]"]').multiselect(multiSelectParamsData);	
-	   
-	   
-	  	$('#specialMembershipTable4 tr:last select[name="special_category_id4[]"]').multiselect(multiSelectParamsData1);
-										
+		initializeAllDropDown(multiSelectParamsDataForOutlets,multiSelectParamsData,multiSelectParamsData1,multiSelectParamsCategoryTpe);
 
-       	$('#specialMembershipTable4 tr:last select[name="special_sub_category_id4[]"]').multiselect(multiSelectParamsData1);									
-
-        											
-		$('#specialMembershipTable4 tr:last select[name="special_service_id4[]"]').multiselect(multiSelectParamsData1);
 		
-		$("#openAddPackageWindow").on('click', function () {
+		$("#openAddPackageWindow").click(function(event){
+			
+			event.preventDefault();	
 			$("#ModalAddPackage").find('.modal-title').html('Add Package'); 
-			 $('#ModalAddPackage').modal({ show: true });
+			$("#hd_salon_package_outlet_id").val("0");
+			$("#hd_salon_package_id").val("0");
+			
+			/*$("#AddPackage").find("input, select, textarea").val("");
+			$("#AddPackage").find("input[name=salon_package_name]").val("");
+			var isClearSelection = true;
+			initializeAllDropDown(isClearSelection,multiSelectParamsDataForOutlets,multiSelectParamsData,multiSelectParamsData1,multiSelectParamsCategoryTpe); */
+			$('#ModalAddPackage').modal({ show: true });
+
 		});
 		
 		
@@ -1558,7 +1653,19 @@
 </script>
 
 <script type="text/javascript">
-	$(document).ready(function(){
+ function assignPackageToOutlet(packageId){
+	 alert(packageId);
+ }
+ $(document).ready(function(){
+	 
+	
+	$('#customers-table').DataTable( {
+		order: [[2, 'asc']],
+		rowGroup: {
+			dataSrc: 2
+		}
+	});
+	
 	
 	$(document).ajaxStart(function() {		
 		$("#load_screen").show();
@@ -1595,60 +1702,73 @@
 					{ "data": "salon_package_date" },
 					{ "data": "salon_package_end_date" },
 					{ "data": "outlet_valid_for" },
+					{ "data": "outlet_created_by" },
 					{ "data": "package_active_status" }
 				]
 		});
+		
 	}
 			
 			
 			
-	$(document).on('change',"#Outlets-select", function(e){
+	    $(document).on('change',"#Outlets-select", function(e){
 				
-				initiateTable($(this).val());
-				 /*var parameters = {
-					'outlet_id' :  $(this).val()
-				};
-				var htmlContent="";
-				$.getJSON("<?=base_url()?>MasterAdmin/GetMasterPackages", parameters)
-				.done(function(data, textStatus, jqXHR) {
-					 if(data.length>0){	
-						for(var i=0;i<data.length;i++){
-							
-							 htmlContent += '<tr>';
-							 htmlContent += '<td>'+(i+1)+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_name+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_type+'</td>';
-							 
-							 htmlContent += '<td>'+data[i].salon_package_date+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_price+'</td>';
-							 htmlContent += '<td>'+(data[i].service_gst_percentage*data[i].salon_package_price/100)+'</td>';
-							 htmlContent += '<td>'+(data[i].salon_package_price+(data[i].service_gst_percentage*data[i].salon_package_price/100))+'</td>';
-							 htmlContent += '<td>'+data[i].salon_package_validity+'</td>';
-							
-							 htmlContent += '<td class="table-action">';
-							if(data[i].is_active==1){
-								 htmlContent += '<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
-							}else{
-								 htmlContent += '<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="'+data[i].salon_package_id+'"><i class="align-middle" data-feather="package"></i></button>';
-							}
-							 htmlContent += '</td></tr>';				
-						}
-					 }else{
-						 htmlContent +='<tr class="odd"><td valign="top" colspan="9" class="dataTables_empty">No data available in table</td>d></tr>';
-					 }
-					
-				    $("#package-content").html(htmlContent);
-					//var json = JSON.stringify(data);
-					//initiateTable("customers-table", json);
-				})
-
-				.fail(function(jqXHR, textStatus, errorThrown) {
-					console.log(errorThrown.toString());
-				}); */
+				//initiateTable($(this).val());
+				setTimeout(function () { $("#package-content").find('select[name="outlet_valid_for[]"]').multiselect(multiSelectParamsData);  }, 300);
+				
+				
 		});
+	
+
+		setTimeout(function () { 
+				$(".outlet_valid_for").on('change', function (e){ 
+				  event.preventDefault();
+				  var salon_package_id = $(this).attr('salon_package_id');
+				  var outlet_id = $(this).val();
+				  var formData = {'salon_package_id':salon_package_id,'outlet_id':outlet_id}; 
+					$.ajax({
+						url: "<?=base_url()?>MasterAdmin/AssignOutletToPackage",
+						data: formData,
+						type: "POST",
+						// crossDomain: true,
+						cache: false,
+						// dataType : "json",
+						success: function(data) {
+							if(data.success == 'true'){ 
+								$("#ModalAddPackage").modal('hide');
+									toastr["success"](data.message,"", {
+									positionClass: "toast-top-right",
+									progressBar: "toastr-progress-bar",
+									newestOnTop: "toastr-newest-on-top",
+									rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+									timeOut: 1500
+								});
+								setTimeout(function () { location.reload(1); }, 1000);
+							}
+							else if (data.success == 'false'){                   
+								if($('.feedback').hasClass('alert-success')){
+									$('.feedback').removeClass('alert-success').addClass('alert-danger');
+								}
+								else{
+									$('.feedback').addClass('alert-danger');
+								}
+								$('.alert-message').html("").html(data.message); 
+							}
+							$(this).multiselect({columns: 1,selectAll: true,placeholder: 'Select Outlet'});
+						},
+						error: function(data){
+							$('.feedback').addClass('alert-danger');
+							$('.alert-message').html("").html(data.message); 
+						}
+					});
+				  
+				});
+		}, 1000);
+				
 		
 		$(document).ready(function() {
-			initiateTable($("#Outlets-select option:selected").val());
+			//initiateTable($("#Outlets-select option:selected").val());
+			setTimeout(function () { $("#package-content").find('select[name="outlet_valid_for[]"]').multiselect(multiSelectParamsData);  }, 300);
 		});
 
 		$("#Wallet").show();
@@ -1690,12 +1810,12 @@
 			});
 
 
-			$("#AddPackage input[name=virtual_wallet_money_absolute]").on('input',function(){
+			$("#AddPackage input[name=virtual_wallet_money_absolute]").on('change',function(){
 				if(parseInt($(this).val()) >0){
 					$("#AddPackage input[name=virtual_wallet_money_percentage]").val(0);
 				}
 			});
-			$("#AddPackage input[name=virtual_wallet_money_percentage]").on('input',function(){
+			$("#AddPackage input[name=virtual_wallet_money_percentage]").on('change',function(){
 				if(parseInt($(this).val()) >0){
 					$("#AddPackage input[name=virtual_wallet_money_absolute]").val(0);
 				}
@@ -1817,7 +1937,7 @@
 					$("#specialMembershipTable1 tr").each(function(i){
 						$(this).find('td input[name="category_type1_index[]"]').val($(this).find("td select[name='category_type1[]']").val());
 					});
-					
+
 					
 					var formData = $("#AddPackage").serialize(); 
 					console.log(formData);
@@ -2088,8 +2208,7 @@
 				};
 				getSubCategoryRecords(parameters,subCatObj,'special_sub_category_id4');
 			});
-			
-			
+						
 
 			$(document).on('change',".sub_category4_filter", function(e){
 				var subCatObj = $(this).closest('td').next('td');
@@ -2399,10 +2518,11 @@
 				event.preventDefault();
 				this.blur(); // Manually remove focus from clicked link.
 				var parameters = {
-					"salon_package_association_id" : $(this).attr('salon_package_association_id'),
+					"salon_package_id" : $(this).attr('salon_package_id'),
 					"activate" : 'false',
 					"deactivate" : 'true'
 				};
+				
 				$.ajax({
 					url: "<?=base_url()?>MasterAdmin/ChangePackageStatus",
 					data: parameters,
@@ -2421,13 +2541,13 @@
 								}
 							}
 			});
-			});
+		});
 
 			$(document).on('click','.package-activate-btn',function(event) {
 				event.preventDefault();
 				this.blur(); // Manually remove focus from clicked link.
 				var parameters = {
-					"salon_package_association_id" : $(this).attr('salon_package_association_id'),
+					"salon_package_id" : $(this).attr('salon_package_id'),
 					"activate" : 'true',
 					"deactivate" : 'false'
 				};

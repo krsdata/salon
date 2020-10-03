@@ -35,7 +35,8 @@ span.multiselect-native-select select {
 }
 
 .multiselect-container>li>a.multiselect-all label {
-	font-weight: 200
+	font-weight: 20;
+	color: #CCCCCC;
 }
 
 .multiselect-container>li.multiselect-group label {
@@ -43,11 +44,12 @@ span.multiselect-native-select select {
 	padding: 3px 20px;
 	height: 100%;
 	max-height:500px;
-	font-weight: 200
+	font-weight: 50;
+	font-size: 10px;
 }
 
 .multiselect-container>li.multiselect-group-clickable label {
-	cursor: pointer
+	cursor: pointer;
 }
 
 .multiselect-container>li>a {
@@ -58,9 +60,10 @@ span.multiselect-native-select select {
 	margin: 0;
 	height: 100%;
 	cursor: pointer;
-	font-weight: 400;
+	font-weight: 20;
 	max-height:500px;
-	padding: 3px 20px 3px 40px
+	padding: 3px 20px 3px 40px;
+	font-size: 9px;
 }
 
 .multiselect-container>li>a>label.checkbox,
@@ -86,4 +89,13 @@ span.multiselect-native-select select {
 .form-inline .multiselect-container li a label.radio input[type=radio] {
 	margin-left: -20px;
 	margin-right: 0
+}
+
+
+input[type="checkbox"] {
+	margin: 1px 8px 0 0 !important;
+}
+.btn{
+	font-size: 10px!important;
+	font-weight: 400;
 }

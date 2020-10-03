@@ -886,7 +886,8 @@
 												<td><?=$package['salon_package_validity']?></td>
 												<td class="table-action">
 												<?php
-													if($package['is_active'] == 1){
+												if($package['business_admin_id']>0){
+													if($package['is_active'] == 1 ){
 												?>
 													<button type="button" class="btn btn-info package-edit-btn"  salon_package_id="<?=$package['salon_package_id']?>">
 														<i class="align-middle" data-feather="edit"></i>
@@ -906,6 +907,9 @@
 													</button>
 												<?php
 													}
+												}else{
+													echo '--';
+												}
 												?>
 												</td>
 											</tr>
