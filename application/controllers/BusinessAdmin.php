@@ -3393,7 +3393,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 			else{
 				$data = $this->GetDataForAdmin("Add Outlet");
-				$outlet_admin_id= $this->session->userdata['logged_in']['business_admin_id'];
+				$outlet_admin_id= $this->session->userdata['outlets']['current_outlet'];
 				$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
 
 					$query = $this->db->query($sql);
@@ -3639,12 +3639,12 @@ public function GetEmployee(){
 					$this->load->library('upload',$config);
 					$this->upload->do_upload('business_outlet_logo');
 					$path=array(
-						'outlet_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+						'outlet_admin_id' => $this->session->userdata['outlets']['current_outlet'],
 						'config_key'			=>'salon_logo',
 						'config_value' =>$_FILES['business_outlet_logo']['name']
 					);
 					$where=array(
-						'outlet_admin_id'=> $this->session->userdata['logged_in']['business_admin_id']
+						'outlet_admin_id'=> $this->session->userdata['outlets']['current_outlet']
 					);
 					$logo_exist=$this->BusinessAdminModel->MultiWhereSelect('mss_config',$where);
 						if(empty($logo_exist['res_arr'])){
