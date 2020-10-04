@@ -194,6 +194,26 @@ class BusinessAdminModel extends CI_Model {
         }
 	}
 	
+	
+    public function GetAllAssignMasterCategories($where){
+		$sql = "SELECT A.`category_id`,A.`category_name`,B.`sub_category_id`,B.`sub_category_name`,C.`service_id`,C.`service_name` FROM `master_categories` as A,`mss_sub_categories` as B,`mss_services` as C WHERE (A.`category_business_admin_id`=".$this->db->escape($where['category_business_admin_id'])." OR A.`master_id`!=0) AND A.`category_is_active`=".$this->db->escape($where['is_active'])." AND A.`category_id`=B.`sub_category_category_id` AND B.`sub_category_is_active`=".$this->db->escape($where['is_active'])." AND C.`outlet_id`=".$this->db->escape($where['category_business_outlet_id'])." AND C.`service_sub_category_id`=B.`sub_category_id` AND C.`service_is_active` =".$this->db->escape($where['is_active'])."" ;
+        
+        if(isset($where['sub_category_category_id']) && $where['sub_category_category_id']!=""){
+			$sql .= " AND B.sub_category_category_id = ".$this->db->escape($where['sub_category_category_id'])."";
+		}
+		if(isset($where['category_type']) && $where['category_type']!=''){
+			$sql .= " AND A.`category_type`=".$this->db->escape($where['category_type'])."";
+		}
+		$query = $this->db->query($sql);
+		
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	
     public function SubCategories($where){
        $sql = "SELECT sub_category_id,sub_category_category_id,sub_category_name,sub_category_is_active,sub_category_description,category_name,category_type,category_business_admin_id FROM mss_sub_categories AS A,master_categories AS B WHERE A.sub_category_category_id = B.category_id AND ( (B.category_business_admin_id = ".$this->db->escape($where['category_business_admin_id'])." AND B.category_business_outlet_id=".$this->db->escape($where['category_business_outlet_id']).") OR  A.master_id=".$this->db->escape($where['master_id']).") AND A.sub_category_is_active = ".$this->db->escape($where['sub_category_is_active'])." ";
         

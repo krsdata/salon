@@ -975,15 +975,17 @@ class Cashier extends CI_Controller {
 					
 					$data['individual_customer'] = $this->GetCustomerBilling($customer_id);
 					
-					$data['categories']  = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Service');
+					//$data['categories']  = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Service');
 					// $data['categories_products'] = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Products');
+					$data['categories'] = $this->GetAssignCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Service');
 
 					
 					$data['experts'] = $this->GetExperts();
 
 					$data['active_packages_categories'] = $this->PurchasedPackages($customer_id);
 				
-					$data['categories_products']=$this->CashierModel->OtcCategory($this->session->userdata['logged_in']['business_outlet_id']);
+					//$data['categories_products']=$this->CashierModel->OtcCategory($this->session->userdata['logged_in']['business_outlet_id']);
+					$data['categories_products']= $this->GetAssignCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Products');
 					$data['categories_products']=$data['categories_products']['res_arr'];
 
 					// $this->PrettyPrintArray($data['categories_products']);
@@ -1275,6 +1277,26 @@ class Cashier extends CI_Controller {
 		}		
 	}
 	
+	private function GetAssignCategoriesByType($outlet_id,$type){
+		if($this->IsLoggedIn('cashier')){
+			$where = array(
+				'category_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+				'category_type' => $type,
+				'is_active'         => TRUE,
+				'category_business_outlet_id'=> $outlet_id
+			);
+			$data = $this->BusinessAdminModel->GetAllAssignMasterCategories($where);
+			$categories = array();
+			if(!empty($data['res_arr']) && $data['success']=='true'){
+				return $data['res_arr'];
+			}
+			
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/");
+		}
+	}
+	
 	private function GetCategoriesByType_old($outlet_id,$type){
 		if($this->IsLoggedIn('cashier')){
 			$where = array(
@@ -1297,21 +1319,32 @@ class Cashier extends CI_Controller {
     
 	public function GetSubCategoriesByCatId(){
 		if($this->IsLoggedIn('cashier')){
-			if(isset($_GET) && !empty($_GET)){
-				$where = array(
-					'sub_category_category_id' => $_GET['category_id'],
-					'sub_category_is_active'   => TRUE
-				);
-				
-				$data = $this->BusinessAdminModel->MultiWhereSelect('mss_sub_categories',$where);
-				header("Content-type: application/json");
-				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
-				die;
+			$where = array(
+				'category_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+				'is_active'         => TRUE,
+				'category_business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+				'sub_category_category_id' => $_GET['category_id']
+			);
+			$data = $this->BusinessAdminModel->GetAllAssignMasterCategories($where);
+			if(!empty($data['res_arr'])){
+				$inArray = array();
+				$subCategory = array();
+				foreach($data['res_arr'] as $key=>$value){
+					if(!in_array($value['sub_category_id'],$inArray)){
+						$inArray[] = $value['sub_category_id'];
+						$subCategory[] = $value;
+					}
+				}
 			}
+			header("Content-type: application/json");
+			print(json_encode($subCategory, JSON_PRETTY_PRINT));
+			die;
+			
 		}
 		else{
 			$this->LogoutUrl(base_url()."Cashier/");
 		}
+		
 	}
 
 	public function GetServicesBySubCatId(){

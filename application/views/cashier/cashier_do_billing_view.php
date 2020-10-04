@@ -484,7 +484,10 @@
 															<div class="card-body" style="margin-right:10px;">
 																<div class="row" style="margin-right:10px;">
 																	<?php
+																	$inArray = array();
 																		foreach ($categories as $category):
+																	     if(!in_array($category['category_id'],$inArray)){
+																			$inArray[] = $category['category_id'];
 																	?>																		
 																		<div class="col-md-2 col-sm-4">
 																			<a class="ShowSubCategories" category-id="<?=$category['category_id']?>">
@@ -496,7 +499,7 @@
 																			</a>		
 																		</div>
 
-																	<?php		
+																		 <?php }		
 																		endforeach;
 																	?>
 																	
