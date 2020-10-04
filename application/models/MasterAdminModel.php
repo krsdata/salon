@@ -540,26 +540,26 @@ class MasterAdminModel extends CI_Model
 	}
   
    // Add category packages for salon
-    public function AddServiceCategoryBulkPackage($data,$categories,$count,$outletIds,$masterId){   
-	  $categoryBulkIndex = $data['service_category_bulk_index'];
-	
-	  unset($data['service_category_bulk_index']);	
-      $result = $this->Insert($data,'mss_salon_packages');
-      $last_insert_id = $result['res_arr']['insert_id'];
+  public function AddServiceCategoryBulkPackage($data,$categories,$count,$outletIds,$masterId){   
+	     $categoryBulkIndex = $data['service_category_bulk_index'];
+	 echo '<pre>df'; print_r($data);die;
+  	    unset($data['service_category_bulk_index']);	
+        $result = $this->Insert($data,'mss_salon_packages');
+        $last_insert_id = $result['res_arr']['insert_id'];
 
       //create a services packages
-	  $servicesIds = array();
-      for($i=0;$i < count($categories);$i++){
-		$serviceCount = 0;
-			 /* Find Count */
-			 if(!empty($categoryBulkIndex)){
-				foreach($categoryBulkIndex as $key=>$catgroup){
-					if(in_array($categories[$i],explode(',',$catgroup))){
-						$serviceCount 	 = (int) $count[$key];
-					}
-				}
-			}
-		
+    	  $servicesIds = array();
+          for($i=0;$i < count($categories);$i++){
+    		$serviceCount = 0;
+    			 /* Find Count */
+    			 if(!empty($categoryBulkIndex)){
+    				foreach($categoryBulkIndex as $key=>$catgroup){
+    					if(in_array($categories[$i],explode(',',$catgroup))){
+    						$serviceCount 	 = (int) $count[$key];
+    					}
+    				}
+    			}
+    		
 					$sub_categories=$this->MultiWhereSelect('mss_sub_categories',array('sub_category_category_id' => $categories[$i]));
 					
 					$sub_categories=$sub_categories['res_arr'];
@@ -589,9 +589,74 @@ class MasterAdminModel extends CI_Model
       }
 	
 	  /* Outlet_services */
-	  $this->AddServiceForOutlet($servicesIds,$outletIds);	
+	     $this->AddServiceForOutlet($servicesIds,$outletIds);	
       return $this->ModelHelper(true,false,'',array('insert_id'=>$last_insert_id));
     }
+
+   public function UpdateServiceCategoryBulkPackage($data,$categories,$count,$outletIds,$masterId,$packageId){   
+       $categoryBulkIndex = $data['service_category_bulk_index'];
+  
+      unset($data['service_category_bulk_index']);  
+      $result = $this->Update($data,'mss_salon_packages',array('salon_package_id'=>$packageId,'master_id'=>$masterId));
+      $last_insert_id = $packageId;
+  
+
+      //create a services packages
+        $servicesIds = array(); $data_2 = array();
+          for($i=0;$i < count($categories);$i++){
+        $serviceCount = 0;
+           /* Find Count */
+           if(!empty($categoryBulkIndex)){
+            foreach($categoryBulkIndex as $key=>$catgroup){
+              if($catgroup!='' && in_array($categories[$i],explode(',',$catgroup))){
+                $serviceCount    = (int) $count[$key];
+              }
+            }
+          }
+        
+          $sub_categories=$this->MultiWhereSelect('mss_sub_categories',array('sub_category_category_id' => $categories[$i]));
+          
+          $sub_categories=$sub_categories['res_arr'];
+          for($j=0;$j< count($sub_categories);$j++){
+          //for each sub category id -> add all services in it
+            $services_data = $this->MultiWhereSelect('master_services',array('service_sub_category_id' => $sub_categories[$j]['sub_category_id']));
+            
+            $services = $services_data['res_arr'];
+            
+            foreach($outletIds as $outletId){ 
+              foreach ($services as $service) {
+                  $data_2[] = array(
+                      'salon_package_id' => $last_insert_id,
+                      'service_id'    => 0,
+                      'discount_percentage' => 100,
+                      'service_count' => $serviceCount,
+                      'master_id' => $masterId,
+                      'master_service_id' => $service['service_id'],
+                      'outlet_id' => $outletId
+                  );
+                
+                  //$result_2 = $this->Insert($data_2,'mss_salon_package_data');
+                  $servicesIds[] = $service['service_id'];
+              }
+             }
+          }
+      }
+
+     $type = 'Service_Category_Bulk';
+   
+     $postData = array('type'=>$type,'insertData'=>$data_2,'categories'=> $categories,'count_service'=>$count);
+   
+    $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData);
+    if($messge == 'error'){
+      return $this->ModelHelper(false,true,'',array('messge' => "Somthing went wrong!Please try again later"));
+      die;
+    }else{
+      return $this->ModelHelper(true,false,'',array('messge' => $messge));
+      die;
+    }
+     
+  }
+    
 	
 	
 	public function AddDiscountCategoryBulkPackage($data,$categories,$cat_price,$discounts,$count,$outletIds,$masterId){
@@ -603,19 +668,19 @@ class MasterAdminModel extends CI_Model
         $last_insert_id = $result['res_arr']['insert_id'];
 
         //create a discounts packages
-		$servicesIds = array();
-        for($i=0;$i<count($categories);$i++){
-			
-			$serviceCount = $serviceDiscount = 0;
-			 /* Find Count */
-			 if(!empty($categoryBulkIndex)){
-				foreach($categoryBulkIndex as $key=>$catgroup){
-					if(in_array($categories[$i],explode(',',$catgroup))){
-						$serviceCount 	 	 = (int) $count[$key];
-						$serviceDiscount 	 = (int) $discounts[$key];
-					}
-				}
-			}
+    		$servicesIds = array();
+            for($i=0;$i<count($categories);$i++){
+    			
+    			$serviceCount = $serviceDiscount = 0;
+    			 /* Find Count */
+    			 if(!empty($categoryBulkIndex)){
+    				foreach($categoryBulkIndex as $key=>$catgroup){
+    					if($catgroup!="" && in_array($categories[$i],explode(',',$catgroup))){
+    						$serviceCount 	 	 = (int) $count[$key];
+    						$serviceDiscount 	 = (int) $discounts[$key];
+    					}
+    				}
+    			}
 			
 					$sub_categories=$this->MultiWhereSelect('mss_sub_categories',array('sub_category_category_id' => $categories[$i]));
 					$sub_categories=$sub_categories['res_arr'];
@@ -648,6 +713,69 @@ class MasterAdminModel extends CI_Model
         
         return $this->ModelHelper(true,false,'',array('insert_id'=>$last_insert_id));
     }
+   
+    public function UpdateDiscountCategoryBulkPackage($data,$categories,$cat_price,$discounts,$count,$outletIds,$masterId,$packageId){
+      $categoryBulkIndex = $data['service_category_bulk_index'];
+  
+      unset($data['service_category_bulk_index']);  
+      $result = $this->Update($data,'mss_salon_packages',array('salon_package_id'=>$packageId,'master_id'=>$masterId));
+      $last_insert_id = $packageId;
+
+        //create a discounts packages
+        $servicesIds = array();$data_2 = array();
+            for($i=0;$i<count($categories);$i++){
+          
+          $serviceCount = $serviceDiscount = 0;
+           /* Find Count */
+           if(!empty($categoryBulkIndex)){
+            foreach($categoryBulkIndex as $key=>$catgroup){
+              if($catgroup!="" && in_array($categories[$i],explode(',',$catgroup))){
+                $serviceCount      = (int) $count[$key];
+                $serviceDiscount   = (int) $discounts[$key];
+              }
+            }
+          }
+      
+          $sub_categories=$this->MultiWhereSelect('mss_sub_categories',array('sub_category_category_id' => $categories[$i]));
+          $sub_categories=$sub_categories['res_arr'];
+          for($j=0;$j< count($sub_categories);$j++){
+          //for each sub category id -> add all services in it
+            $services_data = $this->MultiWhereSelect('master_services',array('service_sub_category_id' => $sub_categories[$j]['sub_category_id']));
+            $services = $services_data['res_arr'];
+            
+            foreach($outletIds as $outletId){
+              for($k=0;$k< count($services);$k++) {
+                if($services[$k]['service_price_inr'] > $cat_price[$i] ){
+                  $data_2[] = array(
+                    'salon_package_id' => $last_insert_id,
+                    'service_id' => 0,
+                    'discount_percentage' => $serviceDiscount,
+                    'service_count' =>$serviceCount,
+                    'master_id' => $masterId,
+                    'master_service_id' => $services[$k]['service_id'],
+                    'outlet_id' =>$outletId
+                  );
+                  //$result_2 = $this->Insert($data_2,'mss_salon_package_data');
+                  $servicesIds[] = $services[$k]['service_id'];
+                }
+              }
+            }
+          }
+        }
+        $type = 'Discount_Category_Bulk';
+   
+      $postData = array('type'=>$type,'insertData'=>$data_2,'categories'=> $categories,'count_service'=>$count,'discounts'=>$discounts,'cat_price'=>$cat_price);
+     
+      $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData);
+      if($messge == 'error'){
+        return $this->ModelHelper(false,true,'',array('messge' => "Somthing went wrong!Please try again later"));
+        die;
+      }else{
+        return $this->ModelHelper(true,false,'',array('messge' => $messge));
+        die;
+      }
+    }
+
      public function ServiceBetweenPrice($data){
 		// $this->PrintArray($data);
         $sql="SELECT 
@@ -884,58 +1012,114 @@ class MasterAdminModel extends CI_Model
 		// exit;
         return $this->ModelHelper(true,false,'',array('insert_id'=>$last_insert_id));
     }
+
+
+  public function UpdateServiceSubCategoryBulkPackage($data, $sub_categories, $count,$outletIds,$masterId,$packageId){
+     $subCategoryBulkIndex = $data['service_sub_category_bulk_index'];
+  
+    unset($data['service_sub_category_bulk_index']);  
+    $result = $this->Update($data,'mss_salon_packages',array('salon_package_id'=>$packageId,'master_id'=>$masterId));
+    $last_insert_id = $packageId;
+
+     //create a services packages
+    $servicesIds = array();
+  
+    $data_2 = array();
+    for ($i = 0; $i < count($sub_categories); $i++) {
+       $serviceCount = 0;
+         /* Find Count */
+       if(!empty($subCategoryBulkIndex)){
+        foreach($subCategoryBulkIndex as $key=>$subCatgroup){
+          if(in_array($sub_categories[$i],explode(',',$subCatgroup))){
+            $serviceCount = (int) $count[$key];
+          }
+        }
+      }
+      
+      //for each sub category id -> add all services in it
+      $services_data = $this->MultiWhereSelect('master_services', array('service_sub_category_id' => $sub_categories[$i]));
+
+      $services = $services_data['res_arr'];
+        foreach($outletIds as $outletId){ 
+          foreach ($services as $service) {
+           $data_2[] = array(
+            'salon_package_id' => $last_insert_id,
+            'service_id' => 0,
+            'discount_percentage' => 100,
+            'service_count' => $serviceCount,
+            'master_id' => $masterId,
+            'master_service_id' => $service['service_id'],
+            'outlet_id' =>$outletId
+          );
+          // $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+          $servicesIds[] =   $service['service_id'];
+          }
+         }
+    }
+
+    $type = 'Service_SubCategory_Bulk';
+   
+    $postData = array('type'=>$type,'insertData'=>$data_2,'sub_categories'=> $sub_categories,'count_service'=>$count);
+   
+    $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData);
+    if($messge == 'error'){
+      return $this->ModelHelper(false,true,'',array('messge' => "Somthing went wrong!Please try again later"));
+      die;
+    }else{
+      return $this->ModelHelper(true,false,'',array('messge' => $messge));
+      die;
+    }
+  }  
   
   public function AddServiceSubCategoryBulkPackage($data, $sub_categories, $count,$outletIds,$masterId)
   {
     $subCategoryBulkIndex = $data['service_sub_category_bulk_index'];
-	
-	unset($data['service_sub_category_bulk_index']);
+	  unset($data['service_sub_category_bulk_index']);
     $result = $this->Insert($data, 'mss_salon_packages');
 
     $last_insert_id = $result['res_arr']['insert_id'];
 
     //create a services packages
-	$servicesIds = array();
+	  $servicesIds = array();
 	
 	
-	for ($i = 0; $i < count($sub_categories); $i++) {
-	 $serviceCount = 0;
-     /* Find Count */
-	 if(!empty($subCategoryBulkIndex)){
-		foreach($subCategoryBulkIndex as $key=>$subCatgroup){
-			if(in_array($sub_categories[$i],explode(',',$subCatgroup))){
-				$serviceCount = (int) $count[$key];
-			}
-		}
-	}
-	
+    for ($i = 0; $i < count($sub_categories); $i++) {
+    	 $serviceCount = 0;
+         /* Find Count */
+    	 if(!empty($subCategoryBulkIndex)){
+    		foreach($subCategoryBulkIndex as $key=>$subCatgroup){
+    			if(in_array($sub_categories[$i],explode(',',$subCatgroup))){
+    				$serviceCount = (int) $count[$key];
+    			}
+    		}
+    	}
+    	
       //for each sub category id -> add all services in it
       $services_data = $this->MultiWhereSelect('master_services', array('service_sub_category_id' => $sub_categories[$i]));
 
       $services = $services_data['res_arr'];
-	  foreach($outletIds as $outletId){ 
-		  foreach ($services as $service) {
-			 $data_2 = array(
-			  'salon_package_id' => $last_insert_id,
-			  'service_id' => 0,
-			  'discount_percentage' => 100,
-			  'service_count' => $serviceCount,
-			  'master_id'	=> $masterId,
-			  'master_service_id'	=> $service['service_id'],
-			  'outlet_id' =>$outletId
-			);
-			$result_2 = $this->Insert($data_2, 'mss_salon_package_data');
-			$servicesIds[] =   $service['service_id'];
-		  }
-	   }
+    	  foreach($outletIds as $outletId){ 
+    		  foreach ($services as $service) {
+    			 $data_2 = array(
+    			  'salon_package_id' => $last_insert_id,
+    			  'service_id' => 0,
+    			  'discount_percentage' => 100,
+    			  'service_count' => $serviceCount,
+    			  'master_id'	=> $masterId,
+    			  'master_service_id'	=> $service['service_id'],
+    			  'outlet_id' =>$outletId
+    			);
+    			$result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+    			$servicesIds[] =   $service['service_id'];
+    		  }
+    	   }
     }
-    /* Outlet_services */
-	$this->AddServiceForOutlet($servicesIds,$outletIds);	
+     /* Outlet_services */
+	   $this->AddServiceForOutlet($servicesIds,$outletIds);	
     return $this->ModelHelper(true, false,'',array('insert_id' => $last_insert_id));
   }
 
-  public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $discounts, $count,$outletIds,$masterId)
-  {
+public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $discounts, $count,$outletIds,$masterId){
 	$subCategoryBulkIndex = $data['service_sub_category_bulk_index'];
 	
 	unset($data['service_sub_category_bulk_index']);
@@ -946,40 +1130,99 @@ class MasterAdminModel extends CI_Model
     //create a discounts packages
 	$servicesIds = array();
     for ($i = 0; $i < count($sub_categories); $i++) {
-	  $serviceCount = 0;
-	  $serviceDiscount = 0;
-     /* Find Count */
-	 if(!empty($subCategoryBulkIndex)){
-		foreach($subCategoryBulkIndex as $key=>$subCatgroup){
-			if(in_array($sub_categories[$i],explode(',',$subCatgroup))){
-				$serviceCount 	 = (int) $count[$key];
-				$serviceDiscount = (int) $discounts[$key];
-			}
-		}
-	}
+    	  $serviceCount = 0;
+    	  $serviceDiscount = 0;$existService = false;
+             /* Find Count */
+      	 if(!empty($subCategoryBulkIndex)){
+      		foreach($subCategoryBulkIndex as $key=>$subCatgroup){
+      			if($subCatgroup!='' &&  in_array($sub_categories[$i],explode(',',$subCatgroup))){
+              $existService = true;
+      				$serviceCount 	 = (int) $count[$key];
+      				$serviceDiscount = (int) $discounts[$key];
+      			}
+      		}
+      	}
+          //for each sub category id -> add all services in it
+          $services_data = $this->MultiWhereSelect('master_services', array('service_sub_category_id' => (int) $sub_categories[$i]));
+
+         $services = $services_data['res_arr'];
+
+         foreach($outletIds as $outletId){ 
+    		  foreach ($services as $service) {
+            			$data_2 = array(
+            			  'salon_package_id' => $last_insert_id,
+            			  'service_id' => 0,
+            			  'discount_percentage' => $serviceDiscount,
+            			  'service_count' => $serviceCount,
+            			  'master_id'	=> $masterId,
+            			  'master_service_id'	=> $service['service_id'],
+            			  'outlet_id' =>$outletId
+            			);
+        			$result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+        			$servicesIds[] =   $service['service_id'];
+    		  }
+    		}
+	  }
+     /* Outlet_services */
+	  $this->AddServiceForOutlet($servicesIds,$outletIds);	
+    return $this->ModelHelper(true, false,'',array('insert_id'=>$last_insert_id));
+  }
+
+  public function UpdateDiscountSubCategoryBulkPackage($data, $sub_categories, $discounts, $count,$outletIds,$masterId,$packageId){
+  
+   $subCategoryBulkIndex = $data['service_sub_category_bulk_index'];
+  
+    unset($data['service_sub_category_bulk_index']);  
+    $result = $this->Update($data,'mss_salon_packages',array('salon_package_id'=>$packageId,'master_id'=>$masterId));
+    $last_insert_id = $packageId;
+
+
+    //create a discounts packages
+  $servicesIds = array(); $data_2 = array();
+  for ($i = 0; $i < count($sub_categories); $i++) {
+    $serviceCount = 0;
+    $serviceDiscount = 0;
+       /* Find Count */
+     if(!empty($subCategoryBulkIndex)){
+      foreach($subCategoryBulkIndex as $key=>$subCatgroup){
+            if($subCatgroup!="" &&  in_array($sub_categories[$i],explode(',',$subCatgroup))){
+            $serviceCount    = (int) $count[$key];
+            $serviceDiscount = (int) $discounts[$key];
+          }
+        }
+      }
       //for each sub category id -> add all services in it
       $services_data = $this->MultiWhereSelect('master_services', array('service_sub_category_id' => (int) $sub_categories[$i]));
 
       $services = $services_data['res_arr'];
      foreach($outletIds as $outletId){ 
-		  foreach ($services as $service) {
-			$data_2 = array(
-			  'salon_package_id' => $last_insert_id,
-			  'service_id' => 0,
-			  'discount_percentage' => $serviceDiscount,
-			  'service_count' => $serviceCount,
-			  'master_id'	=> $masterId,
-			  'master_service_id'	=> $service['service_id'],
-			  'outlet_id' =>$outletId
-			);
-			$result_2 = $this->Insert($data_2, 'mss_salon_package_data');
-			$servicesIds[] =   $service['service_id'];
-		  }
-		}
-	}
-    /* Outlet_services */
-	$this->AddServiceForOutlet($servicesIds,$outletIds);	
-    return $this->ModelHelper(true, false,'',array('insert_id'=>$last_insert_id));
+          foreach ($services as $service) {
+          $data_2[] = array(
+            'salon_package_id' => $last_insert_id,
+            'service_id' => 0,
+            'discount_percentage' => $serviceDiscount,
+            'service_count' => $serviceCount,
+            'master_id' => $masterId,
+            'master_service_id' => $service['service_id'],
+            'outlet_id' =>$outletId
+          );
+          //$result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+          $servicesIds[] =   $service['service_id'];
+          }
+        }
+      }
+     $type = 'Discount_SubCategory_Bulk';
+   
+     $postData = array('type'=>$type,'insertData'=>$data_2,'sub_categories'=> $sub_categories,'discounts'=>$discounts,'count_service'=>$count);
+   
+    $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData);
+    if($messge == 'error'){
+      return $this->ModelHelper(false,true,'',array('messge' => "Somthing went wrong!Please try again later"));
+      die;
+    }else{
+      return $this->ModelHelper(true,false,'',array('messge' => $messge));
+      die;
+    }
   }
   
   function copyMasterServicesToServiceTable($masterServicesIds){
@@ -1046,23 +1289,46 @@ class MasterAdminModel extends CI_Model
   /* Get all records from package data table for given package Id */
   /* Search records from existing records which one (outlet Id) is exist for give package Id */
   /* Skip those Outlet Ids which are exist if not then Temp Delete from package data Table */
-  public function UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$type,$insertData=array()){
+  public function UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData){
+     
+      $type = $postData['type'];
+      $insertData = !empty($postData['insertData']) ? $postData['insertData'] : array();
+      $services = isset($postData['services']) ? $postData['services'] : '';
+      $discounts = (isset($postData['discounts'])) ? $postData['discounts'] : 0;
+
+      $counts = (isset($postData['count_service'])) ? $postData['count_service'] : 0;
+      $count_discount = isset($postData['count_discount']) ? $postData['count_discount'] : '';
+      $sub_categories = isset($postData['sub_categories']) ? $postData['sub_categories'] : array();
+      $categories = isset($postData['categories']) ? $postData['categories'] : array();
+      $cat_price = isset($postData['cat_price']) ? $postData['cat_price'] : array();
+      
+
       $messge = "";
       $notExist = $notExistServiceId = $masterServiceOutletId  = array();
       $recordNotExist = $insertRecords = $updateRecord = FALSE; 
       $result = $this->MultiWhereSelect('mss_salon_package_data', array('salon_package_id'=>$packageId,'master_id'=>$masterId,'is_active'=>'1'));
-
+        
       $assignOutletIds   = $outletIds;
       $assignServiceIds  = $insertData;
      /* Insert data if empty */
       if(empty($result['res_arr'])){
-        if($type=='Wallet'){
-           $result = $this->AddWalletPackageForSalon($data,$outletIds,$masterId,$packageId);
-        }elseif($type=='Services'){
-          $result = $this->AddServicePackageForSalon($data,$outletIds,$masterId,$packageId);
-        }elseif($type=='Discount'){
-          $result = $this->AddDiscountPackageForSalon($data,$outletIds,$masterId,$packageId);
-        }
+              if($type=='Wallet'){
+                 $result = $this->AddWalletPackageForSalon($data,$outletIds,$masterId,$packageId);
+              }elseif($type=='Services'){
+                $result = $this->AddServicePackageForSalon($data,$services,$counts,$outletIds,$masterId,$packageId);
+              }elseif($type=='Discount'){
+                $result = $this->AddDiscountPackageForSalon($data,$services,$discounts,$count_discount,$outletIds,$masterId,$packageId);
+              }elseif($type=='Service_SubCategory_Bulk'){
+              $result = $this->AddServiceSubCategoryBulkPackage($data,$sub_categories,$counts,$outletIds,$masterId,$packageId);
+            }elseif($type=='Discount_SubCategory_Bulk'){
+               $result = $this->AddDiscountSubCategoryBulkPackage($data,$sub_categories,$discounts,$counts,$outletIds,$masterId,$packageId);
+             }elseif($type=='Service_Category_Bulk'){
+               $result = $this->AddServiceCategoryBulkPackage($data,$categories,$counts,$outletIds,$masterId,$packageId);
+             }elseif($type=='Discount_Category_Bulk'){
+               $result = $this->AddDiscountCategoryBulkPackage($data,$categories, $cat_price, $discounts,$counts,$outletIds,$masterId,$packageId);
+             }elseif($type=='special_membership'){
+              // $result = $this->AddDiscountServicePackage($data,$outletIds,$masterId,$packageId);
+             }
         if($result['success'] == 'true'){
           $messge = "Product has been Updated successfully!";
          }elseif($result['error'] == 'true'){
@@ -1082,7 +1348,7 @@ class MasterAdminModel extends CI_Model
                       while (($key = array_search($packageData['outlet_id'], $assignOutletIds)) !== false){
                         unset($assignOutletIds[$key]);
                       }  
-                     }elseif($type=='Services' || $type=='Discount'){
+                     }else{
                       /* Check master Service id  */
                        if(!empty($insertData)){
                          
@@ -1138,7 +1404,7 @@ class MasterAdminModel extends CI_Model
 
             if($type=='Wallet'){
                $insertRecords = (!empty($assignOutletIds)) ? TRUE : FALSE;
-            }elseif($type=='Services' || $type=='Discount'){
+            }else{
                $insertRecords = (!empty($assignServiceIds)) ? TRUE : FALSE;
             }
            
@@ -1163,7 +1429,7 @@ class MasterAdminModel extends CI_Model
                       $insertData['master_id'] = $masterId;
                       $recordInsert[] = $insertData;
                     }// End Loop
-                 }elseif($type=='Services' || $type=='Discount'){
+                 }else{
                     $recordInsert = $assignServiceIds;
                  }
                  
@@ -1237,8 +1503,9 @@ class MasterAdminModel extends CI_Model
       }/* End For */
     }/* End Foreach Loop */
     
-    $type = 'Services';
-    $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$type,$data_2);
+    $postData = array('type'=>$type,'insertData'=>$data_2,'services'=> $services,'count_service'=>$count_service);
+   
+    $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId, $postData);
     if($messge == 'error'){
       return $this->ModelHelper(false,true,'',array('messge' => "Somthing went wrong!Please try again later"));
       die;
@@ -1308,7 +1575,7 @@ class MasterAdminModel extends CI_Model
   //$services = $this->copyMasterServicesToServiceTable($masterServices);
    
 
-    $count = 0; $data_2=array();
+    $count = 0; $data_2=array();$serviceExist = false;
     //create a discounts packages
     foreach($outletIds as $outletId){    
     for ($i = 0; $i < count($services); $i++) {
@@ -1319,29 +1586,34 @@ class MasterAdminModel extends CI_Model
          if(!empty($serviceIdIndex)){
           foreach($serviceIdIndex as $key=>$serviceDiscountGroup){
             if($serviceDiscountGroup!="" && in_array($services[$i],explode(',',$serviceDiscountGroup))){
+              $serviceExist = true;
               $serviceCount    = (int) $count_discount[$key];
               $serviceDiscount = (int) $discounts[$key];
             }
           }
         }   
-          $data_2[] = array(
-          'salon_package_id' => $last_insert_id,
-          'service_id' => 0,
-          'discount_percentage' => $serviceDiscount,
-          'service_count' => $serviceCount,
-          'master_id' => $masterId,
-          'master_service_id' => (int) $services[$i],
-          'outlet_id' => $outletId
-          );
-          //$result_2 = $this->Insert($data_2, 'mss_salon_package_data');
-
+        if($serviceExist){
+            $data_2[] = array(
+            'salon_package_id' => $last_insert_id,
+            'service_id' => 0,
+            'discount_percentage' => $serviceDiscount,
+            'service_count' => $serviceCount,
+            'master_id' => $masterId,
+            'master_service_id' => (int) $services[$i],
+            'outlet_id' => $outletId
+            );
+            //$result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+         }
         }
       }/* End Foreach Loop */
-    
+      
       $type = 'Discount';
-      $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$type,$data_2);
+      $postData = array('type'=>$type,'insertData'=>$data_2,'services'=> $services,'discounts'=>$discounts,'count_discount'=>$count_discount);
+   
+      
+      $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData);
       if($messge == 'error'){
-        return $this->ModelHelper(false,true,'',array('messge' => "Somthing went wrong!Please try again later"));
+        return $this->ModelHelper(false,true,'',array('messge' => "Somthing went wrong!Please try agin later"));
         die;
       }else{
         return $this->ModelHelper(true,false,'',array('messge' => $messge));
@@ -1361,7 +1633,7 @@ public function AddDiscountPackageForSalon($data, $services, $discounts, $count_
     $last_insert_id = $result['res_arr']['insert_id'];
 	/* Copy all master services which are bind to this package to the service table */	
 	//$services = $this->copyMasterServicesToServiceTable($masterServices);
-	 
+
 
     $count = 0;
     //create a discounts packages
@@ -1370,29 +1642,33 @@ public function AddDiscountPackageForSalon($data, $services, $discounts, $count_
 		  
     		  $serviceCount = 0;
     		  $serviceDiscount = 0;
+          $serviceExist = false;
     		 /* Find Count */
     		 if(!empty($serviceIdIndex)){
     			foreach($serviceIdIndex as $key=>$serviceDiscountGroup){
     				if($serviceDiscountGroup!="" && in_array($services[$i],explode(',',$serviceDiscountGroup))){
-    					$serviceCount 	 = (int) $count_discount[$key];
+              $serviceExist = true;
+             	$serviceCount 	 = (int) $count_discount[$key];
     					$serviceDiscount = (int) $discounts[$key];
     				}
     			}
-    		}		
-    		  $data_2 = array(
-    			'salon_package_id' => $last_insert_id,
-    			'service_id' => 0,
-    			'discount_percentage' => $serviceDiscount,
-    			'service_count' => $serviceCount,
-    			'master_id'	=> $masterId,
-    			'master_service_id' => (int) $services[$i],
-    			'outlet_id' => $outletId
-    		  );
-    		  $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
-
+    		}	
+          if($serviceExist){	
+        		  $data_2 = array(
+        			'salon_package_id' => $last_insert_id,
+        			'service_id' => 0,
+        			'discount_percentage' => $serviceDiscount,
+        			'service_count' => $serviceCount,
+        			'master_id'	=> $masterId,
+        			'master_service_id' => (int) $services[$i],
+        			'outlet_id' => $outletId
+        		  );
+        		  $result_2 = $this->Insert($data_2, 'mss_salon_package_data');
+              //$result_21[] = $data_2;
+            }
     		}
     	}
-
+   
     if ($last_insert_id>0){ 
       /* Outlet_services */
 	  //$this->AddServiceForOutlet($services,$outletIds);			

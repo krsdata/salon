@@ -3330,6 +3330,7 @@ class MasterAdmin extends CI_Controller {
 				$servicesIds =  implode(',',$_GET['sub_category_id']);
 			
 				$data = $this->MasterAdminModel->getMasterServicesBySubCatIds($servicesIds);
+
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
 				die;
@@ -3888,9 +3889,12 @@ class MasterAdmin extends CI_Controller {
 	 * @Function : Package Management & Add new Package into Master Table 
 	*/
 	public function MasterAdminAddPackage(){
+
 		if($this->IsLoggedIn('master_admin')){
+
 			// $this->PrettyPrintArray($_POST);
 			if(isset($_POST) && !empty($_POST)){
+
 				$this->form_validation->set_rules('salon_package_name', 'Package Name', 'trim|required|max_length[50]');
 				$this->form_validation->set_rules('salon_package_price', 'Package Price', 'trim|required');
 				$this->form_validation->set_rules('salon_package_gst', 'Package GST', 'trim|required');
@@ -4011,10 +4015,11 @@ class MasterAdmin extends CI_Controller {
 					}
 					elseif($data['salon_package_type'] == "Discount"){
 						$data['salon_package_type_selected'] = $data['salon_package_type'];
-						$data['service_id_index'] =  $this->input->post('service_id_index');
+						$data['service_id_index'] =  $this->input->post('discount_id_index');
 						
 						$services = $this->input->post('service_id');
 						$discounts =  $this->input->post('discount');
+
 						$counts = $this->input->post('count_discount');
 						
 						if(!empty($services) && !empty($discounts) && !empty($counts)){
@@ -4057,29 +4062,32 @@ class MasterAdmin extends CI_Controller {
 						$counts = $this->input->post('count_service_subcategory_bulk');
 						
 						
-						if($packageId>0 && $packageId!=""){
-									
-							//$result = $this->MasterAdminModel->UpdateServiceSubCategoryBulkPackage($data,$sub_categories,$counts,$outletIds,$masterId,$packageId);
-							//$message = $result['res_arr']['message']!="" ? $result['res_arr']['message'] : "Package Updated successfully!";
+							if($packageId>0 && $packageId!=""){
+										
+								$result = $this->MasterAdminModel->UpdateServiceSubCategoryBulkPackage($data,$sub_categories,$counts,$outletIds,$masterId,$packageId);
+								$message = $result['res_arr']['message']!="" ? $result['res_arr']['message'] : "Package Updated successfully!";
 
-						}else{
-							if(!empty($sub_categories) && !empty($counts)){
-								
-								$result = $this->MasterAdminModel->AddServiceSubCategoryBulkPackage($data,$sub_categories,$counts,$outletIds,$masterId);
-								/* Associate Package with multiple outlet*/ 
-								$packageId = $result['res_arr']['insert_id'];
-								
-								$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
-								
-							}
-						}						
+							}else{
+								if(!empty($sub_categories) && !empty($counts)){
+									
+									$result = $this->MasterAdminModel->AddServiceSubCategoryBulkPackage($data,$sub_categories,$counts,$outletIds,$masterId);
+									/* Associate Package with multiple outlet*/ 
+									$packageId = $result['res_arr']['insert_id'];
+									
+									//$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+									
+								    $message = "Package added successfully!";
+								}else{
+									$message = 'Please Select at least one category with count!';
+								}
+							}						
 
 						    if($result['success'] == 'true'){
-								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								$this->ReturnJsonArray(true,false,$message);
 								die;
 							}
 							elseif($result['error'] == 'true'){
-								$this->ReturnJsonArray(false,true,$result['message']);
+								$this->ReturnJsonArray(false,true,);
 								die;
 							}
 						
@@ -4098,16 +4106,25 @@ class MasterAdmin extends CI_Controller {
 						$counts = $this->input->post('count_discount_subcategory_bulk');
 					
 						if(!empty($sub_categories) && !empty($discounts) && !empty($counts)){
+							
+						if($packageId>0 && $packageId!=""){
+									
+							$result = $this->MasterAdminModel->UpdateDiscountSubCategoryBulkPackage($data,$sub_categories,$discounts,$counts,$outletIds,$masterId,$packageId);
+							$message = $result['res_arr']['message']!="" ? $result['res_arr']['message'] : "Package Updated successfully!";
+
+						}else{		
+
 							$result = $this->MasterAdminModel->AddDiscountSubCategoryBulkPackage($data,$sub_categories,$discounts,$counts,$outletIds,$masterId);
 							
 							/* Associate Package with multiple outlet*/ 
 							$packageId = $result['res_arr']['insert_id'];
-							
-							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+							$message = "Package added successfully!";
+						}	
+							//$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
 							
 							
 							if($result['success'] == 'true'){
-								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								$this->ReturnJsonArray(true,false,$message);
 								die;
 							}
 							elseif($result['error'] == 'true'){
@@ -4125,19 +4142,29 @@ class MasterAdmin extends CI_Controller {
 						$data['salon_package_type_selected'] = $data['salon_package_type'];
 						$data['salon_package_type'] = 'Services';
 						$data['service_category_bulk_index'] =  $this->input->post('service_category_bulk_index');
-					
+					  
 						$categories = $this->input->post('service_category_bulk'); 
 						$counts = $this->input->post('count_service_category_bulk');
 						if(!empty($categories) && !empty($counts)){
-							// $this->PrettyPrintArray($categories);
-							$result = $this->MasterAdminModel->AddServiceCategoryBulkPackage($data,$categories,$counts,$outletIds,$masterId);
-							/* Associate Package with multiple outlet*/ 
-							$packageId = $result['res_arr']['insert_id'];
-							
-							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+
+							if($packageId>0 && $packageId!=""){
+								
+								$result = $this->MasterAdminModel->UpdateServiceCategoryBulkPackage($data,$categories,$counts,$outletIds,$masterId,$packageId);
+								$message = $result['res_arr']['message']!="" ? $result['res_arr']['message'] : "Package Updated successfully!";
+
+							}else{	
+
+								// $this->PrettyPrintArray($categories);
+								$result = $this->MasterAdminModel->AddServiceCategoryBulkPackage($data,$categories,$counts,$outletIds,$masterId);
+								/* Associate Package with multiple outlet*/ 
+								$packageId = $result['res_arr']['insert_id'];
+								$message = "Package added successfully!";
+							}
+
+							//$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
 							
 							if($result['success'] == 'true'){
-								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								$this->ReturnJsonArray(true,false,$message);
 								die;
 							}
 							elseif($result['error'] == 'true'){
@@ -4161,14 +4188,25 @@ class MasterAdmin extends CI_Controller {
 						$counts    = $this->input->post('count_discount_category_bulk');
 					
 						if(!empty($categories) && !empty($discounts) && !empty($counts)){
-							$result = $this->MasterAdminModel->AddDiscountCategoryBulkPackage($data,$categories, $cat_price, $discounts,$counts,$outletIds,$masterId);
-							/* Associate Package with multiple outlet*/ 
-							$packageId = $result['res_arr']['insert_id'];
 							
-							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+						  if($packageId>0 && $packageId!=""){
+									
+								$result = $this->MasterAdminModel->UpdateDiscountCategoryBulkPackage($data,$categories, $cat_price, $discounts,$counts,$outletIds,$masterId,$packageId);
+								$message = $result['res_arr']['message']!="" ? $result['res_arr']['message'] : "Package Updated successfully!";
+
+							}else{	
+	
+								$result = $this->MasterAdminModel->AddDiscountCategoryBulkPackage($data,$categories, $cat_price, $discounts,$counts,$outletIds,$masterId);
+								/* Associate Package with multiple outlet*/ 
+								$packageId = $result['res_arr']['insert_id'];
+
+								$message = "Package added successfully!";
+								
+							}
+							//$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
 							
 							if($result['success'] == 'true'){
-								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								$this->ReturnJsonArray(true,false,$message);
 								die;
 							}
 							elseif($result['error'] == 'true'){

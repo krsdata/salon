@@ -56,7 +56,7 @@
 									</div>	
 									<div class="col-md-6">
 										 <!--<button class="btn btn-success float-right"  id="openAssignPackages" style="margin-left:1vw;"><i class="fas fa-caret-square-right"></i> Assign Package</button>-->
-										<button class="btn btn-success float-right"  id="openAddPackageWindow" ><i class="fas fa-fw fa-plus"></i>Create New Package</button>
+										<button class="btn btn-success float-right resetForm"  id="openAddPackageWindow" ><i class="fas fa-fw fa-plus"></i>Create New Package</button>
 									
 										
 									</div>
@@ -305,7 +305,7 @@
 																						<div class="form-group">
 																							<label>Service</label>
 																							<select id="service_id_discount" multiple class="form-control" name="service_id[]" temp="Service">
-																							</select><input type="hidden" name="service_id_index[]" />
+																							</select><input type="hidden" name="discount_id_index[]" />
 																						</div>
 																					</td>
 																					<!--<td>
@@ -1051,7 +1051,7 @@
 					
 					htmlContent +='</select></div></td>';
 					htmlContent +='<td><div class="form-group"><label>Service</label>';
-					htmlContent +='<select class="form-control" name="service_id[]" temp="Service" multiple></select></div>';
+					htmlContent +='<select class="form-control" name="service_id[]" temp="Service" multiple></select><input type="hidden" name="discount_id_index[]" /></div>';
 					//htmlContent +='</td><td><div class="form-group" ><label>Price</label><input type="text" class="form-control" name="service_price_inr" temp="service_price_inr"></div></td>';
 					htmlContent +='<td><div class="form-group"><label>Discount</label><input type="number" min="0" max="100" class="form-control" name="discount[]" temp="Discount"></div></td>';
 					htmlContent +='<td><div class="form-group"><label>Count</label><input type="number" class="form-control" name="count_discount[]" temp="Count" value="1" min="1" max="25"></select></div></td></tr>';
@@ -1201,6 +1201,8 @@
 		}
 			
 	function getServiceSubCategoryById(parameters,serviceDetails,objId){
+		
+		
 				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatMultipleIds", parameters)
 				.done(function(data, textStatus, jqXHR) {
 					   console.log(serviceDetails);
@@ -1399,6 +1401,7 @@
 											      
 											   
 											  }else if(tableId=='serviceTable' || tableId=='discountTable'){  
+													
 													$.each(serviceDetails, function(key1, service) {
 													   
 														 $("#"+tableId+" tr:last select[name='service_sub_category_id[]'] option").filter(function() { 
@@ -1417,6 +1420,8 @@
 														$('#discountTable tr:last input[name="count_discount[]"]').attr('value',key); 
 														$('#discountTable tr:last input[name="discount[]"]').attr('value',serviceDetails[0].discount_percentage); 
 												   }
+												 
+
 											  }
 											  
 										}else{
@@ -1497,7 +1502,14 @@
 
 		initializeAllDropDown(multiSelectParamsDataForOutlets,multiSelectParamsData,multiSelectParamsData1,multiSelectParamsCategoryTpe);
 
-		
+		$(".resetForm").click(function(event){ 
+          /*
+             	$("#AddPackage").find("input, select, textarea").val("");
+				$("#AddPackage").find("input[name=salon_package_name]").val("");
+		        var isClearSelection = true;
+				initializeAllDropDown(isClearSelection,multiSelectParamsDataForOutlets,multiSelectParamsData,multiSelectParamsData1,multiSelectParamsCategoryTpe); 
+		   */
+		});
 		$("#openAddPackageWindow").click(function(event){
 			
 			event.preventDefault();	
@@ -1505,13 +1517,15 @@
 			$("#hd_salon_package_outlet_id").val("0");
 			$("#hd_salon_package_id").val("0");
 			
-			/*$("#AddPackage").find("input, select, textarea").val("");
-			$("#AddPackage").find("input[name=salon_package_name]").val("");
-			var isClearSelection = true;
-			initializeAllDropDown(isClearSelection,multiSelectParamsDataForOutlets,multiSelectParamsData,multiSelectParamsData1,multiSelectParamsCategoryTpe); */
+
 			$('#ModalAddPackage').modal({ show: true });
 
+
 		});
+
+
+		
+
 		
 		
 		$("#openAssignPackages").on('click', function () {
@@ -1917,25 +1931,40 @@
 				},
 				submitHandler: function(form) {
 					$("#serviceTable tr").each(function(i){
+					 if($(this).find("td select[name='service_id[]']").val()!=''){	
 						$(this).find('td input[name="service_id_index[]"]').val($(this).find("td select[name='service_id[]']").val());
+					 }
 					});
 					$("#discountTable tr").each(function(i){
-						$(this).find('td input[name="service_id_index[]"]').val($(this).find("td select[name='service_id[]']").val());
+						console.log($(this).find("td select[name='service_id[]']").val());
+					 if($(this).find("td select[name='service_id[]']").val()!=''){		
+						$(this).find('td input[name="discount_id_index[]"]').val($(this).find("td select[name='service_id[]']").val());
+					 }
 					});
 					$("#serviceSubCategoryBulkTable tr").each(function(i){
+					  if($(this).find("td select[name='service_sub_category_bulk[]']").val()!=""){	
 						$(this).find('td input[name="service_sub_category_bulk_index[]"]').val($(this).find("td select[name='service_sub_category_bulk[]']").val());
+					  }
 					});
 					$("#discountSubCategoryBulkTable tr").each(function(i){
+					  if($(this).find("td select[name='service_sub_category_bulk[]']").val()!=""){	
 						$(this).find('td input[name="service_sub_category_discount_bulk_index[]"]').val($(this).find("td select[name='service_sub_category_bulk[]']").val());
+					  }
 					});
 					$("#serviceCategoryBulkTable tr").each(function(i){
-						$(this).find('td input[name="service_category_bulk_index[]"]').val($(this).find("td select[name='service_category_bulk[]']").val());
+						if($(this).find("td select[name='service_category_bulk[]']").val()!=''){
+						   $(this).find('td input[name="service_category_bulk_index[]"]').val($(this).find("td select[name='service_category_bulk[]']").val());
+						}
 					});
 					$("#discountCategoryBulkTable tr").each(function(i){
+					  if($(this).find("td select[name='discount_service_category_bulk[]']").val()!=""){	
 						$(this).find('td input[name="service_discount_category_bulk_index[]"]').val($(this).find("td select[name='discount_service_category_bulk[]']").val());
+					  }
 					});
 					$("#specialMembershipTable1 tr").each(function(i){
+					  if($(this).find("td select[name='category_type1[]']").val()!=''){	
 						$(this).find('td input[name="category_type1_index[]"]').val($(this).find("td select[name='category_type1[]']").val());
+					  }
 					});
 
 					
