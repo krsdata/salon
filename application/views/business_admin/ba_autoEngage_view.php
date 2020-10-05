@@ -24,7 +24,7 @@
 			$outlets = [];
 			foreach ($business_outlet_details as $key => $b) {
 				$outlets[$b['business_outlet_id']] = $b['business_outlet_name'];
-			}			 
+			}			 			
 		?>
 		<main class="content">
 			<div class="container-fluid p-0">
@@ -69,6 +69,9 @@
 								<div class="col-md-8">
 									<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight: bolder">
 										<li class="nav-item">
+											<a class="nav-link active" data-toggle="tab" href="#tab-1">Control SMS Activity</a>
+										</li>
+										<!-- <li class="nav-item">
 											<a class="nav-link active" data-toggle="tab" href="#tab-1">Marketing</a>
 										</li>
 										<li class="nav-item">
@@ -76,7 +79,7 @@
 										</li>
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-3">Staff</a>
-										</li>
+										</li> -->
 									</ul>
 								</div>
 								<div class="col-md-4">
@@ -97,6 +100,152 @@
 													</div>
 													<div class="card-body">
 														<table class="datatables-basic table table-hover" style="width:100%;">
+															<thead>
+																<th> S. No.</th>
+																<th>Trigger Name</th>
+																<th>Outlet Applicable</th>
+																<th>Action</th>
+															</thead>
+															<tbody>
+																<?php
+																	$index = 1;
+																	foreach ($business_outlet_details as $outlet) {
+																		?>
+																		<tr>
+																			<td><?php echo ++$i?></td>
+																			<td><?php echo 'Before Appointment SMS'?></td>
+																			<td><?php echo $outlet['business_outlet_name']?></td>
+																			<td><?php
+																				if(in_array($outlet['business_outlet_id']."_1", $activity)){
+																			?>
+																				<button type="button" service_id="1" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="0">
+																					<i class="align-middle" data-feather="unlock"></i>
+																				</button>
+																			<?php
+																				}
+																				else{
+																			?>
+																				<button type="button"  service_id="1" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="1">
+																					<i class="align-middle" data-feather="lock"></i>
+																				</button>
+																			<?php
+																				}
+																			?></td>
+																			</tr>
+																		<tr>
+																			<td><?php echo ++$i?></td>
+																			<td><?php echo 'Day Closing Report'?></td>
+																			<td><?php echo $outlet['business_outlet_name']?></td>
+																			<td><?php
+																				if(in_array($outlet['business_outlet_id']."_2", $activity)){
+																			?>
+																				<button type="button"  service_id="2" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="0">
+																					<i class="align-middle" data-feather="unlock"></i>
+																				</button>
+																			<?php
+																				}
+																				else{
+																			?>
+																				<button type="button"  service_id="2" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="1">
+																					<i class="align-middle" data-feather="lock"></i>
+																				</button>
+																			<?php
+																				}
+																			?></td>
+																			</tr>
+																			<tr>
+																			<td><?php echo ++$i?></td>
+																			<td><?php echo 'Generate Report SMS[Weekly]'?></td>
+																			<td><?php echo $outlet['business_outlet_name']?></td>
+																			<td><?php
+																				if(in_array($outlet['business_outlet_id']."_3", $activity)){
+																			?>
+																				<button type="button"  service_id="3" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="0">
+																					<i class="align-middle" data-feather="unlock"></i>
+																				</button>
+																			<?php
+																				}
+																				else{
+																			?>
+																				<button type="button"  service_id="3" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="1">
+																					<i class="align-middle" data-feather="lock"></i>
+																				</button>
+																			<?php
+																				}
+																			?></td>
+																			</tr>
+																			</tr>
+																			<tr>
+																			<td><?php echo ++$i?></td>
+																			<td><?php echo 'Pending Amount SMS[Weekly]'?></td>
+																			<td><?php echo $outlet['business_outlet_name']?></td>
+																			<td><?php
+																				if(in_array($outlet['business_outlet_id']."_4", $activity)){
+																			?>
+																				<button type="button"  service_id="4" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="0">
+																					<i class="align-middle" data-feather="unlock"></i>
+																				</button>
+																			<?php
+																				}
+																				else{
+																			?>
+																				<button type="button"  service_id="4" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="1">
+																					<i class="align-middle" data-feather="lock"></i>
+																				</button>
+																			<?php
+																				}
+																			?></td>
+																			</tr>
+																			</tr>
+																			<tr>
+																			<td><?php echo ++$i?></td>
+																			<td><?php echo 'Generate Report SMS[Monthly]'?></td>
+																			<td><?php echo $outlet['business_outlet_name']?></td>
+																			<td><?php
+																				if(in_array($outlet['business_outlet_id']."_5", $activity)){
+																			?>
+																				<button type="button"  service_id="5" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="0">
+																					<i class="align-middle" data-feather="unlock"></i>
+																				</button>
+																			<?php
+																				}
+																				else{
+																			?>
+																				<button type="button"  service_id="5"  class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="1">
+																					<i class="align-middle" data-feather="lock"></i>
+																				</button>
+																			<?php
+																				}
+																			?></td>
+																			</tr>
+																			</tr>
+																			<tr>
+																			<td><?php echo ++$i?></td>
+																			<td><?php echo 'Pending Amount SMS[Monthly]'?></td>
+																			<td><?php echo $outlet['business_outlet_name']?></td>
+																			<td><?php
+																				if(in_array($outlet['business_outlet_id']."_6", $activity)){
+																			?>
+																				<button type="button"  service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="0">
+																					<i class="align-middle" data-feather="unlock"></i>
+																				</button>
+																			<?php
+																				}
+																				else{
+																			?>
+																				<button type="button"  service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?=$outlet['business_outlet_id']?>" is_active="1">
+																					<i class="align-middle" data-feather="lock"></i>
+																				</button>
+																			<?php
+																				}
+																			?></td>
+																			</tr>
+																		<?php
+																	}
+																?>													
+															</tbody>
+														</table>
+														<!-- <table class="datatables-basic table table-hover" style="width:100%;">
 															<thead>
 																<th> S. No.</th>
 																<th>Trigger Name</th>
@@ -146,7 +295,7 @@
 																?>
 																
 															</tbody>
-														</table>
+														</table> -->
 													</div>
 												</div>
 											</div>
@@ -1057,11 +1206,12 @@ $(document).on('click','.deleteSMSTrigBtn',function(event) {
 				
       var parameters = {
         auto_engage_id : $(this).attr('auto_engage_id'),
-				is_active			 : $(this).attr('is_active')
+				is_active			 : $(this).attr('is_active'),
+				service_id			 : $(this).attr('service_id')
 			
       };
 			$.ajax({
-				url: "<?=base_url()?>BusinessAdmin/CancelSMSTrigger",
+				url: "<?=base_url()?>BusinessAdmin/ActivateSMSTrigger",
 				data: parameters,
 				type: "POST",
 				// crossDomain: true,

@@ -5579,7 +5579,20 @@ public function GetEmployee(){
                     if($trigger_detail['success']){
                         $data['trigger_detail'] = $trigger_detail['res_arr'];
                     }                    
-
+                    $outlet = [];
+                    foreach ($data['business_outlet_details'] as $key => $ol) {
+                        $outlet[] = $ol['business_outlet_id'];
+                    }
+                    
+                    $activity =$this->BusinessAdminModel->GetOutLetSMSActivity($outlet);
+                    $ac = [];
+                    if($activity['success']){
+                        $activity = $activity['res_arr'];                        
+                        foreach ($activity as $key => $a) {
+                            $ac[] = $a['outlet_id']."_".$a['services_number'];
+                        }
+                    }  
+                    $data['activity'] = $ac;                                      
 					$this->load->view('business_admin/ba_autoEngage_view',$data);
 			}
 			else{
@@ -12593,6 +12606,53 @@ public function daybook(){
                 $this->LogoutUrl(base_url()."BusinessAdmin/");
             }   
         }
+
+    
+    public function ActivateSMSTrigger(){
+        if($this->IsLoggedIn('business_admin')){
+                // $this->PrettyPrintArray($_POST);
+                // exit;
+                if(isset($_POST) && !empty($_POST)){
+                    $this->form_validation->set_rules('auto_engage_id', 'Auto Engage', 'trim|required');            
+    
+                    if ($this->form_validation->run() == FALSE) 
+                    {
+                        $data = array(
+                                        'success' => 'false',
+                                        'error'   => 'true',
+                                        'message' =>  validation_errors()
+                                    );
+                        header("Content-type: application/json");
+                        print(json_encode($data, JSON_PRETTY_PRINT));
+                        die;
+                    }
+                    else{
+                        $data = array(
+                            'outlet_id'    => $this->input->post('auto_engage_id'),
+                            'is_active'=>$this->input->post('is_active'),
+                            'services_number    '=>$this->input->post('service_id'),
+                        );                    
+                        if($this->input->post('is_active') == 0){
+                            unset($data['is_active']);
+                            $result = $this->BusinessAdminModel->DeleteSMSActivity('sms_activity',$data);                           
+                        }else{
+                            $result = $this->BusinessAdminModel->Insert($data,'sms_activity');
+                        }                        
+                        if($result['success'] == 'true'){
+                            $this->ReturnJsonArray(true,false,"Trigger Saved Successfully!");
+                            die;
+                        }
+                        elseif($result['error'] == 'true'){
+                            $this->ReturnJsonArray(false,true,$result['message']);
+                            die;
+                        }
+                    }
+                }
+            }
+            else{
+                $this->LogoutUrl(base_url()."BusinessAdmin/");
+            }
+    }
 
 }
 

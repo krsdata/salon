@@ -10327,4 +10327,29 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
         }
     }
 
+    public function DeleteSMSActivity($table_name,$where){
+        $this->db->where($where);
+        $this->db->delete($table_name);
+
+        if (!$this->db->affected_rows()) {
+            $result = 'Error! ID ['.$data.'] not found';
+            return $this->ModelHelper(false,true,$result);
+        } 
+        else{
+            return $this->ModelHelper(true,false);
+        }
+    }
+
+    public function GetOutLetSMSActivity($outlet){
+        $outlet = implode(",", $outlet);
+        $sql = "SELECT outlet_id,services_number FROM `sms_activity` where outlet_id in ($outlet)";
+         $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
+
 }

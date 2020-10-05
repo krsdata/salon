@@ -1,5 +1,3 @@
-
-
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -19,7 +17,9 @@ class Crone extends CI_Controller {
 		if(empty($outlets))
 			return true;
 
+
 		foreach ($outlets['res_arr'] as $key => $ol) {
+
 			$detail = $this->CronModel->DetailsById($ol['business_admin_id'],date('Y-m-d'));
 			$data['visit'] = 0;
 			if($detail['success'])
@@ -231,19 +231,33 @@ die;
 
     public function sendSMSBeforeAppointment(){
         $now = date("H");
-        if ($now < "10" || $now > "22") {
-            die();
-        }
+        // if ($now < "10" || $now > "22") {
+        //     die();
+        // }
         $this->load->model('CronModel');
+        $this->load->model('BusinessAdminModel');
         $result = $this->CronModel->getAppointmentRecord();
-        // echo $this->db->last_query();
-        // echo "<pre>";
-        // print_r($result);
-        // die;
+        #echo $this->db->last_query();
+        
         if($result['success']){
             $record = $result['res_arr']['appointment_record'];
 
             foreach ($record as $key => $r) {
+
+                $activity =$this->BusinessAdminModel->GetOutLetSMSActivity([$r['business_outlet_id']]);
+
+                $ac = [];
+                if($activity['success']){
+                    $activity = $activity['res_arr'];                        
+                    foreach ($activity as $key => $a) {
+                        $ac[] = $a['outlet_id']."_".$a['services_number'];
+                    }
+                }
+
+                if(!in_array($r['business_outlet_id']."_1", $ac)){               
+                    continue;
+                }
+
 
                 $exp_message = "Dear ".$r['employee_first_name'].",You've an upcoming service with ".$r['customer_name'].", ".$r['customer_mobile']." in 30mins. Please be ready to serve the patron with your best expertise."; 
                 
@@ -298,12 +312,27 @@ die;
 
     public function dayClosingReport(){
         $this->load->model('CronModel');
+        $this->load->model('BusinessAdminModel');
         $outlets = $this->CronModel->getOutLetsAdmin();                    
         if(empty($outlets))
             return true;
-        $date = '2020-09-17';//date('Y-m-d');
-        foreach ($outlets['res_arr'] as $key => $ol) {
+        $date = date('Y-m-d');
+        foreach ($outlets['res_arr'] as $key => $ol) {                        
+            $activity =$this->BusinessAdminModel->GetOutLetSMSActivity([$ol['business_outlet_id']]);
+
+            $ac = [];
+            if($activity['success']){
+                $activity = $activity['res_arr'];                        
+                foreach ($activity as $key => $a) {
+                    $ac[] = $a['outlet_id']."_".$a['services_number'];
+                }
+            }
+
+            if(!in_array($ol['business_outlet_id']."_2", $ac)){               
+                continue;
+            }
             
+
             $detail = $this->CronModel->DetailsById($ol['business_admin_id'],$date);      
 
             $data['visit'] = 0;
@@ -388,6 +417,7 @@ die;
 
     public function generateReportSMS($duration){
         $this->load->model('CronModel');
+        $this->load->model('BusinessAdminModel');
         if($duration == "w"){
             $previous_week = strtotime("-1 week +1 day");
 
@@ -406,7 +436,28 @@ die;
         $outlets = $this->CronModel->getOutLetsAdmin();
         if(empty($outlets))
             return true;
-        foreach ($outlets['res_arr'] as $key => $ol) {            
+        foreach ($outlets['res_arr'] as $key => $ol) { 
+
+            $activity =$this->BusinessAdminModel->GetOutLetSMSActivity([$ol['business_outlet_id']]);
+
+            $ac = [];
+            if($activity['success']){
+                $activity = $activity['res_arr'];                        
+                foreach ($activity as $key => $a) {
+                    $ac[] = $a['outlet_id']."_".$a['services_number'];
+                }
+            }
+
+            if($duration == 'w' && !in_array($ol['business_outlet_id']."_3", $ac)){               
+                continue;
+            }
+
+            if($duration == 'm' && !in_array($ol['business_outlet_id']."_5", $ac)){
+                continue;
+            }
+
+
+
             $result = $this->CronModel->GetCashRecord($ol['business_outlet_id'],$start_week,$end_week);
 
             if($result['success']){
@@ -543,8 +594,8 @@ die;
             Expenses : Rs.$total_e
             Due Amt : Rs.$total_p
             Visits: $visit";
-            $this->sendMessage($ol['business_admin_mobile'],$msg);
-            // echo $msg;
+           $this->sendMessage($ol['business_admin_mobile'],$msg);
+           //  echo $msg;
             // echo "<br><br>";
             //die;
 
@@ -577,6 +628,27 @@ die;
         if(empty($outlets))
             return true;
         foreach ($outlets['res_arr'] as $key => $ol) {
+
+            $activity =$this->BusinessAdminModel->GetOutLetSMSActivity([$ol['business_outlet_id']]);
+
+            $ac = [];
+            if($activity['success']){
+                $activity = $activity['res_arr'];                        
+                foreach ($activity as $key => $a) {
+                    $ac[] = $a['outlet_id']."_".$a['services_number'];
+                }
+            }
+
+            if($duration == 'w' && !in_array($ol['business_outlet_id']."_4", $ac)){               
+                continue;
+            }
+
+            if($duration == 'm' && !in_array($ol['business_outlet_id']."_6", $ac)){
+                continue;
+            }
+
+
+
             $where = array(
                     'business_admin_id'  => $ol['business_admin_id'],
                     'business_outlet_id' => $ol['business_outlet_id'],
@@ -597,8 +669,8 @@ die;
                     //echo $msg;
             $this->sendMessage($ol['business_admin_mobile'],$msg);
             //die;
-             //echo $msg."<br><br>";
-             //die;
+            // echo $msg."<br><br>";
+            // die;
         }
     }
 }
