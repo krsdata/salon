@@ -3352,23 +3352,25 @@ class BusinessAdminModel extends CI_Model {
 	//
 	public function GetMonthlySalesTillDate($data){
 		$sql="SELECT 
-		SUM(mss_transactions.txn_value) AS 'sales_till_date'
+		SUM(DISTINCT mss_transactions.txn_value) AS 'sales_till_date'
 		FROM
 		mss_transactions,
 		mss_transaction_settlements,
 		mss_customers,
 		mss_transaction_services,
-		mss_services
+		mss_services,
+		mss_employees
 		WHERE
 		mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
 		AND mss_transactions.txn_customer_id = mss_customers.customer_id
 		AND mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id
 		AND mss_transaction_services.txn_service_service_id=mss_services.service_id
+		AND mss_transactions.txn_cashier= mss_employees.employee_id
 		AND mss_services.service_type= 'service'
-		AND date(mss_transactions.txn_datetime) >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH)
+		AND date(mss_transactions.txn_datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY) 
 		AND mss_transactions.txn_status=1
-		AND mss_customers.customer_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
-		AND mss_customers.customer_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."";
+		AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])." 
+		AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." ";
 
 			$query = $this->db->query($sql);
 			
@@ -3423,7 +3425,7 @@ class BusinessAdminModel extends CI_Model {
               WHERE
 						mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
 						mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
-						AND date(mss_package_transactions.datetime) >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH)
+						AND date(mss_package_transactions.datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY)
 						AND mss_customers.customer_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
 						AND mss_customers.customer_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."";
 
@@ -3708,7 +3710,7 @@ class BusinessAdminModel extends CI_Model {
 		switch ($data['type']) {
 				case 'last_month_sales':
 					$sql = "SELECT 
-					SUM(mss_transactions.txn_value) AS 'last_month_sales'
+					SUM(DISTINCT mss_transactions.txn_value) AS 'last_month_sales'
 					FROM
 					mss_transactions,
 					mss_transaction_settlements,

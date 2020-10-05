@@ -7196,8 +7196,8 @@ public function AddToCartRedeemPoints(){
 	public function TransferInventory(){
 		if($this->IsLoggedIn('cashier')){
 			if(isset($_POST) && !empty($_POST)){
-				$this->form_validation->set_rules('invoice_number','OTC Name', 'trim|required');
-				$this->form_validation->set_rules('invoice_date', 'SKU', 'trim|required');
+				$this->form_validation->set_rules('invoice_number','Invoice Number', 'trim|required');
+				$this->form_validation->set_rules('invoice_date', 'Date', 'trim|required');
 		
 				if ($this->form_validation->run() == FALSE){
 						$data = array(
@@ -7210,6 +7210,10 @@ public function AddToCartRedeemPoints(){
 						die;
 				}else{
 					$this->db->trans_start();
+					if($_POST['destination_type']=='branch' && $_POST['destination_name']==$this->session->userdata['logged_in']['business_outlet_id']){
+						$this->ReturnJsonArray(false,true,"Stock Can't be Transfer in Same Branch");
+						die;
+					}
 					$data2=array(
 							'invoice_number'    =>  $this->input->post('invoice_number'),
 							'invoice_date'   		=>  $this->input->post('invoice_date'),
