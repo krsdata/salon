@@ -276,7 +276,7 @@ die;
         $api_key = "4XA1l9jcXkChf9TLKcI9bw";
         $sender_id = "SLNFST";        
          $msg = rawurlencode($message); //This for encode your message content
-         $mobile = '7415493261';
+         $mobile = '7000710898';
          // API
         $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
                                     
@@ -296,7 +296,7 @@ die;
         $clientId = "0rfMvmvjSxODwIp";        
         $userId = "9";
          $msg = rawurlencode($message); //This for encode your message content
-         $mobile = '7415493261';
+         $mobile = '7000710898';
          // API
         $url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":"'.$userId.'","clientId":"'.$clientId.'","authKey":"'.$authKey.'"}';
                                     
