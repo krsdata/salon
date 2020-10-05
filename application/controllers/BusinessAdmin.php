@@ -342,7 +342,8 @@ class BusinessAdmin extends CI_Controller {
                 
                 $data['last_month_package_sales']=$this->BusinessAdminModel->PackageSalesForLastMonth($where);
                 $data['last_month_package_sales']=$data['last_month_package_sales']['res_arr'][0]['package_sales'];
-                $data['last_month_sales_payment_wise']=$this->BusinessAdminModel->GetLastMonthSalesPaymentWiseData($where);
+								$data['last_month_sales_payment_wise']=$this->BusinessAdminModel->GetLastMonthSalesPaymentWiseData($where);
+								
                 $data['last_month_sales_payment_wise']=$data['last_month_sales_payment_wise']['res_arr'];
                 
                 $data['package_payment_wise'] = $this->BusinessAdminModel->GetPackageSalesPaymentWiseData($where);
@@ -1169,7 +1170,7 @@ class BusinessAdmin extends CI_Controller {
                 $data['last_month_loyalty_points_given']=$this->BusinessAdminModel->GetLastMonthLoyaltyPointsGiven($where);
                 $data['last_month_loyalty_points_given']=$data['last_month_loyalty_points_given']['res_arr'][0]['last_month_loyalty_points'];
                 $data['sales_till_date']=$this->BusinessAdminModel->GetMonthlySalesTillDate($where);
-                $data['sales_till_date']=$data['sales_till_date']['res_arr'][0]['sales_till_date'];
+								$data['sales_till_date']=$data['sales_till_date']['res_arr'][0]['sales_till_date'];
                 $data['product_sales_till_date']=$this->BusinessAdminModel->GetMonthlyProductSalesTillDate($where);
 				$data['product_sales_till_date']=$data['product_sales_till_date']['res_arr'][0]['product_sales_till_date'];
                 $data['package_sales_till_date']=$this->BusinessAdminModel->PackageSalesTillDate($where);
@@ -1197,12 +1198,13 @@ class BusinessAdmin extends CI_Controller {
                 
                 $data['package_payment_wise'] = $this->BusinessAdminModel->GetPackageSalesPaymentWiseData($where);
                 $data['package_payment_wise']=$data['package_payment_wise']['res_arr'];
-                // $this->PrettyPrintArray($data['package_payment_wise']);
+                // $this->PrettyPrintArray($data['last_month_sales_payment_wise']);
                 // exit;
                 $data['last_month_package_sales_payment_wise'] = $this->BusinessAdminModel->GetLastMonthPackageSalesPaymentWiseData($where);
                 $data['last_month_package_sales_payment_wise']=$data['last_month_package_sales_payment_wise']['res_arr'];
                 // $this->PrettyPrintArray($data['last_month_package_sales_payment_wise']);
-                // exit;
+								// exit;
+								// $this->PrettyPrintArray($data['last_month_sales_payment_wise']);
                 
                 //balance_to be paid back
                 $data['balance_paidback']=$this->BusinessAdminModel->GetBalancePaidBack($where);
@@ -3393,7 +3395,7 @@ class BusinessAdmin extends CI_Controller {
 			}
 			else{
 				$data = $this->GetDataForAdmin("Add Outlet");
-				$outlet_admin_id= $this->session->userdata['logged_in']['business_admin_id'];
+				$outlet_admin_id= $this->session->userdata['outlets']['current_outlet'];
 				$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
 
 					$query = $this->db->query($sql);
@@ -3639,12 +3641,12 @@ public function GetEmployee(){
 					$this->load->library('upload',$config);
 					$this->upload->do_upload('business_outlet_logo');
 					$path=array(
-						'outlet_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+						'outlet_admin_id' => $this->session->userdata['outlets']['current_outlet'],
 						'config_key'			=>'salon_logo',
 						'config_value' =>$_FILES['business_outlet_logo']['name']
 					);
 					$where=array(
-						'outlet_admin_id'=> $this->session->userdata['logged_in']['business_admin_id']
+						'outlet_admin_id'=> $this->session->userdata['outlets']['current_outlet']
 					);
 					$logo_exist=$this->BusinessAdminModel->MultiWhereSelect('mss_config',$where);
 						if(empty($logo_exist['res_arr'])){
@@ -11025,6 +11027,10 @@ public function InsertSalary(){
 
 							$data['stock_outgoing']=$this->CashierModel->OutgoingStock($where);
 							$data['stock_outgoing']=	$data['stock_outgoing']['res_arr'];
+
+							$data['all_expenses'] = $this->AllExpenses($this->session->userdata['outlets']['current_outlet']);
+							$data['pending_payment']=$this->BusinessAdminModel->GetPendingPayment();
+              $data['pending_payment']=$data['pending_payment']['res_arr'];
 
                 // $this->PrettyPrintArray($data['stock_incoming']);
                 // exit;

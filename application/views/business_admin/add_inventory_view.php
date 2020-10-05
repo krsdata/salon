@@ -67,6 +67,12 @@
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-6">Inventory Health</a>
 										</li>
+										<li class="nav-item">
+											<a class="nav-link" data-toggle="tab" href="#tab-7">Payments</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" data-toggle="tab" href="#tab-8">Pending Payments</a>
+										</li>
 									</ul>
 								</div>
 								<div class="card-body">
@@ -108,10 +114,10 @@
 																			<div class="form-group col-md-4">
 																				<select name="source_type" class="form-control" required>
 																					<option value="" disabled="disabled" selected>Select Source Type</option>
-																					<option value="warehouse">Warehouse</option>
-																					<option value="branch">Branch</option>
+																					<!-- <option value="warehouse">Warehouse</option> -->
+																					<!-- <option value="branch">Branch</option> -->
 																					<option value="vendor">Vendor</option>
-																					<option value="return">Sales return</option>
+																					<!-- <option value="return">Sales return</option> -->
 																				</select>
 																			</div>
 																		</div>
@@ -171,13 +177,13 @@
 																					<td>
 																						<div class="form-group">
 																							<label>Qty</label>
-																							<input type="text" class="form-control" name="product_qty[]" required>
+																							<input type="text" class="form-control product_qty" name="product_qty[]" required>
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>Cost/Unit(<small>before tax</small>)</label>
-																							<input type="text" class="form-control" name="product_price[]" required>
+																							<input type="text" class="form-control product_price" name="product_price[]" required>
 																						</div>
 																					</td>
 																					<td>
@@ -190,6 +196,12 @@
 																						<div class="form-group">
 																							<label>MRP</label>
 																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Total Cost</label>
+																							<input type="text" class="form-control mrp" name="total_cost[]" required>
 																						</div>
 																					</td>
 																					<td>
@@ -216,7 +228,7 @@
 																	<div class="col-md-6">
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount">
+																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Amount Paid">
 																			</div>
 																			<div class="form-group col-md-4">
 																				<select name="payment_mode" class="form-control">
@@ -231,7 +243,7 @@
 																				</select>
 																			</div>
 																			<div class="form-group col-md-4">
-																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
+																				<input type="text" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
 																			</div>
 																		</div>
 																	</div>
@@ -284,10 +296,10 @@
 																			<div class="form-group col-md-4">
 																				<select name="destination_type" class="form-control" required>
 																					<option value="" disabled="disabled" selected>Select Destination Type</option>
-																					<option value="warehouse">Warehouse</option>
+																					<!-- <option value="warehouse">Warehouse</option> -->
 																					<option value="branch">Branch</option>
-																					<option value="vendor">Vendor</option>
-																					<option value="return">Sales return</option>
+																					<!-- <option value="vendor">Vendor</option> -->
+																					<!-- <option value="return">Sales return</option> -->
 																				</select>
 																			</div>
 																		</div>
@@ -347,13 +359,13 @@
 																					<td>
 																						<div class="form-group">
 																							<label>Qty</label>
-																							<input type="text" class="form-control" name="product_qty[]" required>
+																							<input type="text" class="form-control product_qty" name="product_qty[]" required>
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>Cost/Unit(<small>before tax</small>)</label>
-																							<input type="text" class="form-control" name="product_price[]" required>
+																							<input type="text" class="form-control product_price" name="product_price[]" required>
 																						</div>
 																					</td>
 																					<td>
@@ -656,6 +668,143 @@
 													</div>
 												</div>
 											</div>
+										</div>
+										<div class="tab-pane" id="tab-7" role="tabpanel">
+											<div class="card">
+												<div class="card-header">
+													<h5 class="card-title">Inventory History</h5>
+												</div>
+												<div class="card-body">
+													<div class="row">
+															<div class="col-md-12">
+															<table class="table table-hover table-striped datatables-basic"
+                                            id="adminExpense" style="width: 100%;text-align:center">
+                                            <thead>
+                                                <tr class="text-primary">
+                                                    <!--<th>Sr No</th>-->
+                                                    <th>Expense Id</th>
+                                                    <th>Date</th>
+                                                    <th>Expense Type</th>
+                                                    <th>Item Name</th>
+                                                    <th>Cashier Name</th>
+                                                    <th>Payement Type</th>
+                                                    <th>Paid To</th>
+                                                    <th>Total Amount</th>
+                                                    <th>Amount</th>
+                                                    <th>Pending Amount</th>
+                                                    <th>Mode</th>
+                                                    <th>Payment Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                $i=0;
+																								foreach ($all_expenses as $expense):
+																								?>
+                                                <tr>
+                                                    <!--<td><?=$i=$i+1;?></td>-->
+                                                    <td><?=$expense['expense_unique_serial_id']?></td>
+                                                    <td><?=$expense['expense_date']?></td>
+                                                    <td><?=$expense['expense_type']?></td>
+                                                    <td><?=$expense['item_name']?></td>
+                                                    <td><?=$expense['employee_name']?></td>
+                                                    <td><?=$expense['payment_type']?></td>
+                                                    <td><?=$expense['payment_to_name']?></td>
+                                                    <td><?=$expense['total_amount']?></td>
+                                                    <td><?=$expense['amount']?></td>
+                                                    <td><?=$expense['pending_amount']?></td>
+                                                    <td><?=$expense['payment_mode']?></td>
+                                                    <td><?=$expense['expense_status']?></td>
+                                                </tr>
+                                                <?php	                    	
+																								endforeach;
+																								?>
+                                            </tbody>
+                                        </table>
+															</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="tab-pane" id="tab-8" role="tabpanel">
+											<div class="card">
+												<div class="card-header">
+													<h5 class="card-title">Pending Payments	</h5>
+												</div>
+												<div class="card-body">
+													<div class="row">
+															<div class="col-md-12">
+															<table class="table table-hover table-striped datatables-basic"
+                                            id="PendingPayment" style="width: 100%;">
+                                            <thead>
+                                                <tr class="text-primary">
+                                                    <!-- <th>Expense Id</th> -->
+                                                    <th>Date</th>
+                                                    <th>Expense Name</th>
+                                                    <th>Expense Type</th>
+                                                    <th>Total Amount</th>
+                                                    <th>Amount Pending</th>
+                                                    <th>Invoice No</th>
+                                                    <th>Mode</th>
+                                                    <th>Status </th>
+                                                    <th>Paid To</th>
+                                                    <th>Received By</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+																									foreach ($pending_payment as $pending):
+																									?>
+                                                <tr>
+                                                    <!-- <td><?=$pending['expense_id']?></td> -->
+                                                    <td><?=$pending['expense_date']?></td>
+                                                    <td><?=$pending['item_name']?></td>
+                                                    <td><?=$pending['expense_type']?></td>
+                                                    <td><?=$pending['total_amount']?></td>
+                                                    <td><?=$pending['pending_amount']?></td>
+                                                    <td><?=$pending['invoice_number']?></td>
+                                                    <td><?=$pending['payment_mode']?></td>
+                                                    <td><?=$pending['expense_status']?></td>
+                                                    <td><?=$pending['payment_type']?></td>
+                                                    <td><?=$pending['payment_to_name']?></td>
+                                                    <!-- <td><?=$pending['employee']?></td> -->
+
+
+                                                    
+                                                    <td>
+                                                        <button type="button"
+                                                            class="btn btn-primary pending-expense-edit-btn"
+                                                            expense_id="<?=$pending['expense_id']?>"
+                                                            expense_date="<?=$pending['expense_date']?>"
+                                                            expense_name="<?=$pending['item_name']?>"
+                                                            expense_type="<?=$pending['expense_type']?>"
+                                                            employee_name="<?=$pending['employee_name']?>"
+                                                            payment_type="<?=$pending['payment_type']?>"
+                                                            payment_to="<?=$pending['payment_to']?>"
+                                                            payment_to_name="<?=$pending['payment_to_name']?>"
+                                                            total_amount="<?=$pending['total_amount']?>"
+                                                            pending_amount="<?=$pending['pending_amount']?>"
+                                                            amount="<?=$pending['amount']?>"
+                                                            payment_mode="<?=$pending['payment_mode']?>"
+                                                            expense_status="<?=$pending['expense_status']?>"
+                                                            invoice_number="<?=$pending['invoice_number']?>"
+                                                            expense_date="<?=$pending['expense_date']?>"
+                                                            expense_type_id="<?=$pending['expense_type_id']?>"
+                                                            remark="<?=$pending['remarks']?>">
+                                                            <i class="align-middle" data-feather="edit-2"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <?php	                    	
+																									endforeach;
+																								?>
+                                            </tbody>
+                                        </table>
+															</div>
+													</div>
+												</div>
+											</div>
 										</div>									
 									</div>
 								</div>
@@ -737,6 +886,104 @@
 										</div>
 									</div>
 								</div>
+								<!-- update expense -->
+								<div class="modal fade" id="UpdatePendingExpense" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Update Expense</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body m-3">
+                                    <form id="UpdateDailyExpenses" method="POST" action="#">
+                                        <div class="row">
+                                            <div class="form-group col-md-3">
+                                                <label>Entry Date</label>
+                                                <input type="date"  name="entry_date" style="width:100%" class="form-control" readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Expense Name</label>
+                                                <input type="text" class="form-control" name="item_name" readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Expense Type</label>
+                                                <input type="text" class="form-control" name="expense_type" readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Employee Name</label>
+                                                <input type="text" class="form-control" name="employee_name" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-3">
+                                                <label>Paid To</label>
+                                                <input name="payment_to_name" class="form-control" readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Pending Amount</label>
+                                                <input type="number" class="form-control" min="0" name="pending_amount" id="pendamtValue"
+                                                    readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Amount</label>
+                                                <input type="number" class="form-control" min="0" name="amount1" id="reamt" onkeyup="calPendAmt()">
+                                            </div>
+                                         
+                                            <div class="form-group col-md-3">
+                                                <label>Remaing Amount</label>
+                                                <input type="number" class="form-control" name="remaining_amt"  id="remaining_amt" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-3">
+                                                <label>Payment Mode</label>
+                                                <select class="form-control" name="payment_mode">
+                                                    <option value="Cash" selected>Cash</option>
+                                                    <option value="Card">Card</option>
+                                                    <option value="Bank">Cheque/Bank</option>
+                                                    <option value="Wallet">Wallet/ Others</option>
+                                                    <select>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Payment Status</label>
+                                                <select class="form-control" name="expense_status" id="select_expense_status">
+                                                    <option disabled selected>Select</option>
+                                                    <option value="Paid" disabled>Paid</option>
+                                                    <!-- <option value="Advance">Advance</option> -->
+                                                    <option value="Partialy_paid">Partialy Paid</option>
+                                                    <select>
+                                            </div>
+                                            
+                                            <div class="form-group col-md-3">
+                                                <label>Remarks</label>
+                                                <input type="text" class="form-control" name="remarks" readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Invoice (If any)</label>
+                                                <input type="text" name="invoice_number" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <input type="text" name="expense_id" class="form-control" hidden>
+                                                <input type="text" name="expense_type_id" class="form-control" hidden>
+                                                <input type="text" name="item_name" class="form-control" hidden>
+                                                <input type="number" name="amount" hidden>
+                                                <input type="number" name="total_amount" hidden>
+                                                <input type="text" name="payment_type" hidden>
+                                                <input type="text" name="payment_to" hidden>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <span aria-hidden="true">&times;&times;</span>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- <button type="button" class="btn btn-success" data-dismiss="modal">Submit</button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 								<!-- end -->
 							</div>	
 						</div>
@@ -820,7 +1067,7 @@
 			
 			rowno = rowno+1;
 			
-			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 		});
 
 		$("#DeleteRowProductTable").click(function(event){
@@ -936,6 +1183,23 @@
 				}	
     });
 
+		$("#addProductTable tr:last .gst").on('input',function(e){			
+  			var product_qty=  Number($("#addProductTable tr:last .product_qty").val());
+				var product_price=  Number($("#addProductTable tr:last .product_price").val());
+				var product_gst=  Number($("#addProductTable tr:last .gst").val());
+				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
+				$("#addProductTable tr:last .mrp").val(mrp);
+								
+    });
+		$("#transProductTable tr:last .gst").on('input',function(e){			
+  			var product_qty=  Number($("#transProductTable tr:last .product_qty").val());
+				var product_price=  Number($("#transProductTable tr:last .product_price").val());
+				var product_gst=  Number($("#transProductTable tr:last .gst").val());
+				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
+				$("#transProductTable tr:last .mrp").val(mrp);
+								
+    });
+
 		$("#AddProduct").validate({
 	  	errorElement: "div",
 	    rules: {	       
@@ -990,7 +1254,7 @@
 				
 				rowno = rowno+1;
 				
-				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 			});
 
 			$("#DeleteRowProductTransTable").click(function(event){
@@ -1332,6 +1596,83 @@
 
 	});
 
+	// Update
+	// Update Expenses 
+	$("#UpdateDailyExpenses").validate({
+                errorElement: "div",
+                // rules: {
+                // 		"entry_date":{
+                // 			required:true
+                // 		},
+                //   "expense_type" : {
+                //   required : true	
+                // },
+                // "item_name" : {
+                //   required : true,
+                //   maxlength : 50
+                // },
+                // "amount" : {
+                //   required : true,
+                // 		digits : true
+                // }, 
+                // "payment_mode" : {
+                //   required : true
+                // },    
+                // "expense_status" : {
+                //   required : true
+                // },
+                // "employee_name" : {
+                // 	required : true,
+                // 	maxlength : 100
+                // }
+                // },
+                submitHandler: function(form) {
+                    var formData = $("#UpdateDailyExpenses").serialize();
+                    $.ajax({
+                        url: "<?=base_url()?>BusinessAdmin/UpdateExpense",
+                        data: formData,
+                        type: "POST",
+                        // crossDomain: true,
+                        cache: false,
+                        // dataType: "json",
+                        success: function(data) {
+                            // alert(data.success);
+
+                            if (data.success == 'true') {
+                                $("#UpdatePendingExpense").modal('hide');
+                                toastr["success"](data.message,"", {
+							positionClass: "toast-top-right",
+							progressBar: "toastr-progress-bar",
+							newestOnTop: "toastr-newest-on-top",
+							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+							timeOut: 500
+						});
+						setTimeout(function () { window.location.reload();}, 500);
+                            } else if (data.success == 'false') {
+                                if ($('.feedback').hasClass('alert-success')) {
+                                    $('.feedback').removeClass('alert-success')
+                                        .addClass('alert-danger');
+                                } else {
+                                    $('.feedback').addClass('alert-danger');
+                                }
+                                $('.alert-message').html("").html(data.message);
+                            }
+                        },
+                        error: function(data) {
+                            $("#UpdatePendingExpense").modal('hide');
+                            $('#defaultModalDanger').modal('show').on('shown.bs.modal',
+                                function(e) {
+                                    $("#ErrorModalMessage").html("").html(
+                                        "<p>Error, Try again later!</p>");
+                                }).on('hidden.bs.modal', function(e) {
+                                window.location.reload();
+                            });
+                        }
+                    });
+                },
+            }); 
+	// 
+
 	 //functionality for getting the dynamic input data
 	 $("#SearchServiceByName").typeahead({
       autoselect: true,
@@ -1497,7 +1838,41 @@
 				console.log(errorThrown.toString());
 			});
 		});
-	
+	// updatePendingAmount
+	$(document).on('click', '.pending-expense-edit-btn', function(event) {
+            event.preventDefault();
+            this.blur(); // Manually remove focus from clicked link.
+            //   var parameters = {
+            var expense_type = $(this).attr('expense_type');
+
+            //   };
+            //   $.getJSON("<?=base_url()?>BusinessAdmin/EditPendingExpense", parameters)
+            //   .done(function(data, textStatus, jqXHR) { 
+            $("#UpdatePendingExpense input[name=expense_id]").attr('value', $(this).attr('expense_id'));
+            $("#UpdatePendingExpense input[name=expense_type]").attr('value', expense_type);
+            $("#UpdatePendingExpense input[name=entry_date]").attr('value', $(this).attr('expense_date'));
+            $("#UpdatePendingExpense input[name=item_name]").attr('value', $(this).attr('expense_name'));
+            $("#UpdatePendingExpense input[name=expense_type_id]").attr('value', $(this).attr(
+                'expense_type_id'));
+            $("#UpdatePendingExpense input[name=employee_name]").attr('value', $(this).attr('employee_name'));
+            $("#UpdatePendingExpense input[name=pending_amount]").attr('value', $(this).attr('pending_amount'));
+            $("#UpdatePendingExpense input[name=payment_to_name]").attr('value', $(this).attr('payment_to_name'));
+            $("#UpdatePendingExpense input[name=amount]").attr('value', $(this).attr('amount'));
+            $("#UpdatePendingExpense input[name=remarks]").attr('value', $(this).attr('remark'));
+            $("#UpdatePendingExpense input[name=invoice_number]").attr('value', $(this).attr('invoice_number'));
+            $("#UpdatePendingExpense input[name=total_amount]").attr('value', $(this).attr('total_amount'));
+            $("#UpdatePendingExpense input[name=payment_type]").attr('value', $(this).attr('payment_type'));
+            $("#UpdatePendingExpense input[name=payment_to]").attr('value', $(this).attr('payment_to'));
+            // $("#UpdatePendingExpense input[name=invoice_number]").attr('value', $(this).attr('invoice_number'));
+            // $("#EditExpenseCategory textarea[name=expense_type_description]").val(data.expense_type_description);
+            // $("#EditExpenseCategory input[name=expense_type_id]").attr('value',data.expense_type_id);
+
+            $("#UpdatePendingExpense").modal('show');
+            // })
+            // .fail(function(jqXHR, textStatus, errorThrown) {
+            // console.log(errorThrown.toString());
+            // });
+        });
 </script>
 <script>
 		function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
