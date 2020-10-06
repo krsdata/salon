@@ -801,8 +801,7 @@ class CashierModel extends CI_Model {
                 //Again Check for each composition item whether its stock exists
                 //if exists then reduce it by the consumption quantity
                 foreach ($service_composition as $composition) {
-					$result = $this->CheckRmStockExists(array('stock_service_id'=>$composition['rmc_id']));  
-					
+					$result = $this->CheckRmStockExists(array('stock_service_id'=>$composition['rmc_id'])); 					
                     if($result['success'] == 'true'){
                         //Subtract the composition consumption quantity from stock
                         $temp = array(
@@ -816,7 +815,7 @@ class CashierModel extends CI_Model {
         }
        elseif ($service_details['service_type'] == 'otc') {
             $where = array('service_id' => $service_id);
-            $OTCexists = $this->CheckOTCStockExists($where);
+			$OTCexists = $this->CheckOTCStockExists($where);
             if($OTCexists['success'] == 'true'){
                 //Subtract the consumption quantity from stock
                 $temp = array(
@@ -910,8 +909,7 @@ class CashierModel extends CI_Model {
     }
 
     private function UpdateStockFromOTC($data){
-		$query1 = "UPDATE mss_inventory SET sku_count = sku_count  - ".(int)$data['consumption_quantity']." WHERE service_id = ".$data['otc_service_id']."";
-		//$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
+		$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
         $this->db->query($query1); 
     }
 
@@ -3306,7 +3304,6 @@ class CashierModel extends CI_Model {
 			mss_services.inventory_type_id > 0 AND
 			mss_services.service_is_active = 1
 			)
-
 			AS  X
 			left outer JOIN
 			( 
@@ -3319,7 +3316,7 @@ class CashierModel extends CI_Model {
 
         if($query){
 			return $this->ModelHelper(true,false,'',$query->result_array());            
-        }
+        }   
         else{
             return $this->ModelHelper(false,true,"Product not Available in stock.");
         } 
@@ -3338,8 +3335,8 @@ class CashierModel extends CI_Model {
 				mss_business_outlets on inventory_transfer.destination_name = 
 					mss_business_outlets.business_outlet_id 
 		LEFT JOIN 
-				mss_business_outlets t1 on inventory_transfer.business_outlet_id = 
-					t1.business_outlet_id            
+			mss_business_outlets t1 on inventory_transfer.business_outlet_id = 
+			t1.business_outlet_id            
 		WHERE  
 		inventory_transfer.destination_name = ".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
@@ -3348,12 +3345,19 @@ class CashierModel extends CI_Model {
 			return $this->ModelHelper(true,false,'',$query->result_array());            
         }
         else{
-            return $this->ModelHelper(false,true,"Product not Available in stock.");
+            return $this->ModelHelper(false,true,"Product not available in stock.");
         } 
 	}
 	public function OutgoingStock($data){
-		$sql="SELECT inventory_transfer.*,inventory_transfer_data.* FROM inventory_transfer, inventory_transfer_data
-		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id  AND inventory_transfer.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
+		$sql="SELECT inventory_transfer.*,
+		inventory_transfer_data.* ,
+		mss_business_outlets.business_outlet_name
+		FROM inventory_transfer,
+		inventory_transfer_data,
+		mss_business_outlets
+		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND
+		mss_business_outlets.business_outlet_id= inventory_transfer.destination_name
+		AND inventory_transfer.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
         if($query){
