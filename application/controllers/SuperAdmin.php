@@ -624,7 +624,7 @@ class SuperAdmin extends CI_Controller {
 				}
 			}
 			else{
-				$this->load->view('superAdmin/sa_admin_outlet_details_view',$data);
+				$this->load->view('superAdmin/sa_admin_outlet_details_view');
 			}
 		}
 		else{
@@ -816,8 +816,7 @@ class SuperAdmin extends CI_Controller {
 				}
 			}
 			else{
-				
-				$this->load->view('superAdmin/sa_admin_outlet_details_view',$data);
+				$this->load->view('superAdmin/sa_admin_outlet_details_view');
 			}
 		}
 		else{
@@ -1528,34 +1527,34 @@ class SuperAdmin extends CI_Controller {
                   // Number of Rows in Excel sheet
                   foreach ($sheet->getRowIterator() as $row) {    
                     // It reads data after header.
-                    if ($count >= 1) {     
+                    if ($count > 1) {     
                         $data = array(
                             'customer_master_admin_id'=>$row[0],
                             'customer_business_admin_id' => $row[1],
                             'customer_business_outlet_id'      => $row[2],
-                             'customer_title'      => $row[3],
-                             'customer_name'   => $row[4],
-                             'customer_mobile'   => $row[5],
-                             'customer_dob'   => $row[6]->format('Y-m-d'),
-                             'customer_doa'     => $row[7]->format('Y-m-d'),
-                             'customer_virtual_wallet' => $row[8],
-                             'customer_next_appointment_date'     => $row[9]->format('Y-m-d'),
-                             'customer_next_appointment_time'  => $row[10],
-                             'customer_preferred_day'     => $row[11],
-                             'customer_preferred_service'   => $row[12],
-                             'customer_recommended_service'   => $row[13],
-                             'customer_avg_feedback_rating'   => $row[14],
-                             'customer_last_updated'  => $row[15]->format('Y-m-d'),
-                             'customer_media_path'  => $row[16],
-                             'customer_rewards'     => $row[17],
-                             'customer_cashback'     => $row[18],
-                             'customer_segment'     => $row[19],
-                             'customer_email'     => $row[20],
-                             'customer_pending_amount'     => $row[21],
-                             'customer_wallet_expiry_date'     => $row[22]->format('Y-m-d'),
-                             'customer_added_on'     => $row[23]->format('Y-m-d'),
-                             'home_branch' =>$row[24],
-                             'last_visit_branch'=>$row[25]
+														'customer_title'      => $row[3],
+														'customer_name'   => $row[4],
+														'customer_mobile'   => $row[5],
+														'customer_dob'   => $row[6]->format('Y-m-d'),
+														'customer_doa'     => $row[7]->format('Y-m-d'),
+														'customer_virtual_wallet' => $row[8],
+														'customer_next_appointment_date'     => $row[9]->format('Y-m-d'),
+														'customer_next_appointment_time'  => $row[10],
+														'customer_preferred_day'     => $row[11],
+														'customer_preferred_service'   => $row[12],
+														'customer_recommended_service'   => $row[13],
+														'customer_avg_feedback_rating'   => $row[14],
+														'customer_last_updated'  => $row[15]->format('Y-m-d'),
+														'customer_media_path'  => $row[16],
+														'customer_rewards'     => $row[17],
+														'customer_cashback'     => $row[18],
+														'customer_segment'     => $row[19],
+														'customer_email'     => $row[20],
+														'customer_pending_amount'     => $row[21],
+														'customer_wallet_expiry_date'     => $row[22]->format('Y-m-d'),
+														'customer_added_on'     => $row[23]->format('Y-m-d'),
+														'home_branch' =>$row[24],
+														'last_visit_branch'=>$row[25]
 													);
 													
 											// $this->PrettyPrintArray($data);

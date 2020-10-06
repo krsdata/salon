@@ -10956,7 +10956,7 @@ public function InsertSalary(){
 									$data5=array(
 										'expense_unique_serial_id'	=>	'E1010Y',
 										'expense_date'							=>	date('Y-m-d'),
-										'expense_type_id'						=>	'10000',
+										'expense_type_id'						=>	'1',
 										'item_name'									=>	'Inventory',
 										'employee_name'							=>	$this->session->userdata['logged_in']['business_admin_name'],
 										'total_amount'							=>	$this->input->post('invoice_amount'),
@@ -10971,7 +10971,6 @@ public function InsertSalary(){
 										'pending_amount'						=>	($this->input->post('invoice_amount')- $this->input->post('amount_paid')),
 										'bussiness_outlet_id'				=>	$this->session->userdata['outlets']['current_outlet']
 									);
-
 									$insert_expense=$this->CashierModel->Insert($data5,'mss_expenses');
 
 								}

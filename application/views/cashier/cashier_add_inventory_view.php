@@ -135,6 +135,12 @@
 																				</td>
 																				<td>
 																					<div class="form-group">
+																						<label>MRP</label>
+																						<input type="text" class="form-control mrp" name="product_mrp[]" required readonly>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
 																						<label>Qty</label>
 																						<input type="text" class="form-control product_qty" name="product_qty[]" required>
 																					</div>
@@ -151,16 +157,11 @@
 																						<input type="text" class="form-control gst" name="product_gst[]" required>
 																					</div>
 																				</td>
-																				<td>
-																					<div class="form-group">
-																						<label>MRP</label>
-																						<input type="text" class="form-control mrp" name="product_mrp[]" required readonly>
-																					</div>
-																				</td>
+																				
 																				<td>
 																					<div class="form-group">
 																						<label>Total Cost</label>
-																						<input type="number" class="form-control mrp" name="totat_cost[]" required readonly>
+																						<input type="number" class="form-control total_cost" name="total_cost[]" required readonly>
 																					</div>
 																				</td>
 																				<td>
@@ -317,6 +318,12 @@
 																				</td>
 																				<td>
 																					<div class="form-group">
+																						<label>MRP</label>
+																						<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																					</div>
+																				</td>
+																				<td>
+																					<div class="form-group">
 																						<label>Qty</label>
 																						<input type="text" class="form-control product_qty" name="product_qty[]" required>
 																					</div>
@@ -333,16 +340,11 @@
 																						<input type="text" class="form-control gst" name="product_gst[]" required>
 																					</div>
 																				</td>
-																				<td>
-																					<div class="form-group">
-																						<label>MRP</label>
-																						<input type="text" class="form-control mrp" name="product_mrp[]" required>
-																					</div>
-																				</td>
+																				
 																				<td>
 																					<div class="form-group">
 																						<label>Total Cost</label>
-																						<input type="text" class="form-control mrp" name="total_cost[]" required>
+																						<input type="text" class="form-control total_cost" name="total_cost[]" required>
 																					</div>
 																				</td>
 																				<td>
@@ -691,7 +693,7 @@
 			
 			rowno = rowno+1;
 			
-			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 		});
 
 		$("#DeleteRowProductTable").click(function(event){
@@ -811,7 +813,7 @@
 				var product_price=  Number($("#addProductTable tr:last .product_price").val());
 				var product_gst=  Number($("#addProductTable tr:last .gst").val());
 				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
-				$("#addProductTable tr:last .mrp").val(mrp);
+				$("#addProductTable tr:last .total_cost").val(mrp);
 								
     });
 		$("#transProductTable tr:last .gst").on('input',function(e){			
@@ -819,7 +821,7 @@
 				var product_price=  Number($("#transProductTable tr:last .product_price").val());
 				var product_gst=  Number($("#transProductTable tr:last .gst").val());
 				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
-				$("#transProductTable tr:last .mrp").val(mrp);
+				$("#transProductTable tr:last .total_cost").val(mrp);
 								
     });
 
@@ -877,7 +879,7 @@
 				
 				rowno = rowno+1;
 				
-				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 			});
 
 			$("#DeleteRowProductTransTable").click(function(event){
