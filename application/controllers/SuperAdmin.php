@@ -1539,7 +1539,7 @@ class SuperAdmin extends CI_Controller {
                              'customer_dob'   => $row[6]->format('Y-m-d'),
                              'customer_doa'     => $row[7]->format('Y-m-d'),
                              'customer_virtual_wallet' => $row[8],
-                             'customer_next_appointment_date'     => $row[9],
+                             'customer_next_appointment_date'     => $row[9]->format('Y-m-d'),
                              'customer_next_appointment_time'  => $row[10],
                              'customer_preferred_day'     => $row[11],
                              'customer_preferred_service'   => $row[12],
@@ -1552,14 +1552,17 @@ class SuperAdmin extends CI_Controller {
                              'customer_segment'     => $row[19],
                              'customer_email'     => $row[20],
                              'customer_pending_amount'     => $row[21],
-                             'customer_wallet_expiry_date'     => $row[22],
+                             'customer_wallet_expiry_date'     => $row[22]->format('Y-m-d'),
                              'customer_added_on'     => $row[23]->format('Y-m-d'),
                              'home_branch' =>$row[24],
                              'last_visit_branch'=>$row[25]
-                          );
-                                    $result = $this->SuperAdminModel->Insert($data,'mss_customers');
-                                    if($result['success'] == 'true'){
-                                        $successInserts++;
+													);
+													
+											// $this->PrettyPrintArray($data);
+
+														$result = $this->SuperAdminModel->Insert($data,'mss_customers');
+														if($result['success'] == 'true'){
+														$successInserts++;
                           }
                           elseif($result['error'] == 'true'){
                             $errorInserts++;

@@ -3352,23 +3352,25 @@ class BusinessAdminModel extends CI_Model {
 	//
 	public function GetMonthlySalesTillDate($data){
 		$sql="SELECT 
-		SUM(mss_transactions.txn_value) AS 'sales_till_date'
+		SUM(DISTINCT mss_transactions.txn_value) AS 'sales_till_date'
 		FROM
 		mss_transactions,
 		mss_transaction_settlements,
 		mss_customers,
 		mss_transaction_services,
-		mss_services
+		mss_services,
+		mss_employees
 		WHERE
 		mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
 		AND mss_transactions.txn_customer_id = mss_customers.customer_id
 		AND mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id
 		AND mss_transaction_services.txn_service_service_id=mss_services.service_id
+		AND mss_transactions.txn_cashier= mss_employees.employee_id
 		AND mss_services.service_type= 'service'
-		AND date(mss_transactions.txn_datetime) >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH)
+		AND date(mss_transactions.txn_datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY) 
 		AND mss_transactions.txn_status=1
-		AND mss_customers.customer_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
-		AND mss_customers.customer_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."";
+		AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])." 
+		AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." ";
 
 			$query = $this->db->query($sql);
 			
@@ -3423,7 +3425,7 @@ class BusinessAdminModel extends CI_Model {
               WHERE
 						mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
 						mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
-						AND date(mss_package_transactions.datetime) >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH)
+						AND date(mss_package_transactions.datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY)
 						AND mss_customers.customer_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
 						AND mss_customers.customer_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."";
 
@@ -3708,7 +3710,7 @@ class BusinessAdminModel extends CI_Model {
 		switch ($data['type']) {
 				case 'last_month_sales':
 					$sql = "SELECT 
-					SUM(mss_transactions.txn_value) AS 'last_month_sales'
+					SUM(DISTINCT mss_transactions.txn_value) AS 'last_month_sales'
 					FROM
 					mss_transactions,
 					mss_transaction_settlements,
@@ -10308,6 +10310,42 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 ";
         
         $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
+
+    public function GetTrigger(){
+        $sql = "SELECT * FROM `V_SMS_TRIGGER` where created_by ='".$this->session->userdata['logged_in']['business_admin_id']."'";
+         $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+    }
+
+    public function DeleteSMSActivity($table_name,$where){
+        $this->db->where($where);
+        $this->db->delete($table_name);
+
+        if (!$this->db->affected_rows()) {
+            $result = 'Error! ID ['.$data.'] not found';
+            return $this->ModelHelper(false,true,$result);
+        } 
+        else{
+            return $this->ModelHelper(true,false);
+        }
+    }
+
+    public function GetOutLetSMSActivity($outlet){
+        $outlet = implode(",", $outlet);
+        $sql = "SELECT outlet_id,services_number FROM `sms_activity` where outlet_id in ($outlet)";
+         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
         }

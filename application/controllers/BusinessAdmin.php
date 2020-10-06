@@ -342,7 +342,8 @@ class BusinessAdmin extends CI_Controller {
                 
                 $data['last_month_package_sales']=$this->BusinessAdminModel->PackageSalesForLastMonth($where);
                 $data['last_month_package_sales']=$data['last_month_package_sales']['res_arr'][0]['package_sales'];
-                $data['last_month_sales_payment_wise']=$this->BusinessAdminModel->GetLastMonthSalesPaymentWiseData($where);
+								$data['last_month_sales_payment_wise']=$this->BusinessAdminModel->GetLastMonthSalesPaymentWiseData($where);
+								
                 $data['last_month_sales_payment_wise']=$data['last_month_sales_payment_wise']['res_arr'];
                 
                 $data['package_payment_wise'] = $this->BusinessAdminModel->GetPackageSalesPaymentWiseData($where);
@@ -1169,7 +1170,7 @@ class BusinessAdmin extends CI_Controller {
                 $data['last_month_loyalty_points_given']=$this->BusinessAdminModel->GetLastMonthLoyaltyPointsGiven($where);
                 $data['last_month_loyalty_points_given']=$data['last_month_loyalty_points_given']['res_arr'][0]['last_month_loyalty_points'];
                 $data['sales_till_date']=$this->BusinessAdminModel->GetMonthlySalesTillDate($where);
-                $data['sales_till_date']=$data['sales_till_date']['res_arr'][0]['sales_till_date'];
+								$data['sales_till_date']=$data['sales_till_date']['res_arr'][0]['sales_till_date'];
                 $data['product_sales_till_date']=$this->BusinessAdminModel->GetMonthlyProductSalesTillDate($where);
 				$data['product_sales_till_date']=$data['product_sales_till_date']['res_arr'][0]['product_sales_till_date'];
                 $data['package_sales_till_date']=$this->BusinessAdminModel->PackageSalesTillDate($where);
@@ -1197,12 +1198,13 @@ class BusinessAdmin extends CI_Controller {
                 
                 $data['package_payment_wise'] = $this->BusinessAdminModel->GetPackageSalesPaymentWiseData($where);
                 $data['package_payment_wise']=$data['package_payment_wise']['res_arr'];
-                // $this->PrettyPrintArray($data['package_payment_wise']);
+                // $this->PrettyPrintArray($data['last_month_sales_payment_wise']);
                 // exit;
                 $data['last_month_package_sales_payment_wise'] = $this->BusinessAdminModel->GetLastMonthPackageSalesPaymentWiseData($where);
                 $data['last_month_package_sales_payment_wise']=$data['last_month_package_sales_payment_wise']['res_arr'];
                 // $this->PrettyPrintArray($data['last_month_package_sales_payment_wise']);
-                // exit;
+								// exit;
+								// $this->PrettyPrintArray($data['last_month_sales_payment_wise']);
                 
                 //balance_to be paid back
                 $data['balance_paidback']=$this->BusinessAdminModel->GetBalancePaidBack($where);
@@ -5574,6 +5576,25 @@ public function GetEmployee(){
 					$data['upcomingDate']=$data['upcomingDate']['res_arr'];
 					// $this->PrettyPrintArray($data['upcomingDate']);
 					// exit;
+                    $trigger_detail =$this->BusinessAdminModel->GetTrigger();
+                    $data['trigger_detail'] = [];
+                    if($trigger_detail['success']){
+                        $data['trigger_detail'] = $trigger_detail['res_arr'];
+                    }                    
+                    $outlet = [];
+                    foreach ($data['business_outlet_details'] as $key => $ol) {
+                        $outlet[] = $ol['business_outlet_id'];
+                    }
+                    
+                    $activity =$this->BusinessAdminModel->GetOutLetSMSActivity($outlet);
+                    $ac = [];
+                    if($activity['success']){
+                        $activity = $activity['res_arr'];                        
+                        foreach ($activity as $key => $a) {
+                            $ac[] = $a['outlet_id']."_".$a['services_number'];
+                        }
+                    }  
+                    $data['activity'] = $ac;                                      
 					$this->load->view('business_admin/ba_autoEngage_view',$data);
 			}
 			else{
@@ -11007,6 +11028,10 @@ public function InsertSalary(){
 							$data['stock_outgoing']=$this->CashierModel->OutgoingStock($where);
 							$data['stock_outgoing']=	$data['stock_outgoing']['res_arr'];
 
+							$data['all_expenses'] = $this->AllExpenses($this->session->userdata['outlets']['current_outlet']);
+							$data['pending_payment']=$this->BusinessAdminModel->GetPendingPayment();
+              $data['pending_payment']=$data['pending_payment']['res_arr'];
+
                 // $this->PrettyPrintArray($data['stock_incoming']);
                 // exit;
 							$data['categories']  = $this->GetCategoriesOtc($this->session->userdata['outlets']['current_outlet']);
@@ -12517,6 +12542,122 @@ public function daybook(){
             $this->ReturnJsonArray(true,false,$data['res_arr']);
             die;
         }
+    }
+
+    public function AddMessageTrigger(){
+        if($this->IsLoggedIn('business_admin')){
+            $data['trigger_name'] = $_POST['trigger_name'];
+            $data['trigger_description'] = $_POST['trigger_discription'];
+            $data['mode'] = $_POST['mode'];
+            $data['outlet_id'] = $_POST['business_outlet_id'];
+            $data['recipient'] = $_POST['reciptents'];
+            $date = explode("-", $_POST['dates']);
+            $data['start_date'] = date("Y-m-d", strtotime($date[0]) );
+            $data['expiry_date'] = date("Y-m-d", strtotime($date[1]) );
+            $data['set_frequency'] = $_POST['ftype'];
+            //$data['trigger_name'] = $_POST['frequency_detail'];
+            $data['sms'] = $_POST['message'];
+            $data['created_by'] = $this->session->userdata['logged_in']['business_admin_id'];
+            $result = $this->BusinessAdminModel->Insert($data,'sms_trigger');
+            if($result['success']){
+                $id = $result['res_arr']['insert_id'];
+                foreach ($_POST['frequency_detail'] as $key => $frequency_detail) {
+                    $this->BusinessAdminModel->Insert(array('trigger_id'=>$id,'frequency_detail'=>$frequency_detail),'sms_frequency_detail');
+                }
+            }
+            $this->ReturnJsonArray(true,false,"Trigger Saved SuccessFully");
+            die;
+        }
+    }
+
+    //delete trigger
+        public function CancelSMSTrigger(){
+            if($this->IsLoggedIn('business_admin')){
+                // $this->PrettyPrintArray($_POST);
+                // exit;
+                if(isset($_POST) && !empty($_POST)){
+                    $this->form_validation->set_rules('auto_engage_id', 'Auto Engage', 'trim|required');            
+    
+                    if ($this->form_validation->run() == FALSE) 
+                    {
+                        $data = array(
+                                        'success' => 'false',
+                                        'error'   => 'true',
+                                        'message' =>  validation_errors()
+                                    );
+                        header("Content-type: application/json");
+                        print(json_encode($data, JSON_PRETTY_PRINT));
+                        die;
+                    }
+                    else{
+                        $data = array(
+                            'id'    => $this->input->post('auto_engage_id'),
+                            'is_active'=>$this->input->post('is_active')
+                        );
+    
+                        $result = $this->BusinessAdminModel->Update($data,'sms_trigger','id');
+                            
+                        if($result['success'] == 'true'){
+                            $this->ReturnJsonArray(true,false,"Trigger Updated Successfully!");
+                            die;
+                        }
+                        elseif($result['error'] == 'true'){
+                            $this->ReturnJsonArray(false,true,$result['message']);
+                            die;
+                        }
+                    }
+                }
+            }
+            else{
+                $this->LogoutUrl(base_url()."BusinessAdmin/");
+            }   
+        }
+
+    
+    public function ActivateSMSTrigger(){
+        if($this->IsLoggedIn('business_admin')){
+                // $this->PrettyPrintArray($_POST);
+                // exit;
+                if(isset($_POST) && !empty($_POST)){
+                    $this->form_validation->set_rules('auto_engage_id', 'Auto Engage', 'trim|required');            
+    
+                    if ($this->form_validation->run() == FALSE) 
+                    {
+                        $data = array(
+                                        'success' => 'false',
+                                        'error'   => 'true',
+                                        'message' =>  validation_errors()
+                                    );
+                        header("Content-type: application/json");
+                        print(json_encode($data, JSON_PRETTY_PRINT));
+                        die;
+                    }
+                    else{
+                        $data = array(
+                            'outlet_id'    => $this->input->post('auto_engage_id'),
+                            'is_active'=>$this->input->post('is_active'),
+                            'services_number    '=>$this->input->post('service_id'),
+                        );                    
+                        if($this->input->post('is_active') == 0){
+                            unset($data['is_active']);
+                            $result = $this->BusinessAdminModel->DeleteSMSActivity('sms_activity',$data);                           
+                        }else{
+                            $result = $this->BusinessAdminModel->Insert($data,'sms_activity');
+                        }                        
+                        if($result['success'] == 'true'){
+                            $this->ReturnJsonArray(true,false,"Trigger Saved Successfully!");
+                            die;
+                        }
+                        elseif($result['error'] == 'true'){
+                            $this->ReturnJsonArray(false,true,$result['message']);
+                            die;
+                        }
+                    }
+                }
+            }
+            else{
+                $this->LogoutUrl(base_url()."BusinessAdmin/");
+            }
     }
 
 }
