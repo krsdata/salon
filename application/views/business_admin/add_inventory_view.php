@@ -176,6 +176,12 @@
 																					</td>
 																					<td>
 																						<div class="form-group">
+																							<label>MRP</label>
+																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
 																							<label>Qty</label>
 																							<input type="text" class="form-control product_qty" name="product_qty[]" required>
 																						</div>
@@ -192,16 +198,11 @@
 																							<input type="text" class="form-control gst" name="product_gst[]" required>
 																						</div>
 																					</td>
-																					<td>
-																						<div class="form-group">
-																							<label>MRP</label>
-																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
-																						</div>
-																					</td>
+																					
 																					<td>
 																						<div class="form-group">
 																							<label>Total Cost</label>
-																							<input type="text" class="form-control mrp" name="total_cost[]" required>
+																							<input type="text" class="form-control total_cost" name="total_cost[]" required>
 																						</div>
 																					</td>
 																					<td>
@@ -296,9 +297,9 @@
 																			<div class="form-group col-md-4">
 																				<select name="destination_type" class="form-control" required>
 																					<option value="" disabled="disabled" selected>Select Destination Type</option>
-																					<!-- <option value="warehouse">Warehouse</option> -->
+																					<option value="warehouse">Warehouse</option>
 																					<option value="branch">Branch</option>
-																					<!-- <option value="vendor">Vendor</option> -->
+																					<option value="vendor">Vendor</option>
 																					<!-- <option value="return">Sales return</option> -->
 																				</select>
 																			</div>
@@ -358,6 +359,12 @@
 																					</td>
 																					<td>
 																						<div class="form-group">
+																							<label>MRP</label>
+																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
 																							<label>Qty</label>
 																							<input type="text" class="form-control product_qty" name="product_qty[]" required>
 																						</div>
@@ -374,10 +381,11 @@
 																							<input type="text" class="form-control gst" name="product_gst[]" required>
 																						</div>
 																					</td>
+																					
 																					<td>
 																						<div class="form-group">
-																							<label>MRP</label>
-																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																							<label>Total Cost</label>
+																							<input type="text" class="form-control total_cost" name="total_cost[]" required>
 																						</div>
 																					</td>
 																					<td>
@@ -677,13 +685,12 @@
 												<div class="card-body">
 													<div class="row">
 															<div class="col-md-12">
-															<table class="table table-hover table-striped datatables-basic"
-                                            id="adminExpense" style="width: 100%;text-align:center">
+															<table class="table table-hover table-striped datatables-basic" id="adminExpense" style="width: 100%;text-align:center">
                                             <thead>
                                                 <tr class="text-primary">
-                                                    <!--<th>Sr No</th>-->
-                                                    <th>Expense Id</th>
-                                                    <th>Date</th>
+																										<th>Date</th>
+																										<th>Invoice No.</th>
+																										<th>Expense Id</th>
                                                     <th>Expense Type</th>
                                                     <th>Item Name</th>
                                                     <th>Cashier Name</th>
@@ -692,7 +699,6 @@
                                                     <th>Total Amount</th>
                                                     <th>Amount</th>
                                                     <th>Pending Amount</th>
-                                                    <th>Mode</th>
                                                     <th>Payment Status</th>
                                                 </tr>
                                             </thead>
@@ -734,21 +740,21 @@
 												<div class="card-body">
 													<div class="row">
 															<div class="col-md-12">
-															<table class="table table-hover table-striped datatables-basic"
-                                            id="PendingPayment" style="width: 100%;">
+															<table class="table table-hover table-striped datatables-basic" id="PendingPayment" style="width: 100%;">
                                             <thead>
                                                 <tr class="text-primary">
                                                     <!-- <th>Expense Id</th> -->
-                                                    <th>Date</th>
+																										<th>Date</th>
+																										<th>Invoice No</th>
                                                     <th>Expense Name</th>
-                                                    <th>Expense Type</th>
+																										<th>Expense Type</th>
+																										<th>Vendor Name</th>
                                                     <th>Total Amount</th>
-                                                    <th>Amount Pending</th>
-                                                    <th>Invoice No</th>
-                                                    <th>Mode</th>
+                                                    <th>Amount Pending</th>                                                    
+																										<!-- <th>Mode</th> -->
+																										<th>Paid To</th>
                                                     <th>Status </th>
-                                                    <th>Paid To</th>
-                                                    <th>Received By</th>
+                                                    
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -758,16 +764,17 @@
 																									?>
                                                 <tr>
                                                     <!-- <td><?=$pending['expense_id']?></td> -->
-                                                    <td><?=$pending['expense_date']?></td>
+																										<td><?=$pending['expense_date']?></td>
+																										<td><?=$pending['invoice_number']?></td>
                                                     <td><?=$pending['item_name']?></td>
-                                                    <td><?=$pending['expense_type']?></td>
+																										<td><?=$pending['expense_type']?></td>
+                                                    <td><?=$pending['payment_to_name']?></td>
                                                     <td><?=$pending['total_amount']?></td>
                                                     <td><?=$pending['pending_amount']?></td>
-                                                    <td><?=$pending['invoice_number']?></td>
-                                                    <td><?=$pending['payment_mode']?></td>
-                                                    <td><?=$pending['expense_status']?></td>
                                                     <td><?=$pending['payment_type']?></td>
-                                                    <td><?=$pending['payment_to_name']?></td>
+                                                    
+                                                    <!-- <td><?=$pending['payment_mode']?></td> -->
+                                                    <td><?=$pending['expense_status']?></td>
                                                     <!-- <td><?=$pending['employee']?></td> -->
 
 
@@ -1067,7 +1074,7 @@
 			
 			rowno = rowno+1;
 			
-			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 		});
 
 		$("#DeleteRowProductTable").click(function(event){
@@ -1095,7 +1102,7 @@
     });
        
     // var to_fill = "";
-		var service_name="",product_id="", service_type="", service_barcode="", sku_size="", mrp="";
+		var service_name="",product_id="", service_type="", service_barcode="", sku_size="", mrp="",gst="";
 
     $("#searchProductByName").on("typeahead:selected", function(eventObject, suggestion, name) {
       var loc = "#addProductTable tr:last .searchProductByName";
@@ -1104,7 +1111,7 @@
 			var loc4 = "#addProductTable tr:last .sku_size";
 			var loc5 = "#addProductTable tr:last .mrp";
 			var loc6 = "#addProductTable tr:last .product_id";
-			var loc6 = "#addProductTable tr:last .gst";
+			var loc7 = "#addProductTable tr:last .gst";
       service_name = suggestion.service_name;
 			product_id = suggestion.service_id;
 			service_type = suggestion.inventory_type;
@@ -1183,20 +1190,22 @@
 				}	
     });
 
-		$("#addProductTable tr:last .gst").on('input',function(e){			
+		// $("#addProductTable tr:last .gst").on('input',function(e){			
+		$('body').on('input','#addProductTable tr:last .gst',function(e){	
   			var product_qty=  Number($("#addProductTable tr:last .product_qty").val());
 				var product_price=  Number($("#addProductTable tr:last .product_price").val());
 				var product_gst=  Number($("#addProductTable tr:last .gst").val());
 				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
-				$("#addProductTable tr:last .mrp").val(mrp);
+				$("#addProductTable tr:last .total_cost").val(mrp);
 								
     });
-		$("#transProductTable tr:last .gst").on('input',function(e){			
+		// $("#transProductTable tr:last .gst").on('input',function(e){		
+			$('body').on('input','#transProductTable tr:last .gst',function(e){		
   			var product_qty=  Number($("#transProductTable tr:last .product_qty").val());
 				var product_price=  Number($("#transProductTable tr:last .product_price").val());
 				var product_gst=  Number($("#transProductTable tr:last .gst").val());
 				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
-				$("#transProductTable tr:last .mrp").val(mrp);
+				$("#transProductTable tr:last .total_cost").val(mrp);
 								
     });
 
@@ -1212,7 +1221,19 @@
 
 	    },
 	    submitHandler: function(form) {
-			// alert(document.getElementById('expiry').value);
+				var total_len=$("#AddProduct input[name^=total_cost]").length;
+				var inv_amt= $("#AddProduct input[name=invoice_amount]").val();
+				var array= $("#AddProduct input[name^=total_cost]");
+				var t_cost=0;
+				for(var i=0;i< total_len;i++){
+					t_cost+=Number(array[i].value);
+				}
+				if(t_cost < inv_amt){
+					alert("Total Cost is less than Invoice Amount.");
+				}else if(t_cost > inv_amt){
+					alert("Total Cost is more than Invoice Amount.");
+				}
+				
 				var formData = $("#AddProduct").serialize(); 
 				$.ajax({
 	        url: "<?=base_url()?>BusinessAdmin/AddInventory",
@@ -1254,7 +1275,7 @@
 				
 				rowno = rowno+1;
 				
-				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 			});
 
 			$("#DeleteRowProductTransTable").click(function(event){
@@ -1282,7 +1303,7 @@
     });
        
     // var to_fill = "";
-		var service_name="",product_id="", service_type="", service_barcode="", sku_size="", mrp="";
+		var service_name="",product_id="", service_type="", service_barcode="", sku_size="", mrp="",gst="";
 
     $("#searchProductTransferByName").on("typeahead:selected", function(eventObject, suggestion, name) {
       var loc = "#transProductTable tr:last .searchProductByName";

@@ -2593,11 +2593,13 @@ class Cashier extends CI_Controller {
 					//4.Send a msg
 					$this->session->set_userdata('bill_url',$bill_url);
 					$sms_status = $this->db->select('business_outlet_sms_status')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
-					// $this->PrettyPrintArray($sms_status);	
+						
 					if($sms_status['business_outlet_sms_status']==1){
 							if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
 								if($_POST['txn_data']['txn_value']==0){
 								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}else{
+								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 								}
 							}
 							//
