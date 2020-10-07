@@ -1494,7 +1494,7 @@ class BusinessAdminModel extends CI_Model {
                     mss_business_outlets,
                     mss_business_admin
                 WHERE
-                    ss_customers.customer_pending_amount > 0 
+                    mss_customers.customer_pending_amount > 0 
                      AND mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
                     AND mss_business_outlets.business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
                     AND mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
@@ -3352,25 +3352,18 @@ class BusinessAdminModel extends CI_Model {
 	//
 	public function GetMonthlySalesTillDate($data){
 		$sql="SELECT 
-		SUM(DISTINCT mss_transactions.txn_value) AS 'sales_till_date'
-		FROM
-		mss_transactions,
-		mss_transaction_settlements,
-		mss_customers,
-		mss_transaction_services,
-		mss_services,
-		mss_employees
-		WHERE
-		mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
-		AND mss_transactions.txn_customer_id = mss_customers.customer_id
-		AND mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id
-		AND mss_transaction_services.txn_service_service_id=mss_services.service_id
-		AND mss_transactions.txn_cashier= mss_employees.employee_id
-		AND mss_services.service_type= 'service'
-		AND date(mss_transactions.txn_datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY) 
-		AND mss_transactions.txn_status=1
-		AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])." 
-		AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." ";
+			sum(mss_transaction_services.txn_service_discounted_price) AS 'sales_till_date'		
+			FROM mss_transactions, 
+			mss_employees,
+			mss_services,
+			mss_transaction_services			
+			WHERE mss_transactions.txn_cashier=mss_employees.employee_id
+			AND mss_transactions.txn_id= mss_transaction_services.txn_service_txn_id
+			AND mss_transaction_services.txn_service_service_id= mss_services.service_id
+			AND date(mss_transactions.txn_datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY)
+			AND mss_services.inventory_type_id =0		 
+			AND mss_transactions.txn_status=1
+			AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."  ";
 
 			$query = $this->db->query($sql);
 			
@@ -3384,24 +3377,21 @@ class BusinessAdminModel extends CI_Model {
 	
 	//Monthly Product Sales
 	public function GetMonthlyProductSalesTillDate($data){
-		$sql="SELECT 
-		SUM(mss_transactions.txn_value) AS 'product_sales_till_date'
+		$sql="SELECT sum(mss_transactions.txn_value) AS 'product_sales_till_date'
 		FROM
-		mss_transactions,
-		mss_transaction_settlements,
-		mss_customers,
+		mss_transactions, 
+		mss_employees,
 		mss_transaction_services,
 		mss_services
 		WHERE
-		mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
-		AND mss_transactions.txn_customer_id = mss_customers.customer_id
-		AND mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id
+		mss_transactions.txn_cashier=mss_employees.employee_id
+		AND mss_transaction_services.txn_service_txn_id=mss_transactions.txn_id
 		AND mss_transaction_services.txn_service_service_id=mss_services.service_id
-		AND mss_services.service_type= 'otc'
-		AND date(mss_transactions.txn_datetime) >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH)
+		AND mss_services.inventory_type_id IN (1,2)
 		AND mss_transactions.txn_status=1
-		AND mss_customers.customer_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
-		AND mss_customers.customer_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."";
+		and date(mss_transactions.txn_datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY)
+		AND mss_transaction_services.txn_service_txn_id   
+		AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." ";
 
 			$query = $this->db->query($sql);
 			
@@ -3414,20 +3404,14 @@ class BusinessAdminModel extends CI_Model {
 	}
 	
 	
-	//Monthly Package Sales
+	//Monthly Package SalesM
 	public function PackageSalesTillDate($data){
-		$sql = "SELECT 
-              SUM(mss_package_transaction_settlements.amount_received) AS package_sales
-            FROM
-              mss_package_transactions,
-              mss_package_transaction_settlements,
-              mss_customers
-              WHERE
-						mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
-						mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
-						AND date(mss_package_transactions.datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY)
-						AND mss_customers.customer_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
-						AND mss_customers.customer_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."";
+		$sql = "SELECT sum(mss_package_transactions.package_txn_value) AS package_sales
+		 FROM mss_package_transactions , 
+		 mss_employees 		
+        WHERE mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+        AND date(mss_package_transactions.datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),INTERVAL 1 DAY),INTERVAL -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY)
+        AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." ";
 
 		$query = $this->db->query($sql);
 	
@@ -3440,18 +3424,11 @@ class BusinessAdminModel extends CI_Model {
 	}
 	//Last Month Package Sales
 	public function PackageSalesForLastMonth($data){
-		$sql = "SELECT 
-              SUM(mss_package_transaction_settlements.amount_received) AS package_sales
-            FROM
-              mss_package_transactions,
-              mss_package_transaction_settlements,
-              mss_customers
-              WHERE
-						mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
-						mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
-						AND date(mss_package_transactions.datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH)
-						AND mss_customers.customer_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
-						AND mss_customers.customer_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."";
+		$sql = "SELECT SUM(mss_package_transactions.package_txn_value) AS package_sales
+		FROM mss_package_transactions , mss_employees 		
+        WHERE mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+        AND date(mss_package_transactions.datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH)
+        AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."";
 
 		$query = $this->db->query($sql);
 	
@@ -3709,49 +3686,35 @@ class BusinessAdminModel extends CI_Model {
 	public function GetTopCardsDataForLastMonth($data){
 		switch ($data['type']) {
 				case 'last_month_sales':
-					$sql = "SELECT 
-					SUM(DISTINCT mss_transactions.txn_value) AS 'last_month_sales'
+					$sql = "SELECT sum(mss_transactions.txn_value) AS 'last_month_sales'
 					FROM
-					mss_transactions,
-					mss_transaction_settlements,
-					mss_customers,
-					mss_transaction_services,
-					mss_services,
-					mss_employees
+					mss_transactions, mss_employees,mss_transaction_services,mss_services
 					WHERE
-					mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
-					AND mss_transactions.txn_customer_id = mss_customers.customer_id
-					AND mss_transactions.txn_cashier= mss_employees.employee_id
-					AND mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id
-					AND mss_transaction_services.txn_service_service_id=mss_services.service_id
-					AND mss_services.service_type= 'service'
-					AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH)
-					AND mss_transactions.txn_status=1
-					AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])." 
+                    mss_transactions.txn_cashier=mss_employees.employee_id
+                    AND mss_transaction_services.txn_service_txn_id=mss_transactions.txn_id
+                    AND mss_transaction_services.txn_service_service_id=mss_services.service_id
+                    AND mss_services.inventory_type_id =0  
+                	AND mss_transactions.txn_status=1
+                    and date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH) AND (CURRENT_DATE - INTERVAL 1 MONTH)
+                    AND mss_transaction_services.txn_service_txn_id
 					AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."";
 				//
 				
 				//
 					break;
 					case 'last_month_product_sales':
-						$sql = "SELECT 
-						SUM(mss_transactions.txn_value) AS 'last_month_product_sales'
+						$sql = "SELECT sum(mss_transactions.txn_value) AS 'last_month_product_sales'
 						FROM
-						mss_transactions,
-						mss_transaction_settlements,
-						mss_customers,
-						mss_transaction_services,
-						mss_services
+						mss_transactions, mss_employees,mss_transaction_services,mss_services
 						WHERE
-						mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
-						AND mss_transactions.txn_customer_id = mss_customers.customer_id
-						AND mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id
+						mss_transactions.txn_cashier=mss_employees.employee_id
+						AND mss_transaction_services.txn_service_txn_id=mss_transactions.txn_id
 						AND mss_transaction_services.txn_service_service_id=mss_services.service_id
-						AND mss_services.service_type= 'otc'
-						AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH)
+						AND mss_services.inventory_type_id IN(1,2)  
 						AND mss_transactions.txn_status=1
-						AND mss_customers.customer_business_admin_id = ".$this->db->escape($data['business_admin_id'])." 
-						AND mss_customers.customer_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."";
+						and date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH) AND (CURRENT_DATE - INTERVAL 1 MONTH)
+						AND mss_transaction_services.txn_service_txn_id
+						AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."";
 					//
 					
 					//
@@ -6584,15 +6547,15 @@ public function GetAttendanceAll($data){
     // 25-04
     public function NewCustomer($data){
         $sql="SELECT    
-            mss_transactions_replica.txn_customer_id 
+            mss_transactions.txn_customer_id 
             from 
-            mss_transactions_replica,mss_customers 
+            mss_transactions,mss_customers 
             WHERE 
-            mss_transactions_replica.txn_customer_id = mss_customers.customer_id
+            mss_transactions.txn_customer_id = mss_customers.customer_id
             AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-            GROUP BY mss_transactions_replica.txn_customer_id
+            GROUP BY mss_transactions.txn_customer_id
             HAVING 
-                count(mss_transactions_replica.txn_customer_id) = 1
+                count(mss_transactions.txn_customer_id) = 1
         ";
         $query = $this->db->query($sql);
         if($query){
@@ -6604,18 +6567,18 @@ public function GetAttendanceAll($data){
     }
     public function RepeatingCustomerService($data){
         $sql="SELECT 
-                mss_transactions_replica.txn_customer_id,
-				count(mss_transactions_replica.txn_customer_id) 
+                mss_transactions.txn_customer_id,
+				count(mss_transactions.txn_customer_id) 
             from 
-            mss_transactions_replica,
+            mss_transactions,
 			mss_customers 
             WHERE 
-                mss_transactions_replica.txn_customer_id = mss_customers.customer_id
+                mss_transactions.txn_customer_id = mss_customers.customer_id
             AND mss_customers.customer_business_outlet_id= ".$this->session->userdata['outlets']['current_outlet']."
-            GROUP BY mss_transactions_replica.txn_customer_id
+            GROUP BY mss_transactions.txn_customer_id
             HAVING 
-                count(mss_transactions_replica.txn_customer_id) >= ".$this->db->escape($data['r1'])." AND 
-				COUNT(mss_transactions_replica.txn_customer_id) <= ".$this->db->escape($data['r2'])."
+                count(mss_transactions.txn_customer_id) >= ".$this->db->escape($data['r1'])." AND 
+				COUNT(mss_transactions.txn_customer_id) <= ".$this->db->escape($data['r2'])."
             ";
         $query = $this->db->query($sql);
         if($query){
@@ -6627,17 +6590,17 @@ public function GetAttendanceAll($data){
     }
     public function RegularCustomer($data){
         $sql="SELECT 
-                mss_transactions_replica.txn_customer_id,
-				count(mss_transactions_replica.txn_customer_id) 
+                mss_transactions.txn_customer_id,
+				count(mss_transactions.txn_customer_id) 
             from 
-                mss_transactions_replica,
+                mss_transactions,
 				mss_customers 
             WHERE 
-                mss_transactions_replica.txn_customer_id = mss_customers.customer_id
+                mss_transactions.txn_customer_id = mss_customers.customer_id
             AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-            GROUP BY mss_transactions_replica.txn_customer_id
+            GROUP BY mss_transactions.txn_customer_id
             HAVING 
-                count(mss_transactions_replica.txn_customer_id) > ".$this->db->escape($data['regular_cust'])." 
+                count(mss_transactions.txn_customer_id) > ".$this->db->escape($data['regular_cust'])." 
             ";
         $query = $this->db->query($sql);
         if($query){
@@ -6649,25 +6612,20 @@ public function GetAttendanceAll($data){
     }
     public function RiskCustomerService($data){
         $sql = "SELECT 
-           	GROUP_CONCAT(mss_transactions_replica.txn_customer_id) as customer_id
-			FROM   mss_transactions_replica, 
-				mss_transaction_settlements, 
-				mss_customers, 
-				mss_business_outlets, 
-				mss_business_admin 
-			WHERE 
-			mss_transactions_replica.txn_id = 
-			mss_transaction_settlements.txn_settlement_txn_id 
-			AND mss_transactions_replica.txn_customer_id = 
-            mss_customers.customer_id 
-			AND mss_customers.customer_business_outlet_id = 
-			mss_business_outlets.business_outlet_id 
-			AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." 
-			AND mss_business_outlets.business_outlet_business_admin = 
-			mss_business_admin.business_admin_id 
-			AND mss_business_admin.business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." 
-			AND Date(mss_transactions_replica.txn_datetime) BETWEEN 
-			CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust'])." day AND  CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust2'])." day";
+		mss_customers.customer_name as 'Name',
+		mss_customers.customer_mobile as 'Mobile',
+		'Regular' as 'Category',
+		SUM(mss_transactions.txn_value) as 'Total_Spend',
+		Max(mss_transactions.txn_datetime) as 'Last_Visit_Date' 
+		from 
+		mss_transactions,
+		mss_customers 
+		WHERE 
+		mss_transactions.txn_customer_id = mss_customers.customer_id
+		AND date(mss_transactions.txn_datetime) < (CURRENT_DATE - INTERVAL  ".$this->db->escape($data['at_risk_cust'])." DAY)
+		AND date(mss_transactions.txn_datetime) > (CURRENT_DATE - INTERVAL  ".$this->db->escape($data['at_risk_cust2'])." DAY)
+		AND mss_customers.customer_business_outlet_id= ".$this->session->userdata['outlets']['current_outlet']."
+		GROUP BY mss_transactions.txn_customer_id";
 	// $sql = str_replace(",)",")",$sql);
         $query = $this->db->query($sql);
 		if($query){
@@ -6729,24 +6687,20 @@ $sql = str_replace(",)",")",$sql);
     }
      public function LostCustomerService($data){
             $sql = "SELECT 
-           GROUP_CONCAT(mss_transactions_replica.txn_customer_id ) as customer_id
-			FROM   mss_transactions_replica, 
-				mss_transaction_settlements, 
-				mss_customers, 
-				mss_business_outlets, 
-				mss_business_admin 
+			mss_customers.customer_name as 'Name',
+			mss_customers.customer_mobile as 'Mobile',
+			'Regular' as 'Category',
+			SUM(mss_transactions.txn_value) as 'Total_Spend',
+			Max(mss_transactions.txn_datetime) as 'Last_Visit_Date' 
+			from 
+			mss_transactions,
+			mss_customers 
 			WHERE 
-           mss_transactions_replica.txn_id = 
-           mss_transaction_settlements.txn_settlement_txn_id 
-           AND mss_transactions_replica.txn_customer_id = 
-               mss_customers.customer_id 
-           AND mss_customers.customer_business_outlet_id = 
-           mss_business_outlets.business_outlet_id 
-           AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND mss_business_outlets.business_outlet_business_admin = 
-           mss_business_admin.business_admin_id 
-           AND mss_business_admin.business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." AND Date(mss_transactions_replica.txn_datetime) > 
-           CURRENT_DATE - INTERVAL ".$this->db->escape($data['lost_customer'])." day";
-         $sql = str_replace(",)",")",$sql);
+			mss_transactions.txn_customer_id = mss_customers.customer_id
+			AND date(mss_transactions.txn_datetime) < (CURRENT_DATE - INTERVAL  ".$this->db->escape($data['lost_customer'])." DAY)
+			AND mss_customers.customer_business_outlet_id= ".$this->session->userdata['outlets']['current_outlet']."
+			GROUP BY mss_transactions.txn_customer_id";
+        //  $sql = str_replace(",)",")",$sql);
         $query = $this->db->query($sql);
         #echo $sql;die;
         if($query){
@@ -6758,7 +6712,7 @@ $sql = str_replace(",)",")",$sql);
                     WHERE  mss_customers.customer_business_outlet_id = 1 
                            AND mss_customers.customer_business_admin_id = 1 
                            AND mss_customers.customer_id NOT IN ($customer_id) ";
-                               $sql = str_replace(",)",")",$sql);
+                            //    $sql = str_replace(",)",")",$sql);
                                 $query = $this->db->query($sql);
             }   
             if($query){
@@ -6828,12 +6782,18 @@ $sql = str_replace(",)",")",$sql);
         }
     }
     public function ReportNewCustomer($data){
-        $sql="SELECT mss_customers.customer_name as 'Name',mss_customers.customer_mobile as 'Mobile','New' as 'Category',sum(mss_transactions_replica.txn_value) as 'Total_Spend',Max(mss_transactions_replica.txn_datetime) as 'Last_Visit_Date'FROM mss_transactions_replica,mss_customers 
-        WHERE mss_transactions_replica.txn_customer_id = mss_customers.customer_id
-        AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-        GROUP BY mss_transactions_replica.txn_customer_id
-        HAVING count(mss_transactions_replica.txn_customer_id)=1
-        ";
+        $sql="SELECT mss_customers.customer_name as 'Name',
+		mss_customers.customer_mobile as 'Mobile',
+		'New' as 'Category',
+		sum(mss_transactions.txn_value) as 'Total_Spend',
+		Max(mss_transactions.txn_datetime) as 'Last_Visit_Date'
+		FROM mss_transactions,
+			mss_customers 
+		WHERE 
+			mss_transactions.txn_customer_id = mss_customers.customer_id
+			AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
+				GROUP BY mss_transactions.txn_customer_id
+				HAVING count(mss_transactions.txn_customer_id)=1 ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6844,15 +6804,16 @@ $sql = str_replace(",)",")",$sql);
     }
     public function ReportRepeatCustomer($data){
         $sql="SELECT 
-        mss_customers.customer_name as 'Name',mss_customers.customer_mobile as 'Mobile','Repeat' as 'Category',SUM(mss_transactions_replica.txn_value) as 'Total_Spend',Max(mss_transactions_replica.txn_datetime) as 'Last_Visit_Date' 
+        mss_customers.customer_name as 'Name',mss_customers.customer_mobile as 'Mobile','Repeat' as 'Category',SUM(mss_transactions.txn_value) as 'Total_Spend',Max(mss_transactions.txn_datetime) as 'Last_Visit_Date' 
         from 
-            mss_transactions_replica,mss_customers 
+            mss_transactions,
+			mss_customers 
         WHERE 
-            mss_transactions_replica.txn_customer_id = mss_customers.customer_id
+            mss_transactions.txn_customer_id = mss_customers.customer_id
             AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-        GROUP BY mss_transactions_replica.txn_customer_id
+        GROUP BY mss_transactions.txn_customer_id
         HAVING 
-        count(mss_transactions_replica.txn_customer_id) >= ".$this->db->escape($data['r1'])." AND COUNT(mss_transactions_replica.txn_customer_id) <= ".$this->db->escape($data['r2'])."
+        count(mss_transactions.txn_customer_id) >= ".$this->db->escape($data['r1'])." AND COUNT(mss_transactions.txn_customer_id) <= ".$this->db->escape($data['r2'])."
         ";
         $query = $this->db->query($sql);
         if($query){
@@ -6887,18 +6848,16 @@ $sql = str_replace(",)",")",$sql);
         $sql="SELECT 
             mss_customers.customer_name as 'Name',mss_customers.customer_mobile as 'Mobile',
 			'No Risk' as 'Category',
-			SUM(mss_transactions_replica.txn_value) as 'Total_Spend',
-			Max(mss_transactions_replica.txn_datetime) as 'Last_Visit_Date' 
+			SUM(mss_transactions.txn_value) as 'Total_Spend',
+			Max(mss_transactions.txn_datetime) as 'Last_Visit_Date' 
             from 
-            mss_transactions_replica,
+            mss_transactions,
 			mss_customers 
             WHERE 
-            mss_transactions_replica.txn_customer_id = mss_customers.customer_id
+            mss_transactions.txn_customer_id = mss_customers.customer_id
+			AND date(mss_transactions.txn_datetime) > (CURRENT_DATE - INTERVAL  1 MONTH)
             AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-            GROUP BY mss_transactions_replica.txn_customer_id
-            HAVING 
-            count(mss_transactions_replica.txn_customer_id) > ".$this->db->escape($data['regular_cust'])."
-        ";
+            GROUP BY mss_transactions.txn_customer_id";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6913,18 +6872,17 @@ $sql = str_replace(",)",")",$sql);
             mss_customers.customer_name as 'Name',
 			mss_customers.customer_mobile as 'Mobile',
 			'Regular' as 'Category',
-			SUM(mss_transactions_replica.txn_value) as 'Total_Spend',
-			Max(mss_transactions_replica.txn_datetime) as 'Last_Visit_Date' 
+			SUM(mss_transactions.txn_value) as 'Total_Spend',
+			Max(mss_transactions.txn_datetime) as 'Last_Visit_Date' 
             from 
-            mss_transactions_replica,
+            mss_transactions,
 			mss_customers 
             WHERE 
-            mss_transactions_replica.txn_customer_id = mss_customers.customer_id
+            mss_transactions.txn_customer_id = mss_customers.customer_id
+			AND date(mss_transactions.txn_datetime) > (CURRENT_DATE - INTERVAL  2 MONTH)
+			AND date(mss_transactions.txn_datetime) < (CURRENT_DATE - INTERVAL  1 MONTH)
             AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-            GROUP BY mss_transactions_replica.txn_customer_id
-            HAVING 
-            count(mss_transactions_replica.txn_customer_id) > ".$this->db->escape($data['regular_cust'])."
-        ";
+            GROUP BY mss_transactions.txn_customer_id ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -9722,19 +9680,20 @@ $sql = str_replace(",)",")",$sql);
     // 05-06
     public function CustomerWithoutTransaction(){
         $sql="SELECT count( DISTINCT(mss_customers.customer_id)) AS count FROM 
-                mss_customers
-                WHERE
-                mss_customers.customer_id NOT IN 
-                (
-                    SELECT mss_transactions_replica.txn_customer_id
-                    FROM
-                    mss_transactions_replica
-                  	WHERE
-                    mss_transactions_replica.txn_outlet_id =".$this->session->userdata['outlets']['current_outlet']."
-                )
-                AND
-                mss_customers.customer_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
-        ";
+		mss_customers
+		WHERE
+		mss_customers.customer_id NOT IN 
+		(
+			SELECT mss_transactions.txn_customer_id
+			FROM
+			mss_transactions,
+			mss_employees
+			  WHERE
+			mss_transactions.txn_cashier = mss_employees.employee_id AND
+			mss_employees.employee_business_outlet= ".$this->session->userdata['outlets']['current_outlet']."
+		)
+		AND
+		mss_customers.customer_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
