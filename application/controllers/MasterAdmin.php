@@ -331,6 +331,7 @@ class MasterAdmin extends CI_Controller {
 			}
 			
 			$returnServiceRecordsByGroupCount = array();
+			
 			if(!empty($returnServiceRecords)){
 				/* Group by Count */
 				foreach($returnServiceRecords as $key =>$value){
@@ -344,6 +345,7 @@ class MasterAdmin extends CI_Controller {
 				}
 				
 			}
+			
 		    return $returnServiceRecordsByGroupCount;
 		}
 		else{
@@ -4414,6 +4416,7 @@ class MasterAdmin extends CI_Controller {
 					   //array('table_id'=>array('group_index' => 'service_details_with_category'))
 					   
 					   $data['servicesDetails'] = $this->getServiceDetailsByPackageId($_GET['packageId'],$_GET['outletId'],$packageType);
+					  
 				   }else{
 					   $data['servicesDetails'] = $this->getServiceDetailsByPackageId($_GET['packageId'],$_GET['outletId']);
 				   }
