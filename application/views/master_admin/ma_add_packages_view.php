@@ -25,7 +25,7 @@
 								<div class="card-body">
 									<p>Please add outlet to proceed.</p>
 								</div>
-							</div>F
+							</div>
 						</div>
 					<?php
 						}else{
@@ -140,7 +140,7 @@
 										
 										
 										<div class="modal" id="ModalAddPackage" tabindex="-1" role="dialog" aria-hidden="true">
-											<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+											<div class="modal-dialog modal-dialog-centered modal-xl"  role="document">
 												<div class="modal-content">
 													<div class="modal-header">
 														<h5 class="modal-title text-white font-weight-bold">Add Package</h5>
@@ -547,10 +547,25 @@
 																							<input type="text" class="form-control" min="0" name="max_price1[]"  placeholder="Max Price" >
 																						</div>
 																					</td>
-																					<td colspan="2">
+																					<td>
+																					    <div class="form-group">
+																							<!-- <label>Cat. Type</label> -->
+																							<select id="type1" class="form-control" name="type1[]">
+																							    <option value="Discount">Discount in %</option>
+																								<option value="Loyalty Points">Loyalty Points in %</option>
+																							</select>
+																						</div>
+																					</td>
+																					<td >
 																						<div class="form-group">
 																							<!-- <label>Discount</label> -->
-																							<input type="number" min="0" max="100" class="form-control" name="special_discount1[]"  placeholder="Discount % ">
+																							<input type="number" min="0" max="100" class="form-control" name="special_discount1[]"  placeholder="Discount/Loyalty Points % ">
+																						</div>
+																					</td>
+																					<td >
+																						<div class="form-group">
+																							<!-- <label>Discount</label> -->
+																							<input type="number" min="0" max="100" class="form-control" name="count1[]"  placeholder="Service Count">
 																						</div>
 																					</td>
 																					
@@ -576,7 +591,7 @@
 																							<!-- <label>Category</label> -->
 																							<select class="form-control" id="special_category_id2" multiple name="special_category_id2[]" temp="special_category_id2">
 																								
-																							</select>
+																							</select><input type="hidden" name="special_category_id2_index[]" />
 																						</div>
 																					</td>
 																					<td>
@@ -591,10 +606,25 @@
 																							<input type="text" class="form-control" min="0" name="max_price2[]"  placeholder="Max Price" >
 																						</div>
 																					</td>
-																					<td colspan="2">
+																					<td>
+																					    <div class="form-group">
+																							<!-- <label>Cat. Type</label> -->
+																							<select id="type1" class="form-control" name="type2[]">
+																							    <option value="Discount">Discount in %</option>
+																								<option value="Loyalty Points">Loyalty Points in %</option>
+																							</select>
+																						</div>
+																					</td>
+																					<td >
 																						<div class="form-group">
 																							<!-- <label>Discount</label> -->
-																							<input type="number" min="0" max="100" class="form-control" name="special_discount2[]"  placeholder="Discount % ">
+																							<input type="number" min="0" max="100" class="form-control" name="special_discount2[]"  placeholder="Discount/Loyalty Points % ">
+																						</div>
+																					</td>
+																					<td >
+																						<div class="form-group">
+																							<!-- <label>Discount</label> -->
+																							<input type="number" min="0" max="100" class="form-control" name="count2[]"  placeholder="Service Count">
 																						</div>
 																					</td>
 																					
@@ -625,7 +655,7 @@
 																						<div class="form-group">
 																							<!-- <label>Sub-Cat.</label> -->
 																							<select class="form-control " multiple name="special_sub_category_id3[]" temp="special_sub_category_id3">
-																							</select>
+																							</select><input type="hidden" name="special_sub_category_id3_index[]" />
 																						</div>
 																					</td>
 																					<td>
@@ -641,9 +671,23 @@
 																						</div>
 																					</td>
 																					<td>
+																					   <div class="form-group">
+																						   <select id="type1" class="form-control" name="type3[]">
+																								<option value="Discount">Discount in %</option>
+																								<option value="Loyalty Points">Loyalty Points in %</option>
+																							</select>
+																					   </div>
+																					</td>
+																					<td>
 																						<div class="form-group">
 																							<!-- <label>Discount</label> -->
-																							<input type="number" min="0" max="100" class="form-control" name="special_discount3[]"  placeholder="Discount % ">
+																							<input type="number" min="0" max="100" class="form-control" name="special_discount3[]"  placeholder="Discount/Loyalty Points % ">
+																						</div>
+																					</td>
+																					<td >
+																						<div class="form-group">
+																							<!-- <label>Discount</label> -->
+																							<input type="number" min="0" max="100" class="form-control" name="count3[]"  placeholder="Service Count">
 																						</div>
 																					</td>
 																					
@@ -683,7 +727,7 @@
 																						<div class="form-group">
 																							<!-- <label>Service</label> -->
 																							<select class="form-control" name="special_service_id4[]" multiple temp="Service">
-																							</select>
+																							</select><input type="hidden" name="special_service_id4_index[]" />
 																						</div>
 																					</td>
 																					<td>
@@ -699,9 +743,23 @@
 																						</div>
 																					</td>
 																					<td>
+																					   <div class="form-group">
+																						   <select id="type1" class="form-control" name="type4[]">
+																								<option value="Discount">Discount in %</option>
+																								<option value="Loyalty Points">Loyalty Points in %</option>
+																							</select>
+																					   </div>
+																					</td>
+																					<td>
 																						<div class="form-group" style="width:100px;">
 																							<!-- <label>Discount</label> -->
-																							<input type="number" min="0" max="100" class="form-control" name="special_discount4[]"  placeholder="Discount % ">
+																							<input type="number" min="0" max="100" class="form-control" name="special_discount4[]"  placeholder="Discount/Loyalty Points % ">
+																						</div>
+																					</td>
+																					<td >
+																						<div class="form-group">
+																							<!-- <label>Discount</label> -->
+																							<input type="number" min="0" max="100" class="form-control" name="count4[]"  placeholder="Service Count">
 																						</div>
 																					</td>
 																					
@@ -775,9 +833,9 @@
 													   <td><?=($key+1); ?></td>
 													   <td><?=$value['salon_package_name'];?></td>
 													   <td><?=$value['salon_package_type'];?></td>
-													   <td><?=$value['salon_package_price'];?></td>
-													   <td><?=$value['service_gst_percentage'];?></td>
-													   <td><?=$value['salon_package_upfront_amt'];?></td>
+													   <td><?=moneyFormat($value['salon_package_price']);?></td>
+													   <td><?=moneyFormat($value['service_gst_percentage']);?></td>
+													   <td><?=moneyFormat($value['salon_package_upfront_amt']);?></td>
 													   <td><?=$value['salon_package_validity'];?></td>
 													   <td><?=$value['salon_package_date'];?></td>
 													   <td><?=$value['salon_package_end_date'];?></td>
@@ -835,7 +893,7 @@
 <style>
 
 .modal-dialog {
-    width: 1000px;
+    width: 1500px;
     margin: 30px auto;
 }
 .modal-content #serviceTable tbody tr td{
@@ -938,9 +996,7 @@
 						}
 						
 					});
-					
-				
-				    subCatObj.find("select[temp="+event+"]").html("").html(options); 
+					subCatObj.find("select[temp="+event+"]").html("").html(options); 
 					subCatObj.find("select[temp="+event+"]").multiselect('destroy').multiselect(multiSelectParamsData); 
 				})
 				.fail(function(jqXHR, textStatus, errorThrown) {
@@ -949,7 +1005,9 @@
 					console.log(errorThrown.toString());
 				});
 				
-		}	
+	}
+
+   
 	
 	function getSubCategoryRecords(parameters,subCatObj,event){
 				$.getJSON("<?=base_url()?>MasterAdmin/GetSubCategoriesByCatIds", parameters)
@@ -1233,6 +1291,39 @@
 					
 				});
 	}
+	
+	function loadSpecialMemeberData(tableId,tableInputNameIndex,serviceObj,multiSelectParamsData){
+	 setTimeout(function () {
+		if(tableId!='specialMembershipTable1'){
+		 	
+		   console.log('c id',tableId,serviceObj.service_category_id);
+		   console.log($("#"+tableId+" tr select[name='special_category_id"+tableInputNameIndex+"[]']").html());
+			 $("#"+tableId+" tr select[name='special_category_id"+tableInputNameIndex+"[]'] option").filter(function() {
+					console.log("come here",$(this).val(),serviceObj.service_category_id);		
+					return ($(this).val() == serviceObj.service_category_id); //To select dropdown record
+			  }).prop('selected', true);
+			 $("#"+tableId+" tr select[name='special_category_id"+tableInputNameIndex+"[]']").multiselect('destroy').multiselect(multiSelectParamsData);
+		  
+		}
+		
+		 console.log('testdf',serviceObj.service_category_id);
+		if(tableId!='specialMembershipTable1' && tableId!='specialMembershipTable2'){
+			$("#"+tableId+" tr select[name='special_sub_category_id"+tableInputNameIndex+"[]'] option").filter(function() { 
+					return ($(this).val() == serviceObj.service_sub_category_id); //To select dropdown record
+			  }).prop('selected', true); 
+			 $("#"+tableId+" tr select[name='special_sub_category_id"+tableInputNameIndex+"[]']").multiselect('destroy').multiselect(multiSelectParamsData);
+
+		}
+		
+		if(tableId!='specialMembershipTable1' && tableId!='specialMembershipTable2' && tableId!='specialMembershipTabl3'){
+			$("#"+tableId+" tr select[name='special_service_id"+tableInputNameIndex+"[]'] option").filter(function() { 
+					return ($(this).val() == serviceObj.service_id); //To select dropdown record
+			  }).prop('selected', true); 
+			  $("#"+tableId+" tr select[name='special_service_id"+tableInputNameIndex+"[]']").multiselect('destroy').multiselect(multiSelectParamsData);
+								
+		}
+	  },2000); 		
+	}
 			
 	$(document).on('click','.package-edit-btn',function(event) {
 		$("#hd_salon_package_id").val($(this).attr('salon_package_id'));
@@ -1303,7 +1394,7 @@
 				.done(function(data, textStatus, jqXHR) {
 					console.log(data.outletIds);
 					 if(data!=null && data!='NULL'){
-					 
+
 							  $("#ModalAddPackage input[name=salon_package_name]").attr('value',data.salon_package_name);
 							  $("#ModalAddPackage input[name=salon_package_price]").attr('value',data.salon_package_price);
 							  $("#ModalAddPackage input[name=salon_package_gst]").attr('value',data.service_gst_percentage);
@@ -1312,6 +1403,9 @@
 							  $("#ModalAddPackage input[name=virtual_wallet_money_absolute]").attr('value',data.virtual_wallet_money);
 							  $("#ModalAddPackage input[name=total_no_of_services]").attr('value',data.total_count_of_services);
 							  $("#ModalAddPackage input[name=package_end_date]").attr('value',data.salon_package_end_date);
+							  $("#ModalAddPackage input[name=package_monthly_discount]").attr('value',data.service_monthly_discount);
+							  $("#ModalAddPackage input[name=birthday_discount]").attr('value',data.birthday_discount);
+							  $("#ModalAddPackage input[name=anniversary_discount]").attr('value',data.anni_discount);
 							  
 							 // Not exist in db	
 							 //$("#ModalAddPackage input[name=virtual_wallet_money_percentage]").attr('value',data.virtual_wallet_money_percentage);
@@ -1332,9 +1426,124 @@
 
 							  togglePackage();
 							  //if(data.salon_package_type_selected=='Services' || data.salon_package_type_selected=='Discount' || data.salon_package_type_selected=='Service_SubCategory_Bulk' || data.salon_package_type_selected=='Discount_SubCategory_Bulk'){
-								
+							  var serviceRecords = '';var loopIndex = 0;var loopIndexCount=0;var tableInputNameIndex = 0;var i=0;var categoryTypeArray = [];
+							  var parameters = {}; var subCatObj = '';var categoryIdArray=[];var subCategoryIdArray=[];var serviceIdArray = [];
+							  
 							  if(data.salon_package_type_selected=='special_membership'){
-								  console.log('come');
+								
+								//setTimeout(function () {  
+								//$("#specialMembershipTable2").find(".category_type2_filter").trigger('change',this.val());
+								/* $("#specialMembershipTable3").find(".category_type3_filter").trigger('change');
+								 $("#specialMembershipTable4").find(".category_type4_filter").trigger('change');
+								 $("#specialMembershipTable4").find(".category_type4_filter").trigger('change');
+								 $("#specialMembershipTable2").find(".category3_filter").trigger('change');
+								 $("#specialMembershipTable4").find(".sub_category4_filter").trigger('change');	 */
+								//},500); 
+                                 $.each(Object.keys(data.servicesDetails), function( index, tableId ) {
+										console.log('llllllllll',data.servicesDetails[tableId]);
+										loopIndexCount = data.servicesDetails[tableId].length;
+										
+									    for(loopIndex=1;loopIndex<loopIndexCount;loopIndex++){
+											if(tableId=='specialMembershipTable1'){
+												addRowSpecialMembership1(); 
+											}else if(tableId=='specialMembershipTable2'){
+												addRowSpecialMembership2(); 
+											}else if(tableId=='specialMembershipTable3'){
+												addRowSpecialMembership3(); 
+											}if(tableId=='specialMembershipTable4'){
+												addRowSpecialMembership4(); 
+											} 
+									    }
+								 }); 								 
+								 
+								 $.each(Object.keys(data.servicesDetails), function( index, tableId ) {
+									  tableInputNameIndex = tableInputNameIndex+1;
+									  
+									  // Category Type Filter
+									  loopIndexCount = data.servicesDetails[tableId].length;
+									  for(loopIndex=0;loopIndex<loopIndexCount;loopIndex++){
+										  var categoryTypeHtml = '';
+										  categoryTypeArray   = [];
+										  categoryIdArray 	 = [];
+										  subCategoryIdArray = [];
+										  serviceIdArray = [];
+										  
+										  serviceRecords = data.servicesDetails[tableId][loopIndex];
+										  //console.log(serviceRecords);
+										     
+											 $.each(Object.keys(serviceRecords), function( k,catType ) {
+												
+												 $("#"+tableId+" tr select[name='category_type"+tableInputNameIndex+"[]'] option").filter(function() { 
+														return ($(this).val() == catType); //To select dropdown record
+												 }).prop('selected', true);
+												 $("#"+tableId+" tr select[name='category_type"+tableInputNameIndex+"[]']").multiselect('destroy').multiselect(multiSelectParamsData);
+												
+												 if ($.inArray(catType, categoryTypeArray) == -1) {
+												  categoryTypeArray.push(catType);
+												 }
+												 
+											});
+											
+											$.each(serviceRecords, function( categoType, serviceObj){
+											   for(k=0;k<serviceObj.length;k++){
+												 if ($.inArray(serviceObj[k].service_category_id, categoryIdArray) == -1) {
+												  categoryIdArray.push(serviceObj[k].service_category_id);
+												 }
+												 if($.inArray(serviceObj[k].service_sub_category_id, subCategoryIdArray) == -1) {
+												  subCategoryIdArray.push(serviceObj[k].service_sub_category_id);
+												 }
+												 if($.inArray(serviceObj[k].master_service_id, serviceIdArray) == -1) {
+												  serviceIdArray.push(serviceObj[k].master_service_id);
+												 }
+											   }
+											});
+											console.log('Array',categoryIdArray,subCategoryIdArray);
+											//$("#specialMembershipTable2").find(".category_type2_filter").trigger('change',[{categoryType: categoryTypeArray}]);
+											 parameters = {
+												'category_type' : categoryTypeArray
+											 };
+											 
+											subCatObj = $("#"+tableId); 
+											if(tableId=='specialMembershipTable2'){
+												getCategoryTypeRecords(parameters,subCatObj,'special_category_id2');
+											}else if(tableId=='specialMembershipTable3'){
+												getCategoryTypeRecords(parameters,subCatObj,'special_category_id3');
+												parameters = {
+													'category_id' : categoryIdArray
+												};
+												getSubCategoryRecords(parameters,subCatObj,'special_sub_category_id3');
+												
+											}else if(tableId=='specialMembershipTable4'){
+												getCategoryTypeRecords(parameters,subCatObj,'special_category_id4');
+												parameters = {
+													'category_id' : categoryIdArray
+												};
+												getSubCategoryRecords(parameters,subCatObj,'special_sub_category_id4');
+												parameters = {
+													'sub_category_id' : subCategoryIdArray,
+													'category_type' : categoryTypeArray
+												};
+												$("#specialMembershipTable4").find(".sub_category4_filter").trigger('change',[parameters]);
+											}
+											
+										    $.each(serviceRecords, function( categoType, serviceObj){
+											   for(k=0;k<serviceObj.length;k++){
+                                                 
+													 if(k==0){											
+													   $('#'+tableId+' tr input[name="min_price'+tableInputNameIndex+'[]"]').attr('value',serviceObj[0]['min_price']); 
+													   $('#'+tableId+' tr input[name="max_price'+tableInputNameIndex+'[]"]').attr('value',serviceObj[0]['max_price']); 
+													   $('#'+tableId+' tr input[name="special_discount'+tableInputNameIndex+'[]"]').attr('value',serviceObj[0]['discount_percentage']); 
+													   $('#'+tableId+' tr input[name="count'+tableInputNameIndex+'[]"]').attr('value',serviceObj[0]['service_count']);
+													   $("#"+tableId+" tr select[name='type"+tableInputNameIndex+"[]'] option[value='"+serviceObj[0]['type']+"']").attr('selected','selected');
+													 }
+											        
+													loadSpecialMemeberData(tableId,tableInputNameIndex,serviceObj[k],multiSelectParamsData);
+											 }	
+										   });
+										i++;	
+									  }
+							      });
+							  			 
 							  }else{
 							     var tableId = '';
 								   if(data.salon_package_type_selected=='Services') {
@@ -1664,6 +1873,108 @@
 			$("#special_membership").show();
 		}
 	}
+	
+	function addRowSpecialMembership1(){
+				
+				var rowno = $("#specialMembershipTable1 tr").length;
+				$("#DeleteRowSpecialMembership1").show();	
+				rowno = rowno+1;
+				if(rowno<=2){
+					var htmlContent = "";
+					htmlContent +='<tr><td><div class="form-group">';
+					htmlContent +='<select class="form-control" multiple name="category_type1[]"><option value="service" >Service</option><option value="otc">Products</option></select><input type="hidden" name="category_type1_index[]" />';
+					htmlContent +='</div></td><td><div class="form-group"><input type="number" class="form-control" min="0" name="min_price1[]" placeholder="Min price"></div></td>';
+					htmlContent +='<td><div class="form-group"><input type="number" class="form-control" min="0" name="max_price1[]" placeholder="Max price"></div></td>';
+					htmlContent +='<td><div class="form-group"><select id="type1" class="form-control" name="type1[]"><option value="Discount">Discount in %</option><option value="Loyalty Points">Loyalty Points in %</option</select></div></td>';
+					htmlContent +='<td ><div class="form-group"><input type="number" min="0" max="100" class="form-control" name="special_discount1[]"  placeholder="Discount/Loyalty Points % "></div></td>';
+					htmlContent +='<td ><div class="form-group"><input type="number" min="0" max="100" class="form-control" name="count1[]"  placeholder="Service Count"></div></td></tr>';
+					$("#specialMembershipTable1 tr:last").after(htmlContent);
+				   	$('#specialMembershipTable1 tr:last select[name="category_type1[]"]').multiselect(multiSelectParamsCategoryTpe);
+					$("#AddRowSpecialMembership1").hide();						
+				}
+	}
+	
+	function AddRowSpecialMembership2(){
+				var rowno = $("#specialMembershipTable2 tr").length;
+				$("#DeleteRowSpecialMembership2").show();
+				rowno = rowno+1;
+				var htmlContent = "";
+					htmlContent +='<tr><td><div class="form-group">';
+					htmlContent +='<select class="form-control category_type2_filter"  name="category_type2[]" multiple="multiple"><option value="Service">Service</option><option value="Products">Products</option></select>';
+					htmlContent +='</div></td>';
+					htmlContent += '<td>';
+				    htmlContent += '<div class="form-group">';
+				    htmlContent += '<select class="form-control" name="special_category_id2[]" multiple temp="special_category_id2">';
+				    htmlContent +='</select><input type="hidden" name="special_category_id2_index[]" /></div></td>';
+					htmlContent +='<td><div class="form-group"><input type="number" class="form-control" min="0" name="min_price2[]" placeholder="Min price"></div></td>';
+					htmlContent +='<td><div class="form-group"><input type="number" class="form-control" min="0" name="max_price2[]" placeholder="Max price"></div></td>';
+					htmlContent +='<td><div class="form-group"><select id="type2" class="form-control" name="type1[]"><option value="Discount">Discount in %</option><option value="Loyalty Points">Loyalty Points in %</option</select></div></td>';
+					htmlContent +='<td ><div class="form-group"><input type="number" min="0" max="100" class="form-control" name="special_discount2[]"  placeholder="Discount/Loyalty Points % "></div></td>';
+					htmlContent +='<td ><div class="form-group"><input type="number" min="0" max="100" class="form-control" name="count2[]"  placeholder="Service Count"></div></td></tr>';
+					 $("#specialMembershipTable2 tr:last").after(htmlContent);
+							
+					$("#specialMembershipTable2 tr:last select[name='special_category_id2[]']").multiselect(multiSelectParamsData);
+											
+					$('#specialMembershipTable2 tr:last select[name="category_type2[]"]').multiselect(multiSelectParamsCategoryTpe);
+			}
+	function AddRowSpecialMembership3(){
+		$("#DeleteRowSpecialMembership3").show();
+		var rowno = $("#specialMembershipTable3 tr").length;
+		
+		rowno = rowno+1;
+		
+		var htmlContent = "";
+			htmlContent +='<tr><td><div class="form-group">';
+			htmlContent +='<select class="form-control category_type3_filter"  name="category_type3[]" multiple="multiple"><option value="Service">Service</option><option value="Products">Products</option></select>';
+			htmlContent +='</div></td>';
+			htmlContent += '<td>';
+			htmlContent += '<div class="form-group">';
+			htmlContent += '<select class="form-control category3_filter" name="special_category_id3[]" multiple temp="special_category_id3">';
+			htmlContent +='</select></div></td>';
+			htmlContent +='<td><div class="form-group"><select class="form-control" name="special_sub_category_id3[]" multiple temp="special_sub_category_id3"></select><input type="hidden" name="special_sub_category_id3_index[]" />';
+			 htmlContent +='</div></td>';
+			htmlContent +='<td><div class="form-group"><input type="number" class="form-control" min="0" name="min_price3[]" placeholder="Min price"></div></td>';
+			htmlContent +='<td><div class="form-group"><input type="number" class="form-control" min="0" name="max_price3[]" placeholder="Max price"></div></td>';
+			htmlContent +='<td><div class="form-group"><select id="type1" class="form-control" name="type3[]"><option value="Discount">Discount in %</option><option value="Loyalty Points">Loyalty Points in %</option</select></div></td>';
+			htmlContent +='<td ><div class="form-group"><input type="number" min="0" max="100" class="form-control" name="special_discount3[]"  placeholder="Discount/Loyalty Points % "></div></td>';
+			htmlContent +='<td ><div class="form-group"><input type="number" min="0" max="100" class="form-control" name="count3[]"  placeholder="Service Count"></div></td></tr>';
+			
+
+			$("#specialMembershipTable3 tr:last").after(htmlContent);
+			
+			$("#specialMembershipTable3 tr:last select[name='special_category_id3[]']").multiselect(multiSelectParamsData);
+									
+			$('#specialMembershipTable3 tr:last select[name="category_type3[]"]').multiselect(multiSelectParamsCategoryTpe);	
+			$('#specialMembershipTable3 tr:last select[name="special_sub_category_id3[]"]').multiselect(multiSelectParamsData);							
+	 
+	}	
+	
+	function AddRowSpecialMembership4(){
+		$("#DeleteRowSpecialMembership4").show();
+		var rowno = $("#specialMembershipTable4 tr").length;
+		
+		rowno = rowno+1;
+		var htmlContent ='<tr><td><div class=\"form-group\"><select class=\"form-control category_type4_filter\" multiple name=\"category_type4[]\"><option value=\"Service\" >Service</option><option value=\"Products\">Products</option></select></div></td><td><div class=\"form-group\" ><select class=\"form-control category4_filter\" multiple name=\"special_category_id4[]\" temp=\"special_category_id4\" ></select></div></td><td><div class=\"form-group\"><select class=\"form-control sub_category4_filter\" multiple  name=\"special_sub_category_id4[]\" temp=\"special_sub_category_id4\" ></select></div></td><td><div class=\"form-group\"><select class=\"form-control\" name=\"special_service_id4[]\" multiple temp=\"Service\"></select><input type=\"hidden\" name=\"special_service_id4_index[]\" /></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" min=\"0\" name=\"min_price4[]\" placeholder=\"Mini price\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" min=\"0\" name=\"max_price4[]\" placeholder=\"Max price\"></div></td><td><div class=\"form-group\"><input type=\"number\" min=\"0\" placeholder=\"Discount %\" class=\"form-control\" name=\"special_discount4[]\"></div></td></td>';
+		htmlContent +='<td><div class="form-group"><select id="type4" class="form-control" name="type1[]"><option value="Discount">Discount in %</option><option value="Loyalty Points">Loyalty Points in %</option</select></div></td>';
+		htmlContent +='<td ><div class="form-group"><input type="number" min="0" max="100" class="form-control" name="special_discount4[]"  placeholder="Discount/Loyalty Points % "></div></td>';
+		htmlContent +='<td ><div class="form-group"><input type="number" min="0" max="100" class="form-control" name="count4[]"  placeholder="Service Count"></div></td></tr>';
+		
+		$("#specialMembershipTable4 tr:last").after(htmlContent);
+		
+		 $('#specialMembershipTable4 tr:last select[name="category_type4[]"]').multiselect(multiSelectParamsCategoryTpe);										
+
+
+		$('#specialMembershipTable4 tr:last select[name="special_category_id4[]"]').multiselect(multiSelectParamsData1);
+										
+
+		$('#specialMembershipTable4 tr:last select[name="special_sub_category_id4[]"]').multiselect(multiSelectParamsData1);									
+
+													
+		$('#specialMembershipTable4 tr:last select[name="special_service_id4[]"]').multiselect(multiSelectParamsData1);
+		
+			
+	}
+			
 </script>
 
 <script type="text/javascript">
@@ -1966,7 +2277,22 @@
 						$(this).find('td input[name="category_type1_index[]"]').val($(this).find("td select[name='category_type1[]']").val());
 					  }
 					});
-
+					$("#specialMembershipTable2 tr").each(function(i){
+					 if($(this).find("td select[name='special_category_id2[]']").val()!=''){	
+						$(this).find('td input[name="special_category_id2_index[]"]').val($(this).find("td select[name='special_category_id2[]']").val());
+					  }
+					});  
+					$("#specialMembershipTable3 tr").each(function(i){
+					  if($(this).find("td select[name='special_sub_category_id3[]']").val()!=''){	
+						$(this).find('td input[name="special_sub_category_id3_index[]"]').val($(this).find("td select[name='special_sub_category_id3[]']").val());
+					  }
+					});
+					
+					$("#specialMembershipTable4 tr").each(function(i){  
+					  if($(this).find("td select[name='special_service_id4[]']").val()!=''){	
+						$(this).find('td input[name="special_service_id4_index[]"]').val($(this).find("td select[name='special_service_id4[]']").val());
+					  }
+					}); 
 					
 					var formData = $("#AddPackage").serialize(); 
 					console.log(formData);
@@ -1989,7 +2315,7 @@
 									rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
 									timeOut: 1000
 								});
-								setTimeout(function () { location.reload(1); }, 1000);
+								setTimeout(function () { location.reload(1); }, 1000); 
 							}
 							else if (data.success == 'false'){                   
 								if($('.feedback').hasClass('alert-success')){
@@ -2028,26 +2354,13 @@
 			}
 			// table1
 			$("#AddRowSpecialMembership1").click(function(event){
+				
 				event.preventDefault();
 				this.blur();
-				var rowno = $("#specialMembershipTable1 tr").length;
-				$("#DeleteRowSpecialMembership1").show();	
-				rowno = rowno+1;
-				if(rowno<=2){
-					var htmlContent = "";
-					htmlContent +='<tr><td><div class="form-group">';
-					htmlContent +='<select class="form-control" multiple name="category_type1[]"><option value="service" >Service</option><option value="otc">Products</option></select><input type="hidden" name="category_type1_index[]" />';
-					htmlContent +='</div></td><td><div class="form-group"><input type="number" class="form-control" min="0" name="min_price1[]" placeholder="Min price"></div></td>';
-					htmlContent +='<td><div class="form-group"><input type="number" class="form-control" min="0" name="max_price1[]" placeholder="Max price"></div></td>';
-					htmlContent +='<td><div class="form-group"><input type="number" min="0" placeholder="Discount % " class="form-control" name="special_discount1[]"></div></td></td></tr>';
-				    $("#specialMembershipTable1 tr:last").after(htmlContent);
-				   	$('#specialMembershipTable1 tr:last select[name="category_type1[]"]').multiselect(multiSelectParamsCategoryTpe);
-					$("#AddRowSpecialMembership1").hide();						
-				}
+				addRowSpecialMembership1();
 			});
 			
 			
-
 			$("#DeleteRowSpecialMembership1").click(function(event){
 				event.preventDefault();
 				this.blur();
@@ -2064,13 +2377,21 @@
 			});
 			
 			// table2
-			$(document).on('change',".category_type2_filter", function(e){
+			$(document).on('change',".category_type2_filter", function(e,category_type=''){
+				console.log('cccccccccccccc',category_type.categoryType);
 			    var subCatObj = $(this).closest('td').next('td');
 				e.preventDefault();
-				
-				var parameters = {
-					'category_type' :  $(this).val()
-				};
+				if(category_type!=''){
+					var parameters = {
+						'category_type' : category_type.categoryType
+					};
+				}else{
+					var parameters = {
+						'category_type' : $(this).val()
+					};
+				}
+			
+				console.log('parameter',parameters);
 				getCategoryTypeRecords(parameters,subCatObj,'special_category_id2');
 			});
 			
@@ -2079,28 +2400,11 @@
 			$("#AddRowSpecialMembership2").click(function(event){	
 				event.preventDefault();
 				this.blur();
-				var rowno = $("#specialMembershipTable2 tr").length;
-				$("#DeleteRowSpecialMembership2").show();
-				rowno = rowno+1;
-				var htmlContent = "";
-					htmlContent +='<tr><td><div class="form-group">';
-					htmlContent +='<select class="form-control category_type2_filter"  name="category_type2[]" multiple="multiple"><option value="Service">Service</option><option value="Products">Products</option></select>';
-					htmlContent +='</div></td>';
-					htmlContent += '<td>';
-				    htmlContent += '<div class="form-group">';
-				    htmlContent += '<select class="form-control" name="special_category_id2[]" multiple temp="special_category_id2">';
-				    htmlContent +='</select></div></td>';
-					htmlContent +='<td><div class="form-group"><input type="number" class="form-control" min="0" name="min_price2[]" placeholder="Min price"></div></td>';
-					htmlContent +='<td><div class="form-group"><input type="number" class="form-control" min="0" name="max_price2[]" placeholder="Max price"></div></td>';
-					htmlContent +='<td><div class="form-group"><input type="number" min="0" placeholder="Discount %" class="form-control" name="special_discount2[]"></div></td></tr>';
-				    $("#specialMembershipTable2 tr:last").after(htmlContent);
-							
-					$("#specialMembershipTable2 tr:last select[name='special_category_id2[]']").multiselect(multiSelectParamsData);
-											
-					$('#specialMembershipTable2 tr:last select[name="category_type2[]"]').multiselect(multiSelectParamsCategoryTpe);						
+			  	AddRowSpecialMembership2();					
 					
 			});
             
+			
 			$("#DeleteRowSpecialMembership2").click(function(event){
 				event.preventDefault();
 				this.blur();
@@ -2156,33 +2460,7 @@
 			$("#AddRowSpecialMembership3").click(function(event){
 				event.preventDefault();
 				this.blur();
-				$("#DeleteRowSpecialMembership3").show();
-				var rowno = $("#specialMembershipTable3 tr").length;
-				
-				rowno = rowno+1;
-				
-			    var htmlContent = "";
-					htmlContent +='<tr><td><div class="form-group">';
-					htmlContent +='<select class="form-control category_type3_filter"  name="category_type3[]" multiple="multiple"><option value="Service">Service</option><option value="Products">Products</option></select>';
-					htmlContent +='</div></td>';
-					htmlContent += '<td>';
-				    htmlContent += '<div class="form-group">';
-				    htmlContent += '<select class="form-control category3_filter" name="special_category_id3[]" multiple temp="special_category_id3">';
-				    htmlContent +='</select></div></td>';
-					htmlContent +='<td><div class="form-group"><select class="form-control" name="special_sub_category_id3[]" multiple temp="special_sub_category_id3"></select>';
-					 htmlContent +='</div></td>';
-					htmlContent +='<td><div class="form-group"><input type="number" class="form-control" min="0" name="min_price3[]" placeholder="Min price"></div></td>';
-					htmlContent +='<td><div class="form-group"><input type="number" class="form-control" min="0" name="max_price3[]" placeholder="Max price"></div></td>';
-					htmlContent +='<td><div class="form-group"><input type="number" min="0" placeholder="Discount %" class="form-control" name="special_discount3[]"></div></td></tr>';
-				  
-
-					$("#specialMembershipTable3 tr:last").after(htmlContent);
-			        
-					$("#specialMembershipTable3 tr:last select[name='special_category_id3[]']").multiselect(multiSelectParamsData);
-											
-					$('#specialMembershipTable3 tr:last select[name="category_type3[]"]').multiselect(multiSelectParamsCategoryTpe);	
-					$('#specialMembershipTable3 tr:last select[name="special_sub_category_id3[]"]').multiselect(multiSelectParamsData);							
-			 
+				AddRowSpecialMembership3();
 			
 			});
 
@@ -2239,12 +2517,15 @@
 			});
 						
 
-			$(document).on('change',".sub_category4_filter", function(e){
+			$(document).on('change',".sub_category4_filter", function(e,parameters=''){
+				console.log('p',parameters);
 				var subCatObj = $(this).closest('td').next('td');
-				var parameters = {
-					'sub_category_id' :  $(this).val(),
-					'category_type' : $(this).closest('tr').find("select[name='category_type4[]']").val()
-				};
+				if(parameters==''){
+					var parameters = {
+						'sub_category_id' :  $(this).val(),
+						'category_type' : $(this).closest('tr').find("select[name='category_type4[]']").val()
+					};
+				}
 				$.getJSON("<?=base_url()?>MasterAdmin/GetServicesBySubCatIds", parameters)
 				.done(function(data, textStatus, jqXHR) {
 						var options = ""; 
@@ -2280,25 +2561,7 @@
 			$("#AddRowSpecialMembership4").click(function(event){
 				event.preventDefault();
 				this.blur();
-				$("#DeleteRowSpecialMembership4").show();
-				var rowno = $("#specialMembershipTable4 tr").length;
-				
-				rowno = rowno+1;
-				
-				$("#specialMembershipTable4 tr:last").after("<tr><td><div class=\"form-group\"><select class=\"form-control category_type4_filter\" multiple name=\"category_type4[]\"><option value=\"Service\" >Service</option><option value=\"Products\">Products</option></select></div></td><td><div class=\"form-group\" ><select class=\"form-control category4_filter\" multiple name=\"special_category_id4[]\" temp=\"special_category_id4\" ></select></div></td><td><div class=\"form-group\"><select class=\"form-control sub_category4_filter\" multiple  name=\"special_sub_category_id4[]\" temp=\"special_sub_category_id4\" ></select></div></td><td><div class=\"form-group\"><select class=\"form-control\" name=\"special_service_id4[]\" multiple temp=\"Service\"></select></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" min=\"0\" name=\"min_price4[]\" placeholder=\"Mini price\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" min=\"0\" name=\"max_price4[]\" placeholder=\"Max price\"></div></td><td><div class=\"form-group\"><input type=\"number\" min=\"0\" placeholder=\"Discount %\" class=\"form-control\" name=\"special_discount4[]\"></div></td></td></tr>");
-				
-				 $('#specialMembershipTable4 tr:last select[name="category_type4[]"]').multiselect(multiSelectParamsCategoryTpe);										
-		
-	   
-				$('#specialMembershipTable4 tr:last select[name="special_category_id4[]"]').multiselect(multiSelectParamsData1);
-												
-
-				$('#specialMembershipTable4 tr:last select[name="special_sub_category_id4[]"]').multiselect(multiSelectParamsData1);									
-
-															
-				$('#specialMembershipTable4 tr:last select[name="special_service_id4[]"]').multiselect(multiSelectParamsData1);
-				
-			
+				AddRowSpecialMembership4();
 			});
 
 			$("#DeleteRowSpecialMembership4").click(function(event){

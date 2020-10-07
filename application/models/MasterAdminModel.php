@@ -260,7 +260,7 @@ class MasterAdminModel extends CI_Model
   }
   
   public function getMasterCategoriesBySubCatIds($where){
-	   $sql = "SELECT A.`sub_category_id`,A.`sub_category_name`,A.`sub_category_category_id`,B.category_id,B.category_name FROM `mss_sub_categories` as A,`master_categories` as B  WHERE A.`sub_category_id` IN (".$where['sub_category_id'].") AND A.`sub_category_is_active` = " . $this->db->escape($where['sub_category_is_active']) . " AND A.`sub_category_category_id`=B.category_id ";
+	   $sql = "SELECT A.`sub_category_id`,A.`sub_category_name`,A.`sub_category_category_id`,B.category_id,B.category_name,B.`category_type` FROM `mss_sub_categories` as A,`master_categories` as B  WHERE A.`sub_category_id` IN (".$where['sub_category_id'].") AND A.`sub_category_is_active` = " . $this->db->escape($where['sub_category_is_active']) . " AND A.`sub_category_category_id`=B.category_id ";
 	   $query = $this->db->query($sql);
     
 		if ($query) {
@@ -762,11 +762,11 @@ class MasterAdminModel extends CI_Model
             }
           }
         }
-        $type = 'Discount_Category_Bulk';
+       $type = 'Discount_Category_Bulk';
    
-      $postData = array('type'=>$type,'insertData'=>$data_2,'categories'=> $categories,'count_service'=>$count,'discounts'=>$discounts,'cat_price'=>$cat_price);
+       $postData = array('type'=>$type,'insertData'=>$data_2,'categories'=> $categories,'count_service'=>$count,'discounts'=>$discounts,'cat_price'=>$cat_price);
      
-      $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData);
+       $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData);
       if($messge == 'error'){
         return $this->ModelHelper(false,true,'',array('messge' => "Somthing went wrong!Please try again later"));
         die;
@@ -868,149 +868,260 @@ class MasterAdminModel extends CI_Model
         } 
     }   
  //ServicePAckage
-	public function AddDiscountServicePackage($post,$data,$count,$where,$outletIds,$masterId){
-        $categoryType1Index = $data['category_type1_index'];
-	    unset($data['category_type1_index']);
-		// $this->PrintArray($_POST);
-		$result = $this->Insert($data,'mss_salon_packages');
-		$last_insert_id = $result['res_arr']['insert_id'];	
-		$servicesIds = array();
-        if(!empty($_POST['category_type1'])){
-		  foreach($outletIds as $outletId){
-			 for($i=0;$i<count($_POST['category_type1']);$i++){
-                $filter=array(
-                    'category_type'=>$_POST['category_type1'][$i],
-                    'min_price'=>$_POST['min_price1'][$i],
-                    'max_price'=>$_POST['max_price1'][$i],
-					'master_id'=>$where['master_id']
-                    //'business_admin_id'=>$where['business_admin_id']
-                    //'business_outlet_id'=>$where['business_outlet_id']
-                );
-                // $categories=$this->ServiceByPrice($co);
-                $result_2=$this->ServiceBetweenPrice($filter);
-                $result_2=$result_2['res_arr'];
-                //$this->PrintArray($result_2);
-				// echo $result_2[1]['service_id'];
-                // exit;
-              	  	
-					for($k=0;$k< count($result_2);$k++){
+	public function AddDiscountServicePackage($post,$data,$count,$where,$outletIds,$masterId,$packageId=0){
+	 
+	  $_POST = $post;
+	 
+	  $messge ='';
+	  if($packageId>0){
+		 $categoryType1Index = $data['category_type1_index'];
+		 unset($data['category_type1_index']);
+		 $result = $this->Update($data,'mss_salon_packages',array('salon_package_id'=>$packageId,'master_id'=>$masterId));
+		 $last_insert_id = $packageId;
+		
+	  }else{	
+		 $categoryType1Index = $data['category_type1_index'];
+		 unset($data['category_type1_index']);
+		 // $this->PrintArray($_POST);
+		 $result = $this->Insert($data,'mss_salon_packages');
+		 $last_insert_id = $result['res_arr']['insert_id'];
+	   }
+	  
+  		$servicesIds = array(); 
+		$categoryTypeIndex1 = $_POST['category_type1_index'];
+ 		
+        if(!empty($categoryTypeIndex1)){
+	     	$update_data_2 = array();
+		    foreach($outletIds as $outletId){
+    			
+				 for($i=0;$i<count($categoryTypeIndex1);$i++){
+				   $categoryTypeArray = explode(',',$_POST['category_type1_index'][$i]);
+                   foreach($categoryTypeArray as $categoryType){ 
+				   
+						$filter=array(
+							'category_type'=>$categoryType,
+							'min_price'=>$_POST['min_price1'][$i],
+							'max_price'=>$_POST['max_price1'][$i],
+							'master_id'=>$where['master_id']
+							//'business_admin_id'=>$where['business_admin_id']
+							//'business_outlet_id'=>$where['business_outlet_id']
+						);
+						// $categories=$this->ServiceByPrice($co);
+						$result_2=$this->ServiceBetweenPrice($filter);
+						$result_2=$result_2['res_arr'];
+						//$this->PrintArray($result_2);
+							  // echo $result_2[1]['service_id'];
+						// exit;
+                  	  	 
+      					for($k=0;$k< count($result_2);$k++){
+      						
+      						$data_2 = array(
+								'salon_package_id' => $last_insert_id,
+								'service_id' => 0,
+								'discount_percentage' => (int) $_POST['special_discount1'][$i],
+								'service_monthly_discount'=>$_POST['package_monthly_discount'],
+								'birthday_discount' =>$_POST['birthday_discount'],
+								'anni_discount'	=> $_POST['anniversary_discount'],
+								'service_count' => $count,
+								'master_id' =>$masterId,
+								'master_service_id' =>  $result_2[$k]['service_id'],
+								'outlet_id' =>$outletId,
+								'min_price' => $_POST['min_price1'][$i],
+								'max_price' => $_POST['max_price1'][$i],
+								'discount' => $_POST['special_discount1'][$i],
+								'type' => $_POST['type1'][$i],
+								'service_count' => $_POST['count1'][$i],
+								'group_index' => $i,
+								'table_id'=> 'specialMembershipTable1'
+      						);						
+							 
+							 if($packageId>0){
+								 $update_data_2[] = $data_2;
+							 }else{
+								 $result = $this->Insert($data_2,'mss_salon_package_data');
+							 }
+      						
+							$servicesIds[] = $result_2[$k]['service_id'];					
+      					}
+				    }  
+    			  } 
+			}
+			  
+			if($packageId>0 && !empty($update_data_2)){   
+			   $type = 'special_membership';
+			   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=> $_POST,'data'=>$data,'count'=>$count,'where'=>$where);
+			   $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData); 
+			}
+		 
+        }
+        $categoryIdIndex2 = $_POST['special_category_id2_index'];  	          
+        if(!empty($categoryIdIndex2)){
+	    $update_data_2 = array();		
+		 foreach($outletIds as $outletId){
+            for($i=0;$i<count($categoryIdIndex2);$i++){
+			  $categoryIdsArray = explode(',',$_POST['special_category_id2_index'][$i]);
+              foreach($categoryIdsArray as $categoryId){ 	
+						$filter2=array(
+							// 'category_type'=>$_POST['category_type2'],
+							'category_id'=>$categoryId,
+							'min_price'=>$_POST['min_price2'][$i],
+							'max_price'=>$_POST['max_price2'][$i],
+							'master_id'=>$where['master_id'],
+							//'business_admin_id'=>$where['business_admin_id'],
+							//'business_outlet_id'=>$where['business_outlet_id']
+						);
+						// $categories=$this->ServiceByPrice($co);
+						$result_3=$this->ServiceBetweenPrice2($filter2);
+						$result_3=$result_3['res_arr'];
 						
-						$data_2 = array(
-						'salon_package_id' => $last_insert_id,
-						'service_id' => 0,
-						'discount_percentage' => (int) $_POST['special_discount1'][$i],
-						'service_monthly_discount'=>$_POST['package_monthly_discount'],
-						'birthday_discount' =>$_POST['birthday_discount'],
-						'anni_discount'	=> $_POST['anniversary_discount'],
-						'service_count' => $count,
-						'master_id' =>$masterId,
-						'master_service_id' =>  $result_2[$k]['service_id'],
-						'outlet_id' =>$outletId
-						);							
-						$result = $this->Insert($data_2,'mss_salon_package_data');
-						$servicesIds[] = $result_2[$k]['service_id'];					
-					}
-				  
-			  } 
+    					for($k=0;$k< count($result_3);$k++){
+      						$data_3 = array(
+      						'salon_package_id' => $last_insert_id,
+      						'service_id' => 0,
+      						'discount_percentage' => $_POST['special_discount2'][$i],
+      						'service_monthly_discount'=>$_POST['package_monthly_discount'],
+      						'birthday_discount' =>$_POST['birthday_discount'],
+      						'anni_discount'	=> $_POST['anniversary_discount'],
+      						'service_count' => $count,
+      						'master_id' =>$masterId,
+      						'master_service_id' => $result_3[$k]['service_id'],
+      						'outlet_id' =>$outletId,
+						    'min_price' => $_POST['min_price2'][$i],
+						    'max_price' => $_POST['max_price2'][$i],
+						    'discount' => $_POST['special_discount2'][$i],
+							'type' => $_POST['type2'][$i],
+							'service_count' => $_POST['count2'][$i],
+							'group_index' => $i,
+							'table_id'=> 'specialMembershipTable2'
+      						);							
+      						
+							if($packageId>0){
+								 $update_data_2[] = $data_3;
+							 }else{
+								 $result_2 = $this->Insert($data_3,'mss_salon_package_data'); 
+							 }	
+								
+      						$servicesIds[] = $result_3[$k]['service_id'];							
+    					}
+			    }	 
+			  }
             }
-        }        
-        if(!empty($_POST['special_category_id2'])){
-		 foreach($outletIds as $outletId){	
-            for($i=0;$i<count($_POST['special_category_id2']);$i++){
-                $filter2=array(
-                    // 'category_type'=>$_POST['category_type2'],
-                    'category_id'=>$_POST['special_category_id2'][$i],
-                    'min_price'=>$_POST['min_price2'][$i],
-                    'max_price'=>$_POST['max_price2'][$i],
-					'master_id'=>$where['master_id'],
-                    'business_admin_id'=>$where['business_admin_id'],
-                    'business_outlet_id'=>$where['business_outlet_id']
-                );
-                // $categories=$this->ServiceByPrice($co);
-                $result_3=$this->ServiceBetweenPrice2($filter2);
-                $result_3=$result_3['res_arr'];
-				  	
-					for($k=0;$k< count($result_3);$k++){
-						$data_3 = array(
-						'salon_package_id' => $last_insert_id,
-						'service_id' => 0,
-						'discount_percentage' => $_POST['special_discount2'][$i],
-						'service_monthly_discount'=>$_POST['package_monthly_discount'],
-						'birthday_discount' =>$_POST['birthday_discount'],
-						'anni_discount'	=> $_POST['anniversary_discount'],
-						'service_count' => $count,
-						'master_id' =>$masterId,
-						'master_service_id' => $result_3[$k]['service_id'],
-						'outlet_id' =>$outletId
-						);							
-						$result_2 = $this->Insert($data_3,'mss_salon_package_data');   
-						$servicesIds[] = $result_3[$k]['service_id'];							
-					}
-				 }
-            }
+			if($packageId>0 && !empty($update_data_2)){   
+			   $type = 'special_membership';
+			   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=>$_POST,'data'=>$data,'count'=>$count,'where'=>$where);
+			   $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData); 
+			}
         }
-        if(!empty($_POST['special_sub_category_id3'])){
+		$subCategoryIdIndex3 = $_POST['special_sub_category_id3_index'];  
+        if(!empty($subCategoryIdIndex3)){
+	      $update_data_2 = array();		
 		  foreach($outletIds as $outletId){	
-            for($i=0;$i< count($_POST['special_sub_category_id3']);$i++){
-                $filter3=array(
-                    // 'category_type'=>$_POST['category_type3'],
-                    'sub_category_id'=>$_POST['special_sub_category_id3'][$i],
-                    'min_price'=>$_POST['min_price3'][$i],
-                    'max_price'=>$_POST['max_price3'][$i],
-					'master_id'=>$where['master_id'],
-                    'business_admin_id'=>$where['business_admin_id'],
-                    'business_outlet_id'=>$where['business_outlet_id']
-                );
-                // $categories=$this->ServiceByPrice($co);
-                $result_3=$this->ServiceBetweenPrice3($filter3);
-                $result_3=$result_3['res_arr'];
-                
-					for($k=0;$k< count($result_3);$k++){
-						$data_3 = array(
-						'salon_package_id' => $last_insert_id,
-						'service_id' => 0,
-						'discount_percentage' => $_POST['special_discount3'][$i],
-						'service_monthly_discount'=>$_POST['package_monthly_discount'],
-						'birthday_discount' =>$_POST['birthday_discount'],
-						'anni_discount'	=> $_POST['anniversary_discount'],
-						'service_count' => $count,
-						'master_id'=>$where['master_id'],
-						'master_service_id' => $result_3[$k]['service_id'],
-						'outlet_id' =>$outletId
-						);							
-						$result_2 = $this->Insert($data_3,'mss_salon_package_data');  
-						$servicesIds[] = $result_3[$k]['service_id'];						
-					}
-				}
+            for($i=0;$i< count($subCategoryIdIndex3);$i++){
+			  $subCategoryIdsArray = explode(',',$_POST['special_sub_category_id3_index'][$i]);
+              foreach($subCategoryIdsArray as $subCategoryId){
+						$filter3=array(
+							// 'category_type'=>$_POST['category_type3'],
+							'sub_category_id'=>$subCategoryId,
+							'min_price'=>$_POST['min_price3'][$i],
+							'max_price'=>$_POST['max_price3'][$i],
+							'master_id'=>$where['master_id'],
+							//'business_admin_id'=>$where['business_admin_id'],
+							//'business_outlet_id'=>$where['business_outlet_id']
+						);
+						
+						// $categories=$this->ServiceByPrice($co);
+						$result_3=$this->ServiceBetweenPrice3($filter3);
+						$result_3=$result_3['res_arr'];
+					
+      					for($k=0;$k< count($result_3);$k++){
+      						$data_3 = array(
+      						'salon_package_id' => $last_insert_id,
+      						'service_id' => 0,
+      						'discount_percentage' => $_POST['special_discount3'][$i],
+      						'service_monthly_discount'=>$_POST['package_monthly_discount'],
+      						'birthday_discount' =>$_POST['birthday_discount'],
+      						'anni_discount'	=> $_POST['anniversary_discount'],
+      						'service_count' => $count,
+      						'master_id'=>$where['master_id'],
+      						'master_service_id' => $result_3[$k]['service_id'],
+      						'outlet_id' =>$outletId,
+							'min_price' => $_POST['min_price3'][$i],
+							'max_price' => $_POST['max_price3'][$i],
+							'discount' => $_POST['special_discount3'][$i],
+							'type' => $_POST['type3'][$i],
+							'service_count' => $_POST['count3'][$i],
+							'group_index' => $i,
+							'table_id'=> 'specialMembershipTable3'
+      						);			
+							
+      						
+							if($packageId>0){
+								 $update_data_2[] = $data_3;
+							 }else{
+								 $result_2 = $this->Insert($data_3,'mss_salon_package_data'); 
+							 }
+      						$servicesIds[] = $result_3[$k]['service_id'];			
+							
+      					}
+      				}
+			   }
             }
-        }
-        if(!empty($_POST['special_service_id4'])){
-           foreach($outletIds as $outletId){ 
-				for($i=0;$i< count($_POST['special_service_id4']);$i++){	
-					$data_3 = array(
-						'salon_package_id' => $last_insert_id,
-						'service_id' => 0,
-						'discount_percentage' => $_POST['special_discount4'][$i],
-						'service_monthly_discount'=>$_POST['package_monthly_discount'],
-						'birthday_discount' =>$_POST['birthday_discount'],
-						'anni_discount'	=> $_POST['anniversary_discount'],
-						'service_count' => $count,
-						'master_id'=>$where['master_id'],
-						'master_service_id' => $_POST['special_service_id4'][$i],
-						'outlet_id' => $outletId
-					);							
-					$result_2 = $this->Insert($data_3,'mss_salon_package_data'); 
-					$servicesIds[] = $result_3[$k]['service_id'];	                
-				}
-		   }
+			if($packageId>0 && !empty($update_data_2)){   
+			   $type = 'special_membership';
+			   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=>$_POST,'data'=>$data,'count'=>$count,'where'=>$where);
+			   $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData); 
+			}
         }
 		
-		 /* Outlet_services */
-	  $this->AddServiceForOutlet($servicesIds,$outletIds);	
+		$serviceIdIndex4 = $_POST['special_service_id4_index'];  
+			if(!empty($serviceIdIndex4)){
+			$update_data_2 = array();	
+			   foreach($outletIds as $outletId){ 
+						for($i=0;$i< count($serviceIdIndex4);$i++){
+                          	$serviceIdsArray = explode(',',$_POST['special_service_id4_index'][$i]);
+							foreach($serviceIdsArray as $serviceId){						
+								$data_3 = array(
+									'salon_package_id' => $last_insert_id,
+									'service_id' => 0,
+									'discount_percentage' => $_POST['special_discount4'][$i],
+									'service_monthly_discount'=>$_POST['package_monthly_discount'],
+									'birthday_discount' =>$_POST['birthday_discount'],
+									'anni_discount'	=> $_POST['anniversary_discount'],
+									'service_count' => $count,
+									'master_id'=>$where['master_id'],
+									'master_service_id' => $serviceId,
+									'outlet_id' => $outletId,
+									'min_price' => $_POST['min_price4'][$i],
+									'max_price' => $_POST['max_price4'][$i],
+									'discount' => $_POST['special_discount4'][$i],
+									'type' => $_POST['type4'][$i],
+									'service_count' => $_POST['count4'][$i],
+									'group_index' => $i,
+									'table_id'=> 'specialMembershipTable4'
+								);							
+								
+								if($packageId>0){
+									 $update_data_2[] = $data_3;
+								 }else{
+									 $result_2 = $this->Insert($data_3,'mss_salon_package_data'); 
+								 }
+								$servicesIds[] = $serviceId;	
+						   }			
+						}
+				  }
+				if($packageId>0 && !empty($update_data_2)){   
+				   $type = 'special_membership';
+				   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=> $_POST,'data'=>$data,'count'=>$count,'where'=>$where);
+				   $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData); 
+				}  
+		  }
+		
+		   /* Outlet_services */
+			$this->AddServiceForOutlet($servicesIds,$outletIds);	
 	  
-		// $this->PrintArray($temp);
+		  // $this->PrintArray($temp);
 		// exit;
-        return $this->ModelHelper(true,false,'',array('insert_id'=>$last_insert_id));
+		return $this->ModelHelper(true,false,'',array('insert_id'=>$last_insert_id,'message'=>$messge));
     }
 
 
@@ -1301,8 +1412,12 @@ public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $disco
       $sub_categories = isset($postData['sub_categories']) ? $postData['sub_categories'] : array();
       $categories = isset($postData['categories']) ? $postData['categories'] : array();
       $cat_price = isset($postData['cat_price']) ? $postData['cat_price'] : array();
-      
-
+     
+	  /* For Special Member Type*/ 
+	  $post = isset($postData['post']) ? $postData['post'] : array();
+	  $data = isset($postData['data']) ? $postData['data'] : array();
+	  $where = isset($postData['where']) ? $postData['where'] : array();
+	  
       $messge = "";
       $notExist = $notExistServiceId = $masterServiceOutletId  = array();
       $recordNotExist = $insertRecords = $updateRecord = FALSE; 
@@ -1327,7 +1442,8 @@ public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $disco
              }elseif($type=='Discount_Category_Bulk'){
                $result = $this->AddDiscountCategoryBulkPackage($data,$categories, $cat_price, $discounts,$counts,$outletIds,$masterId,$packageId);
              }elseif($type=='special_membership'){
-              // $result = $this->AddDiscountServicePackage($data,$outletIds,$masterId,$packageId);
+			   $counts = isset($postData['count']) ? $postData['count'] : 100;
+               $result = $this->MasterAdminModel->AddDiscountServicePackage($post,$data,$counts,$where,$outletIds,$masterId);
              }
         if($result['success'] == 'true'){
           $messge = "Product has been Updated successfully!";
@@ -1337,8 +1453,9 @@ public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $disco
       }else{
        $updateRecords = $masterServiceIdNotExist = array();
        $packageDataDetails = $result['res_arr'];
+	   
        if(!empty($packageDataDetails)){
-      
+     
          foreach($packageDataDetails as $packageData){
               if(!empty($outletIds)){  
             
@@ -1354,6 +1471,7 @@ public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $disco
                          
                          $masterServiceIdNotExist[$packageData['outlet_id']][] = $packageData['master_service_id'];
                           foreach ($insertData as $insertKey => $value) {
+							  
                             if($packageData['master_service_id']==$value['master_service_id'] && $packageData['outlet_id']==$value['outlet_id']){
                               /* UPDATE The Records */
 

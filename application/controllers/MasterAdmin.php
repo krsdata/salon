@@ -207,6 +207,7 @@ class MasterAdmin extends CI_Controller {
 		}		
 	}
 	
+	/*
 	private function getServiceDetailsByPackageId($packageId,$outletId){
 	
 		$returnServiceRecords =$serviceRecords_2 = $serviceIds = $subCategoryIds = array();
@@ -215,6 +216,75 @@ class MasterAdmin extends CI_Controller {
 				'master_id' 	   => $this->session->userdata['logged_in']['master_admin_id'],
 				'salon_package_id' => $packageId,
 				//'outlet_id' => $outletId,
+				'is_active' =>'1'
+			);
+           
+			$data = $this->MasterAdminModel->MultiWhereSelect('mss_salon_package_data',$where);
+			
+			if($data['success'] == 'true' && !empty($data['res_arr'])){	
+				foreach($data['res_arr'] as $key=>$serviceRecords_1){
+					$serviceIds[] = $serviceRecords_1['master_service_id'];
+				}
+				
+				/* Get Sub Category based on service Id *
+				$masterServiceDetails =$this->MasterAdminModel->getMasterServicesByIds(implode(',',$serviceIds));
+				
+				if($masterServiceDetails['success'] == 'true' && !empty($masterServiceDetails['res_arr'])){	
+				  foreach($masterServiceDetails['res_arr'] as $key=>$masterService){
+					     $subCategoryIds[] = $masterService['service_sub_category_id'];
+						 $serviceRecords_2[$masterService['service_id']] = array('service_sub_category_id'=>$masterService['service_sub_category_id'],
+																			'service_price_inr'=>$masterService['service_price_inr'],
+																			'service_est_time'=>$masterService['service_est_time'],
+																			'service_gst_percentage'=>$masterService['service_gst_percentage'],
+																			'qty_per_item'=>$masterService['qty_per_item']
+																		  );
+					}
+					
+					/* Merge the service record 1,2 *
+					
+					foreach($data['res_arr'] as $key=>$serviceDetails){
+						$serviceDetails['service_id'] = (int) $serviceDetails['master_service_id'];
+						$returnServiceRecords[] = array_merge($serviceDetails,$serviceRecords_2[$serviceDetails['service_id']]);
+					}
+					
+				}
+			}
+			
+			/* Get Category Ids based on SubCategory *
+			$subCategoryRecords = array();
+			if(!empty($subCategoryIds)){
+				$categoryData = $this->MasterAdminModel->getMasterCategoriesBySubCatIds(array('sub_category_id'=>implode(',',$subCategoryIds),'sub_category_is_active'=>TRUE));
+				if(!empty($categoryData['res_arr'])){
+					foreach($categoryData['res_arr']  as $category){
+						$subCategoryRecords[$category['sub_category_id']] = $category['sub_category_category_id'];
+					}
+				}
+			}
+			
+			$returnServiceRecordsByGroupCount = array();
+			if(!empty($returnServiceRecords)){
+				/* Group by Count *
+				foreach($returnServiceRecords as $key =>$value){
+					$value['service_category_id'] = isset($subCategoryRecords[$value['service_sub_category_id']]) ? $subCategoryRecords[$value['service_sub_category_id']] : 0;
+					$returnServiceRecordsByGroupCount[$value['service_count']][] = $value;
+				}
+				
+			}
+			
+			return $returnServiceRecordsByGroupCount;
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}		
+	} */
+	
+	private function getServiceDetailsByPackageId($packageId,$outletId,$packageType=''){
+	
+		$returnServiceRecords =$serviceRecords_2 = $serviceIds = $subCategoryIds = array();
+		if($this->IsLoggedIn('master_admin')){
+			$where = array(
+				'master_id' 	   => $this->session->userdata['logged_in']['master_admin_id'],
+				'salon_package_id' => $packageId,
 				'is_active' =>'1'
 			);
            
@@ -248,14 +318,14 @@ class MasterAdmin extends CI_Controller {
 					
 				}
 			}
-			
+		
 			/* Get Category Ids based on SubCategory */
 			$subCategoryRecords = array();
 			if(!empty($subCategoryIds)){
 				$categoryData = $this->MasterAdminModel->getMasterCategoriesBySubCatIds(array('sub_category_id'=>implode(',',$subCategoryIds),'sub_category_is_active'=>TRUE));
 				if(!empty($categoryData['res_arr'])){
 					foreach($categoryData['res_arr']  as $category){
-						$subCategoryRecords[$category['sub_category_id']] = $category['sub_category_category_id'];
+						$subCategoryRecords[$category['sub_category_id']] = array('service_category_id'=>$category['sub_category_category_id'],'service_category_type'=>$category['category_type']);
 					}
 				}
 			}
@@ -264,13 +334,17 @@ class MasterAdmin extends CI_Controller {
 			if(!empty($returnServiceRecords)){
 				/* Group by Count */
 				foreach($returnServiceRecords as $key =>$value){
-					$value['service_category_id'] = isset($subCategoryRecords[$value['service_sub_category_id']]) ? $subCategoryRecords[$value['service_sub_category_id']] : 0;
-					$returnServiceRecordsByGroupCount[$value['service_count']][] = $value;
+					$value['service_category_id']   = isset($subCategoryRecords[$value['service_sub_category_id']]) ? $subCategoryRecords[$value['service_sub_category_id']]['service_category_id'] : 0;
+					$value['service_category_type'] = isset($subCategoryRecords[$value['service_sub_category_id']]) ? $subCategoryRecords[$value['service_sub_category_id']]['service_category_type'] : 0;
+					if($packageType=='special_membership'){
+				    	$returnServiceRecordsByGroupCount[$value['table_id']][$value['group_index']][$value['service_category_type']][] = $value;
+					}else{
+						$returnServiceRecordsByGroupCount[$value['service_count']][] = $value;
+					}
 				}
 				
 			}
-			
-			return $returnServiceRecordsByGroupCount;
+		    return $returnServiceRecordsByGroupCount;
 		}
 		else{
 			$this->LogoutUrl(base_url()."MasterAdmin");
@@ -3251,9 +3325,14 @@ class MasterAdmin extends CI_Controller {
 				  foreach($data['res_arr'] as $key=>$value){	
 					$returnData[$value['category_id']][] = $value;
 				  }
+				}else{
+					$returnData = array('status'=>true,'message'=>'Records not found!');
 				}
-				echo json_encode($returnData);
+				
+			}else{
+					$returnData = array('status'=>true,'message'=>'Records not found!');
 			}
+			echo json_encode($returnData);
 		}
 		else{
 			$this->LogoutUrl(base_url()."MasterAdmin");
@@ -3305,11 +3384,15 @@ class MasterAdmin extends CI_Controller {
 				$categoryType    = (!empty($categoryType)) ? implode(',',$categoryType) : "";
 				$subCategoryIds  = implode(',',$_GET['sub_category_id']);
 				$isSubCategoryDetails = TRUE; /* if you want to get Sub Category Details with service then SET it as TRUE else FALSE */
-				$data = $this->MasterAdminModel->getMasterServicesBySubCatIds($subCategoryIds,$categoryType,$isSubCategoryDetails);
-				if(!empty($data['res_arr'])){
-					foreach($data['res_arr'] as $services){
-						$returnServices[$services['service_sub_category_id']][] = $services;
+				if(!empty($subCategoryIds)){
+					$data = $this->MasterAdminModel->getMasterServicesBySubCatIds($subCategoryIds,$categoryType,$isSubCategoryDetails);
+					if(!empty($data['res_arr'])){
+						foreach($data['res_arr'] as $services){
+							$returnServices[$services['service_sub_category_id']][] = $services;
+						}
 					}
+				}else{
+					$returnServices = array('status'=>true,'message'=>'Records not found!');
 				}
 				echo json_encode($returnServices);
 			}
@@ -4220,7 +4303,9 @@ class MasterAdmin extends CI_Controller {
 						}
 					}
 					elseif($data['salon_package_type'] == "special_membership"){
+						$data['total_count_of_services'] = $this->input->post('total_no_of_services');
 						$data['salon_package_type_selected'] = $data['salon_package_type'];
+						
 						// $this->PrettyPrintArray($_POST);
 						$where=array(
 							// 'category_type'=> $_POST['category_type'],
@@ -4233,14 +4318,23 @@ class MasterAdmin extends CI_Controller {
 						$counts = 100;
 					   
 						if(!empty($counts)){
-							$result = $this->MasterAdminModel->AddDiscountServicePackage($_POST,$data,$counts,$where,$outletIds,$masterId);
-							/* Associate Package with multiple outlet*/ 
-							$packageId = $result['res_arr']['insert_id'];
 							
-							$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
+							if($packageId>0 && $packageId!=""){
+									
+								$result = $this->MasterAdminModel->AddDiscountServicePackage($_POST,$data,$counts,$where,$outletIds,$masterId,$packageId);
+								$message = $result['res_arr']['message']!="" ? $result['res_arr']['message'] : "Package Updated successfully!";
+
+							}else{
+								
+								$result = $this->MasterAdminModel->AddDiscountServicePackage($_POST,$data,$counts,$where,$outletIds,$masterId);
+								/* Associate Package with multiple outlet*/ 
+								$packageId = $result['res_arr']['insert_id'];
+								$message = "Package added successfully!";
+							}
+							//$this->MasterAdminModel->AssignPackageToMultipleOutlet(array('master_id'=>$data['master_id'],'package_id'=>$packageId),$outletIds);
 							
 							if($result['success'] == 'true'){
-								$this->ReturnJsonArray(true,false,"Package added successfully!");
+								$this->ReturnJsonArray(true,false,$message);
 								die;
 							}
 							elseif($result['error'] == 'true'){
@@ -4306,7 +4400,8 @@ class MasterAdmin extends CI_Controller {
 				);
 				
 				$packageDetails = $this->MasterAdminModel->GetPackageDetailsById($where);
-				//$this->PrettyPrintArray($packageDetails);
+				$packageType = $packageDetails['res_arr'][0]['salon_package_type_selected'];
+				
 				$outletIds = array();
 				if(!empty($packageDetails)){
 					$packageData = $packageDetails['res_arr'];
@@ -4315,7 +4410,14 @@ class MasterAdmin extends CI_Controller {
 					}
 					/* Get all Service Details which is assign to this package */
 					
-					$data['servicesDetails'] = $this->getServiceDetailsByPackageId($_GET['packageId'],$_GET['outletId']);
+				   if($packageType=='special_membership'){
+					   //array('table_id'=>array('group_index' => 'service_details_with_category'))
+					   
+					   $data['servicesDetails'] = $this->getServiceDetailsByPackageId($_GET['packageId'],$_GET['outletId'],$packageType);
+				   }else{
+					   $data['servicesDetails'] = $this->getServiceDetailsByPackageId($_GET['packageId'],$_GET['outletId']);
+				   }
+				  
 					$data['outletIds'] = $this->MasterAdminModel->getOutletsByPackageId($_GET['packageId']);
 					if(!empty($data['outletIds']['res_arr'])){
 						foreach($data['outletIds']['res_arr'] as $outletId){
