@@ -50,56 +50,7 @@
               <div class="card-header">
                 <h5 class="card-title"></h5>
               </div>
-              <div class="card-body">
-                <!-- <div class="row" id="servicerow" style="text-align:center">
-                                            <div class="col-md-2" style="margin-left:140px;">
-												
-													<div class="card customized-category-card border-dark">
-                                                        <div class="card-body" style="width: 18rem;text-align: center;padding:.5rem!important;background-color:white; border-radius:5px;">
-															<p class="card-text" style="color: black;" >ABC<br></p>
-														</div>
-													</div>
-												
-                                            </div>
-                                            <div class="col-md-2">
-												
-													<div class="card customized-category-card border-dark">
-                                                        <div class="card-body" style="text-align: center;padding:.5rem!important;background-color:white;  border-radius:5px;">
-															<p class="card-text" style="color: black;" ><?=$repeatservice?><br>Repeat</p>
-
-														</div>
-													</div>
-													
-												
-                                            </div>
-                                            <div class="col-md-2">
-												
-													<div class="card customized-category-card border-dark">
-                                                        <div class="card-body" style="text-align: center;padding:.5rem!important;background-color:white;  border-radius:5px;">
-															<p class="card-text" style="color: black;" >ABC<br></p>
-														</div>
-													</div>
-												
-                                            </div>
-                                            <div class="col-md-2">
-												
-													<div class="card customized-category-card border-dark">
-                                                        <div class="card-body" style="text-align: center;padding:.5rem!important;background-color:white;  border-radius:5px;">
-															<p class="card-text" style="color: black;" >ABC<br></p>
-														</div>
-													</div>
-											
-                                            </div>
-                                            <div class="col-md-2">
-												
-													<div class="card customized-category-card border-dark">
-                                                        <div class="card-body" style="text-align: center;padding:.5rem!important;background-color:white;  border-radius:5px;">
-															<p class="card-text" style="color: black;" >ABC<br></p>
-														</div>
-													</div>
-												
-											</div>
-								</div> -->
+              <div class="card-body">                
                 <div class="row">
                   <div class="col-md-2">
                     <div class="card" style="width: 10rem;">

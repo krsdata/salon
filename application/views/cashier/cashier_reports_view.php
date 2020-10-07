@@ -112,7 +112,6 @@
 										<a class="nav-link" data-toggle="tab" href="#tab-6">Last 200 Transactions</a>
 									</li>
 								</ul>
-
 							</div>
 							<div class="card-body">
 								<div class="tab-content">
@@ -371,26 +370,36 @@
 										
 												<div class="accordion" id="accordionExample1">
 													<div class="card">
-														<div class="card-header" id="headingOneE">
-															<h5 class="card-title my-2">
-																<a href="#" data-toggle="collapse" data-target="#collapseOneE" aria-expanded="true" aria-controls="collapseOneE">
+														<div class="card-header" id="headingOneE">														
+															<div class="row">
+														<div class="col-md-3">
+														<h5 class="card-title my-2">
+														<a href="#" data-toggle="collapse" data-target="#collapseOneE" aria-expanded="true" aria-controls="collapseOneE">
 																	Service Transaction
 																</a>
-															</h5>
+																</h5>
+														</div>
+														<form class="form-inline" style="width:60%;" method="POST" action="#" id="txnExpertWise">
+															<div class="form-group col-md-3">
+																<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
+															</div>
+															<div class="form-group col-md-2">
+																<input type="submit" class="btn btn-primary" id="getExpertTxn"  value="Submit" />
+															</div>
+														</form>
+													</div>	
 														</div>
 														<div id="collapseOneE" class="collapse show" aria-labelledby="headingOneE" data-parent="#accordionExample1">
 															<div class="card-body" style="margin-right:10px;">
-															<table class="table table-striped datatables-basic" style="width: 100%;text-align:center">
+															<table class="table table-striped datatables-basic" style="width: 100%;text-align:center" id="expertWiseTable">
 																
 																<thead>
 																	<tr>
 																		<th>Expert Name</th>
 																		<th>Emp-Id</th>
 																		<th>Mobile</th>
-																		<th>Revenue Today(Rs.)</th>
-																		<!-- <th>Revenue Yesterday(Rs.)</th> -->
+																		<th>Revenue</th>
 																		<th>Service Count</th>
-																		<!-- <th>Average Rating Today</th> -->
 																	</tr>
 																</thead>
 																<tbody>
@@ -401,9 +410,7 @@
 																		<td>EMP_0<?=$expert['emp_id']?></td>
 																		<td><?=$expert['employee_mobile']?></td>
 																		<td><?=$expert['discounted_amt']?></td>
-																		<!-- <td><?=$expert['net_amt']?></td> -->
 																		<td><?=$expert['count']?></td>
-																		<!-- <td><?=$expert['count']?></td> -->
 																		</tr>
 																	<?php 
 																}?>
@@ -742,17 +749,28 @@
 									<div class="tab-pane" id="tab-6" role="tabpanel">
 										<div class="card">
 											<div class="card-header">
-												<h5 class="card-title my-2">
+												<div class="card-title my-2">
+													<div class="row">
+														<div class="col-md-3">
 														Last 200 Transaction
-												</h5>
+														</div>
+														<form class="form-inline" style="width:60%;" method="POST" action="#" id="txn200">
+															<div class="form-group col-md-3">
+																<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
+															</div>
+															<div class="form-group col-md-2">
+																<input type="submit" class="btn btn-primary" id="get_txn"  value="Submit" />
+															</div>
+														</form>
+													</div>														
+												</div>
 											</div>
 											<div class="card-body" style="margin-right:10px;">
-												<table class="table table-striped datatables-basic " style="width:100%;text-align:center">	
+												<table class="table table-striped datatables-basic " style="width:100%;text-align:center" id="txnTable">	
 												<thead>
 													<tr>
-														
 														<th>Bill No.</th>
-														<th>Date</th>
+														<th>Date</th>																												
 														<th>Mobile No.</th>
 														<th>Name</th>
 														<th>Type</th>
@@ -766,15 +784,15 @@
 												</thead>
 												<tbody>
 													<?php foreach($last_txn as $txn){?>
-														<tr>															
-															<td data-target="#BillModal" data-toggle="modal" class="showBilledServices" txn_id="<?=$txn['bill_no']?>" style="color:blue;"><?=$txn['txn_id']?></td>
+														<tr>																											
+															<td class="showBilledServices" txn_id="<?=$txn['bill_no']?>" bill_type="<?=$txn['Type']?>" style="color:blue;"><?=$txn['txn_id']?></td>
 															<td><?=$txn['billing_date']?></td>
 															<td><?=$txn['mobile']?></td>
 															<td><?=$txn['name']?></td>
 															<td><?=$txn['Type']?></td>
-															<td><?=$txn['mrp_amt']?></td>
-															<td><?=$txn['discount']?></td>
-															<td><?=$txn['net_amt']?></td>
+															<td><?=number_format($txn['mrp_amt'])?></td>
+															<td><?=number_format($txn['discount'])?></td>
+															<td><?=number_format($txn['net_amt'])?></td>
 															<td><?=$txn['total_tax']?></td>
 															<td><?=$txn['pending_amt']?></td>
 															<?php
@@ -831,6 +849,35 @@
 										</div>
 									</div>
 								</div>
+								<div class="modal" id="BillModal2" tabindex="-1" role="dialog" aria-hidden="true">	
+									<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title text-white">Package Bill Details</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">
+											<table id="show_Bill2" style="width:100%;text-align:center">
+												<thead>
+													<tr>
+														<th>Package Name</th>
+														<th>Type</th>
+														<th>Txn Value</th>
+														<th>Discount</th>
+														<th>Customer Name</th>
+														<th>Expert</th>
+													</tr>
+												</thead>
+												<tbody id="tabid2">
+													
+												</tbody>
+											</table>
+											</div>
+										</div>
+									</div>
+								</div>
 							<!-- end -->
 						</div>
 					</div>
@@ -854,6 +901,14 @@
     format: 'YYYY-MM-DD'
 		}
 	});
+
+	$("input[name=\"daterange\"]").daterangepicker({
+		daterangepicker: true,
+		showDropdowns: true,
+		locale: {
+    format: 'YYYY-MM-DD'
+		}
+	});
 </script>
 <script>
 	$(document).ready(function(){
@@ -867,33 +922,50 @@
     });
   });
   $(".datatables-basic").DataTable({
-			responsive: true
+			responsive: true,
+			"order": [[ 1, "desc" ]]
 		});
 
-		
 	//
 	$(document).on('click',".showBilledServices",function(event){
 				event.preventDefault();
 				this.blur();
 	      var parameters = {
-	        txn_id: $(this).attr('txn_id')
+	        txn_id: $(this).attr('txn_id'),
+					type : $(this).attr('bill_type')
 	      };
 	    //  alert($(this).attr('txn_id'));
 					$.getJSON("<?=base_url()?>Cashier/GetBilledServices", parameters)
 					.done(function(data, textStatus, jqXHR) { 
-						var str_2 = "";	
-						for(var i=0;i<data.length;i++){						
-							str_2 += "<tr>";
-							str_2 += "<td>"+data[i].service_name+"</td>";
-							str_2 += "<td>"+data[i].txn_service_discounted_price+"</td>";
-							str_2 += "<td>"+data[i].disc1+"</td>";
-							str_2 += "<td>"+data[i].disc2+"</td>";
-							str_2 += "<td>"+data[i].txn_service_quantity+"</td>";
-							str_2 += "<td>"+data[i].employee_first_name+"</td>";
-							str_2 += "</tr>";
-						}				
-						$("#tabid").html(str_2);
-						$("#BillModal").modal('show');
+						if(data[0].service=='service'){
+							var str_2 = "";	
+							for(var i=0;i<data.length;i++){						
+								str_2 += "<tr>";
+								str_2 += "<td>"+data[i].service_name+"</td>";
+								str_2 += "<td>"+data[i].txn_service_discounted_price+"</td>";
+								str_2 += "<td>"+data[i].disc1+"</td>";
+								str_2 += "<td>"+data[i].disc2+"</td>";
+								str_2 += "<td>"+data[i].txn_service_quantity+"</td>";
+								str_2 += "<td>"+data[i].employee_first_name+"</td>";
+								str_2 += "</tr>";
+							}				
+							$("#tabid").html(str_2);
+							$("#BillModal").modal('show');
+						}else{
+							var str_2 = "";	
+							for(var i=0;i<data.length;i++){						
+								str_2 += "<tr>";
+								str_2 += "<td>"+data[0].salon_package_name+"</td>";
+								str_2 += "<td>"+data[0].package+"</td>";
+								str_2 += "<td>"+data[0].package_txn_value+"</td>";
+								str_2 += "<td>"+data[0].package_txn_discount+"</td>";
+								str_2 += "<td>"+data[0].customer_name+"</td>";
+								str_2 += "<td>"+data[0].employee_first_name+"</td>";
+								str_2 += "</tr>";
+							}				
+							$("#tabid2").html(str_2);
+							$("#BillModal2").modal('show');
+						}
 					})
 					.fail(function(jqXHR, textStatus, errorThrown) {
 						console.log(errorThrown.toString());
@@ -955,7 +1027,7 @@
 		 						setTimeout(function () { location.reload(1); }, 500);
 	            }else if (data.success == 'false'){   
 								$("#ModalCancelBill").modal('hide');    
-	            	$("#ErrorModalMessage").html("").html(data.message);            
+	            	$("#ErrorMod	alMessage").html("").html(data.message);            
 	        	    $("#defaultModalDanger").modal('show');
 	            }
 	          },
@@ -1151,6 +1223,79 @@
 				},
 			});
 		});
+
+		$(document).on('click',"#get_txn",function(event){
+    	event.preventDefault();
+      this.blur();
+			var dr=$("#txn200 input[name=daterange]").val();
+	      var parameters = {
+	        from_date : dr.substring(0, 10),
+					to_date :	dr.substring(12, 23)
+	      };
+				$.getJSON("<?=base_url()?>Cashier/GetLastTransactions", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					if(data.success == 'true'){
+						var str_2 = "";
+						// alert(data.service.res_arr.length);
+						for(var i=0;i< data.message.length;i++){
+							str_2+="<tr>";
+							str_2 += "<td>" + parseInt(i+1) + "</td>";
+							str_2 += "<td>" + data.message[i].txn_id + "</td>";
+							str_2 += "<td>" + data.message[i].billing_date + "</td>";
+							str_2 += "<td>" + data.message[i].mobile + "</td>";
+							str_2 += "<td>" + data.message[i].Type + "</td>";	
+							str_2 += "<td>" + (new Intl.NumberFormat().format(data.message[i].mrp_amt)) + "</td>";
+							str_2 += "<td>" + data.message[i].discount + "</td>";
+							str_2 += "<td>" + (new Intl.NumberFormat().format(data.message[i].net_amt)) + "</td>";
+							str_2 += "<td>" + data.message[i].total_tax + "</td>";
+							str_2 += "<td>" + data.message[i].pending_amt + "</td>";
+							if(data.message[i].Type=='Package'){
+								str_2 += "<td><button data-type='package' class='btn btn-warning sendSmsBtn'  txn_id='"+data.message[i].bill_no+"'><i class='fa fa-sms'></i></button> <a href=\"<?=base_url()?>Cashier/RePrintPackageBill/"+data.message[i].bill_no+"\" target=\"_blank\" class=\"btn btn-danger\" ><i class=\"fa fa-print\"></i></a></td>";
+							}else{
+								str_2 += "<td><button  data-type='service' class='btn btn-warning sendSmsBtn'  txn_id='"+data.message[i].bill_no+"'><i class='fa fa-sms'></i></button> <a href=\"<?=base_url()?>Cashier/RePrintBill/"+data.message[i].bill_no+"\" target='_blank' class='btn btn-danger' ><i class='fa fa-print'></i></a> </td>";
+							}
+							str_2+="</tr>";
+						}
+						$("#txnTable tbody tr").remove();
+						$("#txnTable tbody").append(str_2);
+					}
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+			});
+  	});
+
+		$(document).on('click',"#getExpertTxn",function(event){
+    	event.preventDefault();
+      this.blur();
+			var dr=$("#txnExpertWise input[name=daterange]").val();
+	      var parameters = {
+	        from_date : dr.substring(0, 10),
+					to_date :	dr.substring(12, 23)
+	      };
+				$.getJSON("<?=base_url()?>Cashier/GetExpertTransactions", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					if(data.success == 'true'){
+						var str_2 = "";
+						for(var i=0;i< data.message.length;i++){
+							str_2+="<tr>";
+							str_2 += "<td>" + data.message[i].expert_name + "</td>";
+							str_2 += "<td> EMP0" + data.message[i].emp_id + "</td>";
+							str_2 += "<td>" + data.message[i].employee_mobile + "</td>";
+							str_2 += "<td>" + (new Intl.NumberFormat().format(data.message[i].net_amt)) + "</td>";	
+							str_2 += "<td>" + data.message[i].count + "</td>";
+							str_2+="</tr>";
+						}
+						$("#expertWiseTable tbody tr").remove();
+						$("#expertWiseTable tbody").append(str_2);
+					}
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+			});
+  	});
+
+
 	});
 </script>
 <script>

@@ -13,26 +13,6 @@
 		<main class="content">
 			<div class="container-fluid p-0">
 				<div class="row">
-					<div class="col-md-1 mt-1">
-						<button class="btn btn-primary btn-lg EditViewCustomer" CustomerId="<?=$individual_customer['customer_id']?>"><?=$individual_customer['customer_name']?></button><br>
-						<p class="ClearPendingAmount" customer_id="<?=$individual_customer['customer_id']?>" pending_amount="<?=$individual_customer['customer_pending_amount']?>" style="color:red;">Due : Rs. <?=$individual_customer['customer_pending_amount']?></p>
-					</div>
-					<div class="col-md-1 mt-1">
-						<p class="font-weight-bold" style="text-decoration:underline;" id="SwapWithExistingCustomer" CustomerId="<?=$individual_customer['customer_id']?>"><i>Swap</i></p>
-					</div>
-					<div class="col-md-5 mt-1">
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" placeholder="Search Service By Name" class="form-control" id="SearchServiceByName">
-								<span class="input-group-append">
-									<button class="btn btn-success ProvideServiceDetails" type="button" id="SearchServiceButton" service-id="Na" service-name="Na" service-price-inr="Na" service-gst-percentage="Na" service-est-time="Na">Go</button>
-								</span>
-							</div>
-						</div>
-					</div>
-					
-				</div>
-				<div class="row">
 					<?php
 						$this->load->view('cashier/cashier_success_modal_view');
 						$this->load->view('cashier/cashier_error_modal_view');
@@ -42,21 +22,19 @@
 							<div class="col-md-7">
 								<div class="tab">
 									<ul class="nav nav-pills" role="tablist">
-										<li class="nav-item"><a class="nav-link active" href="#tab-1" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;">Services</a></li>
-										<li class="nav-item"><a class="nav-link" href="#tab-4" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;">Retail Products</a></li>
-										<li class="nav-item"><a class="nav-link" href="#tab-2" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;">Packages</a></li>
+										<li class="nav-item"><a class="nav-link active" href="#tab-1" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;"><strong>Services</strong></a></li>
+										<li class="nav-item"><a class="nav-link" href="#tab-4" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;"><strong>Retail Products</strong></a></li>
+										<li class="nav-item"><a class="nav-link" href="#tab-2" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;"><strong>Packages</strong></a></li>
 										<?php foreach($business_admin_packages as $key => $value)
 										{
 											if($value == 'Marks360')
 											{
 											    ?>
-														<li class="nav-item"><a class="nav-link" href="#tab-3" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;">Redeem Points</a></li>
+														<li class="nav-item"><a class="nav-link" href="#tab-3" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;"><strong>Redeem Points</strong></a></li>
 												<?php
 										    }
-										}?>
-										
-										
-										<li class="nav-item"><a class="nav-link" href="#tab-5" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;">Customer coupon</a></li>
+										}?>										
+										<li class="nav-item"><a class="nav-link" href="#tab-5" data-toggle="tab" role="tab" aria-selected="false" style="font-size:14px;"><strong>Customer coupon</strong></a></li>
 									</ul>
 									<div class="tab-content">
 										<div class="tab-pane active" id="tab-1" role="tabpanel">											
@@ -107,11 +85,11 @@
 																							</div>
 																							<div class="form-group col-md-4">
 																								<label>Date of Birth</label>
-																								<input type="text" class="form-control" placeholder="Date of Birth" name="customer_dob">
+																								<input type="text" class="form-control date" placeholder="Date of Birth" name="customer_dob">
 																							</div>
 																							<div class="form-group col-md-4">
 																								<label>Date Of Anniversary</label>
-																								<input type="text" class="form-control" placeholder="Date of Addition" name="customer_doa">
+																								<input type="text" class="form-control date" placeholder="Date of Anniversary" name="customer_doa">
 																							</div>
 																							
 																						</div>
@@ -850,7 +828,7 @@
                                     <strong>No Rules Defined !</strong>
                                   </div>
                                 </div>
-                    <?php
+                    	<?php
                         }
                       ?>
                          </div>
@@ -1293,17 +1271,13 @@
 									</div>
 									<!--  -->
 								</div>
-								  
-
-                  	           <div class="row" style="margin-left:0px;">										
-										<div class="card" style="padding:1.25rem;">
-											<div class="card-header">
-													<h5>Quick Bill</h5>
-											</div>
+								<!-- <div class="row" style="margin-left:0px;">										
+									<div class="card" style="padding:1.25rem;">
+										<div class="card-header">
+											<h5>Quick Bill</h5>
+										</div>
 											<?php
 											$cust_id=$individual_customer['customer_id'];
-								// 			print_r($cust_id);
-								// 			print_r($_SESSION['recommended_ser']);
 											if($_SESSION['recommended_ser'][$cust_id] != 0){
 												$recommended=$_SESSION['recommended_ser'][$cust_id];
 											?>
@@ -1311,10 +1285,10 @@
 													<div class="row">							
 														<?php		
 														if(isset($recommended['res_arr'])){
-														    $recommended=$recommended['res_arr'];
+																$recommended=$recommended['res_arr'];
 														}
 														if ($recommended != 0) {
-														  //  print_r($recommended);
+															//  print_r($recommended);
 															foreach ($recommended as $data) { ?>
 																<div class="col-md-2 col-sm-4" style="margin-right:0px">
 																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'].', '.round($data['service_price_inr'])?>">
@@ -1336,10 +1310,8 @@
 											else{
 											?>
 												<div class="card-body"  >	
-													<div class="row">							
-														
-														<?php
-																			
+													<div class="row">															
+														<?php																			
 														if ($recommended != 0) {
 															foreach ($recommended as $data) { ?>
 																<div class="col-md-2 col-sm-4">
@@ -1359,14 +1331,83 @@
 												</div>
 											<?php
 											}
-											?>
-											
-										</div>								
-				  				</div>
-				  <div class="col-md-2 col-sm-4"></div>
-                  <br>
+											?>											
+									</div>								
+								</div> -->
 							</div>
 							<div class="col-md-5">
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group ">
+											<div class="input-group">
+												<input type="text" placeholder="Search Service By Name" class="form-control" id="SearchServiceByName">
+												<span class="input-group-append">
+													<button class="btn btn-success ProvideServiceDetails" type="button" id="SearchServiceButton" service-id="Na" service-name="Na" service-price-inr="Na" service-gst-percentage="Na" service-est-time="Na">Go</button>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+											<?php
+											$cust_id=$individual_customer['customer_id'];
+											if($_SESSION['recommended_ser'][$cust_id] != 0){
+												$recommended=$_SESSION['recommended_ser'][$cust_id];
+											?>
+												<div class="card-body"  >	
+													<div class="row">							
+														<?php		
+														if(isset($recommended['res_arr'])){
+																$recommended=$recommended['res_arr'];
+														}
+														if ($recommended != 0) {
+															//  print_r($recommended);
+															foreach ($recommended as $data) { ?>
+																<!-- <div class="col-md-3 col-sm-4" style="margin-right:0px"> -->
+																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'].', '.round($data['service_price_inr'])?>">
+																		<!-- <div class="card"> -->
+																			<!-- <div class="card-body" style="text-align: center;padding:.2rem!important;background-color:white;border-radius:1px;"> -->
+																				<p class="card-text" style="color: black;" ><?= $data['service_name']." || " ?></p>
+																			<!-- </div> -->
+																		<!-- </div> -->
+																	</a> 
+																<!-- </div> -->
+														<?php
+															}
+														}
+														?>
+													</div>
+												</div>
+											<?php
+											}
+											else{
+											?>
+												<div class="card-body"  >	
+													<div class="row">															
+														<?php																			
+														if ($recommended != 0) {
+															foreach ($recommended as $data) { ?>
+																<div class="col-md-2 col-sm-4">
+																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'].',  '.round($data['service_price_inr']) ?>">
+																		<div class="card customized-category-card border-dark" style="width:100%">
+																			<div class="card-body" style="text-align: center;padding:.5rem!important;background-color:white;  border-radius:5px;">
+																				<p class="card-text" style="color: black;" ><?= $data['service_name'] ?></p>
+																			</div>
+																		</div>
+																	</a>
+																</div>
+														<?php
+															}
+														}
+														?>
+													</div>
+												</div>
+											<?php
+											}
+											?>	
+									</div>
+								</div>
 								<?php
 									if(!isset($cart) || empty($cart)){
 								?>
@@ -1795,25 +1836,19 @@
 												<div class="mb-3">
 													<table class="table table-hover table-sm" style="max-height: 200px;">
 														<tbody>
-														<tr>
-																<td colspan="2">
-												<label class="custom-control custom-checkbox">
+															<!-- <tr>
+																<td colspan="2"> -->
+																	<!-- <label class="custom-control custom-checkbox">
 								              		<input type="checkbox" class="custom-control-input" checked="true" id="cashback">
 								              		<span class="custom-control-label">Credit Rewards</span>
-																</label>																
+																</label>																 -->
 
 																<label style="display:none;" class="custom-control custom-checkbox">
 								              		<input type="checkbox" class="custom-control-input" checked="true" id="SendSMS">
 								              		<span class="custom-control-label">Send SMS</span>
 																</label>
-																</td>
-																<td colspan="2">
-															<!--	<label style="display:none;" class="custom-control custom-checkbox">
-								              		<input type="checkbox" class="custom-control-input" checked="true" id="cashback">
-								              		<span class="custom-control-label">Credit Rewards</span>
-																</label>-->
-																</td>
-															</tr>
+																<!-- </td>
+															</tr> -->
 															<tr>
 															<tr>
 																<td>Total Bill</td>
@@ -1966,10 +2001,29 @@
 												<?php
 													endif;
 												?>
-												</div>
+												</div>												
 											</div>
 										</div>
 									</div>
+									<!--  -->
+									<div class="col-md-12">
+										<div class="row"  style="background-color:white;">
+											<div class="col-md-4 ml-2">
+												<label class="custom-control custom-checkbox">
+													<input type="checkbox" class="custom-control-input" checked="true" id="cashback">
+													<span class="custom-control-label">Credit Rewards</span>
+												</label>
+											</div>
+											<div class="col-md-3 mt-1">
+												<button class="btn btn-primary btn-lg EditViewCustomer" CustomerId="<?=$individual_customer['customer_id']?>"><?=$individual_customer['customer_name']?></button><br>
+												<p class="ClearPendingAmount" customer_id="<?=$individual_customer['customer_id']?>" pending_amount="<?=$individual_customer['customer_pending_amount']?>" style="color:red;">Due : Rs. <?=$individual_customer['customer_pending_amount']?></p>
+											</div>
+											<div class="col-md-3 mt-1">
+												<p class="font-weight-bold" style="text-decoration:underline;" id="SwapWithExistingCustomer" CustomerId="<?=$individual_customer['customer_id']?>"><i>Swap</i></p>
+											</div>
+										</div>
+									</div>
+									<!--  -->
 								</div>
 							</div>
 						</div>
@@ -2090,6 +2144,7 @@
 			event.preventDefault();
 			$(this).blur();
 			var parameters = {category_id : $(this).attr('category-id')};
+			localStorage.setItem("category_id",$(this).attr('category-id'));
 			$.getJSON("<?=base_url()?>Cashier/GetSubCategoriesByCatId",parameters)
       .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row' style='margin-right:10px;'>";
@@ -2212,6 +2267,7 @@
 			event.preventDefault();
 			$(this).blur();
 			var parameters = {sub_category_id : $(this).attr('sub-category-id')};
+			localStorage.setItem('sub_category_id',$(this).attr('sub-category-id'));
 			$.getJSON("<?=base_url()?>Cashier/GetServicesBySubCatId",parameters)
       .done(function(data, textStatus, jqXHR) {
     		var str = "<div class='row' style='margin-right:10px;'>";
@@ -3267,10 +3323,11 @@
       this.blur(); // Manually remove focus from clicked link.
 			package_profile_id=$(this).attr('package-profile-id');
 			// alert(package_profile_id);
-			if(package_profile_id>0){
-				alert("This is a Package Service. You can't Edit it;");
-			}
-			else if(package_profile_id == -9999)
+			// if(package_profile_id>0){
+			// 	alert("This is a Package Service. You can't Edit it;");
+			// }
+			// else 
+			if(package_profile_id == -9999)
       {
         $("#LoyaltyServiceEditDetails input[name=service_name]").val($(this).attr('service-name'));
         $("#LoyaltyServiceEditDetails input[name=service_price_inr]").val($(this).attr('service-price-inr'));
@@ -3928,4 +3985,26 @@
       // },
     // });
   }
+
+setTimeout(function(){
+	if(localStorage.getItem("category_id")){
+  		$('[category-id="'+localStorage.getItem("category_id")+'"]').click();
+	}
+
+},500);
+
+setTimeout(function(){	
+	if(localStorage.getItem("sub_category_id")){
+		$('[sub-category-id="'+localStorage.getItem("sub_category_id")+'"]').click();	
+		$('#collapseOne').addClass('show');
+	}
+},1000);
+
+setTimeout(function(){	
+	if(localStorage.getItem("sub_category_id")){		
+		$('#collapseOne').addClass('show');
+		$('#collapseTwo').addClass('show');		
+	}
+},1500);
+  		
 </script>

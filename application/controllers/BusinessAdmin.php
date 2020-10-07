@@ -321,7 +321,7 @@ class BusinessAdmin extends CI_Controller {
 								$data['sales_till_date']=$data['sales_till_date']['res_arr'][0]['sales_till_date'];
 								// $this->PrettyPrintArray($data['sales_till_date']);
                 $data['product_sales_till_date']=$this->BusinessAdminModel->GetMonthlyProductSalesTillDate($where);
-				$data['product_sales_till_date']=$data['product_sales_till_date']['res_arr'][0]['product_sales_till_date'];
+								$data['product_sales_till_date']=$data['product_sales_till_date']['res_arr'][0]['product_sales_till_date'];
                 $data['package_sales_till_date']=$this->BusinessAdminModel->PackageSalesTillDate($where);
                 $data['package_sales_till_date']=$data['package_sales_till_date']['res_arr'][0]['package_sales'];
                 
@@ -342,12 +342,13 @@ class BusinessAdmin extends CI_Controller {
                 
                 $data['last_month_package_sales']=$this->BusinessAdminModel->PackageSalesForLastMonth($where);
                 $data['last_month_package_sales']=$data['last_month_package_sales']['res_arr'][0]['package_sales'];
-                $data['last_month_sales_payment_wise']=$this->BusinessAdminModel->GetLastMonthSalesPaymentWiseData($where);
+								$data['last_month_sales_payment_wise']=$this->BusinessAdminModel->GetLastMonthSalesPaymentWiseData($where);
+								
                 $data['last_month_sales_payment_wise']=$data['last_month_sales_payment_wise']['res_arr'];
                 
                 $data['package_payment_wise'] = $this->BusinessAdminModel->GetPackageSalesPaymentWiseData($where);
                 $data['package_payment_wise']=$data['package_payment_wise']['res_arr'];
-                // $this->PrettyPrintArray($data['package_payment_wise']);
+                // $this->PrettyPrintArray($data['cards_data']['last_month_sales']);
                 // exit;
                 $data['last_month_package_sales_payment_wise'] = $this->BusinessAdminModel->GetLastMonthPackageSalesPaymentWiseData($where);
                 $data['last_month_package_sales_payment_wise']=$data['last_month_package_sales_payment_wise']['res_arr'];
@@ -1169,7 +1170,7 @@ class BusinessAdmin extends CI_Controller {
                 $data['last_month_loyalty_points_given']=$this->BusinessAdminModel->GetLastMonthLoyaltyPointsGiven($where);
                 $data['last_month_loyalty_points_given']=$data['last_month_loyalty_points_given']['res_arr'][0]['last_month_loyalty_points'];
                 $data['sales_till_date']=$this->BusinessAdminModel->GetMonthlySalesTillDate($where);
-                $data['sales_till_date']=$data['sales_till_date']['res_arr'][0]['sales_till_date'];
+								$data['sales_till_date']=$data['sales_till_date']['res_arr'][0]['sales_till_date'];
                 $data['product_sales_till_date']=$this->BusinessAdminModel->GetMonthlyProductSalesTillDate($where);
 				$data['product_sales_till_date']=$data['product_sales_till_date']['res_arr'][0]['product_sales_till_date'];
                 $data['package_sales_till_date']=$this->BusinessAdminModel->PackageSalesTillDate($where);
@@ -1197,12 +1198,13 @@ class BusinessAdmin extends CI_Controller {
                 
                 $data['package_payment_wise'] = $this->BusinessAdminModel->GetPackageSalesPaymentWiseData($where);
                 $data['package_payment_wise']=$data['package_payment_wise']['res_arr'];
-                // $this->PrettyPrintArray($data['package_payment_wise']);
+                // $this->PrettyPrintArray($data['last_month_sales_payment_wise']);
                 // exit;
                 $data['last_month_package_sales_payment_wise'] = $this->BusinessAdminModel->GetLastMonthPackageSalesPaymentWiseData($where);
                 $data['last_month_package_sales_payment_wise']=$data['last_month_package_sales_payment_wise']['res_arr'];
                 // $this->PrettyPrintArray($data['last_month_package_sales_payment_wise']);
-                // exit;
+								// exit;
+								// $this->PrettyPrintArray($data['last_month_sales_payment_wise']);
                 
                 //balance_to be paid back
                 $data['balance_paidback']=$this->BusinessAdminModel->GetBalancePaidBack($where);
@@ -2740,7 +2742,6 @@ class BusinessAdmin extends CI_Controller {
 	public function AddEmployee(){
 		if($this->IsLoggedIn('business_admin')){
 			// $this->PrettyPrintArray($_POST);
-			// exit;
 			if(isset($_POST) && !empty($_POST)){
 				$this->form_validation->set_rules('employee_first_name', 'Employee FirstName', 'trim|required|max_length[50]');
 				$this->form_validation->set_rules('employee_last_name', 'Employee Last Name', 'trim|required|max_length[50]');
@@ -2766,10 +2767,8 @@ class BusinessAdmin extends CI_Controller {
 					die;
 				}
 				else{
-					// $file=$_POST['myfile']['employee_resume'];
-					// $this->PrettyPrintArray($_POST);
-					// exit;
-                    if($_POST['nick_name'] == ''){
+					
+          if($_POST['nick_name'] == '' || empty($_POST['nick_name'])){
 						$_POST['nick_name']=$_POST['employee_first_name'].' '.$_POST['employee_last_name'];
 					}
 					$data = array(
@@ -2782,14 +2781,11 @@ class BusinessAdmin extends CI_Controller {
 						'employee_business_outlet' 	=> $this->input->post('employee_business_outlet'),
 						'employee_password' 	=> password_hash($this->input->post('employee_password'), PASSWORD_DEFAULT),
 						'employee_expertise' 	=> $this->input->post('employee_expertise'),
-				// 		'working_hours' =>$this->input->post('employee_work_hour'),
-				// 		'employee_over_time_rate' =>$this->input->post('employee_over_time_rate'),
 						'employee_role' 	=> $this->input->post('employee_role'),
 						'employee_date_of_joining' 	=> $this->input->post('employee_date_of_joining'),
 						'employee_business_admin' => $this->session->userdata['logged_in']['business_admin_id']
 					);
 					// $this->PrettyPrintArray($data);
-					// exit;
 					$result = $this->BusinessAdminModel->Insert($data,'mss_employees');
 						
 					if($result['success'] == 'true'){
@@ -3213,7 +3209,6 @@ class BusinessAdmin extends CI_Controller {
 	}
 
 	public function EditEmployee(){
-        // $this->PrettyPrintArray($_POST);
         if($this->IsLoggedIn('business_admin')){
             if(isset($_POST) && !empty($_POST)){
                 $this->form_validation->set_rules('employee_first_name', 'Employee FirstName', 'trim|required|max_length[50]');
@@ -3224,8 +3219,7 @@ class BusinessAdmin extends CI_Controller {
                 $this->form_validation->set_rules('employee_business_outlet', 'Employee Outlet Name', 'trim|required');
                 $this->form_validation->set_rules('employee_expertise', 'Employee Expertise', 'trim');
                 $this->form_validation->set_rules('employee_date_of_joining', 'Employee Date of Joining', 'trim|required');
-                if ($this->form_validation->run() == FALSE) 
-                {
+                if ($this->form_validation->run() == FALSE){
                     $data = array(
                                     'success' => 'false',
                                     'error'   => 'true',
@@ -3234,15 +3228,11 @@ class BusinessAdmin extends CI_Controller {
                     header("Content-type: application/json");
                     print(json_encode($data, JSON_PRETTY_PRINT));
                     die;
-                }
-                else{
-                    if(isset($_POST['employee_weekoff']))
-                    {   $count=0;
+                }else{
+                    if(isset($_POST['employee_weekoff'])){   
+											$count=0;
                         $temp=array_chunk($_POST['employee_weekoff'],5);
-                        // foreach($temp as $w=>$day){
-                        //  // $this->PrettyPrintArray($day);
-                        //  array_push($week,$day);
-                        // }
+                      
                         foreach($_POST['year'] as $key => $value){
                             $month=$_POST['month_name'][$key]."-".$value;
                             $data=array(
@@ -3271,55 +3261,30 @@ class BusinessAdmin extends CI_Controller {
                                 $weeklyoff=json_encode($temp[$key]);
                             }
                         }   
-                    }
-                    else{
+                    }else{
                         $employee_weekoff='null';
                     }
-                //upload    
-                // $this->PrettyPrintArray($_POST);
-                $path='';
-                // $this->PrettyPrintArray($_FILES);
-                if(isset($_FILES['cv']['name'])){
-                    if($_FILES['cv']['name'] != null){
-                        $errors= array();
-                        $file_name = $_FILES['cv']['name'];
-                        $file_size =$_FILES['cv']['size'];
-                        $file_tmp =$_FILES['cv']['tmp_name'];
-                        $file_type=$_FILES['cv']['type'];
-                        // $file_ext=strtolower(end(explode('.',$_FILES['cv']['name'])));
-                        $tmp = explode('.', $file_name);
-                        $file_ext = end($tmp);
-                        $extensions= array("jpeg","jpg","png","pdf","doc","docx");
-                        if(in_array($file_ext,$extensions)=== false){
-                           $errors[]="extension not allowed.";
-                        }
-                        if(empty($errors)==true){
-                            $file_name=$_POST['employee_mobile'].'.'.$file_ext;
-                            $filename=$_POST['employee_mobile'];
-                            $dir = 'upload';
-                            $files = glob("{$dir}/{$filename}.*");
-                            // if($files==null){
-                            // }
-                            $path="upload/".$file_name;
-                           move_uploaded_file($file_tmp,"/home/tamarufa/public_html/marks-retech.in/Login/upload/".$file_name);
-                        //    echo "Success";
-                        }else{
-                           print_r($errors);
-                        }
-                     }
-                }
-                     //  
+										 // for file upload
+										//  $this->PrettyPrintArray($_FILES);
+										$config['allowed_types']='jpg|png|pdf|docx|doc';
+										$config['upload_path']='./upload/';
+										$this->load->library('upload',$config);
+										$this->upload->do_upload('cv');
+										$path="upload/".$_FILES['cv']['name'];
+										 //
+										if($_POST['nick_name'] == '' || empty($_POST['nick_name'])){
+											$_POST['nick_name']=$_POST['employee_first_name'].' '.$_POST['employee_last_name'];
+										}
                     $data = array(
                         'employee_first_name'   => $this->input->post('employee_first_name'),
                         'employee_last_name'    => $this->input->post('employee_last_name'),
-                        'employee_nick_name'    => $this->input->post('employee_nick_name'),
+                        'employee_nick_name'    => $_POST['employee_nick_name'],
                         'employee_mobile'   => $this->input->post('employee_mobile'),
                         'employee_address'  => $this->input->post('employee_address'),
                         'employee_email'    => $this->input->post('employee_email'),
                         'employee_business_outlet'  => $this->input->post('employee_business_outlet'),
                         'employee_expertise'    => $this->input->post('employee_expertise'),
                         'employee_role'     => $this->input->post('employee_role'),
-                        // 'employee_password'  => password_hash('1111', PASSWORD_DEFAULT),
                         'employee_date_of_joining'  => $this->input->post('employee_date_of_joining'),
                         'employee_gross_salary'     => $this->input->post('employee_gross_salary'),
                         'employee_basic_salary'     => $this->input->post('employee_basic_salary'),
@@ -3431,6 +3396,18 @@ class BusinessAdmin extends CI_Controller {
 			}
 			else{
 				$data = $this->GetDataForAdmin("Add Outlet");
+				$outlet_admin_id= $this->session->userdata['outlets']['current_outlet'];
+				$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
+
+					$query = $this->db->query($sql);
+					$result = $query->result_array();
+					if(empty($result)){
+						$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
+
+						$query = $this->db->query($sql);
+						$result = $query->result_array();
+					}
+					$data['logo'] = $result[0]['config_value'];
 				$this->load->view('business_admin/ba_add_outlet_view',$data);
 			}
 		}
@@ -3658,6 +3635,29 @@ public function GetEmployee(){
 					die;
 				}
 				else{
+
+					// for file upload
+					$config['allowed_types']='jpg|png|jpeg';
+					$config['upload_path']='./public/images/';
+					$this->load->library('upload',$config);
+					$this->upload->do_upload('business_outlet_logo');
+					$path=array(
+						'outlet_admin_id' => $this->session->userdata['outlets']['current_outlet'],
+						'config_key'			=>'salon_logo',
+						'config_value' =>$_FILES['business_outlet_logo']['name']
+					);
+					$where=array(
+						'outlet_admin_id'=> $this->session->userdata['outlets']['current_outlet']
+					);
+					$logo_exist=$this->BusinessAdminModel->MultiWhereSelect('mss_config',$where);
+						if(empty($logo_exist['res_arr'])){
+						$update_logo=$this->BusinessAdminModel->Insert($path,'mss_config');
+						}else{
+							$update_logo=$this->BusinessAdminModel->Update($path,'mss_config','outlet_admin_id');
+						}
+
+						//
+
 					$data = array(
 						'business_outlet_id'    => $this->input->post('business_outlet_id'),
 						'business_outlet_name' 	=> $this->input->post('business_outlet_name'),
@@ -3681,7 +3681,7 @@ public function GetEmployee(){
 					
 					$result = $this->BusinessAdminModel->Update($data,'mss_business_outlets','business_outlet_id');
 						
-					if($result['success'] == 'true'){
+					if($result['success'] == 'true' || $update_logo){
 						$this->ReturnJsonArray(true,false,"Outlet details updated successfully!");
 						die;
           }
@@ -5479,7 +5479,8 @@ public function GetEmployee(){
                                 // if($files==null){
                                 // }
                                 $path="upload/".$file_name;
-                            move_uploaded_file($file_tmp,"/home/tamarufa/public_html/marks-retech.in/Login/upload/".$file_name);
+														$status=move_uploaded_file($file_tmp,$path);
+														$this->PrettyPrintArray($status);
                             //    echo "Success";
                             }else{
                             print_r($errors);
@@ -5583,6 +5584,25 @@ public function GetEmployee(){
 					$data['upcomingDate']=$data['upcomingDate']['res_arr'];
 					// $this->PrettyPrintArray($data['upcomingDate']);
 					// exit;
+                    $trigger_detail =$this->BusinessAdminModel->GetTrigger();
+                    $data['trigger_detail'] = [];
+                    if($trigger_detail['success']){
+                        $data['trigger_detail'] = $trigger_detail['res_arr'];
+                    }                    
+                    $outlet = [];
+                    foreach ($data['business_outlet_details'] as $key => $ol) {
+                        $outlet[] = $ol['business_outlet_id'];
+                    }
+                    
+                    $activity =$this->BusinessAdminModel->GetOutLetSMSActivity($outlet);
+                    $ac = [];
+                    if($activity['success']){
+                        $activity = $activity['res_arr'];                        
+                        foreach ($activity as $key => $a) {
+                            $ac[] = $a['outlet_id']."_".$a['services_number'];
+                        }
+                    }  
+                    $data['activity'] = $ac;                                      
 					$this->load->view('business_admin/ba_autoEngage_view',$data);
 			}
 			else{
@@ -8855,7 +8875,7 @@ public function InsertSalary(){
                 $this->form_validation->set_rules('otc_gst_percentage', 'OTC GST Percentage', 'trim|required');
                 $this->form_validation->set_rules('otc_price_inr', 'OTC Gross Price', 'trim|required');
                 $this->form_validation->set_rules('otc_inventory_type', 'Inventory Type', 'trim|required');
-                $this->form_validation->set_rules('otc_barcode', 'Barcode', 'trim|required');
+                // $this->form_validation->set_rules('otc_barcode', 'Barcode', 'trim|required');
                 if ($this->form_validation->run() == FALSE) 
                 {
                     $data = array(
@@ -8868,18 +8888,26 @@ public function InsertSalary(){
                     die;
                 }
                 else{
+									if($_POST['otc_inventory_type']=='Retail Product'){
+										$inventory_type_id = 2;
+									}else{
+										$inventory_type_id = 1;
+									}
                     $data = array(
                         'service_name'          => $this->input->post('otc_item_name'),
                         'service_brand'         => $this->input->post('otc_brand'),
-                        // 'service_sub_category_id'=>$this->input->post('otc_sub_category_id'),
+                        'service_sub_category_id'=>$this->input->post('otc_sub_category_id'),
                         'service_unit'          => $this->input->post('otc_unit'),
-                        'service_id'          => $this->input->post('otc_service_id'),
+												'service_id'          => $this->input->post('otc_service_id'),
+												'service_is_active'	=>1,
                         'barcode'   =>  $this->input->post('otc_barcode'),
                         'inventory_type'    =>  $this->input->post('otc_inventory_type'),
                         'service_price_inr'                 => $this->input->post('otc_price_inr'),
                         'service_gst_percentage'        => $this->input->post('otc_gst_percentage'),
-                        'qty_per_item'      => $this->input->post('sku_size')
-                    );
+												'qty_per_item'      => $this->input->post('sku_size'),
+												'inventory_type_id'	=>	$inventory_type_id
+										);
+										// $this->PrettyPrintArray($_POST);
                     $result = $this->BusinessAdminModel->Update($data,'mss_services','service_id');
                     if($result['success'] == 'true'){
                         $this->ReturnJsonArray(true,false,"OTC item updated successfully!");
@@ -9149,9 +9177,13 @@ public function InsertSalary(){
                 $res=array(
                      'id' => $data['timeline']['res_arr']['id'],
                      'r1' => $data['timeline']['res_arr']['r1'],
-                     'r2' => $data['timeline']['res_arr']['r2'],
-                     'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
-                     'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'r2' => $data['timeline']['res_arr']['r2'],
+										 'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
+										 'no_risk' => $data['timeline']['res_arr']['no_risk'],
+										 'dormant_r1' => $data['timeline']['res_arr']['dormant_r1'],
+										 'dormant_r2' => $data['timeline']['res_arr']['dormant_r2'],
+										 'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
                      'lost_customer' => $data['timeline']['res_arr']['lost_customer']
                 );
             }
@@ -9160,8 +9192,12 @@ public function InsertSalary(){
                     'id' => 0,
                     'r1' => 2,
                     'r2' => 5,
-                    'regular_cust' => 5,
-                    'at_risk_cust' => 30,
+										'regular_cust' => 5,
+										'no_risk'	=>30,
+										'dormant_r1'	=> 31,
+										'dormant_r2'	=>60,
+										'at_risk_cust' => 61,
+										'at_risk_cust2' => 90,
                     'lost_customer' => 90
                );
             }
@@ -9200,6 +9236,20 @@ public function InsertSalary(){
             }
             else{
                 $data['regular']=0;
+						}
+						$data['no_risk']=$this->BusinessAdminModel->NoRiskCustomer($res);
+            if($data['no_risk']['success'] == 'true'){
+                $data['no_risk']=count($data['no_risk']['res_arr']);
+            }
+            else{
+                $data['no_risk']=0;
+						}
+						$data['dormant']=$this->BusinessAdminModel->DormantCustomer($res);
+            if($data['dormant']['success'] == 'true'){
+                $data['dormant']=count($data['dormant']['res_arr']);
+            }
+            else{
+                $data['dormant']=0;
             }
             $data['risk']=$this->BusinessAdminModel->RiskCustomerService($res);
             if($data['risk']['success']='true'){
@@ -9233,9 +9283,13 @@ public function InsertSalary(){
                 $res=array(
                      'id' => $data['timeline']['res_arr']['id'],
                      'r1' => $data['timeline']['res_arr']['r1'],
-                     'r2' => $data['timeline']['res_arr']['r2'],
+										 'r2' => $data['timeline']['res_arr']['r2'],
+										 'no_risk' => $data['timeline']['res_arr']['no_risk'],
+										 'dormant_r1' => $data['timeline']['res_arr']['dormant_r1'],
+										 'dormant_r2' => $data['timeline']['res_arr']['dorant_r2'],
                      'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
-                     'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
                      'lost_customer' => $data['timeline']['res_arr']['lost_customer']
                 );
             }
@@ -9244,8 +9298,12 @@ public function InsertSalary(){
                     'id' => 0,
                     'r1' => 2,
                     'r2' => 5,
-                    'regular_cust' => 5,
-                    'at_risk_cust' => 30,
+										'regular_cust' => 5,
+										'no_risk'	=> 30,
+										'dormant_r1'=>31,
+										'dormant_r2'=>60,
+										'at_risk_cust' => 60,
+										'at_risk_cust2'	=>90,
                     'lost_customer' => 90
                );
             }
@@ -9269,7 +9327,23 @@ public function InsertSalary(){
             }
             else{
                 $data['regular']=0;
+						}
+						
+						$data['no_risk']=$this->BusinessAdminModel->NoRiskCustomer($res);
+            if($data['no_risk']['success'] == 'true'){
+                $data['no_risk']=count($data['no_risk']['res_arr']);
             }
+            else{
+                $data['no_risk']=0;
+						}
+						$data['dormant']=$this->BusinessAdminModel->DormantCustomer($res);
+            if($data['dormant']['success'] == 'true'){
+                $data['dormant']=count($data['dormant']['res_arr']);
+            }
+            else{
+                $data['dormant']=0;
+            }
+
             $data['risk']=$this->BusinessAdminModel->RiskCustomerService($res);
             if($data['risk']['success']='true'){
                 $data['risk']=count($data['risk']['res_arr']);
@@ -9296,8 +9370,12 @@ public function InsertSalary(){
                     $data=array(
                         'r1'=>$_POST['r1'],
                         'r2'=>$_POST['r2'],
-                        'regular_cust'=>$_POST['reg_cust'],
-                        'at_risk_cust'=>$_POST['risk_cust'],
+												'regular_cust'=>$_POST['reg_cust'],
+												'no_risk'			=>$_POST['no_risk'],
+												'dormant_r1'			=>$_POST['dormant_r1'],
+												'dormant_r2'			=>$_POST['dormant_r2'],
+												'at_risk_cust'=>$_POST['at_risk_r1'],
+												'at_risk_cust2'=>$_POST['at_risk_r2'],
                         'lost_customer'=>$_POST['lost_cust'],
                         'business_outlet_id'=>$this->session->userdata['outlets']['current_outlet'],
                         'business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id'],
@@ -9305,12 +9383,17 @@ public function InsertSalary(){
                     );
                     $result = $this->BusinessAdminModel->Insert($data,'mss_customer_timeline_setup');
                 }else{
+                // $this->PrettyPrintArray($_POST);
                         $data=array(
                             'id'=>$_POST['id'],
                             'r1'=>$_POST['r1'],
                             'r2'=>$_POST['r2'],
-                            'regular_cust'=>$_POST['reg_cust'],
-                            'at_risk_cust'=>$_POST['risk_cust'],
+														'regular_cust'=>$_POST['reg_cust'],
+														'no_risk'			=>$_POST['no_risk'],
+														'dormant_r1'			=>$_POST['dormant_r1'],
+														'dormant_r2'			=>$_POST['dormant_r2'],
+														'at_risk_cust'=>$_POST['at_risk_r1'],
+														'at_risk_cust2'=>$_POST['at_risk_r2'],
                             'lost_customer'=>$_POST['lost_cust'],
                             'business_outlet_id'=>$this->session->userdata['outlets']['current_outlet'],
                             'business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id'],
@@ -9318,7 +9401,6 @@ public function InsertSalary(){
                         );
                         $result = $this->BusinessAdminModel->Update($data,'mss_customer_timeline_setup','id');
                     }
-                // $this->PrettyPrintArray($_POST);
               if($result['success'] == 'true'){
                 $this->ReturnJsonArray(true,false,"Data Added successfully!");
                 die;
@@ -10836,8 +10918,8 @@ public function InsertSalary(){
     	public function AddInventory(){
         if($this->IsLoggedIn('business_admin')){
           if(isset($_POST) && !empty($_POST)){
-						$this->form_validation->set_rules('invoice_number','OTC Name', 'trim|required');
-						$this->form_validation->set_rules('invoice_date', 'SKU', 'trim|required');			
+						$this->form_validation->set_rules('invoice_number','Invoice Number', 'trim|required');
+						$this->form_validation->set_rules('invoice_date', 'Invoice Date', 'trim|required');			
 						if($this->form_validation->run() == FALSE){
 							$data = array(
 															'success' => 'false',
@@ -10848,6 +10930,7 @@ public function InsertSalary(){
 							print(json_encode($data, JSON_PRETTY_PRINT));
 							die;
 						}else{
+								$this->db->trans_start();
 								$data2=array(
 									'invoice_number'    =>  $this->input->post('invoice_number'),
 									'invoice_date'   		=>  $this->input->post('invoice_date'),
@@ -10885,6 +10968,7 @@ public function InsertSalary(){
 									$data4=array(
 										'stock_service_id' => $_POST['product_id'][$key],
 										'total_stock'=> $_POST['product_qty'][$key],
+										'stock_in_unit'	=>($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 										'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
 										'updated_on'	=>date('Y-m-d')
 									);
@@ -10894,6 +10978,33 @@ public function InsertSalary(){
 									}else{
 										$insert_stock=$this->CashierModel->Insert($data4,'inventory_stock');
 									}
+
+									//making entry i expense table
+									$data5=array(
+										'expense_unique_serial_id'	=>	'E1010Y',
+										'expense_date'							=>	date('Y-m-d'),
+										'expense_type_id'						=>	'1',
+										'item_name'									=>	'Inventory',
+										'employee_name'							=>	$this->session->userdata['logged_in']['business_admin_name'],
+										'total_amount'							=>	$this->input->post('invoice_amount'),
+										'amount'										=>	$this->input->post('amount_paid'),
+										'payment_type'							=>	$this->input->post('source_type'),
+										'payment_to'								=>	$this->input->post('source_type'),
+										'payment_to_name'						=>	$this->input->post('source_name'),
+										'invoice_number'						=>	$this->input->post('invoice_number'),
+										'remarks'										=>	$this->input->post('note'),
+										'payment_mode'							=>	$this->input->post('payment_mode'),
+										'expense_status'						=>	$this->input->post('payment_status'),
+										'pending_amount'						=>	($this->input->post('invoice_amount')- $this->input->post('amount_paid')),
+										'bussiness_outlet_id'				=>	$this->session->userdata['outlets']['current_outlet']
+									);
+									$insert_expense=$this->CashierModel->Insert($data5,'mss_expenses');
+
+								}
+								$this->db->trans_complete();
+								if ($this->db->trans_status() === FALSE){
+									$this->ReturnJsonArray(false,true,"Error in Stock Addition!");
+									die;
 								}
 								$this->ReturnJsonArray(true,false,"Inventory added successfully!");
 								die;						
@@ -10917,14 +11028,18 @@ public function InsertSalary(){
 
 							$data['stock']=$this->CashierModel->AvailableStock($where);
 							$data['stock']=	$data['stock']['res_arr'];
-
+							// $this->PrettyPrintArray($data['stock']);
 							$data['stock_incoming']=$this->CashierModel->IncomingStock($where);
 							$data['stock_incoming']=	$data['stock_incoming']['res_arr'];
 
 							$data['stock_outgoing']=$this->CashierModel->OutgoingStock($where);
 							$data['stock_outgoing']=	$data['stock_outgoing']['res_arr'];
 
-                // $this->PrettyPrintArray($data['vendors']);
+							$data['all_expenses'] = $this->AllExpenses($this->session->userdata['outlets']['current_outlet']);
+							$data['pending_payment']=$this->BusinessAdminModel->GetPendingPayment();
+              $data['pending_payment']=$data['pending_payment']['res_arr'];
+
+                // $this->PrettyPrintArray($data['stock_incoming']);
                 // exit;
 							$data['categories']  = $this->GetCategoriesOtc($this->session->userdata['outlets']['current_outlet']);
 							$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['outlets']['current_outlet']);
@@ -11516,8 +11631,7 @@ public function InsertSalary(){
 					$where = array(
 							'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 							'is_active'         => TRUE,
-							'business_outlet_id'=> $outlet_id,
-							'category_for'			=> 1
+							'business_outlet_id'=> $outlet_id
 					);
 					$data = $this->BusinessAdminModel->GetRawMaterialsIn($where);
 					if($data['success'] == 'true'){ 
@@ -11750,27 +11864,109 @@ public function daybook(){
                 $key_info['keys'][3] = $temp;
 
 
-                $p_mode = [];
-                foreach ($key_info as $key => $k) {
-                    foreach ($k as $key => $keys) {
-                        if(!in_array($keys, $p_mode)){
-                            $p_mode[] = $keys;
-                        }
-                    }                                    
-                }
+                // $p_mode = [];
+                // foreach ($key_info as $key => $k) {
+                //     foreach ($k as $key => $keys) {
+                //         if(!in_array($keys, $p_mode)){
+                //             $p_mode[] = $keys;
+                //         }
+                //     }                                    
+                // }
 
         }
         
-        $p_mode = array_filter($p_mode);        
+        // $p_mode = array_filter($p_mode);        
+        // $p_mode = call_user_func_array('array_merge', $p_mode);
+        // $p_mode = array_unique($p_mode);
+        // $p_mode = array_values($p_mode);        
+        // $data['p_mode'] = $p_mode;
+        // $data['opening_balance_data'] = $opening_balance_data;
+        // $data['pending_amount_data'] = $pending_amount_data;
+        // $data['expenses_data'] = $expenses_data;
+        // $data['transaction_data'] = $transaction_data;
+        // $data['date'] = $date;
+        $result = $this->BusinessAdminModel->GetPaymentMode();
+        if($result['success']){
+            $mode = $result['res_arr'];
+            
+            foreach ($mode as $key => $value) {
+                if(!empty($value['txn_settlement_payment_mode'])){                        
+                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
+                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
+                    }else{
+                        $result = json_decode($value['txn_settlement_payment_mode']);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
+                        }else{
+                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
+                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
+                        }                            
+                    }
+                }                        
+            }                
+            if(!empty($json_data)){                    
+                foreach ($json_data as $key => $j) {
+                    foreach ($j as $key => $t) {
+                      if(in_array(strtolower($t['payment_type']), $temp)){
+                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
+                        }else{
+                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
+                            $temp[] = strtolower($t['payment_type']);
+                        }  
+                    }                       
+                }
+            }
+        }
+        $data['payment_type_arr'] = $temp;       
+        $result = $this->BusinessAdminModel->getOpeningRecord($date,1);        
+
+        $cashin = [];
+        $cashout = [];
+        $temp1 = [];
+        $temp2 = [];
+        if($result['success']){
+            $cashinout = $result['res_arr']['opening_balance'];
+
+            foreach ($cashinout as $key => $value) {
+                if($value['amount_data'] == 'CashIn'){
+                    if(in_array(strtolower($value['payment_mode']), $temp1)){
+                        $cashin[strtolower($value['payment_mode'])] += $value['amount'];
+                        }else{
+                            $cashin[strtolower($value['payment_mode'])] = $value['amount'];
+                            $temp1[] = strtolower($value['payment_mode']);
+                        }  
+                    }elseif($value['amount_data'] == 'CashOut'){
+                        if(in_array(strtolower($value['payment_mode']), $temp2)){
+                        $cashout[strtolower($value['payment_mode'])] += $value['amount'];
+                        }else{
+                            $cashout[strtolower($value['payment_mode'])] = $value['amount'];
+                            $temp2[] = strtolower($value['payment_mode']);
+                        }
+                    }               
+            }           
+        }        
+        $key_info['keys'][4] = $temp1;
+        $key_info['keys'][5] = $temp2;
+        $p_mode = [];
+        foreach ($key_info as $key => $k) {
+            foreach ($k as $key => $keys) {
+                if(!in_array($keys, $p_mode)){
+                    $p_mode[] = $keys;
+                }
+            }                                    
+        }
+         $p_mode = array_filter($p_mode);        
         $p_mode = call_user_func_array('array_merge', $p_mode);
         $p_mode = array_unique($p_mode);
-        $p_mode = array_values($p_mode);        
+        $p_mode = array_values($p_mode);              
         $data['p_mode'] = $p_mode;
         $data['opening_balance_data'] = $opening_balance_data;
         $data['pending_amount_data'] = $pending_amount_data;
         $data['expenses_data'] = $expenses_data;
         $data['transaction_data'] = $transaction_data;
         $data['date'] = $date;
+        $data['cashin'] = $cashin;
+        $data['cashout'] = $cashout;
         $this->load->view('business_admin/ba_expense_view',$data);
     }
 
@@ -12039,8 +12235,8 @@ public function daybook(){
 		public function TransferInventory(){
 			if($this->IsLoggedIn('business_admin')){
 				if(isset($_POST) && !empty($_POST)){
-					$this->form_validation->set_rules('invoice_number','OTC Name', 'trim|required');
-					$this->form_validation->set_rules('invoice_date', 'SKU', 'trim|required');
+					$this->form_validation->set_rules('invoice_number','Invoice Number', 'trim|required');
+					$this->form_validation->set_rules('invoice_date', 'Date', 'trim|required');
 			
 					if ($this->form_validation->run() == FALSE){
 							$data = array(
@@ -12087,13 +12283,13 @@ public function daybook(){
 							$data4=array(
 								'stock_service_id' => $_POST['product_id'][$key],
 								'total_stock'=> $_POST['product_qty'][$key],
+								'stock_in_unit'  =>	($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 								'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
 								'updated_on'	=>date('Y-m-d')
 							);
 	
 							$stock_exist_for_transfer= $this->CashierModel->CheckStockExistForTransfer($data4);
 							if($stock_exist_for_transfer['success']=='true'){
-								// $update_stock=$this->CashierModel->UpdateInventoryStockTransfer($data4);
 								$this->CashierModel->Insert($data3,'inventory_transfer_data');							
 							}else{
 								$this->ReturnJsonArray(false,true,"Stock not available for transfer!");
@@ -12128,12 +12324,15 @@ public function daybook(){
 					$data=array(
 						'stock_service_id' => $_POST['service_id'],
 						'total_stock'=> $_POST['total_stock'],
+						'stock_in_unit'=>($_POST['stock_in_unit']*$_POST['total_stock']),
 						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
 						'updated_on'	=>date('Y-m-d')
 					);
+
 					$data2=array(
 						'stock_service_id' => $_POST['service_id'],
 						'total_stock'=> $_POST['total_stock'],
+						'stock_in_unit'=>($_POST['stock_in_unit']*$_POST['total_stock']),
 						'stock_outlet_id'	=> $_POST['sender_outlet_id'],
 						'updated_on'	=>date('Y-m-d')
 					);
@@ -12235,7 +12434,238 @@ public function daybook(){
 			}
 		}
 
+		public function EditInventory(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_GET) && !empty($_GET)){
+					$service_details=$this->CashierModel->DetailsById($_GET['service_id'],'mss_services','service_id');
+					$service_details=$service_details['res_arr'];
+					$this->ReturnJsonArray(true,false,$service_details);
+					die;
+				}else if(isset($_POST) && !empty($_POST)){
+					$service_details=$this->CashierModel->DetailsById($_POST['service_id'],'mss_services','service_id');
+					$service_details=$service_details['res_arr'];
+					$data=array(
+						'invoice_number'	=>	$_POST['invoice_number'],
+						'invoice_date'		=>	$_POST['invoice_date'],
+						'invoice_amount'	=>	$_POST['product_mrp'],
+						'invoice_tax'			=>	0,
+						'source'					=>	'branch',
+						'source_name'			=>	$this->session->userdata['outlets']['current_outlet'],
+						'invoice_type'		=>	'challan',
+						'amount_paid'			=>	0,
+						'payment_type'		=>	'',
+						'payment_status'	=>	'unpaid',
+						'notes'						=>	$_POST['remarks'],
+						'business_outlet_id'	=> $this->session->userdata['outlets']['current_outlet']
+					);
+
+					$result=$this->CashierModel->Insert($data,'inventory');
+					
+					$data2=array(
+						'inventory_id'	=>	$result['res_arr']['insert_id'],
+						'service_id'	=>	$_POST['service_id'],
+						'product_name'	=>	$_POST['product_name'],
+						'product_type'	=> $service_details['inventory_type'],
+						'product_barcode'	=> $service_details['barcode'],
+						'sku_size'	=>	$_POST['sku_size'],
+						'product_qty'	=> $_POST['product_qty'],
+						'product_price'	=> $_POST['product_price'],
+						'product_gst'	=> $_POST['product_gst'],
+						'product_mrp'	=> $_POST['product_mrp'],
+						'expiry_date'	=> date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))))
+					);
+					$result=$this->CashierModel->Insert($data2,'inventory_data');
+					$where=array(
+						'stock_service_id' => $_POST['service_id'],
+						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet']
+					);
+					$data3=array(
+						'stock_service_id'=>$_POST['service_id'],
+						'total_stock'	=>$_POST['product_qty'],
+						'stock_in_unit'	=>($_POST['product_qty']*$_POST['sku_size']),
+						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
+						'updated_on'	=>date('Y-m-d')
+					);
+
+						$stock_exist= $this->CashierModel->CheckStockExist($where);
+						if($stock_exist['success']=='true'){
+							$update_stock=$this->CashierModel->UpdateInventoryStockForAdmin($data3);
+						}else{
+							$insert_stock=$this->CashierModel->Insert($data3,'inventory_stock');
+						}					
+					// $res=$this->CashierModel->UpdateInventoryStock($data3);
+					// $res=$this->CashierModel->Update($data3,'inventory_stock','stock_service_id');
+
+					$this->ReturnJsonArray(true,false,"Stock Updated!");
+					die;
+				}else{
+					$this->ReturnJsonArray(false,true,"Wrong Method!");
+					die;
+				}
+			}
+		}
 		
+		public function ChangeSmsStatus(){
+			if($this->IsLoggedIn('business_admin')){
+				$where = array(
+					'business_outlet_id'=> $_POST['business_outlet_id'],
+					'business_outlet_sms_status' => $_POST['sms_status']
+				);
+				$data = $this->BusinessAdminModel->Update($where,'mss_business_outlets','business_outlet_id');
+				if($data['success'] == 'true'){	
+					$this->ReturnJsonArray(true,false,"SMS status Updated");
+					die;
+				}else{
+					$this->ReturnJsonArray(false,true,"Error in Updating status!");
+					die;
+				}
+			}
+			else{
+				$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}		
+		}
+
+        public function AddCashIn(){
+        if($this->IsLoggedIn('business_admin')){
+            $post['amount'] = $_POST['cash_in'];
+            $post['opening_date'] = date('Y-m-d');
+            $post['amount_data'] = 'CashIn';
+            $post['payment_mode'] = 'Cash';
+            $post['business_outlet_id'] = $this->session->userdata['outlets']['current_outlet'];
+            $data=$this->CashierModel->Insert($post,'mss_opening_balance');            
+            $this->ReturnJsonArray(true,false,$data['res_arr']);
+            die;
+        }
+    }
+    
+    public function AddCashOut(){
+        if($this->IsLoggedIn('business_admin')){
+            $post['amount'] = $_POST['cash_out'];
+            $post['opening_date'] = date('Y-m-d');
+            $post['amount_data'] = 'CashOut';
+            $post['payment_mode'] = $_POST['paymod_mode'];
+            $post['business_outlet_id'] = $this->session->userdata['outlets']['current_outlet'];
+            $data=$this->CashierModel->Insert($post,'mss_opening_balance');
+            $this->ReturnJsonArray(true,false,$data['res_arr']);
+            die;
+        }
+    }
+
+    public function AddMessageTrigger(){
+        if($this->IsLoggedIn('business_admin')){
+            $data['trigger_name'] = $_POST['trigger_name'];
+            $data['trigger_description'] = $_POST['trigger_discription'];
+            $data['mode'] = $_POST['mode'];
+            $data['outlet_id'] = $_POST['business_outlet_id'];
+            $data['recipient'] = $_POST['reciptents'];
+            $date = explode("-", $_POST['dates']);
+            $data['start_date'] = date("Y-m-d", strtotime($date[0]) );
+            $data['expiry_date'] = date("Y-m-d", strtotime($date[1]) );
+            $data['set_frequency'] = $_POST['ftype'];
+            //$data['trigger_name'] = $_POST['frequency_detail'];
+            $data['sms'] = $_POST['message'];
+            $data['created_by'] = $this->session->userdata['logged_in']['business_admin_id'];
+            $result = $this->BusinessAdminModel->Insert($data,'sms_trigger');
+            if($result['success']){
+                $id = $result['res_arr']['insert_id'];
+                foreach ($_POST['frequency_detail'] as $key => $frequency_detail) {
+                    $this->BusinessAdminModel->Insert(array('trigger_id'=>$id,'frequency_detail'=>$frequency_detail),'sms_frequency_detail');
+                }
+            }
+            $this->ReturnJsonArray(true,false,"Trigger Saved SuccessFully");
+            die;
+        }
+    }
+
+    //delete trigger
+        public function CancelSMSTrigger(){
+            if($this->IsLoggedIn('business_admin')){
+                // $this->PrettyPrintArray($_POST);
+                // exit;
+                if(isset($_POST) && !empty($_POST)){
+                    $this->form_validation->set_rules('auto_engage_id', 'Auto Engage', 'trim|required');            
+    
+                    if ($this->form_validation->run() == FALSE) 
+                    {
+                        $data = array(
+                                        'success' => 'false',
+                                        'error'   => 'true',
+                                        'message' =>  validation_errors()
+                                    );
+                        header("Content-type: application/json");
+                        print(json_encode($data, JSON_PRETTY_PRINT));
+                        die;
+                    }
+                    else{
+                        $data = array(
+                            'id'    => $this->input->post('auto_engage_id'),
+                            'is_active'=>$this->input->post('is_active')
+                        );
+    
+                        $result = $this->BusinessAdminModel->Update($data,'sms_trigger','id');
+                            
+                        if($result['success'] == 'true'){
+                            $this->ReturnJsonArray(true,false,"Trigger Updated Successfully!");
+                            die;
+                        }
+                        elseif($result['error'] == 'true'){
+                            $this->ReturnJsonArray(false,true,$result['message']);
+                            die;
+                        }
+                    }
+                }
+            }
+            else{
+                $this->LogoutUrl(base_url()."BusinessAdmin/");
+            }   
+        }
+
+    
+    public function ActivateSMSTrigger(){
+        if($this->IsLoggedIn('business_admin')){
+                // $this->PrettyPrintArray($_POST);
+                // exit;
+                if(isset($_POST) && !empty($_POST)){
+                    $this->form_validation->set_rules('auto_engage_id', 'Auto Engage', 'trim|required');            
+    
+                    if ($this->form_validation->run() == FALSE) 
+                    {
+                        $data = array(
+                                        'success' => 'false',
+                                        'error'   => 'true',
+                                        'message' =>  validation_errors()
+                                    );
+                        header("Content-type: application/json");
+                        print(json_encode($data, JSON_PRETTY_PRINT));
+                        die;
+                    }
+                    else{
+                        $data = array(
+                            'outlet_id'    => $this->input->post('auto_engage_id'),
+                            'is_active'=>$this->input->post('is_active'),
+                            'services_number    '=>$this->input->post('service_id'),
+                        );                    
+                        if($this->input->post('is_active') == 0){
+                            unset($data['is_active']);
+                            $result = $this->BusinessAdminModel->DeleteSMSActivity('sms_activity',$data);                           
+                        }else{
+                            $result = $this->BusinessAdminModel->Insert($data,'sms_activity');
+                        }                        
+                        if($result['success'] == 'true'){
+                            $this->ReturnJsonArray(true,false,"Trigger Saved Successfully!");
+                            die;
+                        }
+                        elseif($result['error'] == 'true'){
+                            $this->ReturnJsonArray(false,true,$result['message']);
+                            die;
+                        }
+                    }
+                }
+            }
+            else{
+                $this->LogoutUrl(base_url()."BusinessAdmin/");
+            }
+    }
 
 }
 

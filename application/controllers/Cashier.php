@@ -117,7 +117,8 @@ class Cashier extends CI_Controller {
                 $data['rules'] = ['res_arr'=>''];
                 $data['rules'] = $data['rules']['res_arr'];
               }
-        			$data['sidebar_collapsed'] = "true";
+							$data['sidebar_collapsed'] = "true";
+							// $this->PrettyPrintArray($data['customers']);
         			$this->load->view('cashier/cashier_dashboard_view',$data);
         		}
         		else{
@@ -156,10 +157,10 @@ class Cashier extends CI_Controller {
 						 );
 			header("Content-type: application/json");
 			print(json_encode($data, JSON_PRETTY_PRINT));
-		}
+		} 
   }
 
-  //Testing Function
+  //  Testing Function
   private function PrettyPrintArray($data){
   	print("<pre>".print_r($data,true)."</pre>");
   	die;
@@ -425,7 +426,7 @@ class Cashier extends CI_Controller {
                 $data['rules'] = ['res_arr'=>''];
                 // $data['rules'] = $rules['res_arr'];
 						}	
-						 //$this->PrettyPrintArray($this->session->all_userdata());
+						//  $this->PrettyPrintArray($data['customers']);
 			$data['sidebar_collapsed'] = "true";
 			$this->load->view('cashier/cashier_dashboard_view',$data);
 		}
@@ -657,16 +658,18 @@ class Cashier extends CI_Controller {
 							if(!isset($this->session->userdata['POS'])){
 								array_push($curr_sess_cust_data, $sess_data);
 								$this->session->set_userdata('POS', $curr_sess_cust_data);
+								// $this->PrettyPrintArray($curr_sess_cust_data);
 							}
 							else{
 								$curr_sess_cust_data = $this->session->userdata['POS'];
 								array_push($curr_sess_cust_data, $sess_data);
 								$this->session->set_userdata('POS', $curr_sess_cust_data);
+
 							}
 							
 							////////////////////////////////////////////////////////////
 
-							$this->ReturnJsonArray(true,false,"Customer added successfully!");
+							$this->ReturnJsonArray(true,false,$result['res_arr']);
 							die;
 	          }
 	          elseif($result['error'] == 'true'){
@@ -691,8 +694,7 @@ class Cashier extends CI_Controller {
 				$this->form_validation->set_rules('customer_mobile', 'Customer Mobile', 'trim|required|max_length[10]|min_length[10]');
 				$this->form_validation->set_rules('customer_dob', 'Customer date of birth', 'trim');
 				$this->form_validation->set_rules('customer_doa', 'Customer date of anniversary', 'trim');
-				if ($this->form_validation->run() == FALSE) 
-				{
+				if ($this->form_validation->run() == FALSE){
 					$data = array(
 									'success' => 'false',
 									'error'   => 'true',
@@ -716,7 +718,6 @@ class Cashier extends CI_Controller {
 						);
 						
 						$customerExists = $this->CashierModel->CheckCustomerExists($where);
-						
 						if($customerExists['success'] == 'false' && $customerExists['error'] == 'true' ){
 							$this->ReturnJsonArray(false,true,$customerExists['message']);
 							die;
@@ -758,14 +759,16 @@ class Cashier extends CI_Controller {
 						}
 					}
 					else{					
+						// echo $this->input->post('customer_dob');
 						
 						$data = array(
 							'customer_id'     => $this->input->post('customer_id'),
 							'customer_title' 	=> $this->input->post('customer_title'),
 							'customer_name' 	=> $this->input->post('customer_name'),
-							'customer_dob'    => $this->input->post('customer_dob'),
-							'customer_doa' 		=> $this->input->post('customer_doa')
+							'customer_dob'    => date('Y-m-d',strtotime($this->input->post('customer_dob'))),
+							'customer_doa' 		=> date('Y-m-d',strtotime($this->input->post('customer_doa')))
 						);
+					// $this->PrettyPrintArray($data);
 
 						$result = $this->CashierModel->Update($data,'mss_customers','customer_id');
 						if($result['success'] == 'true'){
@@ -795,7 +798,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."BusinessAdmin/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
@@ -823,7 +826,7 @@ class Cashier extends CI_Controller {
 			}
 		}
 		else{
-			$this->LogoutUrl(base_url()."BusinessAdmin/");
+			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
 
@@ -2652,21 +2655,25 @@ class Cashier extends CI_Controller {
 					$customer_details = $this->GetCustomerBilling($_POST['customer_pending_data']['customer_id']);
 					//4.Send a msg
 					$this->session->set_userdata('bill_url',$bill_url);
-					if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
-						if($_POST['txn_data']['txn_value']==0){
-						$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}else{		
-						$this->SendCashbackSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$_POST['cashback'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}
-					}
-					//
-					if($_POST['send_sms'] === 'true' && $_POST['cashback']==0){
-						if($_POST['txn_data']['txn_value']==0){
-						$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}else{		
-						$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-						}
-					}
+					$sms_status = $this->db->select('business_outlet_sms_status')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+						
+					if($sms_status['business_outlet_sms_status']==1){
+							if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
+								if($_POST['txn_data']['txn_value']==0){
+								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}else{		
+								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}
+							}
+							//
+							if($_POST['send_sms'] === 'true' && $_POST['cashback']==0){
+								if($_POST['txn_data']['txn_value']==0){
+								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}else{		
+								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url']);
+								}
+							}
+					 	}
 					//
         
 					$this->ReturnJsonArray(true,false,"Transaction is successful!");
@@ -2989,6 +2996,7 @@ class Cashier extends CI_Controller {
 
 								$data['stock_incoming']=$this->CashierModel->IncomingStock($where);
 								$data['stock_incoming']=	$data['stock_incoming']['res_arr'];
+								// $this->PrettyPrintArray($data['stock_incoming']);
 
 								$data['stock_outgoing']=$this->CashierModel->OutgoingStock($where);
 								$data['stock_outgoing']=	$data['stock_outgoing']['res_arr'];
@@ -3011,7 +3019,7 @@ class Cashier extends CI_Controller {
                     $data['modal']=0;
 								}
 								$data['sidebar_collapsed'] = "true";
-								// $this->PrettyPrintArray($data['stock_incoming']);
+								// $this->PrettyPrintArray($this->session->userdata['logged_in']);
                 $this->load->view('cashier/cashier_add_inventory_view',$data);
             }
         }
@@ -3818,7 +3826,11 @@ class Cashier extends CI_Controller {
 	public function GetBilledServices(){
 		if($this->IsLoggedIn('cashier')){
 			if(isset($_GET) && !empty($_GET)){
+				if($_GET['type']=="Package"){
+					$data = $this->CashierModel->GetBilledPackagesByTxnId($_GET['txn_id']);
+				}else{
 				$data = $this->CashierModel->GetBilledServicesByTxnId($_GET['txn_id']);
+				}
 				if($data['success'] == 'true'){	
 					header("Content-type: application/json");
 					print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
@@ -6962,28 +6974,90 @@ public function AddToCartRedeemPoints(){
                 }
                 $key_info['keys'][3] = $temp;
 
-
-                $p_mode = [];
-                foreach ($key_info as $key => $k) {
-                    foreach ($k as $key => $keys) {
-                        if(!in_array($keys, $p_mode)){
-                            $p_mode[] = $keys;
-                        }
-                    }                                    
-                }
-
         }
         
-        $p_mode = array_filter($p_mode);        
+        $result = $this->BusinessAdminModel->GetPaymentMode();
+        if($result['success']){
+        	$mode = $result['res_arr'];
+        	
+        	foreach ($mode as $key => $value) {
+                if(!empty($value['txn_settlement_payment_mode'])){                        
+                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
+                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
+                    }else{
+                        $result = json_decode($value['txn_settlement_payment_mode']);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
+                        }else{
+                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
+                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
+                        }                            
+                    }
+                }                        
+            }                
+            if(!empty($json_data)){                    
+                foreach ($json_data as $key => $j) {
+                    foreach ($j as $key => $t) {
+                      if(in_array(strtolower($t['payment_type']), $temp)){
+                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
+                        }else{
+                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
+                            $temp[] = strtolower($t['payment_type']);
+                        }  
+                    }                       
+                }
+            }
+        }
+        $data['payment_type_arr'] = $temp;       
+        $result = $this->BusinessAdminModel->getOpeningRecord($date,1);        
+
+        $cashin = [];
+        $cashout = [];
+        $temp1 = [];
+        $temp2 = [];
+        if($result['success']){
+        	$cashinout = $result['res_arr']['opening_balance'];
+
+        	foreach ($cashinout as $key => $value) {
+        		if($value['amount_data'] == 'CashIn'){
+	        		if(in_array(strtolower($value['payment_mode']), $temp1)){
+		                $cashin[strtolower($value['payment_mode'])] += $value['amount'];
+		                }else{
+		                    $cashin[strtolower($value['payment_mode'])] = $value['amount'];
+		                    $temp1[] = strtolower($value['payment_mode']);
+		                }  
+	                }elseif($value['amount_data'] == 'CashOut'){
+	                	if(in_array(strtolower($value['payment_mode']), $temp2)){
+	                	$cashout[strtolower($value['payment_mode'])] += $value['amount'];
+		                }else{
+		                    $cashout[strtolower($value['payment_mode'])] = $value['amount'];
+		                    $temp2[] = strtolower($value['payment_mode']);
+		                }
+	                }        		
+        	}        	
+        }        
+        $key_info['keys'][4] = $temp1;
+        $key_info['keys'][5] = $temp2;
+        $p_mode = [];
+        foreach ($key_info as $key => $k) {
+            foreach ($k as $key => $keys) {
+                if(!in_array($keys, $p_mode)){
+                    $p_mode[] = $keys;
+                }
+            }                                    
+        }
+         $p_mode = array_filter($p_mode);        
         $p_mode = call_user_func_array('array_merge', $p_mode);
         $p_mode = array_unique($p_mode);
-        $p_mode = array_values($p_mode);        
+        $p_mode = array_values($p_mode);              
         $data['p_mode'] = $p_mode;
         $data['opening_balance_data'] = $opening_balance_data;
         $data['pending_amount_data'] = $pending_amount_data;
         $data['expenses_data'] = $expenses_data;
         $data['transaction_data'] = $transaction_data;
         $data['date'] = $date;
+        $data['cashin'] = $cashin;
+        $data['cashout'] = $cashout;	        
         $this->load->view('cashier/cashier_book_view',$data);
     }
 
@@ -7104,8 +7178,8 @@ public function AddToCartRedeemPoints(){
 		public function AddInventory(){
 			if($this->IsLoggedIn('cashier')){
 				if(isset($_POST) && !empty($_POST)){
-					$this->form_validation->set_rules('invoice_number','OTC Name', 'trim|required');
-					$this->form_validation->set_rules('invoice_date', 'SKU', 'trim|required');
+					$this->form_validation->set_rules('invoice_number','Invoice Number', 'trim|required');
+					$this->form_validation->set_rules('invoice_date', 'Date', 'trim|required');
 			
 					if ($this->form_validation->run() == FALSE){
 							$data = array(
@@ -7117,6 +7191,8 @@ public function AddToCartRedeemPoints(){
 							print(json_encode($data, JSON_PRETTY_PRINT));
 							die;
 					}else{
+
+						$this->db->trans_start();
 						$data2=array(
 								'invoice_number'    =>  $this->input->post('invoice_number'),
 								'invoice_date'   		=>  $this->input->post('invoice_date'),
@@ -7147,6 +7223,7 @@ public function AddToCartRedeemPoints(){
 								'expiry_date'					=>$_POST['product_exp_date'][$key]
 							);
 							$this->CashierModel->Insert($data3,'inventory_data');
+
 							$where=array(
 								'stock_service_id' => $_POST['product_id'][$key],
 								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id']
@@ -7154,15 +7231,45 @@ public function AddToCartRedeemPoints(){
 							$data4=array(
 								'stock_service_id' => $_POST['product_id'][$key],
 								'total_stock'=> $_POST['product_qty'][$key],
+								'stock_in_unit'=>($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
 								'updated_on'	=>date('Y-m-d')
 							);
+					
 							$stock_exist= $this->CashierModel->CheckStockExist($where);
 							if($stock_exist['success']=='true'){
 								$update_stock=$this->CashierModel->UpdateInventoryStock($data4);
 							}else{
 								$insert_stock=$this->CashierModel->Insert($data4,'inventory_stock');
 							}
+
+							//making entry i expense table
+							$data5=array(
+								'expense_unique_serial_id'	=>	'E1010Y',
+								'expense_date'							=>	date('Y-m-d'),
+								'expense_type_id'						=>	'10000',
+								'item_name'									=>	'Inventory',
+								'employee_name'							=>	$this->session->userdata['logged_in']['employee_name'],
+								'total_amount'							=>	$this->input->post('invoice_amount'),
+								'amount'										=>	$this->input->post('amount_paid'),
+								'payment_type'							=>	$this->input->post('source_type'),
+								'payment_to'								=>	$this->input->post('source_type'),
+								'payment_to_name'						=>	$this->input->post('source_name'),
+								'invoice_number'						=>	$this->input->post('invoice_number'),
+								'remarks'										=>	$this->input->post('note'),
+								'payment_mode'							=>	$this->input->post('payment_mode'),
+								'expense_status'						=>	$this->input->post('payment_status'),
+								'pending_amount'						=>	($this->input->post('invoice_amount')- $this->input->post('amount_paid')),
+								'bussiness_outlet_id'				=>	$this->session->userdata['logged_in']['business_outlet_id']
+							);
+
+							$insert_expense=$this->CashierModel->Insert($data5,'mss_expenses');
+
+						}
+						$this->db->trans_complete();
+						if ($this->db->trans_status() === FALSE){
+							$this->ReturnJsonArray(false,true,"Stock not available for transfer!");
+							die;
 						}
 						$this->ReturnJsonArray(true,false,"Inventory added successfully!");
 						die;						
@@ -7179,8 +7286,8 @@ public function AddToCartRedeemPoints(){
 	public function TransferInventory(){
 		if($this->IsLoggedIn('cashier')){
 			if(isset($_POST) && !empty($_POST)){
-				$this->form_validation->set_rules('invoice_number','OTC Name', 'trim|required');
-				$this->form_validation->set_rules('invoice_date', 'SKU', 'trim|required');
+				$this->form_validation->set_rules('invoice_number','Invoice Number', 'trim|required');
+				$this->form_validation->set_rules('invoice_date', 'Date', 'trim|required');
 		
 				if ($this->form_validation->run() == FALSE){
 						$data = array(
@@ -7193,6 +7300,10 @@ public function AddToCartRedeemPoints(){
 						die;
 				}else{
 					$this->db->trans_start();
+					if($_POST['destination_type']=='branch' && $_POST['destination_name']==$this->session->userdata['logged_in']['business_outlet_id']){
+						$this->ReturnJsonArray(false,true,"Stock Can't be Transfer in Same Branch");
+						die;
+					}
 					$data2=array(
 							'invoice_number'    =>  $this->input->post('invoice_number'),
 							'invoice_date'   		=>  $this->input->post('invoice_date'),
@@ -7227,6 +7338,7 @@ public function AddToCartRedeemPoints(){
 						$data4=array(
 							'stock_service_id' => $_POST['product_id'][$key],
 							'total_stock'=> $_POST['product_qty'][$key],
+							'stock_in_unit'	=> ($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 							'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
 							'updated_on'	=>date('Y-m-d')
 						);
@@ -7268,12 +7380,14 @@ public function AddToCartRedeemPoints(){
 				$data=array(
 					'stock_service_id' => $_POST['service_id'],
 					'total_stock'=> $_POST['total_stock'],
+					'stock_in_unit'=>($_POST['total_stock']*$_POST['stock_in_unit']),
 					'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
 					'updated_on'	=>date('Y-m-d')
 				);
 				$data2=array(
 					'stock_service_id' => $_POST['service_id'],
 					'total_stock'=> $_POST['total_stock'],
+					'stock_in_unit'=>($_POST['total_stock']*$_POST['stock_in_unit']),
 					'stock_outlet_id'	=> $_POST['sender_outlet_id'],
 					'updated_on'	=>date('Y-m-d')
 				);
@@ -7383,5 +7497,76 @@ public function AddToCartRedeemPoints(){
 		$response = verifyOPT($_REQUEST['otp']);
 		echo $response;
 	}
+
+	public function GetLastTransactions(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_GET) && !empty($_GET)){
+				$where=array(
+					'from_date'	=>$_GET['from_date'],
+					'to_date'		=> $_GET['to_date']
+				);
+					$data=$this->CashierModel->GetLastTransactions($where);
+			
+					$this->ReturnJsonArray(true,false,$data['res_arr']);
+          die;
+			}else{
+				$this->ReturnJsonArray(false,true,"Wrong Method!");
+				die;
+			}						
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/");
+		}
+	}
+
+	// $data['expert']= $this->CashierModel->ExpertWiseSale($where);
+	// $data['expert']= $data['expert']['res_arr'];
+
+	public function GetExpertTransactions(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_GET) && !empty($_GET)){
+				$where=array(
+					'from_date'	=>$_GET['from_date'],
+					'to_date'		=> $_GET['to_date']
+				);
+					$data=$this->CashierModel->GetExpertTransactions($where);
+					$this->ReturnJsonArray(true,false,$data['res_arr']);
+          die;
+			}else{
+				$this->ReturnJsonArray(false,true,"Wrong Method!");
+				die;
+			}						
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/");
+		}
+	}
+
+	public function AddCashIn(){
+		if($this->IsLoggedIn('cashier')){
+			$post['amount'] = $_POST['cash_in'];
+			$post['opening_date'] = date('Y-m-d');
+			$post['amount_data'] = 'CashIn';
+			$post['payment_mode'] = 'Cash';
+			$post['business_outlet_id'] = $this->session->userdata['logged_in']['business_outlet_id'];
+			$data=$this->CashierModel->Insert($post,'mss_opening_balance');
+			$this->ReturnJsonArray(true,false,$data['res_arr']);
+			die;
+		}
+	}
+	
+	public function AddCashOut(){
+		if($this->IsLoggedIn('cashier')){
+			$post['amount'] = $_POST['cash_out'];
+			$post['opening_date'] = date('Y-m-d');
+			$post['amount_data'] = 'CashOut';
+			$post['payment_mode'] = $_POST['paymod_mode'];
+			$post['business_outlet_id'] = $this->session->userdata['logged_in']['business_outlet_id'];
+			$data=$this->CashierModel->Insert($post,'mss_opening_balance');
+			$this->ReturnJsonArray(true,false,$data['res_arr']);
+			die;
+		}
+	}
+
 
 }

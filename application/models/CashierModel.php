@@ -356,8 +356,8 @@ class CashierModel extends CI_Model {
 
     public function CheckRmStockExists($where){
         $this->db->select('*');
-        $this->db->from('mss_raw_material_stock');
-        $this->db->where('rmc_id',$where['rmc_id']);
+        $this->db->from('inventory_stock');
+        $this->db->where('stock_service_id',$where['stock_service_id']);
         
         $query = $this->db->get();
 
@@ -807,8 +807,8 @@ class CashierModel extends CI_Model {
 
         for($i=0;$i<count($data['cart_data']);$i++){
             $service_data = array(
-                 'txn_service_service_id' => $data['cart_data'][$i]['service_id'],
-                 'txn_service_quantity'   => $data['cart_data'][$i]['service_quantity']
+                'txn_service_service_id' => $data['cart_data'][$i]['service_id'],
+                'txn_service_quantity'   => $data['cart_data'][$i]['service_quantity']
             );
             
             $this->UpdateStock($service_data);
@@ -837,19 +837,20 @@ class CashierModel extends CI_Model {
         if($service_details['service_type'] == 'service'){
             //Check whether service composition exists
             $where = array('service_id' => $service_id);
-            $CompositionExists = $this->CheckCompositionExists($where);
+			$CompositionExists = $this->CheckCompositionExists($where);
             if($CompositionExists['success'] == 'true'){
                 //Update the stock by the quantity
                 $service_composition = $this->GetCompostion($where);
+				// $this->PrintArray($service_composition);
 
                 //Again Check for each composition item whether its stock exists
                 //if exists then reduce it by the consumption quantity
                 foreach ($service_composition as $composition) {
-                    $result = $this->CheckRmStockExists(array('rmc_id' => $composition['rmc_id']));  
+					$result = $this->CheckRmStockExists(array('stock_service_id'=>$composition['rmc_id'])); 					
                     if($result['success'] == 'true'){
                         //Subtract the composition consumption quantity from stock
                         $temp = array(
-                            'rmc_id' =>$composition['rmc_id'],
+                            'stock_service_id' =>$composition['rmc_id'],
                             'consumption_quantity' => (int)$composition['consumption_quantity'] * (int)$quantity
                         );
                         $this->UpdateStockFromComposition($temp);
@@ -859,7 +860,7 @@ class CashierModel extends CI_Model {
         }
        elseif ($service_details['service_type'] == 'otc') {
             $where = array('service_id' => $service_id);
-            $OTCexists = $this->CheckOTCStockExists($where);
+			$OTCexists = $this->CheckOTCStockExists($where);
             if($OTCexists['success'] == 'true'){
                 //Subtract the consumption quantity from stock
                 $temp = array(
@@ -948,15 +949,14 @@ class CashierModel extends CI_Model {
     }
 
     private function UpdateStockFromComposition($data){
-         $query = "UPDATE mss_raw_material_stock SET rm_stock = rm_stock  - ".(int)$data['consumption_quantity']." WHERE rmc_id = ".$data['rmc_id']."";
+         $query = "UPDATE inventory_stock SET stock_in_unit = stock_in_unit  - ".(int)$data['consumption_quantity']." WHERE stock_service_id = ".$data['stock_service_id']."";
         $this->db->query($query);  
     }
 
     private function UpdateStockFromOTC($data){
-		// $query1 = "UPDATE mss_inventory SET sku_count = sku_count  - ".(int)$data['consumption_quantity']." WHERE service_id = ".$data['otc_service_id']."";
-		
-		$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
-		$this->db->query($query1);
+	$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
+        $this->db->query($query1); 
+
     }
 
     public function GetAllExpenses($where){
@@ -2086,7 +2086,8 @@ class CashierModel extends CI_Model {
 					mss_package_transactions.package_txn_value,
 					mss_salon_packages.salon_package_name,
 					mss_customers.customer_name,
-					mss_employees.employee_first_name
+					mss_employees.employee_first_name,
+					'package'
 				FROM
 					mss_customers,
 					mss_employees,
@@ -2110,8 +2111,6 @@ class CashierModel extends CI_Model {
 					} 
 				}
 			public function ExpertWiseSale($data){
-                // $this->PrettyPrintArray($data);
-                // exit;
                     $sql="SELECT                    
                     mss_employees.employee_id AS 'emp_id',
                     mss_employees.employee_mobile,
@@ -2518,7 +2517,8 @@ class CashierModel extends CI_Model {
 		mss_transaction_services.txn_service_discounted_price,
 		mss_transaction_settlements.txn_settlement_way,
 		mss_transaction_settlements.txn_settlement_payment_mode,
-		mss_transaction_settlements.txn_settlement_amount_received
+		mss_transaction_settlements.txn_settlement_amount_received,
+		'service'
 	FROM
 		mss_transactions,
 		mss_transaction_settlements,
@@ -2543,6 +2543,8 @@ class CashierModel extends CI_Model {
            return $this->ModelHelper(false,true,"No Data Found!");
         } 
 	}
+
+	
 	
 	//
 	public function ExpertWisePackageSale($data){
@@ -2947,10 +2949,9 @@ class CashierModel extends CI_Model {
                     AND mss_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
                     AND mss_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
                     AND mss_services.service_is_active = TRUE
-                    AND (mss_services.service_name LIKE '$search_term%' OR  mss_services.barcode LIKE '$search_term%')
-                    AND mss_services.service_type = 'otc'
-                    AND mss_services.inventory_type =  ".$this->db->escape($inventory_type)."
-                ORDER BY mss_services.service_name LIMIT 15";
+                    AND (mss_services.service_name LIKE '%$search_term%' OR  mss_services.barcode LIKE '$search_term%')
+                    AND mss_services.inventory_type != '' 
+                    ORDER BY mss_services.service_name LIMIT 15";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -3405,7 +3406,7 @@ class CashierModel extends CI_Model {
                     AND mss_salon_packages.business_admin_id =  ".$this->db->escape($this->session->userdata['logged_in']['business_admin_id'])."
                     AND mss_salon_packages.business_outlet_id =  ".$this->db->escape($this->session->userdata['logged_in']['business_outlet_id'])."                    
                     ORDER BY
-                        mss_package_transactions.package_txn_id desc limit 100";                        
+                        mss_package_transactions.package_txn_id DESC limit 100";                        
                     $query = $this->db->query($sql); 
                     $result2 = $query->result_array();
                     $result = array_merge($result1,$result2);
@@ -3420,21 +3421,29 @@ class CashierModel extends CI_Model {
 	}
 
 	public function AvailableStock($data){
-		$sql="SELECT mss_services.*, 
-			inventory_stock.*,
-			mss_business_outlets.business_outlet_name
-			FROM	
-			inventory_stock,
-			mss_services,
-			mss_business_outlets
-			WHERE inventory_stock.stock_service_id = mss_services.service_id AND
-			mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." AND
-			inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
+		$sql="Select X.*, Y.*, SUM(Y.total_stock) From 
+			(
+			SELECT mss_services.*,mss_business_outlets.business_outlet_name FROM mss_services, mss_sub_categories,mss_categories, mss_business_outlets WHERE
+			mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
+			mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
+			mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id AND
+			mss_categories.category_business_outlet_id =".$this->db->escape($data['business_outlet_id'])." AND
+			mss_services.inventory_type_id > 0 AND
+			mss_services.service_is_active = 1
+			)
+			AS  X
+			left outer JOIN
+			( 
+			Select inventory_stock.* From inventory_stock, mss_business_outlets WHERE
+			inventory_stock.stock_outlet_id= mss_business_outlets.business_outlet_id AND 
+    		mss_business_outlets.business_outlet_id=".$this->db->escape($data['business_outlet_id']).") AS Y
+    		ON X.service_id = Y.stock_service_id
+    		GROUP BY X.service_id, Y.stock_service_id,X.service_name ";
         $query = $this->db->query($sql);
 
         if($query){
 			return $this->ModelHelper(true,false,'',$query->result_array());            
-        }
+        }   
         else{
             return $this->ModelHelper(false,true,"Product not Available in stock.");
         } 
@@ -3442,26 +3451,40 @@ class CashierModel extends CI_Model {
 
 
 	public function IncomingStock($data){
-		$sql="SELECT inventory_transfer.*,
+		$sql="SELECT inventory_transfer.*, 
 		inventory_transfer_data.*, 
-		mss_business_outlets.business_outlet_name AS 'source',
-		mss_business_outlets.business_outlet_name AS 'destination'
-		FROM inventory_transfer, inventory_transfer_data, mss_business_outlets
-		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND inventory_transfer_data.transfer_status=0 AND 
-		inventory_transfer.destination_name= mss_business_outlets.business_outlet_id AND 
-		inventory_transfer.destination_name= ".$this->db->escape($data['business_outlet_id'])." AND mss_business_outlets.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
+		mss_business_outlets.business_outlet_name AS 'destination' ,
+		t1.business_outlet_name AS 'source' 
+		FROM   inventory_transfer 
+		LEFT JOIN  inventory_transfer_data on inventory_transfer_data.inventory_transfer_id = 
+					inventory_transfer.inventory_transfer_id 
+		LEFT JOIN 
+				mss_business_outlets on inventory_transfer.destination_name = 
+					mss_business_outlets.business_outlet_id 
+		LEFT JOIN 
+			mss_business_outlets t1 on inventory_transfer.business_outlet_id = 
+			t1.business_outlet_id            
+		WHERE  
+		inventory_transfer.destination_name = ".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
         if($query){
 			return $this->ModelHelper(true,false,'',$query->result_array());            
         }
         else{
-            return $this->ModelHelper(false,true,"Product not Available in stock.");
+            return $this->ModelHelper(false,true,"Product not available in stock.");
         } 
 	}
 	public function OutgoingStock($data){
-		$sql="SELECT inventory_transfer.*,inventory_transfer_data.* FROM inventory_transfer, inventory_transfer_data
-		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id  AND inventory_transfer.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
+		$sql="SELECT inventory_transfer.*,
+		inventory_transfer_data.* ,
+		mss_business_outlets.business_outlet_name
+		FROM inventory_transfer,
+		inventory_transfer_data,
+		mss_business_outlets
+		WHERE inventory_transfer_data.inventory_transfer_id= inventory_transfer.inventory_transfer_id AND
+		mss_business_outlets.business_outlet_id= inventory_transfer.destination_name
+		AND inventory_transfer.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
 
         if($query){
@@ -3489,6 +3512,26 @@ class CashierModel extends CI_Model {
 	public function UpdateInventoryStock($data){
 		$sql="UPDATE inventory_stock 
 		SET inventory_stock.total_stock= (inventory_stock.total_stock +  ".$data['total_stock']."),
+		inventory_stock.stock_in_unit 	= (inventory_stock.stock_in_unit +  ".$data['stock_in_unit']."),
+		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
+		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
+		   
+		   $query = $this->db->query($sql);
+		   if($this->db->affected_rows() > 0){
+			 return $this->ModelHelper(true,false);    
+		   }
+		   elseif($this->db->affected_rows() == 0){
+			   return $this->ModelHelper(true,false,"No row updated!");   
+		   }
+		   else{
+			   return $this->ModelHelper(false,true,"Some DB Error!");
+		   } 
+	}
+
+	public function UpdateInventoryStockForAdmin($data){
+		$sql="UPDATE inventory_stock 
+		SET inventory_stock.total_stock	= ".$data['total_stock'].",
+		inventory_stock.stock_in_unit 	= ".$data['stock_in_unit'].",
 		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
 		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
 		   
@@ -3507,6 +3550,7 @@ class CashierModel extends CI_Model {
 	public function UpdateSenderInventoryStock($data){
 		$sql="UPDATE inventory_stock 
 		SET inventory_stock.total_stock= (inventory_stock.total_stock -  ".$data['total_stock']."),
+		inventory_stock.stock_in_unit= (inventory_stock.stock_in_unit -  ".$data['stock_in_unit']."),
 		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
 		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
 		   
@@ -3538,6 +3582,7 @@ class CashierModel extends CI_Model {
 	public function UpdateInventoryStockTransfer($data){
 		$sql="UPDATE inventory_stock 
 		SET inventory_stock.total_stock= (inventory_stock.total_stock -  ".$data['total_stock']."),
+		inventory_stock.stock_in_unit 	= (inventory_stock.stock_in_unit -  ".$data['stock_in_unit']."),
 		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
 		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
 		   
@@ -3552,6 +3597,130 @@ class CashierModel extends CI_Model {
 			   return $this->ModelHelper(false,true,"Some DB Error!");
 		   } 
 	}
+
+	public function GetLastTransactions($where){
+		$sql="SELECT 
+		mss_transactions.txn_id AS 'bill_no',
+		mss_transactions.txn_unique_serial_id AS 'txn_id',
+		date(mss_transactions.txn_datetime) AS 'billing_date',
+		mss_customers.customer_mobile AS 'mobile',
+		mss_customers.customer_name AS 'name',
+        IF(mss_transactions.txn_id,'Service','Service') AS 'Type' ,
+		(mss_transactions.txn_discount+mss_transactions.txn_value) AS 'mrp_amt',
+		mss_transactions.txn_discount AS 'discount',
+		mss_transactions.txn_value AS 'net_amt',
+		mss_transactions.txn_total_tax AS 'total_tax',
+		mss_transactions.txn_pending_amount AS 'pending_amt',
+		mss_transaction_settlements.txn_settlement_way AS 'settlement_way',
+		mss_transaction_settlements.txn_settlement_payment_mode AS 'payment_way'
+		
+		FROM 
+		mss_customers,
+		mss_transactions,
+		mss_transaction_settlements,
+		mss_employees
+		WHERE 
+		mss_transactions.txn_customer_id = mss_customers.customer_id
+		AND mss_transactions.txn_status=1
+		AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+		AND mss_transactions.txn_cashier= mss_employees.employee_id
+		AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($where['from_date'])." AND 
+		".$this->db->escape($where['to_date'])." 
+		AND mss_employees.employee_business_admin = ".$this->session->userdata['logged_in']['business_admin_id']."
+		AND mss_employees.employee_business_outlet = ".$this->session->userdata['logged_in']['business_outlet_id']."		
+		ORDER BY 
+        mss_transactions.txn_id DESC LIMIT 100 ";
+
+        $query = $this->db->query($sql);
+        
+        if($query->num_rows()){
+                $result1 = $query->result_array();
+             $sql = "SELECT
+                    mss_package_transactions.package_txn_id AS 'bill_no',
+                    mss_package_transactions.package_txn_unique_serial_id AS 'txn_id',
+                    date(mss_package_transactions.datetime) AS 'billing_date',
+                    mss_customers.customer_mobile AS 'mobile',
+                    mss_customers.customer_name AS 'name',            
+                    IF(mss_package_transactions.package_txn_id,'Package','Package') AS 'Type' ,
+                    mss_package_transactions.package_txn_value AS 'mrp_amt',  
+                    mss_package_transactions.package_txn_discount AS 'discount',
+                    mss_package_transactions.package_txn_value AS 'net_amt',
+                    IF(mss_salon_packages.service_gst_percentage,'0','0') AS 'total_tax',
+                    mss_package_transactions.package_txn_pending_amount AS 'pending_amt',
+                     mss_package_transaction_settlements.settlement_way AS 'settlement_way',
+                    mss_package_transaction_settlements.payment_mode AS 'payment_way'                    
+                    
+                FROM
+                    mss_package_transactions,
+                    mss_customers,
+                    mss_salon_packages,
+                    mss_transaction_package_details,
+                    mss_employees,
+                    mss_package_transaction_settlements
+                WHERE
+                    mss_package_transactions.package_txn_id = mss_transaction_package_details.package_txn_id
+                    AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_txn_id
+                    AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
+                    AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
+                    AND mss_package_transactions.package_txn_expert= mss_employees.employee_id
+					AND date(mss_package_transactions.datetime) BETWEEN ".$this->db->escape($where['from_date'])." AND 
+										".$this->db->escape($where['to_date'])."
+                    AND mss_salon_packages.business_admin_id =  ".$this->db->escape($this->session->userdata['logged_in']['business_admin_id'])."
+                    AND mss_salon_packages.business_outlet_id =  ".$this->db->escape($this->session->userdata['logged_in']['business_outlet_id'])."                    
+                    ORDER BY
+                        mss_package_transactions.package_txn_id DESC limit 100";                        
+                    $query = $this->db->query($sql); 
+                    $result2 = $query->result_array();
+                    $result = array_merge($result1,$result2);
+                    
+          return $this->ModelHelper(true,false,'',$result);
+        }
+        else{
+          return $this->ModelHelper(true,false,'Database Error');   
+		} 
+	}
+
+	public function GetExpertTransactions($data){
+		$sql="SELECT                    
+		mss_employees.employee_id AS 'emp_id',
+		mss_employees.employee_mobile,
+		mss_employees.employee_first_name As 'expert_name',
+		SUM(mss_transaction_services.txn_service_quantity) AS 'count',
+		SUM(mss_transaction_services.txn_service_discounted_price) AS 'discounted_amt',
+		SUM(mss_transactions.txn_value) AS 'net_amt'
+		FROM
+		mss_transactions,
+		mss_transaction_services,
+		mss_employees,
+		mss_customers,
+		mss_categories,
+		mss_sub_categories,
+		mss_services
+		WHERE
+		mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+		AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+		AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+		AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+		AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
+		AND mss_transactions.txn_customer_id = mss_customers.customer_id
+		AND mss_transactions.txn_status=1
+		AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND 
+		".$this->db->escape($data['to_date'])."
+		AND mss_employees.employee_business_outlet = ".$this->db->escape($this->session->userdata['logged_in']['business_outlet_id'])."
+		AND mss_employees.employee_business_admin = ".$this->db->escape($this->session->userdata['logged_in']['business_admin_id'])."
+		GROUP BY 
+			mss_employees.employee_id";
+		
+			$query = $this->db->query($sql);
+			
+			if($query->num_rows()){
+				return $this->ModelHelper(true,false,'',$query->result_array());
+			}
+			else{
+				return $this->ModelHelper(true,false,'Database Error');   
+			} 
+		}
+
 
 
 }

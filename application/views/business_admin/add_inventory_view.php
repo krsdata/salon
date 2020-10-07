@@ -67,6 +67,12 @@
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-6">Inventory Health</a>
 										</li>
+										<li class="nav-item">
+											<a class="nav-link" data-toggle="tab" href="#tab-7">Payments</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" data-toggle="tab" href="#tab-8">Pending Payments</a>
+										</li>
 									</ul>
 								</div>
 								<div class="card-body">
@@ -84,22 +90,22 @@
 																	<div class="col-md-6">
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_number" placeholder="Invoice No." required>
+																			<input type="text" class="form-control" name="invoice_number" placeholder="Invoice No.">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date" required>
+																			<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value" required>
+																			<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Freight">
+																			<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Extra Freight Charges">
 																			</div>
 																		</div>
 																	</div>
@@ -108,10 +114,10 @@
 																			<div class="form-group col-md-4">
 																				<select name="source_type" class="form-control" required>
 																					<option value="" disabled="disabled" selected>Select Source Type</option>
-																					<option value="warehouse">Warehouse</option>
-																					<option value="branch">Branch</option>
+																					<!-- <option value="warehouse">Warehouse</option> -->
+																					<!-- <option value="branch">Branch</option> -->
 																					<option value="vendor">Vendor</option>
-																					<option value="return">Sales return</option>
+																					<!-- <option value="return">Sales return</option> -->
 																				</select>
 																			</div>
 																		</div>
@@ -147,49 +153,56 @@
 																						<div class="form-group">
 																							<label>Product Name</label>
 																							<input type="text" class="form-control searchProductByName" name="product_name[]" readonly required>
-																							<input type="hidden" class="product_id" name="product_id[]">
+																							<input type="hidden" class="product_id" name="product_id[]" >
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>Type</label>
-																							<input type="text" class="form-control product_type" name="product_type[]" readonly>
+																							<input type="text" class="form-control product_type" name="product_type[]" readonly required>
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>Barcode</label>
-																							<input type="text" class="form-control product_barcode" name="product_barcode[]" readonly>
+																							<input type="text" class="form-control product_barcode" name="product_barcode[]" readonly >
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>SKU Size</label>
-																							<input type="text" class="form-control sku_size" name="sku_size[]" temp="service_price_inr" readonly>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<label>Qty</label>
-																							<input type="text" class="form-control" name="product_qty[]" required>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<label>Cost</label>
-																							<input type="text" class="form-control" name="product_price[]" required>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<label>GST %</label>
-																							<input type="text" class="form-control" name="product_gst[]" required>
+																							<input type="text" class="form-control sku_size" name="sku_size[]" temp="service_price_inr" readonly required>
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>MRP</label>
 																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Qty</label>
+																							<input type="text" class="form-control product_qty" name="product_qty[]" required>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Cost/Unit(<small>before tax</small>)</label>
+																							<input type="text" class="form-control product_price" name="product_price[]" required>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>GST %</label>
+																							<input type="text" class="form-control gst" name="product_gst[]" required>
+																						</div>
+																					</td>
+																					
+																					<td>
+																						<div class="form-group">
+																							<label>Total Cost</label>
+																							<input type="text" class="form-control total_cost" name="total_cost[]" required>
 																						</div>
 																					</td>
 																					<td>
@@ -215,23 +228,23 @@
 																	</div>
 																	<div class="col-md-6">
 																		<div class="row">
-																			<div class="form-group col-md-6">
-																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
+																			<div class="form-group col-md-4">
+																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Amount Paid">
 																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
-																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount" required>
-																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
+																			<div class="form-group col-md-4">
 																				<select name="payment_mode" class="form-control">
-																				<option value="" disabled="disabled" selected>Payment Mode</option>
+																				<!-- <option value="" disabled="disabled" selected>Payment Mode</option> -->
 																					<option value="cash">Cash</option>
-																					<option value="card">Card</option>
+																					<option value="credit_card">Credit Card</option>
+																					<option value="debit_card">Debit Card</option>
+																					<option value="phonepe">Phonepe</option>
+																					<option value="google_pay">Google Pay</option>
+																					<option value="paytm">Paytm</option>
 																					<option value="bank">Bank A/C</option>
 																				</select>
+																			</div>
+																			<div class="form-group col-md-4">
+																				<input type="text" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
 																			</div>
 																		</div>
 																	</div>
@@ -260,22 +273,22 @@
 																	<div class="col-md-6">
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_number" placeholder="Tranf. Order" required>
+																			<input type="text" class="form-control" name="invoice_number" placeholder="Tranf. Order">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date" required>
+																			<input type="date" class="form-control" value="<?=date('Y-m-d');?>" name="invoice_date"  placeholder="Entry Date">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value" required>
+																			<input type="text" class="form-control" name="invoice_amount" min="0" placeholder="Invoice Value">
 																			</div>
 																		</div>
 																		<div class="row">
 																			<div class="form-group col-md-4">
-																			<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Freight">
+																				<input type="text" class="form-control" name="invoice_tax" min="0"  placeholder="Extra Freight Charges">
 																			</div>
 																		</div>
 																	</div>
@@ -287,7 +300,7 @@
 																					<option value="warehouse">Warehouse</option>
 																					<option value="branch">Branch</option>
 																					<option value="vendor">Vendor</option>
-																					<option value="return">Sales return</option>
+																					<!-- <option value="return">Sales return</option> -->
 																				</select>
 																			</div>
 																		</div>
@@ -329,7 +342,7 @@
 																					<td>
 																						<div class="form-group">
 																							<label>Type</label>
-																							<input type="text" class="form-control product_type" name="product_type[]" readonly>
+																							<input type="text" class="form-control product_type" name="product_type[]" readonly required>
 																						</div>
 																					</td>
 																					<td>
@@ -341,31 +354,38 @@
 																					<td>
 																						<div class="form-group">
 																							<label>SKU Size</label>
-																							<input type="text" class="form-control sku_size" name="sku_size[]" temp="service_price_inr" readonly>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<label>Qty</label>
-																							<input type="text" class="form-control" name="product_qty[]" required>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<label>Cost</label>
-																							<input type="text" class="form-control" name="product_price[]" required>
-																						</div>
-																					</td>
-																					<td>
-																						<div class="form-group">
-																							<label>GST %</label>
-																							<input type="text" class="form-control" name="product_gst[]" required>
+																							<input type="text" class="form-control sku_size" name="sku_size[]" temp="service_price_inr" readonly required>
 																						</div>
 																					</td>
 																					<td>
 																						<div class="form-group">
 																							<label>MRP</label>
 																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Qty</label>
+																							<input type="text" class="form-control product_qty" name="product_qty[]" required>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>Cost/Unit(<small>before tax</small>)</label>
+																							<input type="text" class="form-control product_price" name="product_price[]" required>
+																						</div>
+																					</td>
+																					<td>
+																						<div class="form-group">
+																							<label>GST %</label>
+																							<input type="text" class="form-control gst" name="product_gst[]" required>
+																						</div>
+																					</td>
+																					
+																					<td>
+																						<div class="form-group">
+																							<label>Total Cost</label>
+																							<input type="text" class="form-control total_cost" name="total_cost[]" required>
 																						</div>
 																					</td>
 																					<td>
@@ -391,23 +411,25 @@
 																	</div>
 																	<div class="col-md-6">
 																		<div class="row">
-																			<div class="form-group col-md-6">
-																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
+																			
+																			<div class="form-group col-md-4">
+																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount">
 																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
-																				<input type="number" name="amount_paid" class="form-control" min="0" placeholder="Enter Amount" required>
-																			</div>
-																		</div>
-																		<div class="row">
-																			<div class="form-group col-md-6">
+																			
+																			<div class="form-group col-md-4">
 																				<select name="payment_mode" class="form-control">
-																					<option value="" disabled="disabled" selected>Payment Mode</option>
+																					<!-- <option value="" disabled="disabled" selected>Payment Mode</option> -->
 																					<option value="cash">Cash</option>
-																					<option value="card">Card</option>
+																					<option value="credit_card">Credit Card</option>
+																					<option value="debit_card">Debit Card</option>
+																					<option value="phonepe">Phonepe</option>
+																					<option value="google_pay">Google Pay</option>
+																					<option value="paytm">Paytm</option>
 																					<option value="bank">Bank A/C</option>
 																				</select>
+																			</div>
+																			<div class="form-group col-md-4">
+																				<input type="text name" class="form-control" name="payment_status" placeholder="Payment Status" readonly>
 																			</div>
 																		</div>
 																	</div>
@@ -429,7 +451,7 @@
 													<!-- <form action="#" class="form-inlne" method="POST">
 														<div class="form-row">
 															<div class="form-group col-md-2">
-																<input type="date" class="form-control" name="invoice_number" value="<?=date('Y-m-d');?>" required>
+																<input type="date" class="form-control" name="invoice_number" value="<?=date('Y-m-d');?>">
 															</div>										
 															<div class="form-group col-md-2">
 																<select name="" class="form-control" required>
@@ -459,10 +481,10 @@
 														</div>
 													</form> -->
 													<div class="row">
-														<div class="col-md-6">
+														<div class="col-md-10">
 															<h3>Available Stock</h3>
 														</div>
-														<div class="col-md-6">
+														<div class="col-md-2">
 														<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
 														</div>
 													</div>
@@ -476,8 +498,10 @@
 															<th>Barcode</th>
 															<th>SKU size</th>
 															<th>Total Stock</th>
-															<th>Entry Date</th>
+															<th>Stock in Unit</th>
+															<th>Last Updated</th>
 															<th>Location</th>
+															<th>Action</th>
 														</thead>
 														<tbody>
 															<?php $count=1; foreach($stock as $stock){ ?>
@@ -486,10 +510,14 @@
 																	<td><?=$stock['service_name'];?></td>
 																	<td><?=$stock['inventory_type'];?></td>
 																	<td><?=$stock['barcode'];?></td>
-																	<td><?=$stock['qty_per_item'];?></td>
-																	<td><?=$stock['total_stock'];?></td>
+																	<td><?=$stock['qty_per_item'].' '.$stock['service_unit'];?></td>
+																	<td><?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?></td>
+																	<td><?php if(empty($stock['stock_in_unit']) || $stock['stock_in_unit']==""){echo "0"." ".$stock['service_unit'];}else{echo $stock['stock_in_unit']." ".$stock['service_unit'];} ?></td>
 																	<td><?=$stock['updated_on'];?></td>
 																	<td><?=$stock['business_outlet_name'];?></td>
+																	<td>
+																		<button class="btn btn-primary EditInventory" data-toggle="modal" id="" data-target="#ModalEditInventory" service_id="<?=$stock['service_id'];?>" product_qty="<?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?>"><i class="fa fa-pen"></i></button>
+																	</td>
 																</tr>
 															<?php $count++; }?>
 														</tbody>
@@ -506,6 +534,7 @@
 													<table class="table table-hover datatables-basic" style="width: 100%;">
 														<thead>
 															<th>Sr. No.</th>
+															<th>Txn Id</th>
 															<th>Product Name</th>
 															<th>Type</th>
 															<th>Barcode</th>
@@ -521,18 +550,23 @@
 															<?php $count=1; foreach($stock_incoming as $incoming){ ?>
 																<tr>
 															<td><?=$count?></td>
+															<td><?=$incoming['inventory_transfer_data_id'];?></td>
 															<td><?=$incoming['product_name'];?></td>
 															<td><?=$incoming['product_type'];?></td>
 															<td><?=$incoming['product_barcode'];?></td>
-															<td><?=$incoming['sku_size'];?></td>
+															<td><?=$incoming['sku_size'].' '.$stock['service_unit'];?></td>
 															<td><?=$incoming['product_qty'];?></td>
 															<td><?=$incoming['product_mrp'];?></td>
 															<td><?=$incoming['invoice_date'];?></td>
 															<td><?=$incoming['source'];?></td>
 															<td><?=$incoming['destination'];?></td>
 															<td>
-																<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
+																<?php if($incoming['transfer_status']==0){?>
+																<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sku_size="<?=$incoming['sku_size']?>" sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
 																<button class='btn btn-danger rejectInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>'><i class='fa fa-times'>Reject</i></button>
+																<?php }else{?>
+																	Accepted
+																<?php }?>
 															</td>
 															</tr>
 															<?php $count++; }?>
@@ -565,7 +599,7 @@
 															<td><?=$outgoing['product_name'];?></td>
 															<td><?=$outgoing['product_type'];?></td>
 															<td><?=$outgoing['product_barcode'];?></td>
-															<td><?=$outgoing['sku_size'];?></td>
+															<td><?=$outgoing['sku_size'].' '.$stock['service_unit'];?></td>
 															<td><?=$outgoing['product_qty'];?></td>
 															<td><?=$outgoing['product_mrp'];?></td>
 															<td>
@@ -585,66 +619,379 @@
 											</div>
 										</div>
 										<div class="tab-pane" id="tab-6" role="tabpanel">
-										<div class="card">
-											<div class="card-header">
-												<h5 class="card-title">Inventory Health</h5>
+											<div class="card">
+												<div class="card-header">
+													<h5 class="card-title">Inventory Health</h5>
+												</div>
+												<div class="card-body">
+													<div class="row">
+														<div class="col-md-3">
+															<h5>Stock Value (MRP)</h5>
+															<label class="btn btn-danger" id="labeltotal" style="width:130px">Rs <?=$stockvalue?></label>
+														</div>
+														<div class="col-md-3">
+															<h5>Stock Status</h5>
+															<select id="status" name="status" class="form-control">
+																<option value="Regular">Regular Stock</option>
+																<option value="Dead">Dead Stock</option>
+																<option value="slow">Slow Moving</option>
+															</select>
+														</div>
+													</div>
+													<div class="row">
+															<div class="col-md-12">
+																	<table id="details" class="table table-striped" style="text-align:center">
+																			<thead>
+																					<th>Bucket</th>
+																					<th>Item Name</th>
+																					<th>Sub Category</th>
+																					<th>Category</th>
+																					<th>SKU Size</th>
+																					<th>Current Stock</th>
+																					<th>Stock In Regular-Stock Stage</th>
+																					<th>Entry Date</th>
+																					<th>No of Days since entry Date</th>
+																					<th>Total Revenue Stuck(Rs)</th>
+																			</thead>
+																				<?php
+																					foreach($stockdetails as $key=> $value){
+																						?>
+																						<tr>
+																							<td>Regular Stock</td>
+																							<td><?=$value['service_name']?></td>
+																							<td><?=$value['sub_category_name']?></td>
+																							<td><?=$value['category_name']?></td>
+																							<td><?=$value['sku_size']?></td>
+																							<td><?=$value['sku_count']?></td>
+																							<td><?=$value['deadstock']?></td>
+																							<td><?=$value['entrydate']?></td>
+																							<td><?=$value['days']?></td>
+																							<td><?=$value['Total']?></td>
+																						</tr>
+																						<?php
+																					}
+																				?>
+																	</table>
+															</div>
+													</div>
+												</div>
 											</div>
-											<div class="card-body">
-                        <div class="row">
-                          <div class="col-md-3">
-                            <h5>Stock Value (MRP)</h5>
-                            <label class="btn btn-danger" id="labeltotal" style="width:130px">Rs <?=$stockvalue?></label>
-													</div>
-													<div class="col-md-3">
-														<h5>Stock Status</h5>
-														<select id="status" name="status" class="form-control">
-															<option value="Regular">Regular Stock</option>
-															<option value="Dead">Dead Stock</option>
-															<option value="slow">Slow Moving</option>
-														</select>
-													</div>
-                        </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table id="details" class="table table-striped" style="text-align:center">
+										</div>
+										<div class="tab-pane" id="tab-7" role="tabpanel">
+											<div class="card">
+												<div class="card-header">
+													<h5 class="card-title">Inventory History</h5>
+												</div>
+												<div class="card-body">
+													<div class="row">
+															<div class="col-md-12">
+															<table class="table table-hover table-striped datatables-basic" id="adminExpense" style="width: 100%;text-align:center">
                                             <thead>
-                                                <th>Bucket</th>
-                                                <th>Item Name</th>
-                                                <th>Sub Category</th>
-                                                <th>Category</th>
-                                                <th>SKU Size</th>
-                                                <th>Current Stock</th>
-                                                <th>Stock In Regular-Stock Stage</th>
-                                                <th>Entry Date</th>
-                                                <th>No of Days since entry Date</th>
-                                                <th>Total Revenue Stuck(Rs)</th>
+                                                <tr class="text-primary">
+																										<th>Date</th>
+																										<th>Invoice No.</th>
+																										<th>Expense Id</th>
+                                                    <th>Expense Type</th>
+                                                    <th>Item Name</th>
+                                                    <th>Cashier Name</th>
+                                                    <th>Payement Type</th>
+                                                    <th>Paid To</th>
+                                                    <th>Total Amount</th>
+                                                    <th>Amount</th>
+                                                    <th>Pending Amount</th>
+                                                    <th>Payment Status</th>
+                                                </tr>
                                             </thead>
-											<?php
-												foreach($stockdetails as $key=> $value){
-													?>
-													<tr>
-														<td>Regular Stock</td>
-														<td><?=$value['service_name']?></td>
-														<td><?=$value['sub_category_name']?></td>
-														<td><?=$value['category_name']?></td>
-														<td><?=$value['sku_size']?></td>
-														<td><?=$value['sku_count']?></td>
-														<td><?=$value['deadstock']?></td>
-														<td><?=$value['entrydate']?></td>
-														<td><?=$value['days']?></td>
-														<td><?=$value['Total']?></td>
-													</tr>
-													<?php
-												}
-											?>
+                                            <tbody>
+                                                <?php
+                                                $i=0;
+																								foreach ($all_expenses as $expense):
+																								?>
+                                                <tr>
+                                                    <!--<td><?=$i=$i+1;?></td>-->
+                                                    <td><?=$expense['expense_unique_serial_id']?></td>
+                                                    <td><?=$expense['expense_date']?></td>
+                                                    <td><?=$expense['expense_type']?></td>
+                                                    <td><?=$expense['item_name']?></td>
+                                                    <td><?=$expense['employee_name']?></td>
+                                                    <td><?=$expense['payment_type']?></td>
+                                                    <td><?=$expense['payment_to_name']?></td>
+                                                    <td><?=$expense['total_amount']?></td>
+                                                    <td><?=$expense['amount']?></td>
+                                                    <td><?=$expense['pending_amount']?></td>
+                                                    <td><?=$expense['payment_mode']?></td>
+                                                    <td><?=$expense['expense_status']?></td>
+                                                </tr>
+                                                <?php	                    	
+																								endforeach;
+																								?>
+                                            </tbody>
                                         </table>
-                                    </div>
-                                </div>
-							</div>
-						</div>
+															</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="tab-pane" id="tab-8" role="tabpanel">
+											<div class="card">
+												<div class="card-header">
+													<h5 class="card-title">Pending Payments	</h5>
+												</div>
+												<div class="card-body">
+													<div class="row">
+															<div class="col-md-12">
+															<table class="table table-hover table-striped datatables-basic" id="PendingPayment" style="width: 100%;">
+                                            <thead>
+                                                <tr class="text-primary">
+                                                    <!-- <th>Expense Id</th> -->
+																										<th>Date</th>
+																										<th>Invoice No</th>
+                                                    <th>Expense Name</th>
+																										<th>Expense Type</th>
+																										<th>Vendor Name</th>
+                                                    <th>Total Amount</th>
+                                                    <th>Amount Pending</th>                                                    
+																										<!-- <th>Mode</th> -->
+																										<th>Paid To</th>
+                                                    <th>Status </th>
+                                                    
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+																									foreach ($pending_payment as $pending):
+																									?>
+                                                <tr>
+                                                    <!-- <td><?=$pending['expense_id']?></td> -->
+																										<td><?=$pending['expense_date']?></td>
+																										<td><?=$pending['invoice_number']?></td>
+                                                    <td><?=$pending['item_name']?></td>
+																										<td><?=$pending['expense_type']?></td>
+                                                    <td><?=$pending['payment_to_name']?></td>
+                                                    <td><?=$pending['total_amount']?></td>
+                                                    <td><?=$pending['pending_amount']?></td>
+                                                    <td><?=$pending['payment_type']?></td>
+                                                    
+                                                    <!-- <td><?=$pending['payment_mode']?></td> -->
+                                                    <td><?=$pending['expense_status']?></td>
+                                                    <!-- <td><?=$pending['employee']?></td> -->
+
+
+                                                    
+                                                    <td>
+                                                        <button type="button"
+                                                            class="btn btn-primary pending-expense-edit-btn"
+                                                            expense_id="<?=$pending['expense_id']?>"
+                                                            expense_date="<?=$pending['expense_date']?>"
+                                                            expense_name="<?=$pending['item_name']?>"
+                                                            expense_type="<?=$pending['expense_type']?>"
+                                                            employee_name="<?=$pending['employee_name']?>"
+                                                            payment_type="<?=$pending['payment_type']?>"
+                                                            payment_to="<?=$pending['payment_to']?>"
+                                                            payment_to_name="<?=$pending['payment_to_name']?>"
+                                                            total_amount="<?=$pending['total_amount']?>"
+                                                            pending_amount="<?=$pending['pending_amount']?>"
+                                                            amount="<?=$pending['amount']?>"
+                                                            payment_mode="<?=$pending['payment_mode']?>"
+                                                            expense_status="<?=$pending['expense_status']?>"
+                                                            invoice_number="<?=$pending['invoice_number']?>"
+                                                            expense_date="<?=$pending['expense_date']?>"
+                                                            expense_type_id="<?=$pending['expense_type_id']?>"
+                                                            remark="<?=$pending['remarks']?>">
+                                                            <i class="align-middle" data-feather="edit-2"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <?php	                    	
+																									endforeach;
+																								?>
+                                            </tbody>
+                                        </table>
+															</div>
+													</div>
+												</div>
+											</div>
 										</div>									
 									</div>
 								</div>
+								<!-- modal -->
+								<div class="modal fade" id="ModalEditInventory" tabindex="-1" role="dialog" aria-hidden="true">
+									<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title text-white">Edit Inventory</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">×</span>
+												</button>
+											</div>
+											<div class="modal-body">
+												<form id="EditInventory" method="POST" action="#">
+													<div class="form-row">
+														<div class="form-group col-md-4">
+															<label>Product Qty</label>
+															<input type="number" class="form-control" placeholder="Quantity"  name="product_qty" required>
+														</div>														
+														<div class="form-group col-md-4">
+															<label>Date</label>
+															<input type="date" class="form-control"  value="<?=date('Y-m-d');?>" name="invoice_date">
+														</div>
+														<div class="form-group col-md-4">
+															<label>Invoice Number</label>
+															<input type="text" class="form-control" placeholder="Invoice Number" name="invoice_number">
+														</div>														
+													</div>
+													<div class="form-row">
+													<div class="form-group col-md-4">
+															<label>Product Name</label>
+															<input type="text" class="form-control" placeholder="Product Name" name="product_name" readonly>
+														</div>
+														<div class="form-group col-md-4">
+															<label>Product Brand</label>
+															<input type="text" class="form-control" placeholder="Product Brand" name="product_brand" readonly>
+														</div>													
+														<div class="form-group col-md-4">
+															<label>SKU Size</label>
+															<input type="number" class="form-control" placeholder="SKU SIZE" name="sku_size" readonly>
+														</div>														
+													</div>
+													<div class="form-row">	
+														<div class="form-group col-md-4">
+															<label>Cost/Unit(<small>before tax</small>)</label>
+															<input type="number" class="form-control" name="product_price" placeholder="Cost/Unit">
+														</div>
+														<div class="form-group col-md-4">
+														<label class="form-label">Product gst</label>
+															<input type="number" class="form-control" name="product_gst" placeholder="GST">
+														</div>
+														<div class="form-group col-md-4">
+														<label class="form-label">Product MRP</label>
+															<input type="number" class="form-control" name="product_mrp" placeholder="Product MRP">
+														</div>
+													</div>
+													<div class="row">
+														<div class="form-group col-md-12">
+															<label class="form-labl">Remarks</label>
+															<textarea class="form-control" name="remarks" placeholder="Enter Remarks" ></textarea> 
+														</div>
+													</div>
+													<div class="form-row">
+														<div class="form-group col-md-12">
+															<input type="hidden" name="service_id">
+															<button type="submit" class="btn btn-primary">Submit</button>
+														</div>
+													</div>
+												</form>
+												<div class="alert alert-dismissible feedback" role="alert" style="margin:0px;">
+													<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+													</button>
+													<div class="alert-message">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- update expense -->
+								<div class="modal fade" id="UpdatePendingExpense" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Update Expense</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body m-3">
+                                    <form id="UpdateDailyExpenses" method="POST" action="#">
+                                        <div class="row">
+                                            <div class="form-group col-md-3">
+                                                <label>Entry Date</label>
+                                                <input type="date"  name="entry_date" style="width:100%" class="form-control" readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Expense Name</label>
+                                                <input type="text" class="form-control" name="item_name" readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Expense Type</label>
+                                                <input type="text" class="form-control" name="expense_type" readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Employee Name</label>
+                                                <input type="text" class="form-control" name="employee_name" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-3">
+                                                <label>Paid To</label>
+                                                <input name="payment_to_name" class="form-control" readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Pending Amount</label>
+                                                <input type="number" class="form-control" min="0" name="pending_amount" id="pendamtValue"
+                                                    readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Amount</label>
+                                                <input type="number" class="form-control" min="0" name="amount1" id="reamt" onkeyup="calPendAmt()">
+                                            </div>
+                                         
+                                            <div class="form-group col-md-3">
+                                                <label>Remaing Amount</label>
+                                                <input type="number" class="form-control" name="remaining_amt"  id="remaining_amt" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-3">
+                                                <label>Payment Mode</label>
+                                                <select class="form-control" name="payment_mode">
+                                                    <option value="Cash" selected>Cash</option>
+                                                    <option value="Card">Card</option>
+                                                    <option value="Bank">Cheque/Bank</option>
+                                                    <option value="Wallet">Wallet/ Others</option>
+                                                    <select>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Payment Status</label>
+                                                <select class="form-control" name="expense_status" id="select_expense_status">
+                                                    <option disabled selected>Select</option>
+                                                    <option value="Paid" disabled>Paid</option>
+                                                    <!-- <option value="Advance">Advance</option> -->
+                                                    <option value="Partialy_paid">Partialy Paid</option>
+                                                    <select>
+                                            </div>
+                                            
+                                            <div class="form-group col-md-3">
+                                                <label>Remarks</label>
+                                                <input type="text" class="form-control" name="remarks" readonly>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label>Invoice (If any)</label>
+                                                <input type="text" name="invoice_number" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <input type="text" name="expense_id" class="form-control" hidden>
+                                                <input type="text" name="expense_type_id" class="form-control" hidden>
+                                                <input type="text" name="item_name" class="form-control" hidden>
+                                                <input type="number" name="amount" hidden>
+                                                <input type="number" name="total_amount" hidden>
+                                                <input type="text" name="payment_type" hidden>
+                                                <input type="text" name="payment_to" hidden>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <span aria-hidden="true">&times;&times;</span>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- <button type="button" class="btn btn-success" data-dismiss="modal">Submit</button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+								<!-- end -->
 							</div>	
 						</div>
 					<?php
@@ -727,7 +1074,7 @@
 			
 			rowno = rowno+1;
 			
-			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 		});
 
 		$("#DeleteRowProductTable").click(function(event){
@@ -755,7 +1102,7 @@
     });
        
     // var to_fill = "";
-		var service_name="",product_id="", service_type="", service_barcode="", sku_size="", mrp="";
+		var service_name="",product_id="", service_type="", service_barcode="", sku_size="", mrp="",gst="";
 
     $("#searchProductByName").on("typeahead:selected", function(eventObject, suggestion, name) {
       var loc = "#addProductTable tr:last .searchProductByName";
@@ -764,18 +1111,22 @@
 			var loc4 = "#addProductTable tr:last .sku_size";
 			var loc5 = "#addProductTable tr:last .mrp";
 			var loc6 = "#addProductTable tr:last .product_id";
+			var loc7 = "#addProductTable tr:last .gst";
       service_name = suggestion.service_name;
 			product_id = suggestion.service_id;
 			service_type = suggestion.inventory_type;
 			service_barcode = suggestion.barcode;
 			sku_size = suggestion.qty_per_item+suggestion.service_unit;
 			mrp = suggestion.mrp;
+			gst=suggestion.service_gst_percentage;
+
       setVals(loc,service_name,suggestion);
 			setVals(loc2,service_type,suggestion);
 			setVals(loc3,service_barcode,suggestion);
 			setVals(loc4,sku_size,suggestion);
 			setVals(loc5,mrp,suggestion);
 			setVals(loc6,product_id,suggestion);
+			setVals(loc7,gst,suggestion);
     });
 
     $("#searchProductByName").blur(function(){
@@ -784,13 +1135,16 @@
 			$("#addProductTable tr:last .product_type").val(service_type);
 			$("#addProductTable tr:last .product_barcode").val(service_barcode);
 			$("#addProductTable tr:last .sku_size").val(sku_size);
-			$("#addProductTable tr:last .mrp").val(sku_size);
+			$("#addProductTable tr:last .mrp").val(mrp);
+			$("#addProductTable tr:last .gst").val(gst);
+
       service_name = "";
 			product_id="";
 			service_type = "";
 			service_barcode = "";
 			sku_size = "";
 			mrp="";
+			gst="";
     });
 
     function searchProductByName(query, cb){
@@ -836,10 +1190,29 @@
 				}	
     });
 
+		// $("#addProductTable tr:last .gst").on('input',function(e){			
+		$('body').on('input','#addProductTable tr:last .gst',function(e){	
+  			var product_qty=  Number($("#addProductTable tr:last .product_qty").val());
+				var product_price=  Number($("#addProductTable tr:last .product_price").val());
+				var product_gst=  Number($("#addProductTable tr:last .gst").val());
+				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
+				$("#addProductTable tr:last .total_cost").val(mrp);
+								
+    });
+		// $("#transProductTable tr:last .gst").on('input',function(e){		
+			$('body').on('input','#transProductTable tr:last .gst',function(e){		
+  			var product_qty=  Number($("#transProductTable tr:last .product_qty").val());
+				var product_price=  Number($("#transProductTable tr:last .product_price").val());
+				var product_gst=  Number($("#transProductTable tr:last .gst").val());
+				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
+				$("#transProductTable tr:last .total_cost").val(mrp);
+								
+    });
+
 		$("#AddProduct").validate({
 	  	errorElement: "div",
 	    rules: {	       
-	        "invoice_number" : {
+	        "source_type" : {
 	        	required : true
 	        },
 					"product_name" : {
@@ -848,7 +1221,19 @@
 
 	    },
 	    submitHandler: function(form) {
-			// alert(document.getElementById('expiry').value);
+				var total_len=$("#AddProduct input[name^=total_cost]").length;
+				var inv_amt= $("#AddProduct input[name=invoice_amount]").val();
+				var array= $("#AddProduct input[name^=total_cost]");
+				var t_cost=0;
+				for(var i=0;i< total_len;i++){
+					t_cost+=Number(array[i].value);
+				}
+				if(t_cost < inv_amt){
+					alert("Total Cost is less than Invoice Amount.");
+				}else if(t_cost > inv_amt){
+					alert("Total Cost is more than Invoice Amount.");
+				}
+				
 				var formData = $("#AddProduct").serialize(); 
 				$.ajax({
 	        url: "<?=base_url()?>BusinessAdmin/AddInventory",
@@ -890,7 +1275,7 @@
 				
 				rowno = rowno+1;
 				
-				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 			});
 
 			$("#DeleteRowProductTransTable").click(function(event){
@@ -918,7 +1303,7 @@
     });
        
     // var to_fill = "";
-		var service_name="",product_id="", service_type="", service_barcode="", sku_size="", mrp="";
+		var service_name="",product_id="", service_type="", service_barcode="", sku_size="", mrp="",gst="";
 
     $("#searchProductTransferByName").on("typeahead:selected", function(eventObject, suggestion, name) {
       var loc = "#transProductTable tr:last .searchProductByName";
@@ -927,12 +1312,15 @@
 			var loc4 = "#transProductTable tr:last .sku_size";
 			var loc5 = "#transProductTable tr:last .mrp";
 			var loc6 = "#transProductTable tr:last .product_id";
+			var loc7 = "#transProductTable tr:last .gst";
+
       service_name = suggestion.service_name;
 			service_type = suggestion.inventory_type;
 			service_barcode = suggestion.barcode;
 			sku_size = suggestion.qty_per_item;
 			mrp = suggestion.mrp;
 			product_id=suggestion.service_id;
+			gst=suggestion.service_gst_percentage;
 
       setVals(loc,service_name,suggestion);
 			setVals(loc2,service_type,suggestion);
@@ -940,6 +1328,7 @@
 			setVals(loc4,sku_size,suggestion);
 			setVals(loc5,mrp,suggestion);
 			setVals(loc6,product_id,suggestion);
+			setVals(loc7,gst,suggestion);
     });
 
     $("#searchProductTransferByName").blur(function(){
@@ -947,8 +1336,9 @@
 			$("#transProductTable tr:last .product_type").val(service_type);
 			$("#transProductTable tr:last .product_barcode").val(service_barcode);
 			$("#transProductTable tr:last .sku_size").val(sku_size);
-			$("#transProductTable tr:last .mrp").val(sku_size);
+			$("#transProductTable tr:last .mrp").val(mrp);
 			$("#transProductTable tr:last .product_id").val(product_id);
+			$("#transProductTable tr:last .gst").val(gst);
 
       service_name = "";
 			service_type = "";
@@ -956,6 +1346,7 @@
 			sku_size = "";
 			mrp="";
 			product_id="";
+			gst="";
     });
 
     function searchProductTransByName(query, cb){
@@ -1004,7 +1395,7 @@
 		$("#TransProduct").validate({
 	  	errorElement: "div",
 	    rules: {	       
-	        "invoice_number" : {
+	        "destination_type" : {
 	        	required : true
 	        },
 					"product_name" : {
@@ -1053,6 +1444,7 @@
 			var parameters = {
 					transfer_data_id : $(this).attr('trans_data_id'),
 					total_stock : $(this).attr('total_stock'),
+					stock_in_unit:$(this).attr('sku_size'),
 					service_id	:	$(this).attr('stock_service_id'),
 					sender_outlet_id	:	$(this).attr('sender_outlet')
 			};	
@@ -1159,7 +1551,148 @@
 			},
 		});
 
+
+		$(document).on('click','.EditInventory',function(event) {
+      event.preventDefault();
+      this.blur(); // Manually remove focus from clicked link.
+      var parameters = {
+            service_id : $(this).attr('service_id')
+      };
+			var product_qty=$(this).attr('product_qty');
+      $.getJSON("<?=base_url()?>BusinessAdmin/EditInventory", parameters)
+        .done(function(data, textStatus, jqXHR) {            
+					
+					mrp=(Number(data.message.service_price_inr)+Number(data.message.service_price_inr)*Number(.18));
+            $("#ModalEditInventory input[name=product_name]").attr('value',data.message.service_name);
+            $("#ModalEditInventory input[name=product_gst]").attr('value',data.message.service_gst_percentage);
+            $("#ModalEditInventory input[name=product_brand]").attr('value',data.message.service_brand);
+            $("#ModalEditInventory input[name=sku_size]").attr('value',data.message.qty_per_item);
+            $("#ModalEditInventory input[name=product_price]").attr('value',data.message.service_price_inr);
+            $("#ModalEditInventory input[name=service_id]").attr('value',data.message.service_id);
+						$("#ModalEditInventory input[name=product_qty]").attr('value',product_qty);
+						$("#ModalEditInventory input[name=product_mrp]").attr('value',mrp);
+            $("#ModalEditInventory").modal('show');
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown.toString());
+        });
+    	});
+
+
+		$("#EditInventory").validate({
+	  	errorElement: "div",
+	    rules: {
+	        "product_name" : {
+            required : true
+	        },
+					"product_qty" : {
+            required : true
+	        }    
+	    },
+	    submitHandler: function(form) {
+				var formData = $("#EditInventory").serialize(); 
+				$.ajax({
+		        url: "<?=base_url()?>BusinessAdmin/EditInventory",
+		        data: formData,
+		        type: "POST",
+						cache: false,
+		    		success: function(data) {
+              if(data.success == 'true'){
+								$("#ModalEditInventory").modal('hide');
+              	alert("Inventory Added");
+								window.location.reload();
+              }
+              else if (data.success == 'false'){                   
+                $('.alert-message').html("").html(data.message);
+								window.location.reload(); 
+              }
+            },
+            error: function(data){
+    					$('.feedback').addClass('alert-danger');
+    					$('.alert-message').html("").html(data.message); 
+            }
+				});
+			},
+		});
+
 	});
+
+	// Update
+	// Update Expenses 
+	$("#UpdateDailyExpenses").validate({
+                errorElement: "div",
+                // rules: {
+                // 		"entry_date":{
+                // 			required:true
+                // 		},
+                //   "expense_type" : {
+                //   required : true	
+                // },
+                // "item_name" : {
+                //   required : true,
+                //   maxlength : 50
+                // },
+                // "amount" : {
+                //   required : true,
+                // 		digits : true
+                // }, 
+                // "payment_mode" : {
+                //   required : true
+                // },    
+                // "expense_status" : {
+                //   required : true
+                // },
+                // "employee_name" : {
+                // 	required : true,
+                // 	maxlength : 100
+                // }
+                // },
+                submitHandler: function(form) {
+                    var formData = $("#UpdateDailyExpenses").serialize();
+                    $.ajax({
+                        url: "<?=base_url()?>BusinessAdmin/UpdateExpense",
+                        data: formData,
+                        type: "POST",
+                        // crossDomain: true,
+                        cache: false,
+                        // dataType: "json",
+                        success: function(data) {
+                            // alert(data.success);
+
+                            if (data.success == 'true') {
+                                $("#UpdatePendingExpense").modal('hide');
+                                toastr["success"](data.message,"", {
+							positionClass: "toast-top-right",
+							progressBar: "toastr-progress-bar",
+							newestOnTop: "toastr-newest-on-top",
+							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+							timeOut: 500
+						});
+						setTimeout(function () { window.location.reload();}, 500);
+                            } else if (data.success == 'false') {
+                                if ($('.feedback').hasClass('alert-success')) {
+                                    $('.feedback').removeClass('alert-success')
+                                        .addClass('alert-danger');
+                                } else {
+                                    $('.feedback').addClass('alert-danger');
+                                }
+                                $('.alert-message').html("").html(data.message);
+                            }
+                        },
+                        error: function(data) {
+                            $("#UpdatePendingExpense").modal('hide');
+                            $('#defaultModalDanger').modal('show').on('shown.bs.modal',
+                                function(e) {
+                                    $("#ErrorModalMessage").html("").html(
+                                        "<p>Error, Try again later!</p>");
+                                }).on('hidden.bs.modal', function(e) {
+                                window.location.reload();
+                            });
+                        }
+                    });
+                },
+            }); 
+	// 
 
 	 //functionality for getting the dynamic input data
 	 $("#SearchServiceByName").typeahead({
@@ -1300,12 +1833,7 @@
 			}); 
     });
 </script>
-<script type="text/javascript">
-	<?php if($modal == 1) { ?>
-			$(document).ready(function(){        
-				$('#AddProduct').click();
-			}); 
-	<?php } ?>		
+<script type="text/javascript">		
 	$("input[name=\"expiry_date\"]").daterangepicker({
             singleDatePicker: true,
             showDropdowns: true,
@@ -1331,7 +1859,41 @@
 				console.log(errorThrown.toString());
 			});
 		});
-	
+	// updatePendingAmount
+	$(document).on('click', '.pending-expense-edit-btn', function(event) {
+            event.preventDefault();
+            this.blur(); // Manually remove focus from clicked link.
+            //   var parameters = {
+            var expense_type = $(this).attr('expense_type');
+
+            //   };
+            //   $.getJSON("<?=base_url()?>BusinessAdmin/EditPendingExpense", parameters)
+            //   .done(function(data, textStatus, jqXHR) { 
+            $("#UpdatePendingExpense input[name=expense_id]").attr('value', $(this).attr('expense_id'));
+            $("#UpdatePendingExpense input[name=expense_type]").attr('value', expense_type);
+            $("#UpdatePendingExpense input[name=entry_date]").attr('value', $(this).attr('expense_date'));
+            $("#UpdatePendingExpense input[name=item_name]").attr('value', $(this).attr('expense_name'));
+            $("#UpdatePendingExpense input[name=expense_type_id]").attr('value', $(this).attr(
+                'expense_type_id'));
+            $("#UpdatePendingExpense input[name=employee_name]").attr('value', $(this).attr('employee_name'));
+            $("#UpdatePendingExpense input[name=pending_amount]").attr('value', $(this).attr('pending_amount'));
+            $("#UpdatePendingExpense input[name=payment_to_name]").attr('value', $(this).attr('payment_to_name'));
+            $("#UpdatePendingExpense input[name=amount]").attr('value', $(this).attr('amount'));
+            $("#UpdatePendingExpense input[name=remarks]").attr('value', $(this).attr('remark'));
+            $("#UpdatePendingExpense input[name=invoice_number]").attr('value', $(this).attr('invoice_number'));
+            $("#UpdatePendingExpense input[name=total_amount]").attr('value', $(this).attr('total_amount'));
+            $("#UpdatePendingExpense input[name=payment_type]").attr('value', $(this).attr('payment_type'));
+            $("#UpdatePendingExpense input[name=payment_to]").attr('value', $(this).attr('payment_to'));
+            // $("#UpdatePendingExpense input[name=invoice_number]").attr('value', $(this).attr('invoice_number'));
+            // $("#EditExpenseCategory textarea[name=expense_type_description]").val(data.expense_type_description);
+            // $("#EditExpenseCategory input[name=expense_type_id]").attr('value',data.expense_type_id);
+
+            $("#UpdatePendingExpense").modal('show');
+            // })
+            // .fail(function(jqXHR, textStatus, errorThrown) {
+            // console.log(errorThrown.toString());
+            // });
+        });
 </script>
 <script>
 		function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
@@ -1406,55 +1968,6 @@
 			link.click();
 			document.body.removeChild(link);
 		}
-</script>
-<script type="text/javascript">
-	$(".date").daterangepicker({
-		singleDatePicker: true,
-		showDropdowns: true,
-		autoUpdateInput : false,
-		locale: {
-      format: 'YYYY-MM-DD'
-		}
-	});
-
-	$('.date').on('apply.daterangepicker', function(ev, picker) {
-    $(this).val(picker.startDate.format('YYYY-MM-DD'));
-  });
-  $(".smartwizard-arrows-primary").smartWizard({
-			theme: "arrows",
-			showStepURLhash: false
-		});
-    $("#Service_SKU_Size").on('change',function(e){
-    	var parameters = {
-    		'item_id' :  $(this).val()
-    	};
-		// alert($(this).val());
-    	$.getJSON("<?=base_url()?>Cashier/GetProduct", parameters)
-      .done(function(data, textStatus, jqXHR) {
-          var mrp = parseInt(data.result[0]['service_price_inr'])+parseInt((data.result[0]['service_price_inr']*data.result[0]['service_gst_percentage'])/100);
-        //   alert(mrp);
-            document.getElementById("imrptemp").value = mrp;
-            document.getElementById("imrp").value = mrp;
-            document.getElementById("igsttemp").value = data.result[0]['service_gst_percentage'];
-            document.getElementById("igst").value = data.result[0]['service_gst_percentage'];
-            document.getElementById("ipricetemp").value = data.result[0]['service_price_inr'];
-    	})
-    	.fail(function(jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown.toString());
-   		});
-    });
-
-	$("#ibase_cost").on('keyup',function(e){
-    	
-		// alert($(this).val());
-        var sku=parseInt(document.getElementById("sku_count").value);
-        // document.getElementById("ibase_cost").value = baseamount;
-        var baseamount = sku * $(this).val();
-        var totalamount = parseInt( baseamount ) + parseInt((baseamount * document.getElementById("igsttemp").value)/100);
-        // alert(totalamount);
-        document.getElementById("itotal_cost").value = totalamount;
-        
-    });
 </script>
 <script type="text/javascript">
 	$(document).ready(function(){
