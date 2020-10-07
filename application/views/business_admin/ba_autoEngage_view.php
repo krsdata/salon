@@ -67,10 +67,7 @@
 							<div class="card-header" style="margin-left:10px;">
 							<div class="row">
 								<div class="col-md-8">
-									<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight: bolder">
-										<li class="nav-item">
-											<a class="nav-link active" data-toggle="tab" href="#tab-1">Control SMS Activity</a>
-										</li>
+									<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight: bolder">										
 										<!-- <li class="nav-item">
 											<a class="nav-link active" data-toggle="tab" href="#tab-1">Marketing</a>
 										</li>
@@ -103,6 +100,9 @@
 															<thead>
 																<th> S. No.</th>
 																<th>Trigger Name</th>
+																<th>Admin Sms Script</th>
+																<th>Expert Sms Script</th>
+																<th>Customer Sms Script</th>
 																<th>Outlet Applicable</th>
 																<th>Action</th>
 															</thead>
@@ -114,6 +114,14 @@
 																		<tr>
 																			<td><?php echo ++$i?></td>
 																			<td><?php echo 'Before Appointment SMS'?></td>
+																			<td width="20%" align="center">-</td>
+																			<td width="20%">Dear #ExpertName,You've an upcoming service with #CustomerName,#CustMobile in 30mins. Please be ready to serve the patron with your best expertise.
+</td>
+																			<td width="20%">Dear #Customer,You've an upcoming appointment with  #SalonName in 30mins. 
+Look forward to ur patronage.
+Team #SalonName
+#SalonContact No.
+#Location URL</td>
 																			<td><?php echo $outlet['business_outlet_name']?></td>
 																			<td><?php
 																				if(in_array($outlet['business_outlet_id']."_1", $activity)){
@@ -135,6 +143,18 @@
 																		<tr>
 																			<td><?php echo ++$i?></td>
 																			<td><?php echo 'Day Closing Report'?></td>
+																				<td width="20%">Hi #Branch Name,#Location ! 
+
+	Business Update till 10pm
+
+	Sales: Rs#Sales
+	Collection: Rs#Collection
+	Expenses : Rs#Expenes
+	Due Amt : Rs#DueAmt Recvble
+	Visits:#Visits
+	</td>
+																				<td width="20%" align="center">-</td>
+																				<td width="20%" align="center">-</td>
 																			<td><?php echo $outlet['business_outlet_name']?></td>
 																			<td><?php
 																				if(in_array($outlet['business_outlet_id']."_2", $activity)){
@@ -156,6 +176,18 @@
 																			<tr>
 																			<td><?php echo ++$i?></td>
 																			<td><?php echo 'Generate Report SMS[Weekly]'?></td>
+																			<td width="20%">Hi #Branch Name,#Location ! 
+ 
+Business Update: From Date - To Date
+Sales: Rs#Sales
+Collection: Rs#Collection
+Expenses : Rs#Expenes
+Due Amt : Rs#DueAmt Recvble
+Visits: #Visits
+
+</td>
+																			<td width="20%" align="center">-</td>
+																			<td width="20%" align="center">-</td>
 																			<td><?php echo $outlet['business_outlet_name']?></td>
 																			<td><?php
 																				if(in_array($outlet['business_outlet_id']."_3", $activity)){
@@ -178,6 +210,18 @@
 																			<tr>
 																			<td><?php echo ++$i?></td>
 																			<td><?php echo 'Pending Amount SMS[Weekly]'?></td>
+																			<td width="20%">"Pending Amount Update
+#Branch Name,#Location
+Duration: FromDt- ToDt
+Generated:Rs#Amt
+Received: Rs#Amt
+
+Cum.Due Amt till dt: #Amt"
+
+
+</td>
+																			<td width="20%" align="center">-</td>
+																			<td width="20%" align="center">-</td>
 																			<td><?php echo $outlet['business_outlet_name']?></td>
 																			<td><?php
 																				if(in_array($outlet['business_outlet_id']."_4", $activity)){
@@ -200,6 +244,20 @@
 																			<tr>
 																			<td><?php echo ++$i?></td>
 																			<td><?php echo 'Generate Report SMS[Monthly]'?></td>
+																			<td width="20%">"Hi #Branch Name,#Location ! 
+
+Business Update: From Date - To Date
+
+Total Sales: Rs#Sales
+Services : Rs#Service Sales
+Packages : Rs#Package Sales
+Products : Rs#Product Sales
+Memberships :RsMembership Sales"
+
+
+</td>
+																			<td width="20%" align="center">-</td>
+																			<td width="20%" align="center">-</td>
 																			<td><?php echo $outlet['business_outlet_name']?></td>
 																			<td><?php
 																				if(in_array($outlet['business_outlet_id']."_5", $activity)){
@@ -222,6 +280,10 @@
 																			<tr>
 																			<td><?php echo ++$i?></td>
 																			<td><?php echo 'Pending Amount SMS[Monthly]'?></td>
+																			<td width="20%">Pending Amount Update #Branch Name,#Location Duration: FromDt- ToDt Generated:Rs#Amt Received: Rs#Amt Cum.Due Amt till dt: #Amt
+</td>
+																			<td width="20%" align="center">-</td>
+																			<td width="20%" align="center">-</td>
 																			<td><?php echo $outlet['business_outlet_name']?></td>
 																			<td><?php
 																				if(in_array($outlet['business_outlet_id']."_6", $activity)){
