@@ -3636,25 +3636,26 @@ public function GetEmployee(){
 				else{
 
 					// for file upload
-					$config['allowed_types']='jpg|png|jpeg';
-					$config['upload_path']='./public/images/';
-					$this->load->library('upload',$config);
-					$this->upload->do_upload('business_outlet_logo');
-					$path=array(
-						'outlet_admin_id' => $this->session->userdata['outlets']['current_outlet'],
-						'config_key'			=>'salon_logo',
-						'config_value' =>$_FILES['business_outlet_logo']['name']
-					);
-					$where=array(
-						'outlet_admin_id'=> $this->session->userdata['outlets']['current_outlet']
-					);
-					$logo_exist=$this->BusinessAdminModel->MultiWhereSelect('mss_config',$where);
-						if(empty($logo_exist['res_arr'])){
-						$update_logo=$this->BusinessAdminModel->Insert($path,'mss_config');
-						}else{
-							$update_logo=$this->BusinessAdminModel->Update($path,'mss_config','outlet_admin_id');
+					if(!empty($_FILES['business_outlet_logo']['name'])){
+						$config['allowed_types']='jpg|png|jpeg';
+						$config['upload_path']='./public/images/';
+						$this->load->library('upload',$config);
+						$this->upload->do_upload('business_outlet_logo');
+						$path=array(
+							'outlet_admin_id' => $this->session->userdata['outlets']['current_outlet'],
+							'config_key'			=>'salon_logo',
+							'config_value' =>$_FILES['business_outlet_logo']['name']
+						);
+						$where=array(
+							'outlet_admin_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+						$logo_exist=$this->BusinessAdminModel->MultiWhereSelect('mss_config',$where);
+							if(empty($logo_exist['res_arr'])){
+							$update_logo=$this->BusinessAdminModel->Insert($path,'mss_config');
+							}else{
+								$update_logo=$this->BusinessAdminModel->Update($path,'mss_config','outlet_admin_id');
+							}
 						}
-
 						//
 
 					$data = array(
@@ -9143,8 +9144,7 @@ public function InsertSalary(){
             if(isset($data['selected_outlet']) || !empty($data['selected_outlet'])){
                 $data['sidebar_collapsed'] = "true";
             }
-            // $data['etc']=$this->BusinessAdminModel->ETC($data);
-            // $this->PrettyPrintArray($data['etc']);
+            
             $data['timeline']=$this->BusinessAdminModel->DetailsById($this->session->userdata['outlets']['current_outlet'],'mss_customer_timeline_setup','business_outlet_id');
             if($data['timeline']['success'] == 'true'){
                 $res=array(
@@ -9279,17 +9279,27 @@ public function InsertSalary(){
 										'at_risk_cust2'	=>90,
                     'lost_customer' => 90
                );
+						}
+						$data['custwithouttrans']=$this->BusinessAdminModel->CustomerWithoutTransaction();
+            // $this->PrettyPrintArray($data);
+            if($data['custwithouttrans']['success'] == 'true'){
+                $data['custwithouttrans']=($data['custwithouttrans']['res_arr'][0]['count']);
+            }
+            else{
+                $data['custwithouttrans']=0;
             }
             $data['new']=$this->BusinessAdminModel->NewCustomer($res);
             if($data['new']['success'] == 'true'){
-                $data['new']=count($data['new']['res_arr']);
+								$data['new']=count($data['new']['res_arr']);
             }
             else{
                 $data['new']=0;
             }
             $data['repeat']=$this->BusinessAdminModel->RepeatingCustomerService($res);
             if($data['repeat']['success'] == 'true'){
-                $data['repeat']=count($data['repeat']['res_arr']);
+								$data['repeat']=count($data['repeat']['res_arr']);
+								// $this->PrettyPrintArray($data['repeat']);
+								
             }
             else{
                 $data['repeat']=0;
