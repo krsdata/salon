@@ -231,9 +231,9 @@ die;
 
     public function sendSMSBeforeAppointment(){
         $now = date("H");
-        // if ($now < "10" || $now > "22") {
-        //     die();
-        // }
+        if ($now < "10" || $now > "22") {
+             die();
+        }
         $this->load->model('CronModel');
         $this->load->model('BusinessAdminModel');
         $result = $this->CronModel->getAppointmentRecord();
