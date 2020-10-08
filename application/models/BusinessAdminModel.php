@@ -6873,7 +6873,7 @@ $sql = str_replace(",)",")",$sql);
         Count(mss_transactions.txn_id)  as 'Visits',
         FORMAT(SUM(mss_transactions.txn_value),0) as 'LTV', 
         FORMAT(AVG(mss_transactions.txn_value),0) as 'Avg Order Value', 
-        date(MAX(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
+        MAX(date(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
 		mss_customers.last_visit_branch AS 'Last Visited Store',
         FORMAT(mss_customers.customer_rewards,2) as 'Rewards',
 		FORMAT(mss_customers.customer_virtual_wallet,0) as 'Virtual Wallet Amt',
@@ -6886,7 +6886,7 @@ $sql = str_replace(",)",")",$sql);
 			AND mss_business_outlets.business_outlet_id= ".$this->session->userdata['outlets']['current_outlet']."
 			AND mss_transactions.txn_status =1 
 			group by mss_customers.customer_id
-			HAVING MAX(date(mss_transactions.txn_datetime)) > CURRENT_DATE - INTERVAL ".$this->db->escape($data['no_risk'])." DAY ";
+			HAVING MAX(date(mss_transactions.txn_datetime)) > (CURRENT_DATE - INTERVAL ".$this->db->escape($data['no_risk'])." DAY) ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6902,7 +6902,7 @@ $sql = str_replace(",)",")",$sql);
         Count(mss_transactions.txn_id)  as 'Visits',
         FORMAT(SUM(mss_transactions.txn_value),0) as 'Total_Spend', 
         FORMAT(AVG(mss_transactions.txn_value),0) as 'Avg Order Value', 
-        date(MAX(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
+        MAX(date(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
 		mss_customers.last_visit_branch AS 'Last Visited Store',
         FORMAT(mss_customers.customer_rewards,2) as 'Rewards',
 		FORMAT(mss_customers.customer_virtual_wallet,0) as 'Virtual Wallet Amt',
@@ -6915,7 +6915,7 @@ $sql = str_replace(",)",")",$sql);
 			AND mss_business_outlets.business_outlet_id= ".$this->session->userdata['outlets']['current_outlet']."
 			AND mss_transactions.txn_status =1 
 			group by mss_customers.customer_id
-			HAVING MAX(date(mss_transactions.txn_datetime)) > CURRENT_DATE - INTERVAL ".$this->db->escape($data['no_risk'])." DAY ";
+			HAVING MAX(date(mss_transactions.txn_datetime)) > (CURRENT_DATE - INTERVAL ".$this->db->escape($data['no_risk'])." DAY) ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
