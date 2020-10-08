@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class BusinessAdminModel extends CI_Model {
 	
 
-	public function ModelHelper($success,$error,$error_msg = '',$data_arr = array()){
+	public function ModelHelper($success,$error,$error_msg = '',$data_arr = array()){ 
         if($success == true && $error == false){
             $data = array(
                 'success' => 'true',
