@@ -699,10 +699,10 @@
 																		<table id="specialMembershipTable4" class="table">
 																			<tbody>
 																				<tr>
-																					<td>
+																					<td style="width:100px;">
 																						<div class="form-group">
 																							<!-- <label>Cat. Type</label> -->
-																							<select class="form-control category_type4_filter" multiple name="category_type4[]">
+																							<select  class="form-control category_type4_filter" multiple name="category_type4[]">
 																								<option value="Service">Service</option>
 																								<option value="Products">Product</option>
 																							</select>
@@ -928,7 +928,7 @@
 	var	multiSelectParamsData = { maxHeight:150,numberDisplayed: 1,nSelectedText: 'selected' ,includeSelectAllOption: true ,buttonWidth: 150};
 	var	multiSelectParamsData1 = { maxHeight:150,numberDisplayed: 1,nSelectedText: 'selected' ,includeSelectAllOption: true };
 	
-	var	multiSelectParamsCategoryTpe = { maxHeight:150,numberDisplayed: 2,nSelectedText: 'selected' ,includeSelectAllOption: true,buttonWidth: 120,nonSelectedText:'Category Type'};
+	var	multiSelectParamsCategoryTpe = {maxHeight:150,numberDisplayed: 2,nSelectedText: 'selected' ,includeSelectAllOption: true,buttonWidth: 120,nonSelectedText:'Category Type'};
 	
 	initializeAllDropDown(isClearSelection=false,multiSelectParamsDataForOutlets,multiSelectParamsData,multiSelectParamsData1,multiSelectParamsCategoryTpe);
    function initializeAllDropDown(isClearSelection=false,multiSelectParamsDataForOutlets,multiSelectParamsData,multiSelectParamsData1,multiSelectParamsCategoryTpe){
@@ -1446,11 +1446,11 @@
 											if(tableId=='specialMembershipTable1'){
 												addRowSpecialMembership1(); 
 											}else if(tableId=='specialMembershipTable2'){
-												addRowSpecialMembership2(); 
+												addRowSpecialMembershipfun2(); 
 											}else if(tableId=='specialMembershipTable3'){
 												addRowSpecialMembershipfun3(); 
 											}if(tableId=='specialMembershipTable4'){
-												addRowSpecialMembership4(); 
+												addRowSpecialMembershipfun4(); 
 											} 
 									    } 
 								 }); 			
@@ -1998,7 +1998,7 @@
 				}
 	}
 	
-	function AddRowSpecialMembership2(){
+	function addRowSpecialMembershipfun2(){
 				var rowno = $("#specialMembershipTable2 tr").length;
 				$("#DeleteRowSpecialMembership2").show();
 				rowno = rowno+1;
@@ -2053,12 +2053,12 @@
 	 
 	}	
 	
-	function AddRowSpecialMembership4(){
+	function addRowSpecialMembershipfun4(){
 		$("#DeleteRowSpecialMembership4").show();
 		var rowno = $("#specialMembershipTable4 tr").length;
 		
 		rowno = rowno+1;
-		var htmlContent ='<tr><td><div class=\"form-group\"><select class=\"form-control category_type4_filter\" multiple name=\"category_type4[]\"><option value=\"Service\" >Service</option><option value=\"Products\">Products</option></select></div></td><td><div class=\"form-group\" ><select class=\"form-control category4_filter\" multiple name=\"special_category_id4[]\" temp=\"special_category_id4\" ></select></div></td><td><div class=\"form-group\"><select class=\"form-control sub_category4_filter\" multiple  name=\"special_sub_category_id4[]\" temp=\"special_sub_category_id4\" ></select></div></td><td><div class=\"form-group\"><select class=\"form-control\" name=\"special_service_id4[]\" multiple temp=\"Service\"></select><input type=\"hidden\" name=\"special_service_id4_index[]\" /></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" min=\"0\" name=\"min_price4[]\" placeholder=\"Mini price\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" min=\"0\" name=\"max_price4[]\" placeholder=\"Max price\"></div></td><td><div class=\"form-group\"></div></td></td>';
+		var htmlContent ='<tr><td><div class=\"form-group\"><select class=\"form-control category_type4_filter\" multiple name=\"category_type4[]\"><option value=\"Service\" >Service</option><option value=\"Products\">Products</option></select></div></td><td><div class=\"form-group\" ><select class=\"form-control category4_filter\" multiple name=\"special_category_id4[]\" temp=\"special_category_id4\" ></select></div></td><td><div class=\"form-group\"><select class=\"form-control sub_category4_filter\" multiple  name=\"special_sub_category_id4[]\" temp=\"special_sub_category_id4\" ></select></div></td><td><div class=\"form-group\"><select class=\"form-control\" name=\"special_service_id4[]\" multiple temp=\"Service\"></select><input type=\"hidden\" name=\"special_service_id4_index[]\" /></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" min=\"0\" name=\"min_price4[]\" placeholder=\"Mini price\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" min=\"0\" name=\"max_price4[]\" placeholder=\"Max price\"></div></td>';
 		htmlContent +='<td><div class="form-group"><select id="type4" class="form-control" name="type4[]"><option value="Discount">Discount in %</option><option value="Loyalty Points">Loyalty Points in %</option</select></div></td>';
 		htmlContent +='<td ><div class="form-group"><input type="number" min="0" max="100" class="form-control" name="special_discount4[]"  placeholder="Discount/Loyalty Points % "></div></td>';
 		htmlContent +='<td ><div class="form-group"><input type="number" min="0" max="100" class="form-control" name="count4[]"  placeholder="Service Count"></div></td></tr>';
@@ -2504,7 +2504,7 @@
 			$("#AddRowSpecialMembership2").click(function(event){	
 				event.preventDefault();
 				this.blur();
-			  	AddRowSpecialMembership2();					
+			  	addRowSpecialMembershipfun2();					
 					
 			});
             
@@ -2665,7 +2665,7 @@
 			$("#AddRowSpecialMembership4").click(function(event){
 				event.preventDefault();
 				this.blur();
-				AddRowSpecialMembership4();
+				addRowSpecialMembershipfun4();
 			});
 
 			$("#DeleteRowSpecialMembership4").click(function(event){

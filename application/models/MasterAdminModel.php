@@ -871,25 +871,19 @@ class MasterAdminModel extends CI_Model
 	public function AddDiscountServicePackage($post,$data,$count,$where,$outletIds,$masterId,$packageId=0){
 	 
 	  $_POST = $post;
-	 
 	  $messge ='';
 	  if($packageId>0){
-		 $categoryType1Index = $data['category_type1_index'];
-		 unset($data['category_type1_index']);
 		 $result = $this->Update($data,'mss_salon_packages',array('salon_package_id'=>$packageId,'master_id'=>$masterId));
 		 $last_insert_id = $packageId;
 		
 	  }else{	
-		 $categoryType1Index = $data['category_type1_index'];
-		 unset($data['category_type1_index']);
-		 // $this->PrintArray($_POST);
 		 $result = $this->Insert($data,'mss_salon_packages');
 		 $last_insert_id = $result['res_arr']['insert_id'];
 	   }
 	  
   		$servicesIds = array(); 
 		$categoryTypeIndex1 = $_POST['category_type1_index'];
- 		
+ 		$query = array();
         if(!empty($categoryTypeIndex1)){
 	     	$update_data_2 = array();
 		    foreach($outletIds as $outletId){
@@ -899,7 +893,7 @@ class MasterAdminModel extends CI_Model
                    foreach($categoryTypeArray as $categoryType){ 
 				   
 						$filter=array(
-							'category_type'=>$categoryType,
+							'category_type'=>(($categoryType=='Service') ? 'service' : (($categoryType=='Products') ? 'otc' : '')),
 							'min_price'=>$_POST['min_price1'][$i],
 							'max_price'=>$_POST['max_price1'][$i],
 							'master_id'=>$where['master_id']
@@ -909,6 +903,7 @@ class MasterAdminModel extends CI_Model
 						// $categories=$this->ServiceByPrice($co);
 						$result_2=$this->ServiceBetweenPrice($filter);
 						$result_2=$result_2['res_arr'];
+						//file_put_contents('package.txt', print_r(array($this->db->last_query()), true), FILE_APPEND);
 						//$this->PrintArray($result_2);
 							  // echo $result_2[1]['service_id'];
 						// exit;
@@ -939,6 +934,7 @@ class MasterAdminModel extends CI_Model
 								 $update_data_2[] = $data_2;
 							 }else{
 								 $result = $this->Insert($data_2,'mss_salon_package_data');
+								 //file_put_contents('package.txt', print_r(array($data_2,$this->db->last_query()), true), FILE_APPEND);
 							 }
       						
 							$servicesIds[] = $result_2[$k]['service_id'];					
@@ -946,7 +942,7 @@ class MasterAdminModel extends CI_Model
 				    }  
     			  } 
 			}
-			  
+						  
 			if($packageId>0 && !empty($update_data_2)){   
 			   $type = 'special_membership';
 			   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=> $_POST,'data'=>$data,'count'=>$count,'where'=>$where);

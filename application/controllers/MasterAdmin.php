@@ -4,7 +4,22 @@ require_once APPPATH . '/third_party/spout-2.4.3/src/Spout/Autoloader/autoload.p
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Common\Type; 
 class MasterAdmin extends CI_Controller {
-        
+    
+	
+   //constructor of the Alumni Controller
+   public function __construct(){
+       parent::__construct();
+       date_default_timezone_set('Asia/Kolkata');
+       $this->load->model('AnalyticsModel');
+       $this->load->model('BusinessAdminModel');
+       $this->load->model('AppointmentsModel');
+       $this->load->model('CashierModel');
+       $this->load->model('POSModel');
+       $this->load->model('MasterAdminModel');
+	   $this->load->helper('common_helper');
+	   $this->load->helper('file');
+   }
+  
     private function IsLoggedIn($type){
         if (!isset($this->session->userdata['logged_in'])) {
         return false;
@@ -90,19 +105,7 @@ class MasterAdmin extends CI_Controller {
 			return $data;		
 				
 	}
-	
-  //constructor of the Alumni Controller
-  public function __construct(){
-       parent::__construct();
-       date_default_timezone_set('Asia/Kolkata');
-       $this->load->model('AnalyticsModel');
-       $this->load->model('BusinessAdminModel');
-       $this->load->model('AppointmentsModel');
-       $this->load->model('CashierModel');
-       $this->load->model('POSModel');
-       $this->load->model('MasterAdminModel');
-	   $this->load->helper('common_helper');
-  }
+
   public function ReturnJsonArray($success,$error,$message){
     if($success == true && $error == false){
         $data = array(
@@ -285,7 +288,7 @@ class MasterAdmin extends CI_Controller {
 			$where = array(
 				'master_id' 	   => $this->session->userdata['logged_in']['master_admin_id'],
 				'salon_package_id' => $packageId,
-				'is_active' =>'1'
+				'is_active' =>'1',
 			);
            
 			$data = $this->MasterAdminModel->MultiWhereSelect('mss_salon_package_data',$where);
@@ -308,7 +311,7 @@ class MasterAdmin extends CI_Controller {
 																			'qty_per_item'=>$masterService['qty_per_item']
 																		  );
 					}
-					
+				
 					/* Merge the service record 1,2 */
 					
 					foreach($data['res_arr'] as $key=>$serviceDetails){
@@ -345,6 +348,7 @@ class MasterAdmin extends CI_Controller {
 				}
 				
 			}
+			
 			
 		    return $returnServiceRecordsByGroupCount;
 		}
@@ -3979,7 +3983,7 @@ class MasterAdmin extends CI_Controller {
 
 			// $this->PrettyPrintArray($_POST);
 			if(isset($_POST) && !empty($_POST)){
-
+				
 				$this->form_validation->set_rules('salon_package_name', 'Package Name', 'trim|required|max_length[50]');
 				$this->form_validation->set_rules('salon_package_price', 'Package Price', 'trim|required');
 				$this->form_validation->set_rules('salon_package_gst', 'Package GST', 'trim|required');
@@ -4307,6 +4311,11 @@ class MasterAdmin extends CI_Controller {
 					elseif($data['salon_package_type'] == "special_membership"){
 						$data['total_count_of_services'] = $this->input->post('total_no_of_services');
 						$data['salon_package_type_selected'] = $data['salon_package_type'];
+						
+						
+						$fp = fopen('package.txt', 'w');
+						fwrite($fp, print_r($data, TRUE));
+						fclose($fp);
 						
 						// $this->PrettyPrintArray($_POST);
 						$where=array(
