@@ -942,10 +942,11 @@ class MasterAdminModel extends CI_Model
 				    }  
     			  } 
 			}
-						  
+			file_put_contents('package.txt', print_r(array($_POST,$packageId,$update_data_2), true), FILE_APPEND);			  
+			$tableId = 'specialMembershipTable1';
 			if($packageId>0 && !empty($update_data_2)){   
 			   $type = 'special_membership';
-			   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=> $_POST,'data'=>$data,'count'=>$count,'where'=>$where);
+			   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=> $_POST,'data'=>$data,'count'=>$count,'where'=>$where,'tableId'=>$tableId);
 			   $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData); 
 			}
 		 
@@ -1002,9 +1003,10 @@ class MasterAdminModel extends CI_Model
 			    }	 
 			  }
             }
+			$tableId = 'specialMembershipTable2';
 			if($packageId>0 && !empty($update_data_2)){   
 			   $type = 'special_membership';
-			   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=>$_POST,'data'=>$data,'count'=>$count,'where'=>$where);
+			   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=>$_POST,'data'=>$data,'count'=>$count,'where'=>$where,'tableId'=>$tableId);
 			   $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData); 
 			}
         }
@@ -1062,9 +1064,10 @@ class MasterAdminModel extends CI_Model
       				}
 			   }
             }
+			$tableId = 'specialMembershipTable3';
 			if($packageId>0 && !empty($update_data_2)){   
 			   $type = 'special_membership';
-			   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=>$_POST,'data'=>$data,'count'=>$count,'where'=>$where);
+			   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=>$_POST,'data'=>$data,'count'=>$count,'where'=>$where,'tableId'=>$tableId);
 			   $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData); 
 			}
         }
@@ -1105,9 +1108,10 @@ class MasterAdminModel extends CI_Model
 						   }			
 						}
 				  }
+				$tableId = 'specialMembershipTable4';  
 				if($packageId>0 && !empty($update_data_2)){   
 				   $type = 'special_membership';
-				   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=> $_POST,'data'=>$data,'count'=>$count,'where'=>$where);
+				   $postData = array('type'=>$type,'insertData'=>$update_data_2,'post'=> $_POST,'data'=>$data,'count'=>$count,'where'=>$where,'tableId'=>$tableId);
 				   $messge = $this->UpdatePackageDataTable($data,$outletIds,$masterId,$packageId,$postData); 
 				}  
 		  }
@@ -1413,14 +1417,22 @@ public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $disco
 	  $post = isset($postData['post']) ? $postData['post'] : array();
 	  $data = isset($postData['data']) ? $postData['data'] : array();
 	  $where = isset($postData['where']) ? $postData['where'] : array();
+	  $tableId = isset($postData['tableId']) ? $postData['tableId'] : '';
 	  
       $messge = "";
       $notExist = $notExistServiceId = $masterServiceOutletId  = array();
       $recordNotExist = $insertRecords = $updateRecord = FALSE; 
-      $result = $this->MultiWhereSelect('mss_salon_package_data', array('salon_package_id'=>$packageId,'master_id'=>$masterId,'is_active'=>'1'));
-        
+      $packageDataWhere = array('salon_package_id'=>$packageId,'master_id'=>$masterId,'is_active'=>'1');
+	  if($type=='special_membership'){
+		  $packageDataWhere['table_id'] = $tableId;
+	  }
+	  
+	  $result = $this->MultiWhereSelect('mss_salon_package_data',$packageDataWhere );
+       
+	   
       $assignOutletIds   = $outletIds;
       $assignServiceIds  = $insertData;
+	 
      /* Insert data if empty */
       if(empty($result['res_arr'])){
               if($type=='Wallet'){
@@ -1449,7 +1461,8 @@ public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $disco
       }else{
        $updateRecords = $masterServiceIdNotExist = array();
        $packageDataDetails = $result['res_arr'];
-	   
+	  
+	  
        if(!empty($packageDataDetails)){
      
          foreach($packageDataDetails as $packageData){
@@ -1462,6 +1475,7 @@ public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $disco
                         unset($assignOutletIds[$key]);
                       }  
                      }else{
+					
                       /* Check master Service id  */
                        if(!empty($insertData)){
                          
@@ -1470,16 +1484,23 @@ public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $disco
 							  
                             if($packageData['master_service_id']==$value['master_service_id'] && $packageData['outlet_id']==$value['outlet_id']){
                               /* UPDATE The Records */
-
-                              $this->Update($value,'mss_salon_package_data',array('master_id'=>$masterId,'outlet_id'=>$packageData['outlet_id'],'salon_package_id'=>$packageId,'master_service_id'=>$packageData['master_service_id'],'is_active'=>'1'));
+                              $updateData = array('master_id'=>$masterId,'outlet_id'=>$packageData['outlet_id'],'salon_package_id'=>$packageId,'master_service_id'=>$packageData['master_service_id'],'is_active'=>'1');
+							   if($type=='special_membership'){
+								  $updateData['table_id'] = $tableId;
+							  }
+                              $this->Update($value,'mss_salon_package_data',$updateData);
                              
                               unset($assignServiceIds[$insertKey]);
+							  
+	  
                               foreach($masterServiceIdNotExist[$value['outlet_id']] as $searchKey => $searchValue) {
                                unset($masterServiceIdNotExist[$value['outlet_id']][$searchKey]);
                               }
                             }//END IF
 
                          } // END LOOP
+						 
+						
                        }else{
                              /* Temp delete */
                              if(!in_array($packageData['master_service_id'],$masterServiceIdNotExist[$packageData['outlet_id']])){ 
@@ -1497,8 +1518,9 @@ public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $disco
                }else{
                       $notExist[] = $packageData['outlet_id'];
                }  
-             }/* End Loop */    
-            
+             }/* End Loop */
+			 
+		    
             /* TEMP DELETE */ 
             if(!empty($notExist)){
                 $updateRecord = TRUE;
@@ -1514,7 +1536,9 @@ public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $disco
                     $this->Update(array('is_active'=>'0'),'mss_salon_package_data',array('master_id'=>$masterId,'outlet_id'=>$outlet_id,'salon_package_id'=>$packageId,'master_service_id'=>$masterServiceId));
                   }
                 }
-            }  
+            }
+
+		
 
             if($type=='Wallet'){
                $insertRecords = (!empty($assignOutletIds)) ? TRUE : FALSE;
@@ -1525,14 +1549,14 @@ public function AddDiscountSubCategoryBulkPackage($data, $sub_categories, $disco
            }else{
                 $recordNotExist = TRUE; 
            }
-
-           if($recordNotExist || $insertRecords){
+		   
+		    if($recordNotExist || $insertRecords){
                $insertData = $recordInsert =  array();
                
                /* assign service */
                if($insertRecords==TRUE && $type=='Wallet'){
                  $outletIds = $assignOutletIds;
-               }elseif($insertRecords==TRUE && $type=='Services' || $type=='Discount'){
+               }elseif($insertRecords==TRUE){
                  $outletIds = $assignServiceIds;
                }
                    

@@ -4312,7 +4312,7 @@ class MasterAdmin extends CI_Controller {
 						$data['total_count_of_services'] = $this->input->post('total_no_of_services');
 						$data['salon_package_type_selected'] = $data['salon_package_type'];
 						
-						
+						 
 						$fp = fopen('package.txt', 'w');
 						fwrite($fp, print_r($data, TRUE));
 						fclose($fp);
@@ -4329,7 +4329,7 @@ class MasterAdmin extends CI_Controller {
 						$counts = 100;
 					   
 						if(!empty($counts)){
-							
+							//file_put_contents('package.txt', print_r(array($_POST,$packageId), true), FILE_APPEND);
 							if($packageId>0 && $packageId!=""){
 									
 								$result = $this->MasterAdminModel->AddDiscountServicePackage($_POST,$data,$counts,$where,$outletIds,$masterId,$packageId);

@@ -245,7 +245,7 @@
 																						   </select>
 																						</div>
 																					</td>
-																					<td style="width:150px;">
+																					<td >
 																						<div class="form-group">
 																							<label>Service</label>
 																							<select class="" id="service_id" name="service_id[]" multiple="multiple" temp="Service">
@@ -258,12 +258,13 @@
 																							<input type="text" value="" id="service_price_inr" class="form-control" name="service_price_inr[]" temp="service_price_inr" >
 																						</div>
 																					</td>-->
-																					<td colspan="2">
+																					<td >
 																						<div class="form-group">
 																							<label>Count</label>
 																							<input type="number" class="form-control" name="count_service[]" temp="Count" value="1" min="1" max="25">
 																						</div>
 																					</td>
+																					<td ></td>
 																					
 																				</tr>
 																			</tbody>
@@ -499,6 +500,7 @@
 																							<input type="number" class="form-control" name="count_discount_category_bulk[]" temp="Count" value="1" min="1" max="25">
 																						</div>
 																					</td>
+																					<td></td>
 																				</tr>
 																			</tbody>
 																		</table>
@@ -925,7 +927,7 @@
 </style>
 <script type="text/javascript">
     var	multiSelectParamsDataForOutlets = { maxHeight:150,numberDisplayed: 2,nSelectedText: 'selected' ,includeSelectAllOption: true ,buttonWidth: 250};
-	var	multiSelectParamsData = { maxHeight:150,numberDisplayed: 1,nSelectedText: 'selected' ,includeSelectAllOption: true ,buttonWidth: 150};
+	var	multiSelectParamsData = { maxHeight:150,numberDisplayed: 1,nSelectedText: 'selected' ,includeSelectAllOption: true ,buttonWidth: 100};
 	var	multiSelectParamsData1 = { maxHeight:150,numberDisplayed: 1,nSelectedText: 'selected' ,includeSelectAllOption: true };
 	
 	var	multiSelectParamsCategoryTpe = {maxHeight:150,numberDisplayed: 2,nSelectedText: 'selected' ,includeSelectAllOption: true,buttonWidth: 120,nonSelectedText:'Category Type'};
@@ -1478,9 +1480,12 @@
 								     var subCategoryObj = $(this); 		  
 								     var serviceFilterObj = $(this); 
 									 var trObj = $(this);	
-									
-									serviceRecords = (data.servicesDetails[htmlTableId]!='undefined' && data.servicesDetails[htmlTableId]!=undefined) ? data.servicesDetails[htmlTableId][rowNo] : "";
-									if(serviceRecords!=''){
+									 var records = data.servicesDetails[htmlTableId];
+									 
+									 
+									serviceRecords = data.servicesDetails[htmlTableId][rowNo];
+									if(typeof serviceRecords === "undefined"){ 
+									}else{
 										console.log('Row no.',rowNo,serviceRecords);
 										
 										
