@@ -12429,10 +12429,19 @@ public function daybook(){
 		
 		public function ChangeSmsStatus(){
 			if($this->IsLoggedIn('business_admin')){
-				$where = array(
-					'business_outlet_id'=> $_POST['business_outlet_id'],
-					'business_outlet_sms_status' => $_POST['sms_status']
-				);
+				if($_POST['sms_type']=="wapp"){
+					$where = array(
+						'business_outlet_id'=> $_POST['business_outlet_id'],
+						'whats_app_sms_status' => $_POST['sms_status']
+					);
+				}else{
+					$where = array(
+						'business_outlet_id'=> $_POST['business_outlet_id'],
+						'business_outlet_sms_status' => $_POST['sms_status']
+					);
+				}
+				
+				
 				$data = $this->BusinessAdminModel->Update($where,'mss_business_outlets','business_outlet_id');
 				if($data['success'] == 'true'){	
 					$this->ReturnJsonArray(true,false,"SMS status Updated");
