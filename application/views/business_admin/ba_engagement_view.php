@@ -52,7 +52,7 @@
               </div>
               <div class="card-body">                
                 <div class="row">
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
                         <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$new?>
@@ -61,7 +61,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
 
                     <div class="card" style="width: 10rem">
                       <div class="card-body">
@@ -72,7 +72,7 @@
                     </div>
 
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
                         <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$regular?>
@@ -81,7 +81,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
                         <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder">
@@ -89,8 +89,28 @@
                         <h6 class="card-text" style="text-align:center">Never Visited</h6>
                       </div>
                     </div>
-                  </div>
-                  <div class="col-md-2">
+									</div>
+								</div>
+								<div class="row">
+                  <div class="col-md-3">
+                    <div class="card" style="width: 10rem;">
+                      <div class="card-body">
+                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$no_risk?>
+                        </h1>
+                        <h6 class="card-text" style="text-align:center">No Risk</h6>
+                      </div>
+                    </div>
+									</div>
+									<div class="col-md-3">
+                    <div class="card" style="width: 10rem;">
+                      <div class="card-body">
+                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$dormant?>
+                        </h1>
+                        <h6 class="card-text" style="text-align:center">Dormant</h6>
+                      </div>
+                    </div>
+									</div>
+									<div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
                         <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$risk?>
@@ -99,7 +119,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
                         <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"> <?=$lost?>
