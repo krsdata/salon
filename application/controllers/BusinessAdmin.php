@@ -9273,16 +9273,16 @@ public function InsertSalary(){
             // $this->PrettyPrintArray($data['timeline']);
             if($data['timeline']['success'] == 'true'){
                 $res=array(
-                     'id' => $data['timeline']['res_arr']['id'],
-                     'r1' => $data['timeline']['res_arr']['r1'],
-										 'r2' => $data['timeline']['res_arr']['r2'],
-										 'no_risk' => $data['timeline']['res_arr']['no_risk'],
-										 'dormant_r1' => $data['timeline']['res_arr']['dormant_r1'],
-										 'dormant_r2' => $data['timeline']['res_arr']['dorant_r2'],
-                     'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
-										 'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
-										 'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
-                     'lost_customer' => $data['timeline']['res_arr']['lost_customer']
+										'id' => $data['timeline']['res_arr']['id'],
+										'r1' => $data['timeline']['res_arr']['r1'],
+										'r2' => $data['timeline']['res_arr']['r2'],
+										'no_risk' => $data['timeline']['res_arr']['no_risk'],
+										'dormant_r1' => $data['timeline']['res_arr']['dormant_r1'],
+										'dormant_r2' => $data['timeline']['res_arr']['dormant_r2'],
+										'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
+										'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
+										'lost_customer' => $data['timeline']['res_arr']['lost_customer']
                 );
             }
             else{
@@ -9294,11 +9294,20 @@ public function InsertSalary(){
 										'no_risk'	=> 30,
 										'dormant_r1'=>31,
 										'dormant_r2'=>60,
-										'at_risk_cust' => 60,
+										'at_risk_cust' => 61,
 										'at_risk_cust2'	=>90,
-                    'lost_customer' => 90
+                    'lost_customer' => 91
                );
 						}
+
+						$data['allcust']=$this->BusinessAdminModel->AllCustomerCount();
+            if($data['allcust']['success'] == 'true'){
+                $data['allcust']=($data['allcust']['res_arr'][0]['count']);
+            }
+            else{
+                $data['allcust']=0;
+            }
+
 						$data['custwithouttrans']=$this->BusinessAdminModel->CustomerWithoutTransaction();
             // $this->PrettyPrintArray($data);
             if($data['custwithouttrans']['success'] == 'true'){
@@ -10035,19 +10044,21 @@ public function InsertSalary(){
 	public function GetCustDataForTimeline(){
         if($this->IsLoggedIn('business_admin')){
             $data = $this->GetDataForAdmin("Expense");
-            // $this->PrettyPrintArray($_GET);
-            // exit;
             $data['timeline']=$this->BusinessAdminModel->DetailsById($this->session->userdata['outlets']['current_outlet'],'mss_customer_timeline_setup','business_outlet_id');
             $res1 = $this->BusinessAdminModel->DetailsById($this->session->userdata['outlets']['current_outlet'],'mss_business_outlets','business_outlet_id');
             $res1=$res1['res_arr'];
             if($data['timeline']['success'] == 'true'){
                 $res=array(
-                     'id' => $data['timeline']['res_arr']['id'],
-                     'r1' => $data['timeline']['res_arr']['r1'],
-                     'r2' => $data['timeline']['res_arr']['r2'],
-                     'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
-                     'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
-                     'lost_customer' => $data['timeline']['res_arr']['lost_customer']
+										'id' => $data['timeline']['res_arr']['id'],
+										'r1' => $data['timeline']['res_arr']['r1'],
+										'r2' => $data['timeline']['res_arr']['r2'],
+										'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
+										'no_risk'			=> $data['timeline']['res_arr']['no_risk'],
+										'dormant_r1'			=> $data['timeline']['res_arr']['dormant_r1'],
+										'dormant_r2'			=> $data['timeline']['res_arr']['dormant_r2'],
+										'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
+										'lost_customer' => $data['timeline']['res_arr']['lost_customer']
                 );
             }
             else{
@@ -10055,9 +10066,13 @@ public function InsertSalary(){
                     'id' => 0,
                     'r1' => 2,
                     'r2' => 5,
-                    'regular_cust' => 5,
-                    'at_risk_cust' => 30,
-                    'lost_customer' => 90
+										'regular_cust' => 5,
+										'no_risk'			=> 30,
+										'dormant_r1'			=> 31,
+										'dormant_r2'			=> 60,
+										'at_risk_cust' => 61,
+										'at_risk_cust2' => 90,
+                    'lost_customer' => 91
                );
             }
                 //Return the report view
@@ -10072,7 +10087,13 @@ public function InsertSalary(){
                     }
                     else if($_GET['category'] == 'Regular'){
                         $result = $this->BusinessAdminModel->ReportRegularCustomer($res);
-                    }
+										}
+										else if($_GET['category'] == 'no_risk'){
+											$result = $this->BusinessAdminModel->ReportNoRiskCustomer($res);
+										}
+										else if($_GET['category'] == 'dormant'){
+											$result = $this->BusinessAdminModel->ReportDormantCustomer($res);
+										}
                     else if($_GET['category'] == 'Risk'){
                         $riskS=array(); 
                         $data['riskS']=$this->BusinessAdminModel->RiskCustomerService($res);

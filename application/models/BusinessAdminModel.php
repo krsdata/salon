@@ -6546,17 +6546,26 @@ public function GetAttendanceAll($data){
     // engagement Customer
     // 25-04
     public function NewCustomer($data){
-        $sql="SELECT    
-            mss_transactions.txn_customer_id 
-            from 
-            mss_transactions,mss_customers 
-            WHERE 
-            mss_transactions.txn_customer_id = mss_customers.customer_id
-            AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-            GROUP BY mss_transactions.txn_customer_id
-            HAVING 
-                count(mss_transactions.txn_customer_id) = 1
-        ";
+        $sql="SELECT mss_customers.customer_name as 'Customer Name' , 
+					mss_customers.customer_mobile as 'Mobile', 
+					Count(mss_transactions.txn_id)  as 'Visits',
+					FORMAT(SUM(mss_transactions.txn_value),0) as 'LTV', 
+					FORMAT(AVG(mss_transactions.txn_value),0) as 'Avg Order Value', 
+					date(MAX(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
+					mss_customers.last_visit_branch AS 'Last Visited Store',
+					FORMAT(mss_customers.customer_rewards,2) as 'Rewards',
+					FORMAT(mss_customers.customer_virtual_wallet,0) as 'Virtual Wallet Amt',
+					FORMAT(mss_customers.customer_pending_amount,0) as 'Amount Due', 'New' As 'Category'	     
+			
+			FROM mss_customers , 
+				mss_transactions,
+				mss_business_outlets
+				WHERE  mss_customers.customer_id=mss_transactions.txn_customer_id
+			AND  mss_customers.customer_business_outlet_id= mss_business_outlets.business_outlet_id
+			AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." 
+			AND mss_transactions.txn_status =1 
+			group by mss_customers.customer_id
+			HAVING COUNT(mss_transactions.txn_id) =1 ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6566,20 +6575,24 @@ public function GetAttendanceAll($data){
         }
     }
     public function RepeatingCustomerService($data){
-        $sql="SELECT 
-                mss_transactions.txn_customer_id,
-				count(mss_transactions.txn_customer_id) 
-            from 
-            mss_transactions,
-			mss_customers 
-            WHERE 
-                mss_transactions.txn_customer_id = mss_customers.customer_id
-            AND mss_customers.customer_business_outlet_id= ".$this->session->userdata['outlets']['current_outlet']."
-            GROUP BY mss_transactions.txn_customer_id
-            HAVING 
-                count(mss_transactions.txn_customer_id) >= ".$this->db->escape($data['r1'])." AND 
-				COUNT(mss_transactions.txn_customer_id) <= ".$this->db->escape($data['r2'])."
-            ";
+        $sql="SELECT mss_customers.customer_name as 'Customer Name' , 
+        mss_customers.customer_mobile as 'Mobile', 
+        Count(mss_transactions.txn_id)  as 'Visits',
+        FORMAT(SUM(mss_transactions.txn_value),0) as 'LTV', 
+        FORMAT(AVG(mss_transactions.txn_value),0) as 'Avg Order Value', 
+        date(MAX(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
+	    mss_customers.last_visit_branch AS 'Last Visited Store',
+        FORMAT(mss_customers.customer_rewards,2) as 'Rewards',
+	    FORMAT(mss_customers.customer_virtual_wallet,0) as 'Virtual Wallet Amt',
+        FORMAT(mss_customers.customer_pending_amount,0) as 'Amount Due', 'New' As 'Category'  
+		FROM mss_customers , mss_transactions,mss_business_outlets
+			WHERE  mss_customers.customer_id=mss_transactions.txn_customer_id
+		AND  mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
+		AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." 
+		
+		AND mss_transactions.txn_status =1 
+		group by mss_customers.customer_id
+		HAVING COUNT(mss_transactions.txn_id) BETWEEN ".$this->db->escape($data['r1'])." and ".$this->db->escape($data['r2'])."  ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6589,19 +6602,26 @@ public function GetAttendanceAll($data){
         }
     }
     public function RegularCustomer($data){
-        $sql="SELECT 
-                mss_transactions.txn_customer_id,
-				count(mss_transactions.txn_customer_id) 
-            from 
-                mss_transactions,
-				mss_customers 
-            WHERE 
-                mss_transactions.txn_customer_id = mss_customers.customer_id
-            AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-            GROUP BY mss_transactions.txn_customer_id
-            HAVING 
-                count(mss_transactions.txn_customer_id) > ".$this->db->escape($data['regular_cust'])." 
-            ";
+        $sql="SELECT mss_customers.customer_name as 'Customer Name' , 
+        mss_customers.customer_mobile as 'Mobile', 
+        Count(mss_transactions.txn_id)  as 'Visits',
+        FORMAT(SUM(mss_transactions.txn_value),0) as 'LTV', 
+        FORMAT(AVG(mss_transactions.txn_value),0) as 'Avg Order Value', 
+        date(MAX(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
+	    mss_customers.last_visit_branch AS 'Last Visited Store',
+        FORMAT(mss_customers.customer_rewards,2) as 'Rewards',
+	    FORMAT(mss_customers.customer_virtual_wallet,0) as 'Virtual Wallet Amt',
+        FORMAT(mss_customers.customer_pending_amount,0) as 'Amount Due', 'New' As 'Category'	     
+  
+		FROM mss_customers , mss_transactions,
+		mss_business_outlets
+			WHERE  mss_customers.customer_id=mss_transactions.txn_customer_id
+		AND  mss_customers.customer_business_outlet_id= mss_business_outlets.business_outlet_id
+		AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." 
+		
+		AND mss_transactions.txn_status =1 
+		group by mss_customers.customer_id
+		HAVING COUNT(mss_transactions.txn_id) > ".$this->db->escape($data['regular_cust'])." ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6611,33 +6631,36 @@ public function GetAttendanceAll($data){
         }
     }
     public function RiskCustomerService($data){
-        $sql = "SELECT 
-		mss_customers.customer_name as 'Name',
-		mss_customers.customer_mobile as 'Mobile',
-		'Regular' as 'Category',
-		SUM(mss_transactions.txn_value) as 'Total_Spend',
-		Max(mss_transactions.txn_datetime) as 'Last_Visit_Date' 
-		from 
-		mss_transactions,
-		mss_customers 
-		WHERE 
-		mss_transactions.txn_customer_id = mss_customers.customer_id
-		AND date(mss_transactions.txn_datetime) < (CURRENT_DATE - INTERVAL  ".$this->db->escape($data['at_risk_cust'])." DAY)
-		AND date(mss_transactions.txn_datetime) > (CURRENT_DATE - INTERVAL  ".$this->db->escape($data['at_risk_cust2'])." DAY)
-		AND mss_customers.customer_business_outlet_id= ".$this->session->userdata['outlets']['current_outlet']."
-		GROUP BY mss_transactions.txn_customer_id";
+        $sql = "SELECT  mss_customers.customer_id,
+		mss_customers.customer_name as 'Customer Name' , 
+        mss_customers.customer_mobile as 'Mobile', 
+        Count(mss_transactions.txn_id)  as 'Visits',
+        FORMAT(SUM(mss_transactions.txn_value),0) as 'LTV', 
+        FORMAT(AVG(mss_transactions.txn_value),0) as 'Avg Order Value', 
+        max(date(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
+		mss_customers.last_visit_branch AS 'Last Visited Store',
+        FORMAT(mss_customers.customer_rewards,2) as 'Rewards',
+		FORMAT(mss_customers.customer_virtual_wallet,0) as 'Virtual Wallet Amt',
+        FORMAT(mss_customers.customer_pending_amount,0) as 'Amount Due', 'LOST' As 'Category'  
+		FROM mss_customers , mss_transactions, mss_business_outlets
+		WHERE  mss_customers.customer_id=mss_transactions.txn_customer_id
+		AND  mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
+		AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
+		AND mss_transactions.txn_status =1 
+		group by mss_customers.customer_id
+		HAVING MAX(date(mss_transactions.txn_datetime)) BETWEEN (CURRENT_DATE - INTERVAL ".$this->db->escape($data['at_risk_cust2'])." day) and (CURRENT_DATE- INTERVAL ".$this->db->escape($data['at_risk_cust'])." day) ";
 	// $sql = str_replace(",)",")",$sql);
         $query = $this->db->query($sql);
-		if($query){
-            $result = $query->result_array();
-            $customer_id = $result[0]['customer_id'];
-            if(!empty($customer_id)){
-                 $sql = "SELECT mss_customers.customer_id FROM mss_customers WHERE mss_customers.customer_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND mss_customers.customer_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." AND mss_customers.customer_id NOT IN ($customer_id)";
-                    // $sql = str_replace(",)",")",$sql);
-                    $query = $this->db->query($sql);
-            }
+		// if($query){
+        //     $result = $query->result_array();
+        //     $customer_id = $result[0]['customer_id'];
+        //     if(!empty($customer_id)){
+        //          $sql = "SELECT mss_customers.customer_id FROM mss_customers WHERE mss_customers.customer_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND mss_customers.customer_business_admin_id = ".$this->session->userdata['logged_in']['business_admin_id']." AND mss_customers.customer_id NOT IN ($customer_id)";
+        //             // $sql = str_replace(",)",")",$sql);
+        //             $query = $this->db->query($sql);
+        //     }
            
-        }
+        // }
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
         }
@@ -6845,19 +6868,54 @@ $sql = str_replace(",)",")",$sql);
 	}
 	
 	public function NoRiskCustomer($data){
-        $sql="SELECT 
-            mss_customers.customer_name as 'Name',mss_customers.customer_mobile as 'Mobile',
-			'No Risk' as 'Category',
-			SUM(mss_transactions.txn_value) as 'Total_Spend',
-			Max(mss_transactions.txn_datetime) as 'Last_Visit_Date' 
-            from 
-            mss_transactions,
-			mss_customers 
-            WHERE 
-            mss_transactions.txn_customer_id = mss_customers.customer_id
-			AND date(mss_transactions.txn_datetime) > (CURRENT_DATE - INTERVAL  1 MONTH)
-            AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-            GROUP BY mss_transactions.txn_customer_id";
+        $sql="SELECT mss_customers.customer_name as 'Customer Name' , 
+        mss_customers.customer_mobile as 'Mobile', 
+        Count(mss_transactions.txn_id)  as 'Visits',
+        FORMAT(SUM(mss_transactions.txn_value),0) as 'LTV', 
+        FORMAT(AVG(mss_transactions.txn_value),0) as 'Avg Order Value', 
+        date(MAX(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
+		mss_customers.last_visit_branch AS 'Last Visited Store',
+        FORMAT(mss_customers.customer_rewards,2) as 'Rewards',
+		FORMAT(mss_customers.customer_virtual_wallet,0) as 'Virtual Wallet Amt',
+        FORMAT(mss_customers.customer_pending_amount,0) as 'Amount Due', 'NO RISK' As 'Category'	     
+  
+			FROM mss_customers , mss_transactions,
+			mss_business_outlets
+			WHERE  mss_customers.customer_id=mss_transactions.txn_customer_id
+			AND mss_customers.customer_business_outlet_id= mss_business_outlets.business_outlet_id
+			AND mss_business_outlets.business_outlet_id= ".$this->session->userdata['outlets']['current_outlet']."
+			AND mss_transactions.txn_status =1 
+			group by mss_customers.customer_id
+			HAVING MAX(date(mss_transactions.txn_datetime)) > CURRENT_DATE - INTERVAL ".$this->db->escape($data['no_risk'])." DAY ";
+        $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+
+	public function ReportNoRiskCustomer($data){
+        $sql="SELECT mss_customers.customer_name as 'Name' , 
+        mss_customers.customer_mobile as 'Mobile', 
+        Count(mss_transactions.txn_id)  as 'Visits',
+        FORMAT(SUM(mss_transactions.txn_value),0) as 'Total_Spend', 
+        FORMAT(AVG(mss_transactions.txn_value),0) as 'Avg Order Value', 
+        date(MAX(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
+		mss_customers.last_visit_branch AS 'Last Visited Store',
+        FORMAT(mss_customers.customer_rewards,2) as 'Rewards',
+		FORMAT(mss_customers.customer_virtual_wallet,0) as 'Virtual Wallet Amt',
+        FORMAT(mss_customers.customer_pending_amount,0) as 'Amount Due', 'NO RISK' As 'Category'	     
+  
+			FROM mss_customers , mss_transactions,
+			mss_business_outlets
+			WHERE  mss_customers.customer_id=mss_transactions.txn_customer_id
+			AND mss_customers.customer_business_outlet_id= mss_business_outlets.business_outlet_id
+			AND mss_business_outlets.business_outlet_id= ".$this->session->userdata['outlets']['current_outlet']."
+			AND mss_transactions.txn_status =1 
+			group by mss_customers.customer_id
+			HAVING MAX(date(mss_transactions.txn_datetime)) > CURRENT_DATE - INTERVAL ".$this->db->escape($data['no_risk'])." DAY ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6868,21 +6926,54 @@ $sql = str_replace(",)",")",$sql);
 	}
 	
 	public function DormantCustomer($data){
-        $sql="SELECT 
-            mss_customers.customer_name as 'Name',
-			mss_customers.customer_mobile as 'Mobile',
-			'Regular' as 'Category',
-			SUM(mss_transactions.txn_value) as 'Total_Spend',
-			Max(mss_transactions.txn_datetime) as 'Last_Visit_Date' 
-            from 
-            mss_transactions,
-			mss_customers 
-            WHERE 
-            mss_transactions.txn_customer_id = mss_customers.customer_id
-			AND date(mss_transactions.txn_datetime) > (CURRENT_DATE - INTERVAL  2 MONTH)
-			AND date(mss_transactions.txn_datetime) < (CURRENT_DATE - INTERVAL  1 MONTH)
-            AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-            GROUP BY mss_transactions.txn_customer_id ";
+        $sql="SELECT  mss_customers.customer_id,
+		mss_customers.customer_name AS 'Name', 
+        mss_customers.customer_mobile AS 'Mobile', 
+        Count(mss_transactions.txn_id)  as 'Visits',
+        FORMAT(SUM(mss_transactions.txn_value),0) AS 'Total_Spend', 
+        FORMAT(AVG(mss_transactions.txn_value),0) as 'Avg Order Value', 
+        max(date(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
+		mss_customers.last_visit_branch AS 'Last Visited Store',
+        FORMAT(mss_customers.customer_rewards,2) as 'Rewards',
+		FORMAT(mss_customers.customer_virtual_wallet,0) as 'Virtual Wallet Amt',
+        FORMAT(mss_customers.customer_pending_amount,0) as 'Amount Due', 'LOST' As 'Category'  
+		FROM mss_customers , mss_transactions, mss_business_outlets
+		WHERE  mss_customers.customer_id=mss_transactions.txn_customer_id
+		AND  mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
+		AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
+		AND mss_transactions.txn_status =1 
+		group by mss_customers.customer_id
+		HAVING MAX(date(mss_transactions.txn_datetime)) BETWEEN (CURRENT_DATE - INTERVAL ".$this->db->escape($data['dormant_r2'])." day) and (CURRENT_DATE- INTERVAL ".$this->db->escape($data['dormant_r1'])." day) ";
+        $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+
+	
+
+	public function ReportDormantCustomer($data){
+        $sql="SELECT  mss_customers.customer_id,
+		mss_customers.customer_name AS 'Name' , 
+        mss_customers.customer_mobile AS 'Mobile', 
+        Count(mss_transactions.txn_id)  as 'Visits',
+        FORMAT(SUM(mss_transactions.txn_value),0) as 'Total_Spend', 
+        FORMAT(AVG(mss_transactions.txn_value),0) as 'Avg Order Value', 
+        max(date(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
+		mss_customers.last_visit_branch AS 'Last Visited Store',
+        FORMAT(mss_customers.customer_rewards,2) as 'Rewards',
+		FORMAT(mss_customers.customer_virtual_wallet,0) as 'Virtual Wallet Amt',
+        FORMAT(mss_customers.customer_pending_amount,0) as 'Amount Due', 'LOST' As 'Category'  
+		FROM mss_customers , mss_transactions, mss_business_outlets
+		WHERE  mss_customers.customer_id=mss_transactions.txn_customer_id
+		AND  mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
+		AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
+		AND mss_transactions.txn_status =1 
+		group by mss_customers.customer_id
+		HAVING MAX(date(mss_transactions.txn_datetime)) BETWEEN (CURRENT_DATE - INTERVAL ".$this->db->escape($data['dormant_r2'])." day) and (CURRENT_DATE- INTERVAL ".$this->db->escape($data['dormant_r1'])." day) ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());

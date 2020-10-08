@@ -85,7 +85,7 @@
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
                         <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder">
-                          <?=$custwithouttrans?></h1>
+                          <?=($allcust-($new+$regular+$repeat))?></h1>
                         <h6 class="card-text" style="text-align:center">Never Visited</h6>
                       </div>
                     </div>
@@ -147,7 +147,9 @@
                       <option value="All">All Customer</option>
                       <option value="New">New Customer</option>
                       <option value="Repeat">Repeat Customer</option>
-                      <option value="Regular">Regular Customer</option>
+											<option value="Regular">Regular Customer</option>
+											<option value="no_risk">No Risk Customer</option>
+											<option value="dormant">Dormant Customer</option>
                       <option value="Risk">Risk Customer</option>
                       <option value="Lost">Lost Customer</option>
                     </select>
@@ -170,7 +172,7 @@
                   </div>
                   <div class="col-md-2">
                     <label>&emsp;</label>
-                    <input style="float:right" type="submit" value="Download" id="download" name="download"
+                    <input style="float:right" type="submit" class="btn btn-primary" value="Download" id="download" name="download"
                       class="form-control" style="width:100px">
                   </div>
                 </div>
@@ -213,7 +215,6 @@
     </script>
     <script type="text/javascript">
     $("#category").on('change', function(e) {
-
       var category = document.getElementById('category').value;
       // alert(category);
       var parameters = {

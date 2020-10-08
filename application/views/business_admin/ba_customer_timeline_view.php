@@ -107,7 +107,7 @@
                     <div class="card-body">
                       <div class="card" style="width: 13rem;;border:none">
                         <div class="card-body">
-                          <h3 class="card-title" style="text-align:center"><?=$custwithouttrans?></h3>
+                          <h3 class="card-title" style="text-align:center"><?=($allcust - ($new+$regular+$repeat))?></h3>
                           <h6 class="card-text" style="text-align:center">Never Visited</h6>
                           <hr style="height:2px;border-width:0;color:gray;background-color:red">
                           <div classs="row" style="text-align:center">
