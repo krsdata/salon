@@ -26,7 +26,10 @@ $url = "https://salonfirst.in";
   <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
   <link href="assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
   <link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
-  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+	<link href="assets/vendor/aos/aos.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.css" rel="stylesheet" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.js"></script>
+
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
@@ -39,7 +42,17 @@ $url = "https://salonfirst.in";
   * Template URL: https://bootstrapmade.com/vesperr-free-bootstrap-template/
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+	======================================================== -->
+	<style>
+	#owl-demo .item{
+  margin: 3px;
+}
+#owl-demo .item img{
+  display: block;
+  width: 10%;
+  height: auto;
+}
+		</style>
 </head>
 
 <body>
@@ -112,6 +125,34 @@ $url = "https://salonfirst.in";
   </section><!-- End Hero -->
 
   <main id="main">
+
+						<div id="ac-wrapper" style='display:none'>
+							<div id="popup">
+							<div class="row ac-wraper">
+											<div class="col-md-1">
+											</div>
+											<div class="col-md-2">
+											<img src="assets/img/clients/birac_logo.jpg" class="img-fluid">
+											</div>
+											<div class="col-md-2">
+											<img src="assets/img/clients/birac_logo.jpg" class="img-fluid">
+											</div>
+											<div class="col-md-2">
+											<img src="assets/img/clients/birac_logo.jpg" class="img-fluid">
+											</div>
+											<div class="col-md-2">
+											<img src="assets/img/clients/birac_logo.jpg" class="img-fluid">
+											</div>
+											<div class="col-md-2">
+											<img src="assets/img/clients/birac_logo.jpg" class="img-fluid">
+											</div>
+											<div class="col-md-1">
+								<input type="submit" name="submit" value="Submit" onClick="PopUp('hide')" />
+
+											</div>
+										</div>    
+							</div>
+						</div>
 
     <!-- ======= Clients Section ======= -->
     <!-- <section id="clients" class="clients clients">
@@ -544,17 +585,11 @@ $url = "https://salonfirst.in";
 
         <div class="section-title" data-aos="fade-up">
           <h2>A Few More Happy Customers</h2>
-          <!-- <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem</p> -->
         </div>
 
         <div class="row" data-aos="fade-up" data-aos-delay="200">
           <div class="col-lg-12 d-flex justify-content-center">
-            <!-- <ul id="portfolio-flters">
-              <li data-filter="*" class="filter-active">All</li>
-              <li data-filter=".filter-app">App</li>
-              <li data-filter=".filter-card">Card</li>
-              <li data-filter=".filter-web">Web</li>
-            </ul> -->
+            
           </div>
         </div>
 
@@ -563,184 +598,136 @@ $url = "https://salonfirst.in";
           <div class="col-lg-2 col-md-6 portfolio-item filter-app">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-1.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info"> -->
-                <!-- <h4>App 1</h4>
-                <p>App</p> -->
-                <!-- <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-1.jpg" data-gall="portfolioGallery" class="venobox" title="App 1"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div> -->
-              <!-- </div> -->
+              
             </div>
           </div>
 
           <div class="col-lg-2 col-md-6 portfolio-item filter-web">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-2.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info">
-                <h4>Web 3</h4>
-                <p>Web</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-2.jpg" data-gall="portfolioGallery" class="venobox" title="Web 3"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
             </div>
           </div>
 
           <div class="col-lg-2 col-md-6 portfolio-item filter-app">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-3.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info">
-                <h4>App 2</h4>
-                <p>App</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-3.jpg" data-gall="portfolioGallery" class="venobox" title="App 2"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
             </div>
           </div>
 
           <div class="col-lg-2 col-md-6 portfolio-item filter-card">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-4.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info">
-                <h4>Card 2</h4>
-                <p>Card</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-4.jpg" data-gall="portfolioGallery" class="venobox" title="Card 2"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
+              
             </div>
           </div>
 
           <div class="col-lg-2 col-md-6 portfolio-item filter-web">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-5.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info">
-                <h4>Web 2</h4>
-                <p>Web</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-5.jpg" data-gall="portfolioGallery" class="venobox" title="Web 2"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
+             
             </div>
           </div>
 
           <div class="col-lg-2 col-md-6 portfolio-item filter-app">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-6.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info">
-                <h4>App 3</h4>
-                <p>App</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-6.jpg" data-gall="portfolioGallery" class="venobox" title="App 3"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
+              
             </div>
           </div>
 
           <div class="col-lg-2 col-md-6 portfolio-item filter-card">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-7.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info">
-                <h4>Card 1</h4>
-                <p>Card</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-7.jpg" data-gall="portfolioGallery" class="venobox" title="Card 1"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
+              
             </div>
           </div>
 
           <div class="col-lg-2 col-md-6 portfolio-item filter-card">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-8.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info">
-                <h4>Card 3</h4>
-                <p>Card</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-8.jpg" data-gall="portfolioGallery" class="venobox" title="Card 3"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
+              
             </div>
           </div>
 
           <div class="col-lg-2 col-md-6 portfolio-item filter-web">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-9.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info">
-                <h4>Web 3</h4>
-                <p>Web</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-9.jpg" data-gall="portfolioGallery" class="venobox" title="Web 3"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
+              
             </div>
           </div>
 
           <div class="col-lg-2 col-md-6 portfolio-item filter-web">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-13.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info">
-                <h4>Web 3</h4>
-                <p>Web</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-9.jpg" data-gall="portfolioGallery" class="venobox" title="Web 3"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
+              
             </div>  
           </div>
 
           <div class="col-lg-2 col-md-6 portfolio-item filter-web">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-11.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info">
-                <h4>Web 3</h4>
-                <p>Web</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-9.jpg" data-gall="portfolioGallery" class="venobox" title="Web 3"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
+              
             </div>  
           </div>
 
           <div class="col-lg-2 col-md-6 portfolio-item filter-web">
             <div class="portfolio-wrap">
               <img src="assets/img/portfolio/portfolio-12.jpg" class="img-fluid" alt="">
-              <!-- <div class="portfolio-info">
-                <h4>Web 3</h4>
-                <p>Web</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-9.jpg" data-gall="portfolioGallery" class="venobox" title="Web 3"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
+              
             </div>  
           </div>
+        </div>
+      </div>
+		</section><!--End Portfolio Section-->
+		<section id="portfolio" class="portfolio">
+      <div class="container">
 
-          <!-- <div class="col-lg-2 col-md-6 portfolio-item filter-web">
+        <div class="section-title" data-aos="fade-up">
+          <h2>Supported By :-</h2>
+        </div>
+
+        <div class="row" data-aos="fade-up" data-aos-delay="200">
+          <div class="col-lg-12 d-flex justify-content-center">
+
+          </div>
+        </div>
+
+        <div class="row portfolio-container" data-aos="fade-up" data-aos-delay="400">
+
+          <div class="col-lg-2 col-md-6 portfolio-item filter-app">
             <div class="portfolio-wrap">
-              <img src="assets/img/portfolio/portfolio-13.jpg" class="img-fluid" alt=""> -->
-              <!-- <div class="portfolio-info">
-                <h4>Web 3</h4>
-                <p>Web</p>
-                <div class="portfolio-links">
-                  <a href="assets/img/portfolio/portfolio-9.jpg" data-gall="portfolioGallery" class="venobox" title="Web 3"><i class="bx bx-plus"></i></a>
-                  <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
-                </div>
-              </div> -->
-            <!-- </div>  
-          </div> -->
+              <img src="assets/img/clients/riidlwithR.png" class="img-fluid" alt="">
+              
+            </div>
+          </div>
+
+          <div class="col-lg-2 col-md-6 portfolio-item filter-web">
+            <div class="portfolio-wrap">
+						<img src="assets/img/clients/Logo_SVU.jpg" class="img-fluid" alt="">
+            </div>
+          </div>
+
+          <div class="col-lg-2 col-md-6 portfolio-item filter-app">
+            <div class="portfolio-wrap">
+						<img src="assets/img/clients/DST-logo.png" class="img-fluid" alt="">
+            </div>
+          </div>
+
+          <div class="col-lg-2 col-md-6 portfolio-item filter-card">
+            <div class="portfolio-wrap">
+						<img src="assets/img/clients/msis_logo.png" class="img-fluid" alt="">              
+            </div>
+					</div>
+					<div class="col-lg-2 col-md-6 portfolio-item filter-card">
+            <div class="portfolio-wrap">
+						<img src="assets/img/clients/birac_logo.jpg" class="img-fluid" alt="">              
+            </div>
+					</div>
+					<div class="col-lg-2 col-md-6 portfolio-item filter-card">
+            <div class="portfolio-wrap">
+						<img src="assets/img/clients/birac_logo.jpg" class="img-fluid" alt="">              
+            </div>
+          </div>
         </div>
       </div>
     </section><!--End Portfolio Section-->
@@ -905,20 +892,24 @@ $url = "https://salonfirst.in";
       <div class="container">
 
         <div class="section-title" data-aos="fade-up">
-          <h2>Frequently Asked Questions</h2>
+          <h2>Supported By :-</h2>
         </div>
 
-        <div class="row faq-item d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
-          <div class="col-lg-5">
-            <i class="ri-question-line"></i>
-            <h4>Non consectetur a erat nam at lectus urna duis?</h4>
-          </div>
-          <div class="col-lg-7">
-            <p>
-              Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.
-            </p>
-          </div>
-        </div>End F.A.Q Item -->
+			</div>
+			<div id="owl-demo">
+          
+  <div class="item"><img src="assets/img/salon_first_logo.png" alt="Owl Image" wi></div>
+  <div class="item"><img src="assets/owl2.jpg" alt="Owl Image"></div>
+  <div class="item"><img src="assets/owl3.jpg" alt="Owl Image"></div>
+  <div class="item"><img src="assets/owl4.jpg" alt="Owl Image"></div>
+  <div class="item"><img src="assets/owl5.jpg" alt="Owl Image"></div>
+  <div class="item"><img src="assets/owl6.jpg" alt="Owl Image"></div>
+  <div class="item"><img src="assets/owl7.jpg" alt="Owl Image"></div>
+  <div class="item"><img src="assets/owl8.jpg" alt="Owl Image"></div>
+ 
+</div>
+		</div>
+    </section> -->
 
         <!-- <div class="row faq-item d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
           <div class="col-lg-5">
@@ -1016,6 +1007,7 @@ $url = "https://salonfirst.in";
 
           <div class="col-lg-5 col-md-12" data-aos="fade-up" data-aos-delay="300">
             <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+						
               <div class="form-group">
                 <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" style="border-radius: 5px;"/>
                 <div class="validate"></div>
@@ -1111,7 +1103,37 @@ Links
 </body>
 
 </html>
+<script type="text/javascript">
+function PopUp(hideOrshow) {
+    if (hideOrshow == 'hide') document.getElementById('ac-wrapper').style.display = "none";
+    else document.getElementById('ac-wrapper').removeAttribute('style');
+}
+window.onload = function () {
+    setTimeout(function () {
+        PopUp('show');
+    }, 5000);
+}
+</script>
+<script>
+	$(document).ready(function() {
+ 
+		$("#owl-demo").owlCarousel({
 
+				autoPlay: 3000, //Set AutoPlay to 3 seconds
+
+				items : 4,
+				itemsDesktop : [1199,3],
+				itemsDesktopSmall : [979,3]
+
+		});
+
+		setTimeout(function(){
+				PopUp();
+		},5000); // 5000 to load it after 5 seconds from page load
+
+
+		});
+	</script>
 
 
 <?php

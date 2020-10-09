@@ -47,6 +47,144 @@
 					?>
 					<div class="col-md-12">
 						<div class="card">
+							<div class="card-header" style="margin-left:10px;">
+							<div class="row">
+								<div class="col-md-8">
+									<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight: bolder">
+										<li class="nav-item">
+											<a class="nav-link active" data-toggle="tab" href="#tab-1">Marketing</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" data-toggle="tab" href="#tab-2">Business Ops</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" data-toggle="tab" href="#tab-3">Staff</a>
+										</li>
+									</ul>
+								</div>
+								<div class="col-md-4">
+								<button type="submit" class="btn btn-primary float-md-middle" data-toggle="modal" data-target="#ModalCreateTrigger" >New Trigger</button>
+
+								</div>
+							</div>
+								
+							</div>
+							<div class="card-body">
+								<div class="tab-content">
+									<div class="tab-pane show active" id="tab-1" role="tabpanel">
+										<div class="row">
+											<div class="col-md-12">
+												<div class="card">
+													<div class="card-header">
+														<h4></h4>
+													</div>
+													<div class="card-body">
+														<table class="datatables-basic table table-hover" style="width:100%;">
+															<thead>
+																<th> S. No.</th>
+																<th>Trigger Name</th>
+																<th>Trigger Description</th>
+																<th>SMS/WA</th>
+																<th>Outlet Applicable</th>
+																<th>frequency Type</th>
+																<th>frequency Details</th>
+																<th>Action</th>
+															</thead>
+															<tbody>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>									
+									<div class="tab-pane" id="tab-2" role="tabpanel">
+										<div class="row">
+											<div class="col-md-12">
+												<div class="card">
+													<div class="card-header">
+														<h4></h4>
+													</div>
+													<div class="card-body">
+													<table class="datatables-basic table table-hover" style="width:100%;">
+															<thead>
+																<th> S. No.</th>
+																<th>Trigger Name</th>
+																<th>Trigger Description</th>
+																<th>SMS/WA</th>
+																<th>Outlet Applicable</th>
+																<th>frequency Type</th>
+																<th>frequency Details</th>
+																<th>Action</th>
+															</thead>
+															<tbody>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="tab-3" role="tabpanel">
+										<div class="card">
+											<div class="card-header">											
+												<div class="row">
+													<div class="col-md-10">
+														<h3></h3>
+													</div>
+													<div class="col-md-2">
+													<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
+													</div>
+												</div>
+											</div>
+											<div class="card-body">
+											<table class="datatables-basic table table-hover" style="width:100%;">
+															<thead>
+																<th> S. No.</th>
+																<th>Trigger Name</th>
+																<th>Trigger Description</th>
+																<th>SMS/WA</th>
+																<th>Outlet Applicable</th>
+																<th>frequency Type</th>
+																<th>frequency Details</th>
+																<th>Action</th>
+															</thead>
+															<tbody>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+															</tbody>
+														</table>
+											</div>
+										</div>
+									</div>									
+								</div>
+							</div>
+						</div>	
+					</div>
+					<div class="col-md-12">
+						<div class="card">
 							<div class="card-header">
 								<div class="row">
 									<div class="col-md-9">
@@ -202,6 +340,7 @@
 							</div>
 						</div>	
 					</div>
+					
 				
 					<!-- modal -->
 						<div class="modal" id="defaultModalSuccess" tabindex="-1" role="dialog" aria-hidden="true">
@@ -303,6 +442,65 @@
 								</div>
 							</div>
 						</div>
+						<div class="modal fade" id="ModalCreateTrigger" tabindex="-1" role="dialog" aria-hidden="true">
+									<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+										<div class="modal-content">
+											<div class="modal-header" style="background-color:#47bac1;">
+												<h5 class="modal-title text-white">Create Trigger</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body m-3">
+												<div class="row">
+													<div class="col-md-12">
+														<form id="CreateTrigger" method="POST" action="#">
+															<div class="form-row">
+																<div class="form-group col-md-4">
+																	<label>Trigger Name</label>
+																	<input type="text" class="form-control" placeholder="Trigger Name" name="trigger_name">
+																</div>
+																<div class="form-group col-md-4">
+																	<label>Trigger Discription</label>
+																	<input type="text" class="form-control" placeholder="Description"  name="business_outlet_firm_name">
+																</div>															
+																<div class="form-group col-md-4">
+																	<label>Mode</label>
+																	<select name="mode" class="form-control">
+																		<option value="">SMS</option>
+																		<option value="">WA</option>
+																	</select>
+																</div>
+															</div>
+															<div class="form-row">
+																<div class="form-group col-md-4">
+																	<label>Frequency Type</label>
+																	<input type="text" class="form-control" placeholder="Frequncy Type" name="business_outlet_address">
+																</div>															
+																<div class="form-group col-md-4">
+																	<label>Frequency Details</label>
+																	<input type="email" class="form-control" placeholder="Frequency detail" name="business_outlet_email">
+																</div>
+																<div class="form-group col-md-4">
+																	<label>Message Text</label>
+																	<textarea type="text" class="form-control" placeholder="" name="business_outlet_mobile" style="height:130px;"></textarea>
+																</div>
+															</div>															
+															<button type="submit" class="btn btn-primary">Submit</button>
+														</form>
+														<div class="alert alert-dismissible feedback" role="alert">
+															<button type="button" class="close" data-dismiss="alert" aria-label="Close" style="margin:0px;">
+																<span aria-hidden="true">&times;</span>
+									            </button>
+															<div class="alert-message">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 					<!-- end -->
 					<?php
 						}

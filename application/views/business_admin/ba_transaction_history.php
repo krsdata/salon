@@ -62,9 +62,9 @@
 								</li>
 							</ul>
 						</div>
-						<div class="col-md-5" id="searchforcust">
+						<div class="col-md-6" id="searchforcust">
 							<div class="form-group">
-								<div class="input-group" style="margin-left:280px;margin-top:5px">
+								<div class="input-group" style="margin-left:0px;margin-top:5px">
 									<input type="text" placeholder="Search Customer by name/contact no." class="form-control" id="SearchCustomer">
 									<span class="input-group-append">
 										<button class="btn btn-success" type="button" id="SearchCustomerButton" Customer-No="Nothing" style="padding:0px 0px;">Search</button>
@@ -73,8 +73,7 @@
 							</div>
 						</div>
 						<div class="card-body">
-							<div class="tab-content">
-                           
+							<div class="tab-content">                           
 								<div class="tab-pane fade show active" id="tab-1" role="tabpanel">
 									<div class="card-header">
 									
@@ -1622,4 +1621,13 @@
 				}
 			});
    		});
+</script>
+<script>
+	var input = document.getElementById("SearchCustomer");
+	input.addEventListener("keyup", function(event) {
+		if (event.keyCode === 13) {
+		event.preventDefault();
+		document.getElementById("SearchCustomerButton").click();
+		}
+	});
 </script>
