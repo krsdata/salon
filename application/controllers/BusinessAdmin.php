@@ -5577,6 +5577,25 @@ public function GetEmployee(){
 					$data['upcomingDate']=$data['upcomingDate']['res_arr'];
 					// $this->PrettyPrintArray($data['upcomingDate']);
 					// exit;
+                    $trigger_detail =$this->BusinessAdminModel->GetTrigger();
+                    $data['trigger_detail'] = [];
+                    if($trigger_detail['success']){
+                        $data['trigger_detail'] = $trigger_detail['res_arr'];
+                    }                    
+                    $outlet = [];
+                    foreach ($data['business_outlet_details'] as $key => $ol) {
+                        $outlet[] = $ol['business_outlet_id'];
+                    }
+                    
+                    $activity =$this->BusinessAdminModel->GetOutLetSMSActivity($outlet);
+                    $ac = [];
+                    if($activity['success']){
+                        $activity = $activity['res_arr'];                        
+                        foreach ($activity as $key => $a) {
+                            $ac[] = $a['outlet_id']."_".$a['services_number'];
+                        }
+                    }  
+                    $data['activity'] = $ac;                                      
 					$this->load->view('business_admin/ba_autoEngage_view',$data);
 			}
 			else{
@@ -11868,27 +11887,109 @@ public function daybook(){
                 $key_info['keys'][3] = $temp;
 
 
-                $p_mode = [];
-                foreach ($key_info as $key => $k) {
-                    foreach ($k as $key => $keys) {
-                        if(!in_array($keys, $p_mode)){
-                            $p_mode[] = $keys;
-                        }
-                    }                                    
-                }
+                // $p_mode = [];
+                // foreach ($key_info as $key => $k) {
+                //     foreach ($k as $key => $keys) {
+                //         if(!in_array($keys, $p_mode)){
+                //             $p_mode[] = $keys;
+                //         }
+                //     }                                    
+                // }
 
         }
         
-        $p_mode = array_filter($p_mode);        
+        // $p_mode = array_filter($p_mode);        
+        // $p_mode = call_user_func_array('array_merge', $p_mode);
+        // $p_mode = array_unique($p_mode);
+        // $p_mode = array_values($p_mode);        
+        // $data['p_mode'] = $p_mode;
+        // $data['opening_balance_data'] = $opening_balance_data;
+        // $data['pending_amount_data'] = $pending_amount_data;
+        // $data['expenses_data'] = $expenses_data;
+        // $data['transaction_data'] = $transaction_data;
+        // $data['date'] = $date;
+        $result = $this->BusinessAdminModel->GetPaymentMode();
+        if($result['success']){
+            $mode = $result['res_arr'];
+            
+            foreach ($mode as $key => $value) {
+                if(!empty($value['txn_settlement_payment_mode'])){                        
+                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
+                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
+                    }else{
+                        $result = json_decode($value['txn_settlement_payment_mode']);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
+                        }else{
+                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
+                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
+                        }                            
+                    }
+                }                        
+            }                
+            if(!empty($json_data)){                    
+                foreach ($json_data as $key => $j) {
+                    foreach ($j as $key => $t) {
+                      if(in_array(strtolower($t['payment_type']), $temp)){
+                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
+                        }else{
+                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
+                            $temp[] = strtolower($t['payment_type']);
+                        }  
+                    }                       
+                }
+            }
+        }
+        $data['payment_type_arr'] = $temp;       
+        $result = $this->BusinessAdminModel->getOpeningRecord($date,1);        
+
+        $cashin = [];
+        $cashout = [];
+        $temp1 = [];
+        $temp2 = [];
+        if($result['success']){
+            $cashinout = $result['res_arr']['opening_balance'];
+
+            foreach ($cashinout as $key => $value) {
+                if($value['amount_data'] == 'CashIn'){
+                    if(in_array(strtolower($value['payment_mode']), $temp1)){
+                        $cashin[strtolower($value['payment_mode'])] += $value['amount'];
+                        }else{
+                            $cashin[strtolower($value['payment_mode'])] = $value['amount'];
+                            $temp1[] = strtolower($value['payment_mode']);
+                        }  
+                    }elseif($value['amount_data'] == 'CashOut'){
+                        if(in_array(strtolower($value['payment_mode']), $temp2)){
+                        $cashout[strtolower($value['payment_mode'])] += $value['amount'];
+                        }else{
+                            $cashout[strtolower($value['payment_mode'])] = $value['amount'];
+                            $temp2[] = strtolower($value['payment_mode']);
+                        }
+                    }               
+            }           
+        }        
+        $key_info['keys'][4] = $temp1;
+        $key_info['keys'][5] = $temp2;
+        $p_mode = [];
+        foreach ($key_info as $key => $k) {
+            foreach ($k as $key => $keys) {
+                if(!in_array($keys, $p_mode)){
+                    $p_mode[] = $keys;
+                }
+            }                                    
+        }
+         $p_mode = array_filter($p_mode);        
         $p_mode = call_user_func_array('array_merge', $p_mode);
         $p_mode = array_unique($p_mode);
-        $p_mode = array_values($p_mode);        
+        $p_mode = array_values($p_mode);              
         $data['p_mode'] = $p_mode;
         $data['opening_balance_data'] = $opening_balance_data;
         $data['pending_amount_data'] = $pending_amount_data;
         $data['expenses_data'] = $expenses_data;
         $data['transaction_data'] = $transaction_data;
         $data['date'] = $date;
+        $data['cashin'] = $cashin;
+        $data['cashout'] = $cashout;
         $this->load->view('business_admin/ba_expense_view',$data);
     }
 
@@ -12455,6 +12556,148 @@ public function daybook(){
 				$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}		
 		}
+
+        public function AddCashIn(){
+        if($this->IsLoggedIn('business_admin')){
+            $post['amount'] = $_POST['cash_in'];
+            $post['opening_date'] = date('Y-m-d');
+            $post['amount_data'] = 'CashIn';
+            $post['payment_mode'] = 'Cash';
+            $post['business_outlet_id'] = $this->session->userdata['outlets']['current_outlet'];
+            $data=$this->CashierModel->Insert($post,'mss_opening_balance');            
+            $this->ReturnJsonArray(true,false,$data['res_arr']);
+            die;
+        }
+    }
+    
+    public function AddCashOut(){
+        if($this->IsLoggedIn('business_admin')){
+            $post['amount'] = $_POST['cash_out'];
+            $post['opening_date'] = date('Y-m-d');
+            $post['amount_data'] = 'CashOut';
+            $post['payment_mode'] = $_POST['paymod_mode'];
+            $post['business_outlet_id'] = $this->session->userdata['outlets']['current_outlet'];
+            $data=$this->CashierModel->Insert($post,'mss_opening_balance');
+            $this->ReturnJsonArray(true,false,$data['res_arr']);
+            die;
+        }
+    }
+
+    public function AddMessageTrigger(){
+        if($this->IsLoggedIn('business_admin')){
+            $data['trigger_name'] = $_POST['trigger_name'];
+            $data['trigger_description'] = $_POST['trigger_discription'];
+            $data['mode'] = $_POST['mode'];
+            $data['outlet_id'] = $_POST['business_outlet_id'];
+            $data['recipient'] = $_POST['reciptents'];
+            $date = explode("-", $_POST['dates']);
+            $data['start_date'] = date("Y-m-d", strtotime($date[0]) );
+            $data['expiry_date'] = date("Y-m-d", strtotime($date[1]) );
+            $data['set_frequency'] = $_POST['ftype'];
+            //$data['trigger_name'] = $_POST['frequency_detail'];
+            $data['sms'] = $_POST['message'];
+            $data['created_by'] = $this->session->userdata['logged_in']['business_admin_id'];
+            $result = $this->BusinessAdminModel->Insert($data,'sms_trigger');
+            if($result['success']){
+                $id = $result['res_arr']['insert_id'];
+                foreach ($_POST['frequency_detail'] as $key => $frequency_detail) {
+                    $this->BusinessAdminModel->Insert(array('trigger_id'=>$id,'frequency_detail'=>$frequency_detail),'sms_frequency_detail');
+                }
+            }
+            $this->ReturnJsonArray(true,false,"Trigger Saved SuccessFully");
+            die;
+        }
+    }
+
+    //delete trigger
+        public function CancelSMSTrigger(){
+            if($this->IsLoggedIn('business_admin')){
+                // $this->PrettyPrintArray($_POST);
+                // exit;
+                if(isset($_POST) && !empty($_POST)){
+                    $this->form_validation->set_rules('auto_engage_id', 'Auto Engage', 'trim|required');            
+    
+                    if ($this->form_validation->run() == FALSE) 
+                    {
+                        $data = array(
+                                        'success' => 'false',
+                                        'error'   => 'true',
+                                        'message' =>  validation_errors()
+                                    );
+                        header("Content-type: application/json");
+                        print(json_encode($data, JSON_PRETTY_PRINT));
+                        die;
+                    }
+                    else{
+                        $data = array(
+                            'id'    => $this->input->post('auto_engage_id'),
+                            'is_active'=>$this->input->post('is_active')
+                        );
+    
+                        $result = $this->BusinessAdminModel->Update($data,'sms_trigger','id');
+                            
+                        if($result['success'] == 'true'){
+                            $this->ReturnJsonArray(true,false,"Trigger Updated Successfully!");
+                            die;
+                        }
+                        elseif($result['error'] == 'true'){
+                            $this->ReturnJsonArray(false,true,$result['message']);
+                            die;
+                        }
+                    }
+                }
+            }
+            else{
+                $this->LogoutUrl(base_url()."BusinessAdmin/");
+            }   
+        }
+
+    
+    public function ActivateSMSTrigger(){
+        if($this->IsLoggedIn('business_admin')){
+                // $this->PrettyPrintArray($_POST);
+                // exit;
+                if(isset($_POST) && !empty($_POST)){
+                    $this->form_validation->set_rules('auto_engage_id', 'Auto Engage', 'trim|required');            
+    
+                    if ($this->form_validation->run() == FALSE) 
+                    {
+                        $data = array(
+                                        'success' => 'false',
+                                        'error'   => 'true',
+                                        'message' =>  validation_errors()
+                                    );
+                        header("Content-type: application/json");
+                        print(json_encode($data, JSON_PRETTY_PRINT));
+                        die;
+                    }
+                    else{
+                        $data = array(
+                            'outlet_id'    => $this->input->post('auto_engage_id'),
+                            'is_active'=>$this->input->post('is_active'),
+                            'services_number    '=>$this->input->post('service_id'),
+                        );                    
+                        if($this->input->post('is_active') == 0){
+                            unset($data['is_active']);
+                            $result = $this->BusinessAdminModel->DeleteSMSActivity('sms_activity',$data);                           
+                        }else{
+                            $result = $this->BusinessAdminModel->Insert($data,'sms_activity');
+                        }                        
+                        if($result['success'] == 'true'){
+                            $this->ReturnJsonArray(true,false,"Trigger Saved Successfully!");
+                            die;
+                        }
+                        elseif($result['error'] == 'true'){
+                            $this->ReturnJsonArray(false,true,$result['message']);
+                            die;
+                        }
+                    }
+                }
+            }
+            else{
+                $this->LogoutUrl(base_url()."BusinessAdmin/");
+            }
+    }
 
 }
 

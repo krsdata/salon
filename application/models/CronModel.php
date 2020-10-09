@@ -55,24 +55,19 @@ class CronModel extends CI_Model {
         }
         }
 
-        public function GetPaymentWiseReport($data){
+        public function GetPaymentWiseReport($data){    
         $sql = "SELECT 
-                    date(mss_transactions.txn_datetime) AS 'Payment Date',          
-                    -- mss_transaction_settlements.txn_settlement_way AS 'Settlement Way',
-                    SUM(mss_transactions.txn_value) AS 'Total Amount'
-                FROM 
-                   mss_transactions, 
-                   mss_transaction_settlements, 
-                   mss_customers,
-                   mss_employees
-                WHERE 
-                    mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id 
-                    AND mss_transactions.txn_customer_id = mss_customers.customer_id 
-                    AND mss_transactions.txn_cashier= mss_employees.employee_id
-                    AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."
-                    AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
-                    AND date(mss_transactions.txn_datetime) = ".$this->db->escape($data['date']);
+        sum(mss_transaction_services.txn_service_discounted_price),mss_services.inventory_type_id
 
+            FROM mss_transactions, mss_employees,mss_services,mss_transaction_services
+            
+            WHERE mss_transactions.txn_cashier=mss_employees.employee_id
+            AND mss_transactions.txn_id= mss_transaction_services.txn_service_txn_id
+            AND mss_transaction_services.txn_service_service_id= mss_services.service_id
+            AND mss_employees.employee_business_outlet= ".$this->db->escape($data['business_outlet_id'])." 
+            AND date(mss_transactions.txn_datetime) = ".$this->db->escape($data['date'])."
+            AND mss_services.inventory_type_id in ('1')
+            GROUP BY mss_services.inventory_type_id";
         $query = $this->db->query($sql);
         
         if($query){
@@ -83,40 +78,22 @@ class CronModel extends CI_Model {
         }
     }
 
-    public function GetPackageReport($data){
-       $sql = "SELECT
-                    -- mss_package_transactions.package_txn_unique_serial_id AS 'Serial Id',
-                    -- mss_customers.customer_name AS 'Customer Name',
-                    -- mss_customers.customer_mobile AS 'Customer Mobile',
-                    -- date(mss_package_transactions.datetime) AS 'Purchase Date',
-                    -- mss_salon_packages.salon_package_name AS 'Package Name',
-                    -- mss_salon_packages.salon_package_type AS 'Package Type',
-                    SUM(mss_package_transactions.package_txn_value) AS 'Bill Amount'
-                    -- mss_package_transactions.package_txn_discount AS 'Discount Given',
-                    -- mss_package_transactions.package_txn_pending_amount AS 'Pending Amount',
-                    -- mss_package_transaction_settlements.settlement_way AS 'Settlement Way',
-                    -- mss_package_transaction_settlements.payment_mode AS 'Payment Mode',
-                    -- date_add(date(now()),INTERVAL mss_salon_packages.salon_package_validity MONTH) AS 'Expiry Date',
-                    -- mss_employees.employee_first_name AS 'Expert Name'
-                FROM
-                    mss_package_transactions,
-                    mss_customers,
-                    mss_salon_packages,
-                    mss_transaction_package_details,
-                    mss_employees,
-                    mss_package_transaction_settlements
-                WHERE
-                    mss_package_transactions.package_txn_id = mss_transaction_package_details.package_txn_id
-                    AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_txn_id
-                    AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
-                    AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
-                    AND mss_package_transactions.package_txn_expert= mss_employees.employee_id
-                    AND mss_salon_packages.business_admin_id =  ".$this->db->escape($data['business_admin_id'])."
-                    AND mss_salon_packages.business_outlet_id =  ".$this->db->escape($data['business_outlet_id'])."
-                    AND date(mss_package_transactions.datetime) = ".$this->db->escape($data['date'])." 
-                    ORDER BY
-                        mss_package_transactions.package_txn_id";
+    public function GetPackageReport($data){       
+        $sql = "SELECT SUM(mss_package_transactions.package_txn_value) AS 'Bill Amount' 
+        
+        FROM mss_package_transactions, mss_employees
 
+            WHERE 
+            
+             mss_package_transactions.package_txn_expert= mss_employees.employee_id 
+        
+            AND mss_employees.employee_business_outlet  = ".$this->db->escape($data['business_outlet_id'])."
+            
+            AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
+        
+            AND date(mss_package_transactions.datetime) = ".$this->db->escape($data['date'])."
+
+            ORDER BY mss_package_transactions.package_txn_id";
 
         $query = $this->db->query($sql);
         
@@ -203,9 +180,9 @@ WHERE  Date(t1.txn_datetime) = "'.$date.'" and t3.employee_business_outlet = '.$
         //     $outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
         // }
     if(!empty($outlet_id)){
-            $sql = "select * from mss_opening_balance where opening_date='".$date."' and business_outlet_id = ".$outlet_id;
+            $sql = "select * from mss_opening_balance where opening_date='".$date."' and business_outlet_id = ".$outlet_id."  and amount_data is null";
         }else{
-            $sql = "select * from mss_opening_balance where opening_date='".$date."'";
+            $sql = "select * from mss_opening_balance where opening_date='".$date."' and amount_data is null";
         }        $query = $this->db->query($sql);
         $data['opening_balance'] = $query->result_array();
         if($data){
@@ -224,7 +201,8 @@ WHERE  Date(t1.txn_datetime) = "'.$date.'" and t3.employee_business_outlet = '.$
        t4.employee_mobile, 
        t5.business_outlet_name, 
        t5.business_outlet_location, 
-       t5.business_outlet_mobile 
+       t5.business_outlet_mobile ,
+       t5.business_outlet_id
 FROM   mss_appointments AS t1 
        inner join mss_customers AS t2 
                ON t1.customer_id = t2.customer_id 
@@ -290,16 +268,37 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
     }
 
     public function GetTotalDueAmount($data){
-        $sql="SELECT 
-        SUM(mss_transactions.txn_pending_amount) AS 'total_due_amount'    
-        FROM 
-        mss_transactions,
-            mss_customers
-        WHERE 
-            date(mss_transactions.txn_datetime) between ".$this->db->escape($data['start_week'])." AND  ".$this->db->escape($data['end_week'])." AND
-            mss_transactions.txn_customer_id=mss_customers.customer_id AND
-            mss_customers.customer_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND
-            mss_customers.customer_business_outlet_id=".$this->db->escape($data['business_outlet_id'])."";
+        $sql = "SELECT X.EmpID,(Y.PDue+X.SDue) as total_due_amount FROM 
+
+ (   
+        SELECT sum(mss_transactions.txn_pending_amount) AS SDue,
+     mss_employees.employee_id AS EmpID 
+        
+        FROM mss_transactions, mss_employees 
+        WHERE date(mss_transactions.txn_datetime) BETWEEN  ".$this->db->escape($data['start_week'])." AND  ".$this->db->escape($data['end_week'])."
+        AND mss_transactions.txn_cashier=mss_employees.employee_id
+        AND mss_employees.employee_business_outlet=".$this->db->escape($data['business_outlet_id'])."
+        group by mss_employees.employee_id
+   ) as X
+   
+   JOIN
+   
+   ( 
+       SELECT sum(mss_package_transactions.package_txn_pending_amount) as PDue, mss_employees.employee_id AS EmID
+       
+       FROM   mss_package_transactions, mss_employees
+       
+       WHERE
+            mss_package_transactions.package_txn_cashier=mss_employees.employee_id
+       AND date(mss_package_transactions.datetime) BETWEEN  ".$this->db->escape($data['start_week'])." AND  ".$this->db->escape($data['end_week'])." 
+       AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."
+       GROUP BY mss_employees.employee_id
+      
+      ) AS Y 
+      
+      on X.EmpID= Y.EmID
+      group by X.EmpID";
+
 
             $query = $this->db->query($sql);
             
@@ -312,16 +311,11 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
     }
 
     public function GetPendingAmountReceived($data){
-        $sql="SELECT 
-                        SUM(mss_pending_amount_tracker.pending_amount_submitted) AS 'pending_amount_received'    
-                    FROM 
-                        mss_pending_amount_tracker,
-                        mss_customers
-                    WHERE 
-                        date(mss_pending_amount_tracker.date_time) between ".$this->db->escape($data['start_week'])." AND  ".$this->db->escape($data['end_week'])." AND
-                        mss_pending_amount_tracker.customer_id=mss_customers.customer_id AND
-                        mss_customers.customer_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND
-                        mss_customers.customer_business_outlet_id=".$this->db->escape($data['business_outlet_id'])."";
+        $sql = "SELECT SUM(mss_pending_amount_tracker.pending_amount_submitted) AS 'pending_amount_received' 
+                FROM mss_pending_amount_tracker 
+                    WHERE date(mss_pending_amount_tracker.date_time) between  ".$this->db->escape($data['start_week'])." AND  ".$this->db->escape($data['end_week'])."  
+                    AND mss_pending_amount_tracker.business_outlet_id = ".$this->db->escape($data['business_outlet_id']);
+
 
             $query = $this->db->query($sql);
             
