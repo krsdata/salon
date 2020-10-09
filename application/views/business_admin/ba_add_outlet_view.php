@@ -357,6 +357,7 @@
 											<th>Landline</th>
 											<th>Action</th>
 											<th>SMS Status</th>
+											<th>What's App SMS</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -376,15 +377,27 @@
 											</td>
 											<td class="table-action">
 												<?php if($outlet['business_outlet_sms_status']==1){?>
-												<button type="button" class="btn btn-success sms_status" business_outlet_id="<?=$outlet['business_outlet_id']?>" sms_status="0">
+												<button type="button" class="btn btn-success sms_status" business_outlet_id="<?=$outlet['business_outlet_id']?>" sms_type="sms" sms_status="0">
 									        ON
 												</button>
 											<?php }else{?>
-												<button type="button" class="btn btn-danger sms_status" business_outlet_id="<?=$outlet['business_outlet_id']?>" sms_status="1">
+												<button type="button" class="btn btn-danger sms_status" business_outlet_id="<?=$outlet['business_outlet_id']?>" sms_type="sms" sms_status="1">
 									        OFF
 												</button>
 											<?php }?>
 											</td>
+											<td class="table-action">
+												<?php if($outlet['whats_app_sms_status']==1){?>
+												<button type="button" class="btn btn-success sms_status" business_outlet_id="<?=$outlet['business_outlet_id']?>" sms_type="wapp" sms_status="0">
+									        ON
+												</button>
+											<?php }else{?>
+												<button type="button" class="btn btn-danger sms_status" business_outlet_id="<?=$outlet['business_outlet_id']?>" sms_type="wapp" sms_status="1">
+									        OFF
+												</button>
+											<?php }?>
+											</td>
+											
 										</tr>	
 										<?php		
 											endforeach;
@@ -665,7 +678,8 @@
 				this.blur(); // Manually remove focus from clicked link.
 				var parameters = {
 					"business_outlet_id" : $(this).attr('business_outlet_id'),
-					"sms_status" : $(this).attr('sms_status')
+					"sms_status" : $(this).attr('sms_status'),
+					'sms_type'	: $(this).attr('sms_type')
 				};
 			
 				$.ajax({

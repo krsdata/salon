@@ -643,14 +643,14 @@
 						var str_2 = "";		
 						for(var i=0;i<data.length;i++){
 							str_2 += "<tr>";
-						str_2 += "<td>"+data[i].txn_id+"</td>";
-						str_2 += "<td>"+data[i].mobile+"</td>";
-						str_2 += "<td>"+data[i].name+"</td>";
-						str_2 += "<td>"+data[i].Type+"</td>";
+							str_2 += "<td>"+data[i].txn_id+"</td>";
+							str_2 += "<td>"+data[i].mobile+"</td>";
+							str_2 += "<td>"+data[i].name+"</td>";
+							str_2 += "<td>"+data[i].Type+"</td>";
 							str_2 += "<td>"+data[i].billing_date+"</td>";
-						str_2 += "<td>"+data[i].mrp_amt+"</td>";
-						str_2 += "<td>"+data[i].discount+"</td>";						
-						str_2 += "<td>"+data[i].net_amt+"</td>";
+							str_2 += "<td>"+data[i].mrp_amt+"</td>";
+							str_2 += "<td>"+data[i].discount+"</td>";						
+							str_2 += "<td>"+data[i].net_amt+"</td>";
 						// str_2 += "<td>"+data[i].payment_way+"</td>";
 						var edit_bill="<?php if(array_search('Edit_Bill', $business_admin_packages) !== false){ echo 'Edit_Bill';}?>";
 						
@@ -751,9 +751,7 @@
         url: "<?=base_url()?>BusinessAdmin/UpdateTransaction",
         data: parameters,
         type: "POST",
-        // crossDomain: true,
 				cache: false,
-        // dataType : "json",
     		success: function(data) {
           if(data.success == 'true'){
 						// $("#ModalEditBill").modal('hide');

@@ -178,7 +178,7 @@
 												<div class="col-md-4">
 													<!-- <button class="btn btn-primary DownloadCategories"><i class="fa fa-download"></i> Category</button> -->
 													<button class="btn btn-primary DownloadSubCategories"><i class="fa fa-download"></i>Sub Category</button>
-													<a class="btn btn-primary" href="<?=base_url()?>public\format\OTCUploadFormat.xlsx" download><i class="fa fa-download"></i> Format</a>
+													<a class="btn btn-primary" href="<?=base_url()?>public/format/OTCUploadFormat.xlsx" download><i class="fa fa-download"></i> Format</a>
 												</div>	
 												<div class="col-md-4">
 													<form action="#" id="UploadOTC">
