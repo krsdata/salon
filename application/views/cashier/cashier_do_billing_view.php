@@ -38,7 +38,7 @@
 									<div class="tab-content">
 										<div class="tab-pane active" id="tab-1" role="tabpanel">											
 											<div id="ServiceSection">
-												<!----- Modal Area------->
+												<!-- Modal Area-->
 											<div class="modal" id="ModalCustomerDetails" tabindex="-1" role="dialog" aria-hidden="true">
 													<div class="modal-dialog modal-dialog-centered modal-md" role="document">
 														<div class="modal-content">
@@ -3972,7 +3972,7 @@
       // },
     // });
   }
-
+/*
 setTimeout(function(){
 	if(localStorage.getItem("category_id")){
   		$('[category-id="'+localStorage.getItem("category_id")+'"]').click();
@@ -3992,6 +3992,6 @@ setTimeout(function(){
 		$('#collapseOne').addClass('show');
 		$('#collapseTwo').addClass('show');		
 	}
-},1500);
+},1500); */
   		
 </script>
