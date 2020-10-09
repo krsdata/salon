@@ -6794,18 +6794,25 @@ $sql = str_replace(",)",")",$sql);
         }
     }
     public function ReportNewCustomer($data){
-        $sql="SELECT mss_customers.customer_name as 'Name',
-		mss_customers.customer_mobile as 'Mobile',
-		'New' as 'Category',
-		sum(mss_transactions.txn_value) as 'Total_Spend',
-		Max(mss_transactions.txn_datetime) as 'Last_Visit_Date'
-		FROM mss_transactions,
-			mss_customers 
-		WHERE 
-			mss_transactions.txn_customer_id = mss_customers.customer_id
-			AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-				GROUP BY mss_transactions.txn_customer_id
-				HAVING count(mss_transactions.txn_customer_id)=1 ";
+        $sql="SELECT mss_customers.customer_name as 'Name' , 
+		mss_customers.customer_mobile as 'Mobile', 
+		Count(mss_transactions.txn_id)  as 'Visits',
+		FORMAT(SUM(mss_transactions.txn_value),0) as 'Total_Spend', 
+		FORMAT(AVG(mss_transactions.txn_value),0) as 'aov', 
+		date(MAX(mss_transactions.txn_datetime)) as 'Last_Visit_Date',
+		mss_customers.last_visit_branch AS 'last_visited_store',
+		FORMAT(mss_customers.customer_rewards,2) as 'rewards',
+		FORMAT(mss_customers.customer_virtual_wallet,0) as 'vw_amount',
+		FORMAT(mss_customers.customer_pending_amount,0) as 'due_amount', 'New Customer' As 'Category'
+		FROM mss_customers , 
+			mss_transactions,
+			mss_business_outlets
+			WHERE  mss_customers.customer_id=mss_transactions.txn_customer_id
+		AND  mss_customers.customer_business_outlet_id= mss_business_outlets.business_outlet_id
+		AND mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." 
+		AND mss_transactions.txn_status =1 
+		group by mss_customers.customer_id
+		HAVING COUNT(mss_transactions.txn_id) =1 ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
