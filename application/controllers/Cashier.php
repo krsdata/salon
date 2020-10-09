@@ -2593,11 +2593,13 @@ class Cashier extends CI_Controller {
 					//4.Send a msg
 					$this->session->set_userdata('bill_url',$bill_url);
 					$sms_status = $this->db->select('business_outlet_sms_status')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
-					// $this->PrettyPrintArray($sms_status);	
+						
 					if($sms_status['business_outlet_sms_status']==1){
 							if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
 								if($_POST['txn_data']['txn_value']==0){
 								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}else{
+								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 								}
 							}
 							//
@@ -2650,9 +2652,11 @@ class Cashier extends CI_Controller {
    		$msg = rawurlencode($msg);   //This for encode your message content                 		
  			
  			// API 
-			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
-            log_message('info', $url);
-        
+			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+
+			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
+				log_message('info', $url);
+			
   		$ch = curl_init($url);
   		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
   		curl_setopt($ch,CURLOPT_POST,1);
@@ -6884,90 +6888,28 @@ public function AddToCartRedeemPoints(){
                 }
                 $key_info['keys'][3] = $temp;
 
+
+                $p_mode = [];
+                foreach ($key_info as $key => $k) {
+                    foreach ($k as $key => $keys) {
+                        if(!in_array($keys, $p_mode)){
+                            $p_mode[] = $keys;
+                        }
+                    }                                    
+                }
+
         }
         
-        $result = $this->BusinessAdminModel->GetPaymentMode();
-        if($result['success']){
-        	$mode = $result['res_arr'];
-        	
-        	foreach ($mode as $key => $value) {
-                if(!empty($value['txn_settlement_payment_mode'])){                        
-                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
-                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
-                    }else{
-                        $result = json_decode($value['txn_settlement_payment_mode']);
-                        if (json_last_error() === JSON_ERROR_NONE) {
-                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
-                        }else{
-                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
-                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
-                        }                            
-                    }
-                }                        
-            }                
-            if(!empty($json_data)){                    
-                foreach ($json_data as $key => $j) {
-                    foreach ($j as $key => $t) {
-                      if(in_array(strtolower($t['payment_type']), $temp)){
-                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
-                        }else{
-                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
-                            $temp[] = strtolower($t['payment_type']);
-                        }  
-                    }                       
-                }
-            }
-        }
-        $data['payment_type_arr'] = $temp;       
-        $result = $this->BusinessAdminModel->getOpeningRecord($date,1);        
-
-        $cashin = [];
-        $cashout = [];
-        $temp1 = [];
-        $temp2 = [];
-        if($result['success']){
-        	$cashinout = $result['res_arr']['opening_balance'];
-
-        	foreach ($cashinout as $key => $value) {
-        		if($value['amount_data'] == 'CashIn'){
-	        		if(in_array(strtolower($value['payment_mode']), $temp1)){
-		                $cashin[strtolower($value['payment_mode'])] += $value['amount'];
-		                }else{
-		                    $cashin[strtolower($value['payment_mode'])] = $value['amount'];
-		                    $temp1[] = strtolower($value['payment_mode']);
-		                }  
-	                }elseif($value['amount_data'] == 'CashOut'){
-	                	if(in_array(strtolower($value['payment_mode']), $temp2)){
-	                	$cashout[strtolower($value['payment_mode'])] += $value['amount'];
-		                }else{
-		                    $cashout[strtolower($value['payment_mode'])] = $value['amount'];
-		                    $temp2[] = strtolower($value['payment_mode']);
-		                }
-	                }        		
-        	}        	
-        }        
-        $key_info['keys'][4] = $temp1;
-        $key_info['keys'][5] = $temp2;
-        $p_mode = [];
-        foreach ($key_info as $key => $k) {
-            foreach ($k as $key => $keys) {
-                if(!in_array($keys, $p_mode)){
-                    $p_mode[] = $keys;
-                }
-            }                                    
-        }
-         $p_mode = array_filter($p_mode);        
+        $p_mode = array_filter($p_mode);        
         $p_mode = call_user_func_array('array_merge', $p_mode);
         $p_mode = array_unique($p_mode);
-        $p_mode = array_values($p_mode);              
+        $p_mode = array_values($p_mode);        
         $data['p_mode'] = $p_mode;
         $data['opening_balance_data'] = $opening_balance_data;
         $data['pending_amount_data'] = $pending_amount_data;
         $data['expenses_data'] = $expenses_data;
         $data['transaction_data'] = $transaction_data;
         $data['date'] = $date;
-        $data['cashin'] = $cashin;
-        $data['cashout'] = $cashout;	        
         $this->load->view('cashier/cashier_book_view',$data);
     }
 
@@ -7449,32 +7391,6 @@ public function AddToCartRedeemPoints(){
 		}
 		else{
 				$this->LogoutUrl(base_url()."Cashier/");
-		}
-	}
-
-	public function AddCashIn(){
-		if($this->IsLoggedIn('cashier')){
-			$post['amount'] = $_POST['cash_in'];
-			$post['opening_date'] = date('Y-m-d');
-			$post['amount_data'] = 'CashIn';
-			$post['payment_mode'] = 'Cash';
-			$post['business_outlet_id'] = $this->session->userdata['logged_in']['business_outlet_id'];
-			$data=$this->CashierModel->Insert($post,'mss_opening_balance');
-			$this->ReturnJsonArray(true,false,$data['res_arr']);
-			die;
-		}
-	}
-	
-	public function AddCashOut(){
-		if($this->IsLoggedIn('cashier')){
-			$post['amount'] = $_POST['cash_out'];
-			$post['opening_date'] = date('Y-m-d');
-			$post['amount_data'] = 'CashOut';
-			$post['payment_mode'] = $_POST['paymod_mode'];
-			$post['business_outlet_id'] = $this->session->userdata['logged_in']['business_outlet_id'];
-			$data=$this->CashierModel->Insert($post,'mss_opening_balance');
-			$this->ReturnJsonArray(true,false,$data['res_arr']);
-			die;
 		}
 	}
 

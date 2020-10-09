@@ -52,7 +52,7 @@
               </div>
               <div class="card-body">                
                 <div class="row">
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
                         <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$new?>
@@ -61,7 +61,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
 
                     <div class="card" style="width: 10rem">
                       <div class="card-body">
@@ -72,7 +72,7 @@
                     </div>
 
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
                         <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$regular?>
@@ -81,16 +81,36 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
                         <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder">
-                          <?=$custwithouttrans?></h1>
+                          <?=($allcust-($new+$regular+$repeat))?></h1>
                         <h6 class="card-text" style="text-align:center">Never Visited</h6>
                       </div>
                     </div>
-                  </div>
-                  <div class="col-md-2">
+									</div>
+								</div>
+								<div class="row">
+                  <div class="col-md-3">
+                    <div class="card" style="width: 10rem;">
+                      <div class="card-body">
+                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$no_risk?>
+                        </h1>
+                        <h6 class="card-text" style="text-align:center">No Risk</h6>
+                      </div>
+                    </div>
+									</div>
+									<div class="col-md-3">
+                    <div class="card" style="width: 10rem;">
+                      <div class="card-body">
+                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$dormant?>
+                        </h1>
+                        <h6 class="card-text" style="text-align:center">Dormant</h6>
+                      </div>
+                    </div>
+									</div>
+									<div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
                         <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$risk?>
@@ -99,7 +119,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
                         <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"> <?=$lost?>
@@ -127,7 +147,9 @@
                       <option value="All">All Customer</option>
                       <option value="New">New Customer</option>
                       <option value="Repeat">Repeat Customer</option>
-                      <option value="Regular">Regular Customer</option>
+											<option value="Regular">Regular Customer</option>
+											<option value="no_risk">No Risk Customer</option>
+											<option value="dormant">Dormant Customer</option>
                       <option value="Risk">Risk Customer</option>
                       <option value="Lost">Lost Customer</option>
                     </select>
@@ -150,7 +172,7 @@
                   </div>
                   <div class="col-md-2">
                     <label>&emsp;</label>
-                    <input style="float:right" type="submit" value="Download" id="download" name="download"
+                    <input style="float:right" type="submit" class="btn btn-primary" value="Download" id="download" name="download"
                       class="form-control" style="width:100px">
                   </div>
                 </div>
@@ -193,7 +215,6 @@
     </script>
     <script type="text/javascript">
     $("#category").on('change', function(e) {
-
       var category = document.getElementById('category').value;
       // alert(category);
       var parameters = {

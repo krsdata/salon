@@ -3294,7 +3294,7 @@ class CashierModel extends CI_Model {
 	}
 
 	public function AvailableStock($data){
-		$sql="Select X.*, Y.*, SUM(Y.total_stock) From 
+		$sql="Select X.service_id,Y.stock_service_id,X.service_name, X.inventory_type,X.barcode,X.qty_per_item,Y.total_stock, Y.stock_in_unit,Y.updated_on,X.business_outlet_name From 
 			(
 			SELECT mss_services.*,mss_business_outlets.business_outlet_name FROM mss_services, mss_sub_categories,mss_categories, mss_business_outlets WHERE
 			mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND

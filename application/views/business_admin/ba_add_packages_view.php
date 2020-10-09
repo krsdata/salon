@@ -1584,14 +1584,14 @@
 					// dataType : "json",
 					success: function(data) {
 								if(data.success == 'true'){
-						$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
-							$("#SuccessModalMessage").html("").html(data.message);
-						}).on('hidden.bs.modal', function (e) {
-								window.location.reload();
-						});
+									$('#defaultModalSuccess').modal('show').on('shown.bs.modal', function (e) {
+										$("#SuccessModalMessage").html("").html(data.message);
+									}).on('hidden.bs.modal', function (e) {
+											window.location.reload();
+									});
 								}
 							}
-			});
+				});
 			});
 
 			$(document).on('click',".package-edit-btn", function(e){
