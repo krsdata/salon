@@ -144,7 +144,7 @@
                     <label>Select Category</label>
                     <select name="category" id="category" class="form-control" style="width:300px;">
                       <option selected disabled>Select</option>
-                      <option value="All">All Customer</option>
+                      <!-- <option value="All">All Customer</option> -->
                       <option value="New">New Customer</option>
                       <option value="Repeat">Repeat Customer</option>
 											<option value="Regular">Regular Customer</option>
@@ -236,15 +236,21 @@
             }
           } else {
             var temp_str =
-              "<thead><th>S.No</th><th>Name</th><th>Number</th><th>Category</th><th>Total Spend</th><th>Last Visit Date</th></thead> ";
+              "<thead><th>S.No</th><th>Name</th><th>Number</th><th>Visits</th><th>Total Spend</th><th>Average Order Value</th><th>Last Visit</th><th> Store</th><th>Rewards</th><th>Wallet</th><th>Due</th><th>Category</th></thead> ";
             for (var i = 0; i < data.result.length; i++) {
               temp_str += "<tr>";
               temp_str += "<td>" + (i + 1) + "</td>";
               temp_str += "<td>" + data.result[i].Name + "</td>";
               temp_str += "<td>" + data.result[i].Mobile + "</td>";
-              temp_str += "<td>" + data.result[i].Category + "</td>";
-              temp_str += "<td>" + data.result[i].Total_Spend + "</td>";
+							temp_str += "<td>" + data.result[i].Visits + "</td>";
+							temp_str += "<td>" + data.result[i].Total_Spend + "</td>";
+							temp_str += "<td>" + data.result[i].aov + "</td>";              
               temp_str += "<td>" + data.result[i].Last_Visit_Date + "</td>";
+							temp_str += "<td>" + data.result[i].last_visited_store + "</td>";
+							temp_str += "<td>" + data.result[i].rewards + "</td>";
+							temp_str += "<td>" + data.result[i].vw_amount + "</td>";
+							temp_str += "<td>" + data.result[i].due_amount + "</td>";
+							temp_str += "<td>" + data.result[i].Category + "</td>";
               temp_str += "</tr>";
             }
           }
