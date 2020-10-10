@@ -9871,7 +9871,7 @@ public function InsertSalary(){
                             'success' => 'true',
                             'res_arr'   => $ReportRiskS
                         );
-                        // $this->PrettyPrintArray($result);
+                        $this->PrettyPrintArray($result);
                     }elseif($_GET['category'] == 'Lost'){
                         $lostS=array(); 
                         $data['lostS']=$this->BusinessAdminModel->LostCustomerService($res);
@@ -10095,47 +10095,29 @@ public function InsertSalary(){
 											$result = $this->BusinessAdminModel->ReportDormantCustomer($res);
 										}
                     else if($_GET['category'] == 'Risk'){
-                        $riskS=array(); 
-                        $data['riskS']=$this->BusinessAdminModel->RiskCustomerService($res);
-                         if($data['riskS']['success']='true'){
-                            $data['riskS']=$data['riskS']['res_arr'];
-                            foreach($data['riskS'] as $key => $value){
-                                array_push($riskS,$value['customer_id']);
-                            }
-                        }else{
-                            $data['riskS']=0;
-                        }
-                        $ReportRiskS=array();   
-                        for($i=0;$i<count($riskS);$i++){
-                            $result = $this->BusinessAdminModel->ReportRiskSCustomer($riskS[$i]);
-                            array_push($ReportRiskS,$result['res_arr'][0]);
-                            // $this->PrettyPrintArray($result);
-                        }
-                        $result = array(
-                            'success' => 'true',
-                            'res_arr'   => $ReportRiskS
-                        );
-                        // $this->PrettyPrintArray($result);
+                        // $riskS=array();
+												$result=$this->BusinessAdminModel->RiskCustomerService($res);
+                        
                     }elseif($_GET['category'] == 'Lost'){
-                            $lostS=array(); 
-                            $data['lostS']=$this->BusinessAdminModel->LostCustomerService($res);
-                            if($data['lostS']['success']='true'){
-                                $data['lostS']=$data['lostS']['res_arr'];
-                                foreach($data['lostS'] as $key => $value){
-                                    array_push($lostS,$value['customer_id']);
-                                }
-                            }else{
-                                $data['lostS']=0;
-                            }
-                            $ReportRiskS=array();   
-                            for($i=0;$i<count($lostS);$i++){
-                                $result = $this->BusinessAdminModel->ReportLostSCustomer($lostS[$i]);
-                                array_push($ReportRiskS,$result['res_arr'][0]);
-                            }
-                            $result = array(
-                                'success' => 'true',
-                                'res_arr'   => $ReportRiskS
-                            );
+                            // $lostS=array(); 
+                            $result=$this->BusinessAdminModel->LostCustomerService($res);
+                            // if($data['lostS']['success']='true'){
+                            //     $data['lostS']=$data['lostS']['res_arr'];
+                            //     foreach($data['lostS'] as $key => $value){
+                            //         array_push($lostS,$value['customer_id']);
+                            //     }
+                            // }else{
+                            //     $data['lostS']=0;
+                            // }
+                            // $ReportRiskS=array();   
+                            // for($i=0;$i<count($lostS);$i++){
+                            //     $result = $this->BusinessAdminModel->ReportLostSCustomer($lostS[$i]);
+                            //     array_push($ReportRiskS,$result['res_arr'][0]);
+                            // }
+                            // $result = array(
+                            //     'success' => 'true',
+                            //     'res_arr'   => $ReportRiskS
+                            // );
                     }
                     if($result['success'] == 'true'){
                         $data = array(
