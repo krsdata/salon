@@ -1604,11 +1604,11 @@
 																						if($rules['rule_type'] == 'Cashback Single Rule' || $rules['rule_type'] == 'Cashback Multiple Rule' || $rules['rule_type'] == 'Cashback LTV Rule')
 																						{
 																							if($individual_customer['customer_rewards'] >$actual_bill){?>
-																								<option value="loyalty_wallet">Loyalty Wallet : <?=$individual_customer['customer_rewards']?> </option>
+																								<option value="loyalty_wallet">Cashback Wallet : <?=$individual_customer['customer_rewards']?> </option>
 																								<?php
 																							}
 																							else{?>
-																									<option value="loyalty_wallet" disabled>Loyalty Wallet : <?=$individual_customer['customer_rewards']?></option>
+																									<option value="loyalty_wallet" disabled>Cashback Wallet : <?=$individual_customer['customer_rewards']?></option>
 																								<?php
 																							}
 																						}
@@ -1698,7 +1698,7 @@
 																								<option value="Phonepe">Phonepe</option>
 																								<option value="Google_Pay">Google Pay</option>
 																								<option value="Virtual_Wallet">Virtual Wallet -- Balance : <?=$individual_customer['customer_virtual_wallet']?></option>
-																								<option value="loyalty_wallet">Loyalty Wallet: <?=$individual_customer['customer_rewards']?></option>
+																								<option value="cashback_wallet">Cashback Wallet: <?=$individual_customer['customer_cashback']?></option>
 																							</select>
 															        			</div>
 															        		</td>

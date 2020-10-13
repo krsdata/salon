@@ -56,7 +56,7 @@
 				<img src="<?=base_url()?>public/images/revenue.jpg" class="avatar img-fluid rounded-circle mr-1 blink-bg" alt="Business Admin" /> 
 				<!-- rotate linear infinite  -->
 				<?php
-					echo "<span class=\"text-white font-weight-bold \">".($nav_details['revenue']-($loyalty_payment+$cards_data['payment_wise']['others']))."</span>";
+					echo "<span class=\"text-white font-weight-bold \">".($nav_details['revenue'])."</span>";
 				?></a>
 			</li>
 			<li class="nav-item" style="margin-top: 8px;margin-right: 16px;">
