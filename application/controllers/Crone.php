@@ -276,9 +276,9 @@ die;
         $api_key = "4XA1l9jcXkChf9TLKcI9bw";
         $sender_id = "SLNFST";        
          $msg = rawurlencode($message); //This for encode your message content
-         $mobile = '7000710898';
+         $mobile = '7415493261';
          // API
-        $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+        $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';        
                                     
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -671,6 +671,29 @@ die;
             //die;
             // echo $msg."<br><br>";
             // die;
+        }
+    }
+
+    public function packageExpiry($day){
+        $this->load->model('CronModel');
+        $this->load->model('BusinessAdminModel');
+        $outlets = $this->CronModel->getOutLetsAdmin();
+        if(empty($outlets))
+            return true;
+        foreach ($outlets['res_arr'] as $key => $ol) {            
+            $where = array(
+                    'business_master_admin_id'  => $ol['business_master_admin_id'],
+                    'business_outlet_id' => $ol['business_outlet_id'],
+                    'day'    => $day
+                );
+            $packageExpiry = $this->CronModel->packageExpiry($where);
+            if($packageExpiry['success']){                
+                $packageExpiry = $packageExpiry['res_arr'];
+                foreach ($packageExpiry as $key => $p) {
+                    $msg = "Dear ".$p['customer_name'].", Your  ".$p['salon_package_name'].", is due for renewal in next $day days.Expiring on ".$p['package_expiry_date'].". Please renew it today, to keep availing the awesome services. Team ".$ol['business_outlet_name']." ".$ol['business_outlet_mobile'].". ".$ol['business_outlet_location'];                    
+                    $this->sendMessage($p['customer_mobile'],$msg);
+                }
+            }
         }
     }
 }

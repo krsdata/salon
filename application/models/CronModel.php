@@ -6,7 +6,7 @@ class CronModel extends CI_Model {
 	//Generic function which will give all details by primary key of table
 
     public function getOutLetsAdmin(){
-        $sql = "SELECT t1.business_admin_id,t2.business_outlet_id,t1.business_admin_email,t1.business_admin_mobile,t1.business_admin_first_name,t1.business_admin_last_name,t2.business_outlet_name,t2.business_outlet_address,t2.business_outlet_state,t2.business_outlet_city,t2.business_outlet_country FROM `mss_business_admin` t1 INNER JOIN mss_business_outlets t2 on t1.`business_admin_id` = t2.business_outlet_business_admin WHERE t2.business_outlet_status = 1 GROUP by t1.business_admin_email ORDER by t1.business_admin_id asc";
+        $sql = "SELECT t1.business_admin_id,t1.business_master_admin_id,t2.business_outlet_id,t2.business_outlet_mobile,t1.business_admin_email,t1.business_admin_mobile,t1.business_admin_first_name,t1.business_admin_last_name,t2.business_outlet_name,t2.business_outlet_address,t2.business_outlet_state,t2.business_outlet_city,t2.business_outlet_country,t2.business_outlet_location  FROM `mss_business_admin` t1 INNER JOIN mss_business_outlets t2 on t1.`business_admin_id` = t2.business_outlet_business_admin WHERE t2.business_outlet_status = 1 GROUP by t1.business_admin_email ORDER by t1.business_admin_id asc";
         $query = $this->db->query($sql);
         if($query && $query->num_rows() > 0){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -316,6 +316,37 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
                     WHERE date(mss_pending_amount_tracker.date_time) between  ".$this->db->escape($data['start_week'])." AND  ".$this->db->escape($data['end_week'])."  
                     AND mss_pending_amount_tracker.business_outlet_id = ".$this->db->escape($data['business_outlet_id']);
 
+
+            $query = $this->db->query($sql);
+            
+            if($query->num_rows()>0){
+                return $this->ModelHelper(true,false,'',$query->result_array());
+            }
+            else{
+                return $this->ModelHelper(false,true,"DB error!");   
+            } 
+    }
+
+    public function packageExpiry($where){
+        $sql = "SELECT 
+        mss_customers.customer_name,
+        mss_customers.customer_mobile,
+        mss_salon_packages.salon_package_name,
+        mss_customer_packages.salon_package_type,
+        mss_customer_packages.package_expiry_date
+    
+        FROM 
+            
+            mss_customers , mss_customer_packages , mss_salon_packages
+            
+            WHERE 
+            
+                 mss_customers.customer_id=mss_customer_packages.customer_id
+            AND  mss_customer_packages.salon_package_id= mss_salon_packages.salon_package_id
+            AND  mss_customer_packages.package_expiry_date BETWEEN CURRENT_DATE and (CURRENT_DATE + INTERVAL ".$where['day']." Day)
+            AND  mss_customers.customer_master_admin_id=  ".$where['business_master_admin_id']." 
+            AND  mss_customers.customer_business_outlet_id = ".$where['business_outlet_id']." 
+            order by mss_customer_packages.package_expiry_date DESC";
 
             $query = $this->db->query($sql);
             
