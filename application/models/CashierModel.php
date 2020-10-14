@@ -547,6 +547,7 @@ class CashierModel extends CI_Model {
 						$cashback = $cashback['res_arr'];
 					}
 				}
+				// $this->PrintArray($cashback);
                 //jitesh ends code
         		//end of calculate points
         $this->db->trans_start();
@@ -644,7 +645,6 @@ class CashierModel extends CI_Model {
 									'redemption_date' => date('Y-m-d'),
 									'qty' => $data['cart_data'][$i]['service_quantity']
 								);
-
 					$insert_redemption = $this->Insert($package_redemption_data,'mss_package_redemption_history');
             	}
 			}
@@ -687,14 +687,13 @@ class CashierModel extends CI_Model {
 					}
 					else if ($cashback['rule_type'] == 'Cashback Single Rule' || $cashback['rule_type'] == 'Cashback Multiple Rule' || $cashback['rule_type'] == 'Cashback LTV Rule')
 					{
-
 							$update_cashback="UPDATE mss_customers SET customer_cashback = customer_cashback + ".$cashback['cashback_generated']." WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";
 							$this->db->query($update_cashback);
 					}
 				}
 				else
 				{
-					$update_cashback = $update_cashback="UPDATE mss_customers SET customer_cashback = customer_cashback + 0 WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";
+					$update_cashback="UPDATE mss_customers SET customer_cashback = customer_cashback + 0 WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";
 					$this->db->query($update_cashback);
 				}
 				
@@ -715,7 +714,7 @@ class CashierModel extends CI_Model {
 					$sp_array=array(json_decode($_POST['txn_settlement']['txn_settlement_payment_mode'],true));
 						$sp_array=$sp_array[0];
 					foreach($sp_array as $k=>$v){
-						if($v['payment_type']=="loyalty_wallet"){
+						if($v['payment_type']=="cashback_wallet"){
 							$split_loyalty_payment= $v['payment_type'];
 							$payment_form_rewards= $v['amount_received'];
 						}
@@ -726,9 +725,9 @@ class CashierModel extends CI_Model {
 						}
 					}
 					if(isset($split_loyalty_payment)){
-						if($split_loyalty_payment == 'loyalty_wallet' && $data['txn_settlement']['txn_settlement_way'] == 'Split Payment'){
+						if($split_loyalty_payment == 'cashback_wallet' && $data['txn_settlement']['txn_settlement_way'] == 'Split Payment'){
 							//Update the customer loyalty wallet as well
-							$query = "UPDATE mss_customers SET customer_rewards = customer_rewards - ".(int)$payment_form_rewards." WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";			
+							$query = "UPDATE mss_customers SET customer_cashback = customer_cashback - ".(int)$payment_form_rewards." WHERE customer_id = ".$data['customer_pending_data']['customer_id']."";			
 							$this->db->query($query);   
 						}   
 					} 
@@ -2391,7 +2390,7 @@ class CashierModel extends CI_Model {
 		mss_transaction_settlements.txn_settlement_way,
 		mss_transaction_settlements.txn_settlement_payment_mode,
 		mss_transaction_settlements.txn_settlement_amount_received,
-		'service'
+		'service' AS 'service'
 	FROM
 		mss_transactions,
 		mss_transaction_settlements,
@@ -2400,6 +2399,7 @@ class CashierModel extends CI_Model {
 		mss_employees
 	WHERE 
 		mss_transaction_services.txn_service_status=1 AND
+		mss_transactions.txn_status=1 AND
 		mss_services.service_id= mss_transaction_services.txn_service_service_id AND
 		mss_transaction_settlements.txn_settlement_txn_id=mss_transactions.txn_id AND
 		mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id AND
