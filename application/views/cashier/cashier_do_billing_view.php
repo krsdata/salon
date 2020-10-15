@@ -2004,13 +2004,15 @@
 									<!--  -->
 									<div class="col-md-12">
 										<div class="row"  style="background-color:white;">
+										<?php if(array_search('Marks360', $business_admin_packages) !== false){?>
 											<div class="col-md-4 ml-2">
 												<label class="custom-control custom-checkbox">
 													<input type="checkbox" class="custom-control-input" checked="true" id="cashback">
 													<span class="custom-control-label">Credit Rewards</span>
 												</label>
 											</div>
-											<div class="col-md-3 mt-1">
+										<?php } ?>
+											<div class="col-md-4 mt-1">
 												<button class="btn btn-primary btn-lg EditViewCustomer" CustomerId="<?=$individual_customer['customer_id']?>"><?=$individual_customer['customer_name']?></button><br>
 												<p class="ClearPendingAmount" customer_id="<?=$individual_customer['customer_id']?>" pending_amount="<?=$individual_customer['customer_pending_amount']?>" style="color:red;">Due : Rs. <?=$individual_customer['customer_pending_amount']?></p>
 											</div>
@@ -3422,7 +3424,7 @@
 
       rowno = rowno+1;
       
-      $("#Split-Payment-Info-Table tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><label class=\"form-label\">Payment Mode</label><select name=\"payment_type[]\" class=\"form-control\" required><option disabled>Select Payment Method</option><option value=\"Cash\">Cash</option><option value=\"Credit_Card\">Credit Card</option><option value=\"Debit_Card\">Debit Card</option><option value=\"Paytm\">Paytm</option><option value=\"Phonepe\">Phonepe</option><option value=\"Google_Pay\">Google Pay</option><option value=\"Virtual_Wallet\" disabled>Virtual Wallet</option><option value=\"loyalty_wallet\" >Loyalty Wallet</option></select></div></td><td><div class=\"form-group\"><label class=\"form-label\">Amount Received</label><input type=\"number\" placeholder=\"Amount in INR\" class=\"form-control\" name=\"amount_received[]\"></div></td></tr>");
+      $("#Split-Payment-Info-Table tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><label class=\"form-label\">Payment Mode</label><select name=\"payment_type[]\" class=\"form-control\" required><option disabled>Select Payment Method</option><option value=\"Cash\">Cash</option><option value=\"Credit_Card\">Credit Card</option><option value=\"Debit_Card\">Debit Card</option><option value=\"Paytm\">Paytm</option><option value=\"Phonepe\">Phonepe</option><option value=\"Google_Pay\">Google Pay</option><option value=\"Virtual_Wallet\" disabled>Virtual Wallet</option><option value=\"cashback_wallet\" >Cashback Wallet</option></select></div></td><td><div class=\"form-group\"><label class=\"form-label\">Amount Received</label><input type=\"number\" placeholder=\"Amount in INR\" class=\"form-control\" name=\"amount_received[]\"></div></td></tr>");
 
 				
 			

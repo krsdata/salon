@@ -758,14 +758,14 @@ class CashierModel extends CI_Model {
                 5.if exists then reduce it by the no. of quantity taken
                 6.if not then do nothing
             */
-
+		$txn_id=$result_1['res_arr']['insert_id'];
         for($i=0;$i<count($data['cart_data']);$i++){
             $service_data = array(
                 'txn_service_service_id' => $data['cart_data'][$i]['service_id'],
                 'txn_service_quantity'   => $data['cart_data'][$i]['service_quantity']
             );
             
-            $this->UpdateStock($service_data);
+            $this->UpdateStock($service_data,$txn_id);
         }
 
         $this->db->trans_complete();
@@ -781,7 +781,7 @@ class CashierModel extends CI_Model {
     }
 
 
-    public function UpdateStock($service_data){
+    public function UpdateStock($service_data,$txn_id){
         $service_id = $service_data['txn_service_service_id'];
         $quantity = $service_data['txn_service_quantity'];
 
@@ -792,21 +792,35 @@ class CashierModel extends CI_Model {
             //Check whether service composition exists
             $where = array('service_id' => $service_id);
 			$CompositionExists = $this->CheckCompositionExists($where);
+
             if($CompositionExists['success'] == 'true'){
                 //Update the stock by the quantity
-                $service_composition = $this->GetCompostion($where);
+				$service_composition = $this->GetCompostion($where);
+				
 				// $this->PrintArray($service_composition);
-
                 //Again Check for each composition item whether its stock exists
                 //if exists then reduce it by the consumption quantity
                 foreach ($service_composition as $composition) {
-					$result = $this->CheckRmStockExists(array('stock_service_id'=>$composition['rmc_id'])); 					
+					$result = $this->CheckRmStockExists(array('stock_service_id'=>$composition['rmc_id'])); 
+
                     if($result['success'] == 'true'){
                         //Subtract the composition consumption quantity from stock
                         $temp = array(
                             'stock_service_id' =>$composition['rmc_id'],
                             'consumption_quantity' => (int)$composition['consumption_quantity'] * (int)$quantity
-                        );
+						);
+						//capture servicewise raw material cunsumption 
+						$raw_mat=array(
+							'raw_material_id' => $composition['rmc_id'],
+							'consumption'	=> 	(int)$composition['consumption_quantity'] * (int)$quantity,
+							'service_id'	=> $service_id,
+							'txn_id'		=> $txn_id,
+							'txn_date'			=>date('Y-m-d')
+						);
+
+						$rw_entry=$this->Insert($raw_mat,'mss_raw_consumption');
+
+						//Update Rw Stock
                         $this->UpdateStockFromComposition($temp);
                     }
                 }
@@ -3595,5 +3609,138 @@ class CashierModel extends CI_Model {
 		}
 
 
+
+	public function TodaysServiceWiseSale($data){
+			$sql="SELECT 
+			mss_transactions.txn_id,
+			mss_transactions.txn_discount,
+			mss_transactions.txn_value,
+			date(mss_transactions.txn_datetime) AS 'date',
+			mss_transactions.txn_unique_serial_id,
+			mss_customers.customer_name,
+			mss_customers.customer_mobile,
+			mss_transaction_services.txn_service_service_id AS 'service_id',
+			mss_services.service_name,
+			mss_employees.employee_first_name
+		FROM
+			mss_transactions,
+			mss_transaction_services,
+			mss_customers,
+			mss_employees,
+			mss_services
+		WHERE
+			mss_transactions.txn_status=1 AND
+			mss_transaction_services.txn_service_status=1 AND
+			mss_transaction_services.txn_service_txn_id = mss_transactions.txn_id AND
+			mss_transaction_services.txn_service_expert_id = mss_employees.employee_id AND
+			mss_transaction_services.txn_service_service_id = mss_services.service_id AND
+			mss_transactions.txn_customer_id = mss_customers.customer_id AND
+			date(mss_transactions.txn_datetime) = CURRENT_DATE AND
+			mss_employees.employee_business_outlet=".$this->db->escape($data['business_outlet_id'])." 
+			GROUP BY mss_transaction_services.txn_service_id ";
+			
+				$query = $this->db->query($sql);
+				
+				if($query->num_rows()){
+					return $this->ModelHelper(true,false,'',$query->result_array());
+				}
+				else{
+					return $this->ModelHelper(true,false,'Database Error');   
+				} 
+			}
+
+			public function ServiceWiseSaleBetween($data){
+				$sql="SELECT 
+				mss_transactions.txn_id,
+				mss_transactions.txn_discount,
+				mss_transactions.txn_value,
+				date(mss_transactions.txn_datetime) AS 'date',
+				mss_transactions.txn_unique_serial_id,
+				mss_customers.customer_name,
+				mss_customers.customer_mobile,
+				mss_transaction_services.txn_service_service_id AS 'service_id',
+				mss_services.service_name,
+				mss_employees.employee_first_name
+			FROM
+				mss_transactions,
+				mss_transaction_services,
+				mss_customers,
+				mss_employees,
+				mss_services
+			WHERE
+				mss_transactions.txn_status=1 AND
+				mss_transaction_services.txn_service_status=1 AND
+				mss_transaction_services.txn_service_txn_id = mss_transactions.txn_id AND
+				mss_transaction_services.txn_service_expert_id = mss_employees.employee_id AND
+				mss_transaction_services.txn_service_service_id = mss_services.service_id AND
+				mss_transactions.txn_customer_id = mss_customers.customer_id AND
+				date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND
+				".$this->db->escape($data['to_date'])." AND
+				mss_employees.employee_business_outlet=".$this->db->escape($data['business_outlet_id'])." 
+				GROUP BY mss_transaction_services.txn_service_id ";
+				
+					$query = $this->db->query($sql);
+					
+					if($query){
+						return $this->ModelHelper(true,false,'',$query->result_array());
+					}
+					else{
+						return $this->ModelHelper(false,true,'Database Error');   
+					} 
+				}
+				public function ViewComposition($where){
+					$sql = "SELECT 
+					mss_services.service_id,
+					mss_services.service_name,
+					mss_services.service_unit,
+					mss_sub_categories.sub_category_name,
+					mss_categories.category_name,
+					mss_raw_consumption.consumption,
+					mss_raw_consumption.raw_material_id,
+					mss_transactions.txn_id,
+					mss_raw_consumption.extra_use,
+					mss_raw_consumption.wastage
+				FROM
+					mss_services,
+					mss_sub_categories,
+					mss_categories,
+					mss_transactions,
+					mss_raw_consumption
+				WHERE
+					mss_services.service_id = mss_raw_consumption.raw_material_id AND
+					mss_services.service_sub_category_id = mss_sub_categories.sub_category_id AND
+					mss_sub_categories.sub_category_category_id = mss_categories.category_id AND
+					mss_raw_consumption.txn_id = mss_transactions.txn_id AND
+					mss_transactions.txn_id= ".$this->db->escape($where['txn_id'])." ";
+			
+					$query = $this->db->query($sql);
+					
+					if($query){
+						return $this->ModelHelper(true,false,'',$query->result_array());
+					}
+					else{
+						return $this->ModelHelper(false,true,"DB error!");   
+					}
+				}	
+
+				public function UpdateConsumption($where){
+					$sql = "UPDATE mss_raw_consumption SET extra_use=".$this->db->escape($where['extra_use']).",
+					wastage=".$this->db->escape($where['wastage'])." WHERE
+					txn_id= ".$this->db->escape($where['txn_id'])." AND raw_material_id= ".$this->db->escape($where['service_id'])." ";
+			
+					$query = $this->db->query($sql);
+
+					$sql2 = "UPDATE inventory_stock SET stock_in_unit=(stock_in_unit - (".$this->db->escape($where['extra_use'])." + ".$this->db->escape($where['wastage']).") ) WHERE
+					stock_service_id= ".$this->db->escape($where['service_id'])." ";
+			
+					$query2 = $this->db->query($sql2);
+
+					if($query){
+						return $this->ModelHelper(true,false,'Updated Successfully');
+					}
+					else{
+						return $this->ModelHelper(false,true,"DB error!");   
+					}
+				}	
 
 }

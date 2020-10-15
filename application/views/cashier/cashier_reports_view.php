@@ -111,6 +111,9 @@
 									<li class="nav-item">
 										<a class="nav-link" data-toggle="tab" href="#tab-6">Last 200 Transactions</a>
 									</li>
+									<li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#tab-7">Edit Composition</a>
+									</li>
 								</ul>
 							</div>
 							<div class="card-body">
@@ -816,6 +819,62 @@
 												</table>
 											</div>
 										</div>								
+									</div>
+									<div class="tab-pane" id="tab-7" role="tabpanel">
+										<div class="card">
+											<div class="card-header">
+												<div class="card-title my-2">
+													<div class="row">
+														<div class="col-md-3">
+														Last 10 Transaction
+														</div>
+														<form class="form-inline" style="width:60%;" method="POST" action="#" id="service_txn">
+															<div class="form-group col-md-3">
+																<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
+															</div>
+															<div class="form-group col-md-2">
+																<input type="submit" class="btn btn-primary" id="getServiceTxn"  value="Submit" />
+															</div>
+														</form>
+													</div>														
+												</div>
+											</div>
+											<div class="card-body" style="margin-right:10px;">
+												<table class="table table-striped datatables-basic " style="width:100%;text-align:center" id="service_txnTable">	
+												<thead>
+													<tr>
+														<th>Sr. No.</th>
+														<th>Date</th>			
+														<th>Unique Serial Id</th>	
+														<th>Customer Name</th>																								
+														<th>Mobile No.</th>														
+														<th>Service Name</th>
+														<th>MRP Amount</th>
+														<th>Net Amount</th>
+														<th>Expert Name</th>
+														<th>Action</th>
+													</tr>
+												</thead>
+												<tbody>
+													<?php $count=1; foreach($service_sales as $txn){ ?>
+														<tr>								
+															<td><?=$count?></td>													
+															<td><?=$txn['date']?></td>
+															<td><?=$txn['txn_unique_serial_id']?></td>
+															<td><?=$txn['customer_name']?></td>														
+															<td><?=$txn['customer_mobile']?></td>															
+															<td><?=$txn['service_name']?></td>
+															<td><?=number_format($txn['txn_value']+$txn['txn_discount'])?></td>
+															<td><?=number_format($txn['txn_value'])?></td>	
+															<td><?=$txn['employee_first_name']?></td>														
+															<td><button class='btn btn-primary editComposition' txn_id="<?=$txn['txn_id']?>"  service_id='<?=$txn['service_id']?>'><i class='fa fa-pen'></i></button>															
+															</td>
+														</tr>
+													<?php $count++; } ?>
+												</tbody>
+												</table>
+											</div>
+										</div>								
 									</div>									
 								</div>
 							</div>
@@ -874,6 +933,52 @@
 													
 												</tbody>
 											</table>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal fade show" id="ModalViewComposition" tabindex="-1" role="dialog" aria-hidden="true">
+									<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title text-white">
+													Edit Composition
+												</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">
+												<div class="row">
+													<div class="col-md-12">
+														<form id="edit_composition" method="POST" action="#">
+															<div class="form-row">
+																<table id="edit_comp">
+																	<thead>
+																		<th>Category</th>
+																		<th>Sub-Category</th>
+																		<th>Raw Material</th>
+																		<th>Consumption</th>
+																		<th>Extra use </th>
+																		<th>Wastage</th>
+																		<th colspan="2">Action</th>
+																	</thead>
+																	<tbody id="edit_bill">
+																		
+																	</tbody>		
+																</table>												
+															</div>
+															<button type="button" id="close_edit_btn" class="btn btn-primary float-right" data-dismiss="modal">Close</button>
+														</form>
+														<!-- <div class="alert alert-dismissible feedback1" style="margin:0px;" role="alert">
+															<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+															<div class="alert-message">
+															</div>
+														</div> -->
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -1296,7 +1401,123 @@
   	});
 
 
+		$(document).on('click',"#getServiceTxn",function(event){
+    	event.preventDefault();
+      this.blur();
+			var dr=$("#service_txn input[name=daterange]").val();
+	      var parameters = {
+	        from_date : dr.substring(0, 10),
+					to_date :	dr.substring(12, 23)
+	      };
+				$.getJSON("<?=base_url()?>Cashier/GetServiceWiseTransactions", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					if(data.success == 'true'){
+						var str_2 = "";
+						for(var i=0;i< data.message.length;i++){
+							str_2+="<tr>";
+							str_2 += "<td>" + (i+1) + "</td>";
+							str_2 += "<td>" + data.message[i].date + "</td>";
+							str_2 += "<td>" + data.message[i].txn_unique_serial_id + "</td>";
+							str_2 += "<td>" + data.message[i].customer_name + "</td>";
+							str_2 += "<td>" + data.message[i].customer_mobile + "</td>";
+							str_2 += "<td>" + data.message[i].service_name + "</td>";
+							str_2 += "<td>" + (new Intl.NumberFormat().format(Number(data.message[i].txn_value)+Number(data.message[i].txn_discount))) + "</td>";
+							str_2 += "<td>" + (new Intl.NumberFormat().format(data.message[i].txn_value)) + "</td>";	
+							str_2 += "<td>" + data.message[i].employee_first_name + "</td>";
+							str_2 +="<td><button class='btn btn-info'  service_id="+data.message[i].service_id+"><i class='fa fa-eye'></i></button> <button class='btn btn-primary'  service_id="+data.message[i].service_id+"><i class='fa fa-pen'></i></button></td>";
+							str_2+="</tr>";
+						}
+						$("#service_txnTable tbody tr").remove();
+						$("#service_txnTable tbody").append(str_2);
+					}
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+			});
+  	});
+
+		$(document).on('click',".editComposition",function(event){
+			event.preventDefault();
+			this.blur();
+			var parameters = {
+				txn_id: $(this).attr('txn_id')
+			};
+			
+				$.getJSON("<?=base_url()?>Cashier/GetComposition", parameters)
+				.done(function(data, textStatus, jqXHR) { 
+					if(data=='' || data.length==0){
+						alert("No Composition Found");
+					}else{
+						var str_2 = "";							
+						for(var i=0;i<data.length;i++){						
+							str_2 += "<tr>";
+							str_2 += "<td><div class='form-group'><input type='text' class='form-control' name='' value='"+data[i].category_name+"' readonly></div></td>";
+							str_2 += "<td><div class='form-group'><input type='text' class='form-control' name='' value='"+data[i].sub_category_name+"' readonly></div></td>";
+							str_2 += "<td><div class='form-group'><input type='text' class='form-control' name='' value='"+data[i].service_name+"' readonly></div></td>";
+							str_2 += "<td><div class='form-group'><input type='text' class='form-control' name='txn_discount_abs[]' value='"+data[i].consumption+' '+data[i].service_unit+"' readonly></div></td>";
+							str_2 += "<td><div class='form-group'><input type='text' class='form-control extra' name='txn_discounted_price[]' value="+data[i].extra_use+" ></div></td>";
+							str_2 += "<td><div class='form-group'><input type='text' class='form-control wastage' name='txn_discounted_price[]' value="+data[i].wastage+" ></div></td>";
+							str_2 += "<td><div class='form-group'><input type='hidden'  name='txn_id' value="+data[i].txn_id+"></div></td>";
+							str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-success updateConsumption' txn_id='"+data[i].txn_id+"' service_id='"+data[i].service_id+"' extra_use='"+data[i].extra_use+"' wastage='"+data[i].wastage+"' >Save</button></div></td>";
+						str_2 += "</tr>";
+						}				
+						$("#edit_comp tbody tr").remove();
+						$("#edit_comp tbody").append(str_2);
+						$("#ModalViewComposition").modal('show');	
+					}			
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+			});
+		});
+
+		$(document).on('change','.extra',function(event){
+			$('.updateConsumption').attr('extra_use',$(this).val());
+			// $('.updateConsumption').attr('wastage',$(this).val(0));
+		});
+		$(document).on('change','.wastage',function(event){
+			$('.updateConsumption').attr('wastage',$(this).val());
+			// $('.updateConsumption').attr('extra_use',$(this).val(0));
+		});
+		$(document).on('click',".updateConsumption",function(event){
+				event.preventDefault();
+				this.blur();
+				var parameters = {
+        "txn_id" : $(this).attr('txn_id'),
+        "service_id" : $(this).attr('service_id'),
+        "extra_use" : $(this).attr('extra_use'),
+				"wastage" : $(this).attr('wastage')
+      };
+			
+      $.ajax({
+        url: "<?=base_url()?>Cashier/UpdateConsumption",
+        data: parameters,
+        type: "POST",
+				cache: false,
+    		success: function(data) {
+          if(data.success == 'true'){
+						// $("#ModalEditBill").modal('hide');
+								toastr["success"](data.message,"", {
+								positionClass: "toast-top-right",
+								progressBar: "toastr-progress-bar",
+								newestOnTop: "toastr-newest-on-top",
+								rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+								timeOut: 500
+							});
+							// setTimeout(function () { location.reload(1); }, 500);
+          }
+          else if (data.success == 'false'){  
+						// $("#ModalEditBill").modal('hide');                 
+      	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
+							$("#ErrorModalMessage").html("").html(data.message);
+						})
+          }
+        }
+			});
 	});
+
+	});
+	
 </script>
 <script>
   function exportTableToExcel(tableID, filename = ''){

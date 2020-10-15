@@ -2309,9 +2309,12 @@ class Cashier extends CI_Controller {
           
             $data['last_txn']= $this->CashierModel->LastFiftyTransaction();
 						$data['last_txn']=$data['last_txn']['res_arr'];
-						// $this->PrettyPrintArray($data['last_txn']);
             $data['service']= $this->CashierModel->ServiceWiseSale($where);
-            $data['service']= $data['service']['res_arr'];
+						$data['service']= $data['service']['res_arr'];
+						$data['service_sales']= $this->CashierModel->TodaysServiceWiseSale($where);
+						$data['service_sales']= $data['service_sales']['res_arr'];
+						
+						// $this->PrettyPrintArray($data['service_sales']);
             $data['expert']= $this->CashierModel->ExpertWiseSale($where);
             $data['expert']= $data['expert']['res_arr'];
             $data['package_expert']=$this->CashierModel->ExpertWisePackageSale($where);
@@ -2636,7 +2639,7 @@ class Cashier extends CI_Controller {
 			// $apisender = "BILLIT";
 			// $apikey="32kO6tWy5UuN16e3fOQpPg";
 			// $apisender="DSASSH";
-			
+			// $this->PrettyPrintArray($loyalty);
   		//$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again!Review us on ".$google_url." to serve you better and Please find the invoice on ".$bill_url;
   		if(!empty($loyalty) && $loyalty > 0){
   			if(!empty($google_url)){
@@ -7479,6 +7482,60 @@ public function AddToCartRedeemPoints(){
 			$data=$this->CashierModel->Insert($post,'mss_opening_balance');
 			$this->ReturnJsonArray(true,false,$data['res_arr']);
 			die;
+		}
+	}
+
+
+	public function GetServiceWiseTransactions(){
+		if($this->IsLoggedIn('cashier')){		
+			$where=array(
+				'to_date'	=>  $_GET['to_date'],
+				'from_date'	=> $_GET['from_date'],
+				'business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id']
+			);
+			$data=$this->CashierModel->ServiceWiseSaleBetween($where);
+			// $this->PrettyPrintArray($data);	
+
+			$this->ReturnJsonArray(true,false,$data['res_arr']);
+			die;
+		}
+	}
+
+	public function GetComposition(){
+		if($this->IsLoggedIn('cashier')){		
+			if(isset($_GET) && !empty($_GET)){
+				$where = array(
+					'txn_id'         => $_GET['txn_id']
+				);
+				$data = $this->CashierModel->ViewComposition($where);
+				header("Content-type: application/json");
+				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
+				die;
+			}
+		}
+	}
+
+	public function UpdateConsumption(){
+		if($this->IsLoggedIn('cashier')){		
+			if(isset($_POST) && !empty($_POST)){
+				$data=array(
+					'txn_id'			=> $_POST['txn_id'],
+					'service_id'	=> $_POST['service_id'],
+					'extra_use'		=> $_POST['extra_use'],
+					'wastage'			=> $_POST['wastage']
+				);
+				$res=$this->CashierModel->UpdateConsumption($data);
+				if($res['success']=='true'){
+					$this->ReturnJsonArray(true,false,'Consumption Updated');
+					die;
+				}else{
+					$this->ReturnJsonArray(false,true,'Error');
+					die;
+				}
+			}else{
+				$this->ReturnJsonArray(false,true,'Wrong Method');
+			die;
+			}
 		}
 	}
 
