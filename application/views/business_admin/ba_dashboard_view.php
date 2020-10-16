@@ -244,7 +244,7 @@
 												<tr><td>Services : </td><td><?=$sales_till_date?></td></tr>
 												<tr><td>Packages : </td><td><?=$package_sales_till_date?></td></tr>
 												<tr><td>Product : </td><td><?=$product_sales_till_date?></td></tr>
-												<tr style="color: red"><td>VW : </td><td>-<?=($monthly_sales_payment_wise['monthly_virtual_wallet']+$monthly_package_sales_payment_wise['virtual_wallet'])?></td></tr>
+												<tr style="color: red"><td>VW : </td><td>-<?=($monthly_sales_payment_wise['monthly_virtual_wallet']+$monthly_package_sales_payment_wise['virtual_wallet'])?></td></tr> 	
 												
 											</table>
 										</div>

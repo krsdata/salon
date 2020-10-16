@@ -16,21 +16,21 @@
 					<div class="col-md-12">
 						<div class="card">
 							<div class="card-header" style="margin-left:10px;">
-								<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight: bolder">
+								<ul class="nav nav-pills card-header-pills pull-right" id="myTab" role="tablist" style="font-weight: bolder">
 									<li class="nav-item">
-										<a class="nav-link active" data-toggle="tab" href="#tab-1">Add Stock</a>
+										<a class="nav-link active" data-toggle="tab" id="t1" href="#tab-1">Add Stock</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#tab-2">Stock Transfer</a>
+										<a class="nav-link" data-toggle="tab" id="t2" href="#tab-2">Stock Transfer</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#tab-3">Stock Level</a>
+										<a class="nav-link" data-toggle="tab" id="t3" href="#tab-3">Stock Level</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#tab-4">Incoming Stock</a>
+										<a class="nav-link" data-toggle="tab" id="t4" href="#tab-4">Incoming Stock</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#tab-5">Outgoing Stock</a>
+										<a class="nav-link" data-toggle="tab" id="t5" href="#tab-5">Outgoing Stock</a>
 									</li>
 								</ul>
 							</div>
@@ -1593,3 +1593,18 @@
 			}
 	}
 </script>
+<script>
+$(document).ready(function() {
+    if (location.hash) {
+        $("a[href='" + location.hash + "']").tab("show");
+    }
+    $(document.body).on("click", "a[data-toggle='tab']", function(event) {
+        location.hash = this.getAttribute("href");
+    });
+});
+$(window).on("popstate", function() {
+    var anchor = location.hash || $("a[data-toggle='tab']").first().attr("href");
+    $("a[href='" + anchor + "']").tab("show");
+});
+</script>
+
