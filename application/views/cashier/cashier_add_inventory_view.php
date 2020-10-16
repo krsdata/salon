@@ -319,7 +319,7 @@
 																				<td>
 																					<div class="form-group">
 																						<label>MRP</label>
-																						<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																						<input type="text" class="form-control mrp" name="product_mrp[]" required readonly>
 																					</div>
 																				</td>
 																				<td>
@@ -337,14 +337,13 @@
 																				<td>
 																					<div class="form-group">
 																						<label>GST %</label>
-																						<input type="text" class="form-control gst" name="product_gst[]" required>
+																						<input type="text" class="form-control gst" name="product_gst[]" required >
 																					</div>
-																				</td>
-																				
+																				</td>																				
 																				<td>
 																					<div class="form-group">
 																						<label>Total Cost</label>
-																						<input type="text" class="form-control total_cost" name="total_cost[]" required>
+																						<input type="text" class="form-control total_cost" name="total_cost[]" required readoly>
 																					</div>
 																				</td>
 																				<td>
