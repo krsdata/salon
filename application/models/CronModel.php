@@ -357,4 +357,49 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
                 return $this->ModelHelper(false,true,"DB error!");   
             } 
     }
+
+    public function wallerBallanceReminder($where){
+        $sql = "SELECT mss_customers.customer_name,mss_customers.customer_mobile, mss_customers.customer_virtual_wallet as 'Wallet Balance(Rs)',mss_customers.customer_wallet_expiry_date 
+
+            FROM  mss_customers
+            
+            WHERE mss_customers.customer_virtual_wallet > 0 
+            
+            AND mss_customers.customer_wallet_expiry_date > CURRENT_DATE
+            
+            and mss_customers.customer_master_admin_id = ".$where['business_master_admin_id'];
+            $query = $this->db->query($sql);
+            
+            if($query->num_rows()>0){
+                return $this->ModelHelper(true,false,'',$query->result_array());
+            }
+            else{
+                return $this->ModelHelper(false,true,"DB error!");   
+            } 
+    }
+    public function balanceServiceUsage($where){
+        $sql = "SELECT mss_customers.customer_mobile, mss_customer_packages.package_expiry_date,
+mss_customer_packages.salon_package_type,mss_salon_packages.salon_package_name,
+sum(mss_customer_package_profile.service_count) As 'Remaining Serv.'
+
+FROM mss_customer_packages,mss_customers,mss_customer_package_profile,mss_salon_packages
+
+WHERE
+        mss_customers.customer_id= mss_customer_packages.customer_id
+   AND  mss_customer_package_profile.customer_package_id= mss_customer_packages.salon_package_id
+   AND  mss_salon_packages.salon_package_type in ('SERVICE')
+   AND mss_customer_packages.package_expiry_date > (CURRENT_DATE + INTERVAL 30 DAY)
+   group by mss_customers.customer_mobile, mss_customer_packages.package_expiry_date,
+mss_customer_packages.salon_package_type,mss_salon_packages.salon_package_name
+   
+   HAVING sum(mss_customer_package_profile.service_count) > 0";
+            $query = $this->db->query($sql);
+            
+            if($query->num_rows()>0){
+                return $this->ModelHelper(true,false,'',$query->result_array());
+            }
+            else{
+                return $this->ModelHelper(false,true,"DB error!");   
+            } 
+    }
 }
