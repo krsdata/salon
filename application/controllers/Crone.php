@@ -696,4 +696,48 @@ die;
             }
         }
     }
+
+    public function wallerBallanceReminder(){
+        $this->load->model('CronModel');
+        $this->load->model('BusinessAdminModel');
+        $outlets = $this->CronModel->getOutLetsAdmin();
+        if(empty($outlets))
+            return true;
+        foreach ($outlets['res_arr'] as $key => $ol) {            
+            $where = array(
+                    'business_master_admin_id'  => $ol['business_master_admin_id'],
+                    'business_outlet_id' => $ol['business_outlet_id']
+                );
+            $packageExpiry = $this->CronModel->wallerBallanceReminder($where);
+            if($packageExpiry['success']){                
+                $packageExpiry = $packageExpiry['res_arr'];
+                foreach ($packageExpiry as $key => $p) {                   
+                    $msg  = "Dear  ".$p['customer_name'].", Utilize ur balance of  ".$p['Wallet Balance(Rs)'].", with  ".$ol['business_outlet_name'].", and experience the fantastic services before it expires. Team  ".$ol['business_outlet_name']."  ".$ol['business_outlet_mobile'].". ".$ol['business_outlet_location'];
+                    $this->sendMessage($p['customer_mobile'],$msg);
+                }
+            }
+        }
+    }
+
+    public function balanceServiceUsage(){
+        $this->load->model('CronModel');
+        $this->load->model('BusinessAdminModel');
+        $outlets = $this->CronModel->getOutLetsAdmin();
+        if(empty($outlets))
+            return true;
+        foreach ($outlets['res_arr'] as $key => $ol) {            
+            $where = array(
+                    'business_master_admin_id'  => $ol['business_master_admin_id'],
+                    'business_outlet_id' => $ol['business_outlet_id']
+                );
+            $packageExpiry = $this->CronModel->balanceServiceUsage($where);
+            if($packageExpiry['success']){                
+                $packageExpiry = $packageExpiry['res_arr'];
+                foreach ($packageExpiry as $key => $p) {                   
+                    $msg  = "Dear  ".$p['customer_name'].", Utilize ur balance of  ".$p['Wallet Balance(Rs)'].", with  ".$ol['business_outlet_name'].", and experience the fantastic services before it expires. Team  ".$ol['business_outlet_name']."  ".$ol['business_outlet_mobile'].". ".$ol['business_outlet_location'];
+                    $this->sendMessage($p['customer_mobile'],$msg);
+                }
+            }
+        }
+    }
 }
