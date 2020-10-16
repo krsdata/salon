@@ -2836,7 +2836,7 @@ class CashierModel extends CI_Model {
                     AND mss_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
                     AND mss_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
                     AND mss_services.service_is_active = TRUE
-                    AND (mss_services.service_name LIKE '%$search_term%' OR  mss_services.barcode LIKE '$search_term%')
+                    AND (mss_services.service_name LIKE '%$search_term%' OR  mss_services.barcode LIKE '%$search_term%' OR  mss_services.qty_per_item LIKE '%$search_term%')
                     AND mss_services.inventory_type != '' 
                     ORDER BY mss_services.service_name LIMIT 15";
         $query = $this->db->query($sql);
