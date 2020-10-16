@@ -1068,114 +1068,111 @@
                   <div class="modal-body m-3">
                     <div class="row">
                       <div class="col-md-12">
-                        <form id="AddOTCCategory" method="POST" action="#">
-							<div class="row">
-								<div class="form-group col-md-3">
-								<label>Inventory Type</label>
-								<select class="form-control" name="otc_inventory_type" id="otc_inventory_type" required>
-										<option value="" selected disabled>Select</option>
-										<option value="Retail Product">Retail Product</option>
-										<option value="Raw Material">Raw Material</option>
-								</select>
-								</div>
-														
-							</div>
-							<div class="row">
-									<div class="form-group col-md-3">
-										<label>Product Name</label>
-										<input type="text" class="form-control" placeholder="Item Name" name="otc_item_name" id="SearchServiceByName">
-										
-									</div>
-									<div class="form-group col-md-3">
-										<label>Category Type</label>
-										<select class="form-control" name="category_type" id='Otc-Category-Type' onchange="GetOtcCategory()">
-											<option value="" selected></option>
-											<!--<option value="Service">Service</option>-->
-											<option value="Products">Product</option>
-										</select>
-									</div>
-									<div class="form-group col-md-3">
-										<label>Category</label>
-										<select class="form-control" name="category_id" id="OTC-Category-Id">
-											<option value="" selected></option>
-											<?php
-											foreach ($categories as $category) {
-												echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
-											}
-											?>
-										</select>
-									</div>   
-									<div class="form-group col-md-3">
-										<label>Sub-Category</label>
-										<select class="form-control" name="otc_sub_category_id" id="OTC-Sub-Category-Id">
-										</select>
-									</div>                      
-								</div>
-							<div class="row">
-								<div class="form-group col-md-3">
-									<label>Item Name</label>
-									<input type="text" class="form-control" placeholder="Item Name" name="item_name" id="ServiceName">		
-								</div>
-								<div class="form-group col-md-3">
-									<label>Brand</label>
-									<input class="form-control" placeholder="Brand Name" name="otc_brand" id="otc_brand">
-								</div> 
-								<div class="form-group col-md-3">
-									<label>BarCode</label>
-									<input class="form-control" placeholder="Barcode" name="otc_barcode" id="otc_barcode">
-								</div>                       
-							
-							</div>
-							<div class="form-row">
-								<div class="form-group col-md-12">
-									<table class="table table-hover" id="InventoryAddProducts">
-										<tr>  
-											<td>
-												<div class="form-group">
-													<label>SKU Size 1</label>
-													<input type="number" class="form-control" id="q1" placeholder="Quantity Per Item" name="qty_per_item[]">
-												</div>
-											</td>
-											<td>		
-												<div class="form-group">
-													<label>Unit</label>
-													<select class="form-control" id="u1" name="otc_unit[]">
-														<option value="mL">mL</option>
-														<option value="gms">gms</option>
-														<option value="Pcs">Pcs</option>
-														<!--<option value="Ltr">ltr</option>-->
-													</select>
-												</div>                           
-											</td>
-											<td>	
-												<div class="form-group">
-													<label>Product Gross Price</label>
-													<input type="text" class="form-control" id="price" placeholder="OTC Gross Price" name="otc_price_inr[]" onkeypress="return validateFloatKeyPress(this,event);">
-												</div>
-											</td>
-											<td>	
-												<div class="form-group">
-													<label>GST</label>
-													<input type="number" class="form-control" id="gst" placeholder="Percentage" name="otc_gst_percentage[]" onkeyup="toTotalstatic()">
-												</div>                            
-											</td>
-											<td>	
-												<div class="form-group">
-													<label>Total</label>
-													<input type="number" class="form-control" id="total" placeholder="Total" name="otc_total[]">
-												</div>
-											</td>
-										</tr>	
-									</table>
-								</div>						
-								<div class="row">
-									<div class="col-md-12">
-										<button type="button" class="btn btn-success" id="AddRow">Add <i class="fa fa-plus" aria-hidden="true"></i></button>
-										<button type="button" class="btn btn-danger" id="DeleteRow">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>				
-										<button type="submit" class="btn btn-primary">Submit</button>
-									</div>
-								</div>
-							</div>	
+                        <form id="AddOTCCategory" method="POST" action="#">		
+													<div class="row">
+															<!-- <div class="form-group col-md-3">
+																<label>Product Name</label>
+																<input type="text" class="form-control" placeholder="Item Name" name="otc_item_name">
+																
+															</div> -->
+															<div class="form-group col-md-3">
+														<label>Inventory Type</label>
+														<select class="form-control" name="otc_inventory_type" id="otc_inventory_type" required>
+																<option value="" selected disabled>Select</option>
+																<option value="Retail Product">Retail Product</option>
+																<option value="Raw Material">Raw Material</option>
+														</select>
+														</div>
+															<div class="form-group col-md-3">
+																<label>Category Type</label>
+																<select class="form-control" name="category_type" id='Otc-Category-Type' onchange="GetOtcCategory()">
+																	<!-- <option value="" selected></option> -->
+																	<!--<option value="Service">Service</option>-->
+																	<option value="Products">Product</option>
+																</select>
+															</div>
+															<div class="form-group col-md-3">
+																<label>Category</label>
+																<select class="form-control" name="category_id" id="OTC-Category-Id">
+																	<option value="" selected></option>
+																	<?php
+																	foreach ($otccategories as $category) {
+																		echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
+																	}
+																	?>
+																</select>
+															</div>   
+															<div class="form-group col-md-3">
+																<label>Sub-Category</label>
+																<select class="form-control" name="otc_sub_category_id" id="OTC-Sub-Category-Id">
+																</select>
+															</div>                      
+														</div>
+													<div class="row">
+														<div class="form-group col-md-3">
+															<label>Item Name</label>
+															<input type="text" class="form-control" placeholder="Item Name" name="item_name" id="ServiceName">		
+														</div>
+														<div class="form-group col-md-3">
+															<label>Brand</label>
+															<input class="form-control" placeholder="Brand Name" name="otc_brand" id="otc_brand">
+														</div> 
+														<div class="form-group col-md-3">
+															<label>BarCode</label>
+															<input class="form-control" placeholder="Barcode" name="otc_barcode" id="otc_barcode">
+														</div>                       
+													
+													</div>
+													<div class="form-row">
+														<div class="form-group col-md-12">
+															<table class="table table-hover" id="InventoryAddProducts">
+																<tr>  
+																	<td>
+																		<div class="form-group">
+																			<label>SKU Size 1</label>
+																			<input type="number" class="form-control" id="q1" placeholder="Quantity Per Item" name="qty_per_item[]">
+																		</div>
+																	</td>
+																	<td>		
+																		<div class="form-group">
+																			<label>Unit</label>
+																			<select class="form-control" id="u1" name="otc_unit[]">
+																				<option value="mL">mL</option>
+																				<option value="gms">gms</option>
+																				<option value="Pcs">Pcs</option>
+																				<!--<option value="Ltr">ltr</option>-->
+																			</select>
+																		</div>                           
+																	</td>
+																	<td>	
+																		<div class="form-group">
+																			<label>Product Gross Price</label>
+																			<input type="text" class="form-control" id="price" placeholder="OTC Gross Price" name="otc_price_inr[]" onkeypress="return validateFloatKeyPress(this,event);">
+																		</div>
+																	</td>
+																	<td>	
+																		<div class="form-group">
+																			<label>GST</label>
+																			<input type="number" class="form-control" id="gst" placeholder="Percentage" name="otc_gst_percentage[]" onkeyup="toTotalstatic()">
+																		</div>                            
+																	</td>
+																	<td>	
+																		<div class="form-group">
+																			<label>Total</label>
+																			<input type="number" class="form-control" id="total" placeholder="Total" name="otc_total[]">
+																		</div>
+																	</td>
+																</tr>	
+															</table>
+														</div>						
+														<div class="row">
+															<div class="col-md-12">
+																<button type="button" class="btn btn-success" id="AddRow">Add <i class="fa fa-plus" aria-hidden="true"></i></button>
+																<button type="button" class="btn btn-danger" id="DeleteRow">Delete <i class="fa fa-trash" aria-hidden="true"></i></button>				
+																<button type="submit" class="btn btn-primary">Submit</button>
+															</div>
+														</div>
+													</div>	
                         </form>
                         <div class="alert alert-dismissible feedback" style="margin:0px;" role="alert">
                           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
