@@ -2307,11 +2307,11 @@ class BusinessAdmin extends CI_Controller {
                 }
             }
             $where = array(
-							'category_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-							'category_is_active'         => TRUE,
-							'category_business_outlet_id'=> $this->session->userdata['outlets']['current_outlet'],
-							'category_type'=>'Products'
-						);
+				'category_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+				'category_is_active'         => TRUE,
+				'category_business_outlet_id'=> $this->session->userdata['outlets']['current_outlet'],
+				'category_type'=>'Products'
+			);
 
 			$data['otccategories'] = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
 			if($data['otccategories']['success'] == 'true'){	
@@ -2880,7 +2880,7 @@ class BusinessAdmin extends CI_Controller {
                 }
                 else{
                         // $barcode_id = $this->BusinessAdminModel->DetailsById($_POST['otc_barcode'],'mss_services','barcode');
-                        // // $barcode_id = $barcode_id['res_arr']; 
+                        // $barcode_id = $barcode_id['res_arr']; 
 												// $barcode_id=count($barcode_id)-3;
 												
 												$inv=0;
@@ -2902,7 +2902,7 @@ class BusinessAdmin extends CI_Controller {
                                 'service_gst_percentage'        => $_POST['otc_gst_percentage'][$key],
                                 'service_unit'                          => $_POST['otc_unit'][$key],
 																'service_type'              => "otc",
-																'inventory_type_id'					=> $inv
+																'inventory_type_id'					=>$inv
                             );
                             // $this->PrettyPrintArray($data);
                             $result = $this->BusinessAdminModel->Insert($data,'mss_services');

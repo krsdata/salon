@@ -291,7 +291,7 @@ die;
     }
 
     function sendWatsupMessage($mobile,$message){  
-    die('twt');
+  //  die('twt');
         $authKey = "JH3E76DHNYeIcwD";
         $clientId = "0rfMvmvjSxODwIp";        
         $userId = "9";
@@ -311,6 +311,8 @@ die;
     }
 
     public function dayClosingReport(){
+        // echo date('Y-m-d');
+        // die;
         $this->load->model('CronModel');
         $this->load->model('BusinessAdminModel');
         $outlets = $this->CronModel->getOutLetsAdmin();                    
@@ -355,7 +357,7 @@ die;
             }       
             
             $collection = $this->daybook($date,$ol['business_outlet_id']);
-
+            
             $data['collection'] = $collection;
             $data['service_Amt'] = $service_Amt;
             $data['package_Amt'] = $package_Amt;
@@ -367,7 +369,7 @@ die;
             $data['business_outlet_state'] = $ol['business_outlet_state'];
             $data['business_outlet_city'] = $ol['business_outlet_city'];
             $data['business_outlet_country'] = $ol['business_outlet_country'];
-
+            
             $total_o = 0;
             $total_t = 0;
             $total_p = 0;
@@ -410,7 +412,8 @@ die;
             Sales: Rs.$service_Amt, Collection: Rs.$total_t, Expenses : Rs.$total_e, Due Amt : Rs.$total_p          Visits:".$data['visit'];
 
             //echo $msg."<br><br>";
-            $this->sendMessage($ol['business_admin_mobile'],$msg);            
+            $this->sendMessage($ol['business_admin_mobile'],$msg);     
+            $this->sendWatsupMessage($ol['business_admin_mobile'],$msg);       
         }
         die;
     }
