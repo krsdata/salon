@@ -177,7 +177,7 @@
 																					<td>
 																						<div class="form-group">
 																							<label>MRP</label>
-																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																							<input type="text" class="form-control mrp" name="product_mrp[]" required readonly>
 																						</div>
 																					</td>
 																					<td>
@@ -195,14 +195,14 @@
 																					<td>
 																						<div class="form-group">
 																							<label>GST %</label>
-																							<input type="text" class="form-control gst" name="product_gst[]" required>
+																							<input type="text" class="form-control gst" name="product_gst[]" required readonly>
 																						</div>
 																					</td>
 																					
 																					<td>
 																						<div class="form-group">
 																							<label>Total Cost</label>
-																							<input type="text" class="form-control total_cost" name="total_cost[]" required>
+																							<input type="text" class="form-control total_cost" name="total_cost[]" required readonly>
 																						</div>
 																					</td>
 																					<td>
@@ -360,7 +360,7 @@
 																					<td>
 																						<div class="form-group">
 																							<label>MRP</label>
-																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																							<input type="text" class="form-control mrp" name="product_mrp[]" required readonly>
 																						</div>
 																					</td>
 																					<td>
@@ -378,14 +378,14 @@
 																					<td>
 																						<div class="form-group">
 																							<label>GST %</label>
-																							<input type="text" class="form-control gst" name="product_gst[]" required>
+																							<input type="text" class="form-control gst" name="product_gst[]" required readonly>
 																						</div>
 																					</td>
 																					
 																					<td>
 																						<div class="form-group">
 																							<label>Total Cost</label>
-																							<input type="text" class="form-control total_cost" name="total_cost[]" required>
+																							<input type="text" class="form-control total_cost" name="total_cost[]" required readonly>
 																						</div>
 																					</td>
 																					<td>
@@ -1074,7 +1074,7 @@
 			
 			rowno = rowno+1;
 			
-			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 		});
 
 		$("#DeleteRowProductTable").click(function(event){
@@ -1191,21 +1191,45 @@
     });
 
 		// $("#addProductTable tr:last .gst").on('input',function(e){			
-		$('body').on('input','#addProductTable tr:last .gst',function(e){	
+		$('body').on('input','#addProductTable tr:last .product_price',function(e){	
   			var product_qty=  Number($("#addProductTable tr:last .product_qty").val());
 				var product_price=  Number($("#addProductTable tr:last .product_price").val());
 				var product_gst=  Number($("#addProductTable tr:last .gst").val());
 				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
-				$("#addProductTable tr:last .total_cost").val(mrp);
+				$("#addProductTable tr:last .total_cost").val(mrp);				
 								
     });
 		// $("#transProductTable tr:last .gst").on('input',function(e){		
-			$('body').on('input','#transProductTable tr:last .gst',function(e){		
+			$('body').on('input','#transProductTable tr:last .product_price',function(e){		
   			var product_qty=  Number($("#transProductTable tr:last .product_qty").val());
 				var product_price=  Number($("#transProductTable tr:last .product_price").val());
 				var product_gst=  Number($("#transProductTable tr:last .gst").val());
 				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
 				$("#transProductTable tr:last .total_cost").val(mrp);
+								
+    });
+
+		$('body').on('blur','#addProductTable tr:last .product_price',function(e){		
+			var total_len=$("#AddProduct input[name^=total_cost]").length;
+				var array= $("#AddProduct input[name^=total_cost]");
+				var t_cost=0;
+				for(var i=0;i< total_len;i++){
+					t_cost+=Number(array[i].value);
+				}
+				// alert(t_cost);
+				$("#AddProduct input[name=amount_paid]").val(t_cost);
+								
+    });
+
+		$('body').on('blur','#transProductTable tr:last .product_price',function(e){		
+			var total_len=$("#TransProduct input[name^=total_cost]").length;
+				var array= $("#TransProduct input[name^=total_cost]");
+				var t_cost=0;
+				for(var i=0;i< total_len;i++){
+					t_cost+=Number(array[i].value);
+				}
+				// alert(t_cost);
+				$("#TransProduct input[name=amount_paid]").val(t_cost);
 								
     });
 
@@ -1228,11 +1252,19 @@
 				for(var i=0;i< total_len;i++){
 					t_cost+=Number(array[i].value);
 				}
-				if(t_cost < inv_amt){
-					alert("Total Cost is less than Invoice Amount.");
-				}else if(t_cost > inv_amt){
-					alert("Total Cost is more than Invoice Amount.");
-				}
+				// if(t_cost < inv_amt){
+				// 	let result = confirm('Total Cost is less than Invoice Amount. Do you want to Continue ?');
+				// 	let message = result ? '' : 'Transaction Canceled.';
+				// 	alert(message);
+				// 	// return false;		
+
+				// }else if(t_cost > inv_amt){
+				// 	let result = confirm('Total Cost is More than Invoice Amount. Do you want to Continue ?');
+				// 	let message = result ? '' : 'Transaction Canceled.';
+				// 	alert(message);
+				// 	// return false;
+			
+				// }
 				
 				var formData = $("#AddProduct").serialize(); 
 				$.ajax({
@@ -1275,7 +1307,7 @@
 				
 				rowno = rowno+1;
 				
-				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 			});
 
 			$("#DeleteRowProductTransTable").click(function(event){
