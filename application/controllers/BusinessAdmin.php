@@ -10986,8 +10986,13 @@ public function InsertSalary(){
 									}
 
 									//making entry i expense table
+									$outlet_id = $this->session->userdata['outlets']['current_outlet'];
+									$admin_id= $this->session->userdata['logged_in']['business_admin_id'];
+									$expense_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();			
+          				$expense_unique_serial_id = strval("EA".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($expense_counter['business_outlet_expense_counter']));
+
 									$data5=array(
-										'expense_unique_serial_id'	=>	'E1010Y',
+										'expense_unique_serial_id'	=>  $expense_unique_serial_id,
 										'expense_date'							=>	date('Y-m-d'),
 										'expense_type_id'						=>	'1',
 										'item_name'									=>	'Inventory',
@@ -11005,6 +11010,10 @@ public function InsertSalary(){
 										'bussiness_outlet_id'				=>	$this->session->userdata['outlets']['current_outlet']
 									);
 									$insert_expense=$this->CashierModel->Insert($data5,'mss_expenses');
+
+									$query = "UPDATE mss_business_outlets SET business_outlet_expense_counter = business_outlet_expense_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
+					
+									$this->db->query($query);
 
 								}
 								$this->db->trans_complete();

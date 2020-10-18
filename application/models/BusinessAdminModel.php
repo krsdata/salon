@@ -865,6 +865,12 @@ class BusinessAdminModel extends CI_Model {
         } 
         elseif ($data['report_name'] == 'SROTC') {
             return $this->GetStockReportInventory($data);
+		}
+		elseif ($data['report_name'] == 'CSRR') {
+            return $this->GetProductStockReport($data);
+		}
+		elseif ($data['report_name'] == 'CSRRM') {
+            return $this->GetRawMaterialStockReport($data);
         } 
         elseif ($data['report_name'] == 'SRRM') {
             return $this->GetStockReportRawMaterial($data);
@@ -895,6 +901,12 @@ class BusinessAdminModel extends CI_Model {
         }
         elseif($data['report_name']=='TWR'){
             return $this->TransactionInventoryReport($data);
+		}
+		elseif($data['report_name']=='VIT'){
+            return $this->VendorInvoiceTrackerReport($data);
+		}
+		elseif($data['report_name']=='PVIT'){
+            return $this->ProductWiseVendorInvoiceTrackerReport($data);
         }
         elseif($data['report_name']=='CT'){
             return $this->CancelledTransaction($data);
@@ -6266,26 +6278,116 @@ public function GetAttendanceAll($data){
     }
     //15-04
     private function GetStockReportInventory($data){
-        $sql = "SELECT 
-        mss_business_outlets.business_outlet_name as 'Outlet Name',
-        mss_inventory.barcode_id as 'Barcode Id',
-        mss_inventory.barcode as 'Barcode',
-        mss_services.service_name as 'Product Name',
-        mss_sub_categories.sub_category_name as 'Sub Category',
-        mss_categories.category_name as 'Category',
-        mss_inventory.brand_name as 'Brand Name',
-        mss_inventory.usg_category as 'Usg Type',
-        mss_inventory.sku_size as 'SKU Size',
-        mss_inventory.unit as 'Unit',
-        mss_inventory.sku_count as 'Total Stock'
-        FROM mss_inventory,mss_business_outlets,mss_sub_categories,mss_categories,mss_services
-        where 
-        mss_inventory.service_id=mss_services.service_id
-        AND mss_inventory.outlet_id = mss_business_outlets.business_outlet_id
-        AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
-        AND mss_sub_categories.sub_category_category_id=mss_categories.category_id
-        AND mss_inventory.business_admin_id=".$this->db->escape($data['business_admin_id'])." 
-        AND mss_inventory.outlet_id=".$this->db->escape($data['business_outlet_id'])." ";
+        $sql = "SELECT
+        mss_business_outlets.business_outlet_name,
+        mss_services.inventory_type,
+        mss_categories.category_name,
+        mss_sub_categories.sub_category_name,
+        mss_services.service_name,
+        mss_services.qty_per_item  as 'SKU Size',
+        mss_services.service_unit,
+        inventory_stock.total_stock,
+        inventory_stock.stock_in_unit,
+        mss_services.barcode,
+        format(inventory_data.product_mrp,0) as 'MRP',
+        format((inventory_data.product_mrp*inventory_stock.total_stock),0) as 'Stock Value@MRP' 
+	FROM
+        inventory_stock,
+        inventory_data,
+        inventory,
+        mss_services,
+        mss_categories,
+        mss_sub_categories,
+        mss_business_outlets       
+        WHERE
+		inventory_stock.stock_service_id=mss_services.service_id
+		AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
+		AND mss_sub_categories.sub_category_category_id=mss_categories.category_id
+		AND mss_business_outlets.business_outlet_id= inventory_stock.stock_outlet_id
+		AND mss_services.service_is_active=1
+		AND mss_services.inventory_type_id in (1,2)
+		AND inventory_data.service_id=mss_services.service_id
+		AND inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." 
+		GROUP BY mss_services.service_id " ;
+        
+        $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	
+	private function GetProductStockReport($data){
+        $sql = "SELECT
+
+				mss_business_outlets.business_outlet_name,
+				'Retail Product' as 'Product Type',
+				mss_services.service_name,
+				mss_services.qty_per_item  as 'SKU Size',
+				mss_services.service_unit,
+				inventory_stock.total_stock,
+				mss_services.barcode,
+				mss_categories.category_name,
+				mss_sub_categories.sub_category_name				   
+		FROM
+				inventory_stock,
+				inventory_data,
+				inventory,
+				mss_services,
+				mss_categories,
+				mss_sub_categories,
+				mss_business_outlets			   
+		WHERE
+			inventory_stock.stock_service_id=mss_services.service_id
+			AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
+			AND mss_sub_categories.sub_category_category_id=mss_categories.category_id
+			AND mss_business_outlets.business_outlet_id= inventory_stock.stock_outlet_id
+			AND mss_services.service_is_active=1
+			AND mss_services.inventory_type_id in (2)
+			AND inventory_data.service_id=mss_services.service_id
+			AND inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." 
+			GROUP BY mss_services.service_id " ;
+        
+        $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	private function GetRawMaterialStockReport($data){
+        $sql = "SELECT
+				mss_business_outlets.business_outlet_name,
+				'Raw Material' as 'Product Type',
+				mss_services.service_name,
+				mss_services.qty_per_item  as 'SKU Size',
+				mss_services.service_unit,
+				inventory_stock.total_stock,
+				mss_services.barcode,
+				mss_categories.category_name,
+				mss_sub_categories.sub_category_name				   
+		FROM
+				inventory_stock,
+				inventory_data,
+				inventory,
+				mss_services,
+				mss_categories,
+				mss_sub_categories,
+				mss_business_outlets			   
+				WHERE
+			inventory_stock.stock_service_id=mss_services.service_id
+			AND mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
+			AND mss_sub_categories.sub_category_category_id=mss_categories.category_id
+			AND mss_business_outlets.business_outlet_id= inventory_stock.stock_outlet_id
+			AND mss_services.service_is_active=1
+			AND mss_services.inventory_type_id in (1)
+			AND inventory_data.service_id=mss_services.service_id
+			AND inventory_stock.stock_outlet_id=".$this->db->escape($data['business_outlet_id'])." 
+			GROUP BY mss_services.service_id " ;
+        
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -6315,6 +6417,56 @@ public function GetAttendanceAll($data){
         mss_inventory_transaction.business_admin_id=".$this->db->escape($data['business_admin_id'])." 
         AND mss_inventory_transaction.outlet_id=".$this->db->escape($data['business_outlet_id'])."
        ";
+        $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	
+	private function VendorInvoiceTrackerReport($data){
+        $sql = "SELECT
+		inventory.invoice_number,inventory.invoice_date,
+		inventory.invoice_amount,inventory.amount_paid,
+		FORMAT ((inventory.invoice_amount - inventory.amount_paid),0) as 'Pending Amt',
+		inventory.source,
+		inventory.source_name		
+		FROM		
+		inventory, mss_vendors
+		WHERE
+			inventory.source = mss_vendors.vendor_id
+		AND inventory.business_outlet_id = ".$this->db->escape($data['business_outlet_id'])." ";
+        $query = $this->db->query($sql);
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	
+	private function ProductWiseVendorInvoiceTrackerReport($data){
+        $sql = "SELECT
+		inventory.invoice_number,
+		inventory.invoice_date,
+		inventory_data.product_name,
+		inventory_data.product_barcode,
+		inventory_data.product_price as 'Cost/Unit',
+	   	format( (( inventory_data.product_price*inventory_data.product_qty)+(inventory_data.product_price*inventory_data.product_gst*inventory_data.product_qty/100)),0) as 'Total Cost',
+	   	inventory_data.product_type,
+		mss_categories.category_name,
+		mss_sub_categories.sub_category_name	 
+	FROM	 
+	inventory, inventory_data, mss_services,mss_sub_categories,mss_categories	
+	WHERE	 
+	inventory.inventory_id = inventory_data.inventory_id
+	and inventory.business_outlet_id=mss_categories.category_business_outlet_id
+	and mss_sub_categories.sub_category_category_id= mss_categories.category_id
+	and mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
+	AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."	  
+	 GROUP by inventory.inventory_id ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
