@@ -20,9 +20,9 @@
 									<li class="nav-item">
 										<a class="nav-link active" data-toggle="tab" id="t1" href="#tab-1">Add Stock</a>
 									</li>
-									<li class="nav-item">
+									<!-- <li class="nav-item">
 										<a class="nav-link" data-toggle="tab" id="t2" href="#tab-2">Stock Transfer</a>
-									</li>
+									</li> -->
 									<li class="nav-item">
 										<a class="nav-link" data-toggle="tab" id="t3" href="#tab-3">Stock Level</a>
 									</li>
@@ -859,10 +859,35 @@
 					"product_name" : {
 	        	required : true
 	        }
-
 	    },
 	    submitHandler: function(form) {
 			// alert(document.getElementById('expiry').value);
+
+			var total_len=$("#AddProduct input[name^=total_cost]").length;
+				var inv_amt= $("#AddProduct input[name=invoice_amount]").val();
+				var array= $("#AddProduct input[name^=total_cost]");
+				var t_cost=0;
+				for(var i=0;i< total_len;i++){
+					t_cost+=Number(array[i].value);
+				}
+				if(t_cost < inv_amt){
+					let result = confirm('Total Cost is less than Invoice Amount. Do you want to Continue ?');
+					if(result){
+						alert("Transaction will be Processed");
+					}else{
+						alert("Transaction Canceled");
+						return false;
+					}
+				}else if(t_cost > inv_amt){
+					let result = confirm('Total Cost is More than Invoice Amount. Do you want to Continue ?');					
+					if(result){
+						alert("Transaction will be Processed");
+					}else{
+						alert("Transaction Canceled");
+						return false;
+					}			
+				}
+
 				var formData = $("#AddProduct").serialize(); 
 				$.ajax({
 	        url: "<?=base_url()?>Cashier/AddInventory",

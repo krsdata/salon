@@ -6428,15 +6428,16 @@ public function GetAttendanceAll($data){
 	
 	private function VendorInvoiceTrackerReport($data){
         $sql = "SELECT
-		inventory.invoice_number,inventory.invoice_date,
-		inventory.invoice_amount,inventory.amount_paid,
-		FORMAT ((inventory.invoice_amount - inventory.amount_paid),0) as 'Pending Amt',
+		inventory.invoice_number,
+		inventory.invoice_date,
+		inventory.invoice_amount,
+		inventory.amount_paid,
 		inventory.source,
-		inventory.source_name		
+		mss_vendors.vendor_name		
 		FROM		
 		inventory, mss_vendors
 		WHERE
-			inventory.source = mss_vendors.vendor_id
+			inventory.source_name = mss_vendors.vendor_id
 		AND inventory.business_outlet_id = ".$this->db->escape($data['business_outlet_id'])." ";
         $query = $this->db->query($sql);
         if($query){
