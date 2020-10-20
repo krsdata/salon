@@ -11046,6 +11046,8 @@ public function InsertSalary(){
 							// $this->PrettyPrintArray($data['stock']);
 							$data['stock_incoming']=$this->CashierModel->IncomingStock($where);
 							$data['stock_incoming']=	$data['stock_incoming']['res_arr'];
+							$data['inventory_details']= $this->CashierModel->StockInventoryDetails($where);
+							$data['inventory_details']=$data['inventory_details']['res_arr'];
 
 							$data['stock_outgoing']=$this->CashierModel->OutgoingStock($where);
 							$data['stock_outgoing']=	$data['stock_outgoing']['res_arr'];
@@ -11054,7 +11056,7 @@ public function InsertSalary(){
 							$data['pending_payment']=$this->BusinessAdminModel->GetPendingPayment();
               $data['pending_payment']=$data['pending_payment']['res_arr'];
 
-                // $this->PrettyPrintArray($data['stock_incoming']);
+                // $this->PrettyPrintArray($data['stock_outgoing']);
                 // exit;
 							$data['categories']  = $this->GetCategoriesOtc($this->session->userdata['outlets']['current_outlet']);
 							$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['outlets']['current_outlet']);
@@ -12689,7 +12691,28 @@ public function daybook(){
             else{
                 $this->LogoutUrl(base_url()."BusinessAdmin/");
             }
-    }
+		}
+		
+
+
+		public function GetInventoryDetails(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_GET) && !empty($_GET)){
+					$where = array(
+						'inventory_id'				=> $_GET['inventory_id']
+					);
+					$data = $this->CashierModel->StockInventoryDetailsById($where);
+					// $this->PrettyPrintArray($data);
+					if($data['success'] == 'true'){	
+						$this->ReturnJsonArray(false,true,$data['res_arr']);
+            die;	
+					}
+				}
+			}
+			else{
+				$this->LogoutUrl(base_url()."BusinessAdmin");
+			}			
+		}
 
 }
 
