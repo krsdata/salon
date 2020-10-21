@@ -1172,7 +1172,7 @@ class BusinessAdmin extends CI_Controller {
                 $data['sales_till_date']=$this->BusinessAdminModel->GetMonthlySalesTillDate($where);
 								$data['sales_till_date']=$data['sales_till_date']['res_arr'][0]['sales_till_date'];
                 $data['product_sales_till_date']=$this->BusinessAdminModel->GetMonthlyProductSalesTillDate($where);
-				$data['product_sales_till_date']=$data['product_sales_till_date']['res_arr'][0]['product_sales_till_date'];
+								$data['product_sales_till_date']=$data['product_sales_till_date']['res_arr'][0]['product_sales_till_date'];
                 $data['package_sales_till_date']=$this->BusinessAdminModel->PackageSalesTillDate($where);
                 $data['package_sales_till_date']=$data['package_sales_till_date']['res_arr'][0]['package_sales'];
                 
@@ -2534,7 +2534,7 @@ class BusinessAdmin extends CI_Controller {
 				'expense_type_business_outlet_id' => $outlet_id
 			);
 
-			$data = $this->CashierModel->GetAllExpenses($where);
+			$data = $this->BusinessAdminModel->GetAllExpenses($where);
 			
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
@@ -9451,8 +9451,12 @@ public function InsertSalary(){
                      'id' => $data['timeline']['res_arr']['id'],
                      'r1' => $data['timeline']['res_arr']['r1'],
                      'r2' => $data['timeline']['res_arr']['r2'],
-                     'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
-                     'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
+										 'no_risk'		=> $data['timeline']['res_arr']['no_risk'],
+										 'dormant_r1'		=> $data['timeline']['res_arr']['dormant_r1'],
+										 'dormant_r2'		=> $data['timeline']['res_arr']['dormant_r2'],
+										 'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
                      'lost_customer' => $data['timeline']['res_arr']['lost_customer']
                 );
             }
@@ -9461,9 +9465,13 @@ public function InsertSalary(){
                     'id' => 0,
                     'r1' => 2,
                     'r2' => 5,
-                    'regular_cust' => 5,
-                    'at_risk_cust' => 30,
-                    'lost_customer' => 90
+										'regular_cust' => 5,
+										'no_risk'	=> 30,
+										'dormant_r1'	=>31,
+										'dormant_r2'	=>60,
+										'at_risk_cust' => 61,
+										'at_risk_cust2' => 90,
+                    'lost_customer' => 91
                );
             }
             $data['new']=$this->BusinessAdminModel->NewCustomer($res);
@@ -9556,17 +9564,14 @@ public function InsertSalary(){
     }
     public function SendSmsCampaign($sender_id,$api_key,$mobile,$camapign_name,$name,$cust_name,$message,$outlet_name){
         if($this->IsLoggedIn('business_admin')){
-        // print_r($mobile);
-        // print_r($cust_name);
-        // exit;
-        // $msg=explode("#Name#",$message);
+        
         $msg = str_replace('#Name#', $cust_name, $message); 
         $msg = $msg." ".$outlet_name;
         // $this->PrettyPrintArray($msg);
         // exit;
         $msg = rawurlencode($msg);                          
             // API 
-            $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+            $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=1&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch,CURLOPT_POST,1);
@@ -11053,7 +11058,7 @@ public function InsertSalary(){
 							$data['stock_outgoing']=	$data['stock_outgoing']['res_arr'];
 
 							$data['all_expenses'] = $this->AllExpenses($this->session->userdata['outlets']['current_outlet']);
-							$data['pending_payment']=$this->BusinessAdminModel->GetPendingPayment();
+							$data['pending_payment']=$this->BusinessAdminModel->GetVendorPendingPayment();
               $data['pending_payment']=$data['pending_payment']['res_arr'];
 
                 // $this->PrettyPrintArray($data['stock_outgoing']);
@@ -12712,6 +12717,28 @@ public function daybook(){
 			else{
 				$this->LogoutUrl(base_url()."BusinessAdmin");
 			}			
+		}
+
+		public function GetInventoryTransactions(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_GET) && !empty($_GET)){
+					$where=array(
+						'from_date'	=> $_GET['from_date'],
+						'to_date'		=> $_GET['to_date'],
+						'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+					);
+					// $this->PrettyPrintArray($where);
+						$data=$this->BusinessAdminModel->GetInventoryDetailsBetween($where);						
+						$this->ReturnJsonArray(true,false,$data['res_arr']);
+						die;
+				}else{
+					$this->ReturnJsonArray(false,true,"Wrong Method!");
+					die;
+				}						
+			}
+			else{
+					$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}
 		}
 
 }

@@ -1640,8 +1640,7 @@ class BusinessAdminModel extends CI_Model {
 							AND mss_services.service_type= 'otc'
 							AND date(mss_transactions.txn_datetime) = date(now())
 							AND mss_transactions.txn_status=1				
-							AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])." 
-							AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."";
+							AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])." AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."";
 							//
 							
 							//
@@ -3373,7 +3372,7 @@ class BusinessAdminModel extends CI_Model {
 			AND mss_transactions.txn_id= mss_transaction_services.txn_service_txn_id
 			AND mss_transaction_services.txn_service_service_id= mss_services.service_id
 			AND date(mss_transactions.txn_datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY)
-			AND mss_services.inventory_type_id =0		 
+			AND mss_services.service_type='service'		 
 			AND mss_transactions.txn_status=1
 			AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."  ";
 
@@ -3389,7 +3388,7 @@ class BusinessAdminModel extends CI_Model {
 	
 	//Monthly Product Sales
 	public function GetMonthlyProductSalesTillDate($data){
-		$sql="SELECT sum(mss_transactions.txn_value) AS 'product_sales_till_date'
+		$sql="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'product_sales_till_date'
 		FROM
 		mss_transactions, 
 		mss_employees,
@@ -3399,7 +3398,7 @@ class BusinessAdminModel extends CI_Model {
 		mss_transactions.txn_cashier=mss_employees.employee_id
 		AND mss_transaction_services.txn_service_txn_id=mss_transactions.txn_id
 		AND mss_transaction_services.txn_service_service_id=mss_services.service_id
-		AND mss_services.inventory_type_id IN (1,2)
+		AND mss_services.service_type='otc'
 		AND mss_transactions.txn_status=1
 		and date(mss_transactions.txn_datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY)
 		AND mss_transaction_services.txn_service_txn_id   
@@ -3439,7 +3438,7 @@ class BusinessAdminModel extends CI_Model {
 		$sql = "SELECT SUM(mss_package_transactions.package_txn_value) AS package_sales
 		FROM mss_package_transactions , mss_employees 		
         WHERE mss_package_transactions.package_txn_cashier = mss_employees.employee_id
-        AND date(mss_package_transactions.datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH)
+        AND date(mss_package_transactions.datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH - INTERVAL +1 DAY)
         AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."";
 
 		$query = $this->db->query($sql);
@@ -3698,35 +3697,41 @@ class BusinessAdminModel extends CI_Model {
 	public function GetTopCardsDataForLastMonth($data){
 		switch ($data['type']) {
 				case 'last_month_sales':
-					$sql = "SELECT sum(mss_transactions.txn_value) AS 'last_month_sales'
-					FROM
-					mss_transactions, mss_employees,mss_transaction_services,mss_services
-					WHERE
-                    mss_transactions.txn_cashier=mss_employees.employee_id
-                    AND mss_transaction_services.txn_service_txn_id=mss_transactions.txn_id
-                    AND mss_transaction_services.txn_service_service_id=mss_services.service_id
-                    AND mss_services.inventory_type_id =0  
-                	AND mss_transactions.txn_status=1
-                    and date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH) AND (CURRENT_DATE - INTERVAL 1 MONTH)
-                    AND mss_transaction_services.txn_service_txn_id
-					AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."";
+					$sql = "SELECT 
+						SUM(mss_transaction_services.txn_service_discounted_price) AS 'last_month_sales'		
+						FROM mss_transactions, 
+						mss_employees,
+						mss_services,
+						mss_transaction_services				
+						WHERE 
+						mss_transactions.txn_cashier=mss_employees.employee_id
+						AND mss_transactions.txn_id= mss_transaction_services.txn_service_txn_id
+						AND mss_transaction_services.txn_service_service_id= mss_services.service_id
+						AND mss_services.service_type='service'
+						AND mss_transactions.txn_status=1
+						AND mss_transaction_services.txn_service_status=1
+						AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND (CURRENT_DATE - INTERVAL 1 MONTH - INTERVAL +1 DAY)
+						AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." ";
 				//
 				
 				//
 					break;
 					case 'last_month_product_sales':
-						$sql = "SELECT sum(mss_transactions.txn_value) AS 'last_month_product_sales'
-						FROM
-						mss_transactions, mss_employees,mss_transaction_services,mss_services
-						WHERE
-						mss_transactions.txn_cashier=mss_employees.employee_id
-						AND mss_transaction_services.txn_service_txn_id=mss_transactions.txn_id
-						AND mss_transaction_services.txn_service_service_id=mss_services.service_id
-						AND mss_services.inventory_type_id IN(1,2)  
-						AND mss_transactions.txn_status=1
-						and date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH) AND (CURRENT_DATE - INTERVAL 1 MONTH)
-						AND mss_transaction_services.txn_service_txn_id
-						AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."";
+						$sql = "SELECT 
+							sum(mss_transaction_services.txn_service_discounted_price) AS 'last_month_product_sales'						
+							FROM 
+							mss_transactions, 
+							mss_employees,
+							mss_services,
+							mss_transaction_services				
+							WHERE mss_transactions.txn_cashier=mss_employees.employee_id
+							AND mss_transactions.txn_id= mss_transaction_services.txn_service_txn_id
+							AND mss_transaction_services.txn_service_service_id= mss_services.service_id
+							AND mss_transactions.txn_status=1
+							AND mss_transaction_services.txn_service_status=1
+							AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND (CURRENT_DATE - INTERVAL 1 MONTH - INTERVAL +1 DAY)
+							AND mss_services.service_type='otc'
+							AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." ";
 					//
 					
 					//
@@ -6454,8 +6459,9 @@ public function GetAttendanceAll($data){
 		inventory.invoice_date,
 		inventory_data.product_name,
 		inventory_data.product_barcode,
+		inventory_data.product_qty,
 		inventory_data.product_price as 'Cost/Unit',
-	   	format( (( inventory_data.product_price*inventory_data.product_qty)+(inventory_data.product_price*inventory_data.product_gst*inventory_data.product_qty/100)),0) as 'Total Cost',
+	   	format((( inventory_data.product_price*inventory_data.product_qty)+(inventory_data.product_price*inventory_data.product_gst*inventory_data.product_qty/100)),0) as 'Total Cost',
 	   	inventory_data.product_type,
 		mss_categories.category_name,
 		mss_sub_categories.sub_category_name	 
@@ -6467,7 +6473,7 @@ public function GetAttendanceAll($data){
 	and mss_sub_categories.sub_category_category_id= mss_categories.category_id
 	and mss_services.service_sub_category_id=mss_sub_categories.sub_category_id
 	AND mss_categories.category_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."	  
-	 GROUP by inventory.inventory_id ";
+	 GROUP by inventory.inventory_id ORDER BY inventory_data.inventory_data_id DESC ";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -10038,24 +10044,25 @@ $sql = str_replace(",)",")",$sql);
 
 	private function EmployeeAttendanceReport($data){
         $sql = "SELECT 
-					mss_employees.employee_first_name,
-					mss_employees.employee_id,
-					mss_emss_attendance.attendance_date,
-					mss_emss_attendance.in_time,
-					mss_emss_attendance.out_time,
-					mss_emss_attendance.working_hours
-				FROM
-					mss_employees,
-					mss_emss_attendance
-				WHERE 
-					mss_employees.employee_business_outlet=".$this->db->escape($data['business_admin_id'])." AND
-					mss_employees.employee_business_admin=".$this->db->escape($data['business_outlet_id'])." AND 
-					mss_emss_attendance.attendance_date BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])." ";
+				mss_employees.employee_first_name,
+				mss_employees.employee_id,
+				mss_emss_attendance.attendance_date,
+				mss_emss_attendance.in_time,
+				mss_emss_attendance.out_time,
+				(mss_emss_attendance.out_time - mss_emss_attendance.in_time) AS 'Working Time',
+				mss_emss_attendance.working_hours
+			FROM
+				mss_employees,
+				mss_emss_attendance
+			WHERE 
+				mss_employees.employee_id= mss_emss_attendance.employee_id AND
+				mss_employees.employee_business_outlet=".$this->db->escape($data['business_outlet_id'])." AND
+				mss_employees.employee_business_admin=".$this->db->escape($data['business_admin_id'])." AND 
+				mss_emss_attendance.attendance_date BETWEEN ".$this->db->escape($data['from_date'])." AND 
+				".$this->db->escape($data['to_date'])." ";
 
         $query = $this->db->query($sql);
-        
         if($query){
-            // $result = $query->result_array();
             return $this->ModelHelper(true,false,'',$query->result_array());
         }
         else{
@@ -10570,6 +10577,60 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
         else{
             return $this->ModelHelper(false,true,"DB error!");   
         }
-    }
+	}
+	
+	public function GetInventoryDetailsBetween($data){
+		$sql="SELECT
+			inventory.inventory_id,
+			inventory.invoice_number,
+			inventory.invoice_date,
+			inventory_data.*,
+			mss_vendors.vendor_name
+		FROM
+			inventory,
+			mss_vendors,
+			inventory_data
+		WHERE
+			inventory.inventory_id = inventory_data.inventory_id AND
+			inventory.source_name = mss_vendors.vendor_id AND
+			inventory.invoice_date BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])." AND
+			inventory.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])."
+		GROUP BY
+			inventory_data.inventory_data_id ";
+
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"No Product Found in Stock.");
+        } 
+	}
+
+	public function GetAllExpenses($where){
+        $sql = "SELECT * FROM mss_expense_types,mss_expenses WHERE mss_expense_types.expense_type_id = mss_expenses.expense_type_id AND mss_expense_types.expense_type_business_admin_id = ".$this->db->escape($where['expense_type_business_admin_id'])." AND mss_expense_types.expense_type_business_outlet_id = ".$this->db->escape($where['expense_type_business_outlet_id'])."";
+
+        $query = $this->db->query($sql);
+        
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	
+	public function GetVendorPendingPayment(){
+        $sql="SELECT * FROM mss_expense_types,mss_expenses_unpaid WHERE mss_expense_types.expense_type_id = mss_expenses_unpaid.expense_type_id AND mss_expense_types.expense_type_business_admin_id =".$this->session->userdata['logged_in']['business_admin_id']."  AND mss_expense_types.expense_type_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND (expense_status='Unpaid' OR expense_status='Partialy_paid')";
+        $query = $this->db->query($sql);
+        
+        if($query){
+        return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+        return $this->ModelHelper(false,true,"DB error!");   
+        } 
+    } 
 
 }

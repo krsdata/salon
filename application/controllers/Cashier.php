@@ -2595,8 +2595,8 @@ class Cashier extends CI_Controller {
 					$customer_details = $this->GetCustomerBilling($_POST['customer_pending_data']['customer_id']);
 					//4.Send a msg
 					$this->session->set_userdata('bill_url',$bill_url);
-					$sms_status = $this->db->select('business_outlet_sms_status')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
-						
+					$sms_status = $this->db->select('business_outlet_sms_status,whats_app_sms_status')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+						// $this->PrettyPrintArray($sms_status);
 					if($sms_status['business_outlet_sms_status']==1){
 							if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
 								if($_POST['txn_data']['txn_value']==0){
@@ -2613,7 +2613,14 @@ class Cashier extends CI_Controller {
 								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 								}
 							}
-					 	}
+					 	}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
+							$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+							$this->SendWhatsAppSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+
+						}elseif($sms_status['whats_app_sms_status']==1){
+							print_r($this->SendWhatsAppSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']));
+
+						}
 					//
         
 					$this->ReturnJsonArray(true,false,"Transaction is successful!");
@@ -2630,6 +2637,51 @@ class Cashier extends CI_Controller {
 		}
 	}
 	public function SendSms($sender_id,$api_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
+		if($this->IsLoggedIn('cashier')){
+			$bill_url = $this->session->userdata('bill_url');
+			$loyalty = $this->session->userdata('loyalty_point');
+		error_log("URL ============1 ".$bill_url);
+  		//API key & sender ID
+  		// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
+			// $apisender = "BILLIT";
+			// $apikey="32kO6tWy5UuN16e3fOQpPg";
+			// $apisender="DSASSH";
+			// $this->PrettyPrintArray($loyalty);
+  		//$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again!Review us on ".$google_url." to serve you better and Please find the invoice on ".$bill_url;
+  		if(!empty($loyalty) && $loyalty > 0){
+  			if(!empty($google_url)){
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url Review us on Google: $google_url";
+  			}else{
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url ";
+  			}  			
+  		}else if(!empty($google_url)){
+  			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Review us on Google: $google_url";
+  		}else{
+  			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Look forward to serve you again.";
+  		}  		
+   		$msg = rawurlencode($msg);   //This for encode your message content                 		
+ 			
+ 			// API 
+			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+
+			// $url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
+				log_message('info', $url);
+			
+  		$ch = curl_init($url);
+  		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+  		curl_setopt($ch,CURLOPT_POST,1);
+  		curl_setopt($ch,CURLOPT_POSTFIELDS,"");
+  		curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
+  		
+  		$data = curl_exec($ch);
+  		return json_encode($data);
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/");
+		}				
+	}
+
+	public function SendWhatsAppSms($sender_id,$api_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
 		if($this->IsLoggedIn('cashier')){
 			$bill_url = $this->session->userdata('bill_url');
 			$loyalty = $this->session->userdata('loyalty_point');
