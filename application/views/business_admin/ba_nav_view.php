@@ -93,7 +93,7 @@
                      <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/Campaigns"><i data-feather="calendar" style="color:blue;"></i>Campaign Manager</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/AutoEngage"><i data-feather="clock" style="color:#0070c0;"></i>Auto Engage</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/Tags"><i data-feather="calendar" style="color:blue;"></i>Tags</a></li>
-                    <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/GoogleReviews"><i data-feather="book" style="color:#0070c0;"></i>Google Reviews</a></li>
+                    <!-- <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/GoogleReviews"><i data-feather="book" style="color:#0070c0;"></i>Google Reviews</a></li> -->
                 </ul>
             </li>
             

@@ -597,9 +597,9 @@ die;
             Expenses : Rs.$total_e
             Due Amt : Rs.$total_p
             Visits: $visit";
-           $this->sendMessage($ol['business_admin_mobile'],$msg);
-           //  echo $msg;
-            // echo "<br><br>";
+           //$this->sendMessage($ol['business_admin_mobile'],$msg);
+             echo $msg;
+             echo "<br><br>";
             //die;
 
         }
@@ -690,11 +690,17 @@ die;
                     'day'    => $day
                 );
             $packageExpiry = $this->CronModel->packageExpiry($where);
+		echo $this->db->last_query();
+echo "<br>";
+	echo "<pre>";
+print_r($packageExpiry);
+echo "</pre>";
             if($packageExpiry['success']){                
                 $packageExpiry = $packageExpiry['res_arr'];
                 foreach ($packageExpiry as $key => $p) {
                     $msg = "Dear ".$p['customer_name'].", Your  ".$p['salon_package_name'].", is due for renewal in next $day days.Expiring on ".$p['package_expiry_date'].". Please renew it today, to keep availing the awesome services. Team ".$ol['business_outlet_name']." ".$ol['business_outlet_mobile'].". ".$ol['business_outlet_location'];                    
-                    $this->sendMessage($p['customer_mobile'],$msg);
+			echo $msg."<br>";
+                   // $this->sendMessage($p['customer_mobile'],$msg);
                 }
             }
         }

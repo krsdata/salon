@@ -428,8 +428,7 @@
 		}
 </script>
 <script>
-  $(document).ready(function() {
-		
+  $(document).ready(function() {		
 		var Sales = [
 			{
 				display: "OverAll Bill Wise Sales Report",
@@ -483,12 +482,28 @@
 
 		var Inventory = [
 			{
-				display: "Inventory Stock Report",
+				display: "Current Stock Report",
 				value: "SROTC"
 			},
 			{
-				display: "Transaction Wise Report",
-				value: "TWR"
+				display: "Current Stock Report-Retail",
+				value: "CSRR"
+			},
+			{
+				display: "Current Stock Report-Raw Material",
+				value: "CSRRM"
+			},
+			// {
+			// 	display: "Transaction Wise Report",
+			// 	value: "TWR"
+			// },
+			{
+				display:"Vendor Invoice Tracker",
+				value: "VIT"
+			},
+			{
+				display : "Product Wise Vendor Invoice Tracker",
+				value	: "PVIT"
 			}
 		];
 

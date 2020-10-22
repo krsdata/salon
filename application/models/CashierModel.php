@@ -2836,7 +2836,7 @@ class CashierModel extends CI_Model {
                     AND mss_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
                     AND mss_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
                     AND mss_services.service_is_active = TRUE
-                    AND (mss_services.service_name LIKE '%$search_term%' OR  mss_services.barcode LIKE '$search_term%')
+                    AND (mss_services.service_name LIKE '%$search_term%' OR  mss_services.barcode LIKE '%$search_term%' OR  mss_services.qty_per_item LIKE '%$search_term%')
                     AND mss_services.inventory_type != '' 
                     ORDER BY mss_services.service_name LIMIT 15";
         $query = $this->db->query($sql);
@@ -3362,6 +3362,62 @@ class CashierModel extends CI_Model {
             return $this->ModelHelper(false,true,"Product not available in stock.");
         } 
 	}
+
+	public function StockInventoryDetails($data){
+		$sql="SELECT
+			inventory.inventory_id,
+			inventory.invoice_number,
+			inventory.invoice_date,
+			inventory_data.*,
+			mss_vendors.vendor_name
+		FROM
+			inventory,
+			mss_vendors,
+			inventory_data
+		WHERE
+			inventory.inventory_id = inventory_data.inventory_id AND
+			inventory.source_name = mss_vendors.vendor_id AND
+			inventory.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])."
+		GROUP BY
+			inventory_data.inventory_data_id ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not available in stock.");
+        } 
+	}
+
+	public function StockInventoryDetailsById($data){
+		$sql="SELECT
+			inventory.inventory_id,
+			inventory.invoice_number,
+			inventory.invoice_date,
+			inventory_data.*,
+			mss_vendors.vendor_name
+		FROM
+			inventory,
+			mss_vendors,
+			inventory_data
+		WHERE
+			inventory.inventory_id = inventory_data.inventory_id AND
+			inventory.source_name = mss_vendors.vendor_id AND
+			inventory.inventory_id= ".$this->db->escape($data['inventory_id'])."
+		GROUP BY
+			inventory_data.inventory_data_id ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not available in stock.");
+        } 
+	}
+
+
 	public function OutgoingStock($data){
 		$sql="SELECT inventory_transfer.*,
 		inventory_transfer_data.* ,

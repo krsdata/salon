@@ -52,9 +52,9 @@
 										<li class="nav-item">
 											<a class="nav-link active" data-toggle="tab" href="#tab-1">Add Stock</a>
 										</li>
-										<li class="nav-item">
+										<!-- <li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-2">Stock Transfer</a>
-										</li>
+										</li> -->
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-3">Stock Level</a>
 										</li>
@@ -64,15 +64,15 @@
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-5">Outgoing Stock</a>
 										</li>
-										<li class="nav-item">
+										<!-- <li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-6">Inventory Health</a>
-										</li>
+										</li> -->
 										<li class="nav-item">
-											<a class="nav-link" data-toggle="tab" href="#tab-7">Payments</a>
+											<a class="nav-link" data-toggle="tab" href="#tab-7">Invoice Tracker</a>
 										</li>
-										<li class="nav-item">
+										<!-- <li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-8">Pending Payments</a>
-										</li>
+										</li> -->
 									</ul>
 								</div>
 								<div class="card-body">
@@ -177,7 +177,7 @@
 																					<td>
 																						<div class="form-group">
 																							<label>MRP</label>
-																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																							<input type="text" class="form-control mrp" name="product_mrp[]" required readonly>
 																						</div>
 																					</td>
 																					<td>
@@ -195,14 +195,14 @@
 																					<td>
 																						<div class="form-group">
 																							<label>GST %</label>
-																							<input type="text" class="form-control gst" name="product_gst[]" required>
+																							<input type="text" class="form-control gst" name="product_gst[]" required readonly>
 																						</div>
 																					</td>
 																					
 																					<td>
 																						<div class="form-group">
 																							<label>Total Cost</label>
-																							<input type="text" class="form-control total_cost" name="total_cost[]" required>
+																							<input type="text" class="form-control total_cost" name="total_cost[]" required readonly>
 																						</div>
 																					</td>
 																					<td>
@@ -360,7 +360,7 @@
 																					<td>
 																						<div class="form-group">
 																							<label>MRP</label>
-																							<input type="text" class="form-control mrp" name="product_mrp[]" required>
+																							<input type="text" class="form-control mrp" name="product_mrp[]" required readonly>
 																						</div>
 																					</td>
 																					<td>
@@ -378,14 +378,14 @@
 																					<td>
 																						<div class="form-group">
 																							<label>GST %</label>
-																							<input type="text" class="form-control gst" name="product_gst[]" required>
+																							<input type="text" class="form-control gst" name="product_gst[]" required readonly>
 																						</div>
 																					</td>
 																					
 																					<td>
 																						<div class="form-group">
 																							<label>Total Cost</label>
-																							<input type="text" class="form-control total_cost" name="total_cost[]" required>
+																							<input type="text" class="form-control total_cost" name="total_cost[]" required readonly>
 																						</div>
 																					</td>
 																					<td>
@@ -526,52 +526,98 @@
 											</div>
 										</div>
 										<div class="tab-pane" id="tab-4" role="tabpanel">
-											<div class="card">
-												<div class="card-header">
-													<h4>Incoming Stock</h4>
+											<div class="row">
+												<div class="col-md-12">
+													<div class="card">
+														<div class="card-header">
+															<h4>Incoming Stock</h4>
+														</div>
+														<div class="card-body">
+															<table class="table table-hover datatables-basic" style="width: 100%;">
+																<thead>
+																	<th>Sr. No.</th>
+																	<th>Txn Id</th>
+																	<th>Product Name</th>
+																	<th>Type</th>
+																	<th>Barcode</th>
+																	<th>SKU size</th>
+																	<th>Product Qty</th>
+																	<th>MRP</th>
+																	<th>Entry Date</th>
+																	<th>Source Name</th>
+																	<th>Destination Name</th>
+																	<th>Actions</th>
+																</thead>
+																<tbody>
+																	<?php $count=1; foreach($stock_incoming as $incoming){ ?>
+																		<tr>
+																	<td><?=$count?></td>
+																	<td><?=$incoming['inventory_transfer_data_id'];?></td>
+																	<td><?=$incoming['product_name'];?></td>
+																	<td><?=$incoming['product_type'];?></td>
+																	<td><?=$incoming['product_barcode'];?></td>
+																	<td><?=$incoming['sku_size'].' '.$stock['service_unit'];?></td>
+																	<td><?=$incoming['product_qty'];?></td>
+																	<td><?=$incoming['product_mrp'];?></td>
+																	<td><?=$incoming['invoice_date'];?></td>
+																	<td><?=$incoming['source'];?></td>
+																	<td><?=$incoming['destination'];?></td>
+																	<td>
+																		<?php if($incoming['transfer_status']==0){?>
+																		<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sku_size="<?=$incoming['sku_size']?>" sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
+																		<button class='btn btn-danger rejectInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>'><i class='fa fa-times'>Reject</i></button>
+																		<?php }else{?>
+																			Accepted
+																		<?php }?>
+																	</td>
+																	</tr>
+																	<?php $count++; }?>
+																</tbody>
+															</table>
+														</div>
+													</div>
 												</div>
-												<div class="card-body">
-													<table class="table table-hover datatables-basic" style="width: 100%;">
-														<thead>
-															<th>Sr. No.</th>
-															<th>Txn Id</th>
-															<th>Product Name</th>
-															<th>Type</th>
-															<th>Barcode</th>
-															<th>SKU size</th>
-															<th>Product Qty</th>
-															<th>MRP</th>
-															<th>Entry Date</th>
-															<th>Source Name</th>
-															<th>Destination Name</th>
-															<th>Actions</th>
-														</thead>
-														<tbody>
-															<?php $count=1; foreach($stock_incoming as $incoming){ ?>
-																<tr>
-															<td><?=$count?></td>
-															<td><?=$incoming['inventory_transfer_data_id'];?></td>
-															<td><?=$incoming['product_name'];?></td>
-															<td><?=$incoming['product_type'];?></td>
-															<td><?=$incoming['product_barcode'];?></td>
-															<td><?=$incoming['sku_size'].' '.$stock['service_unit'];?></td>
-															<td><?=$incoming['product_qty'];?></td>
-															<td><?=$incoming['product_mrp'];?></td>
-															<td><?=$incoming['invoice_date'];?></td>
-															<td><?=$incoming['source'];?></td>
-															<td><?=$incoming['destination'];?></td>
-															<td>
-																<?php if($incoming['transfer_status']==0){?>
-																<button class='btn btn-success acceptInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>' total_stock='<?=$incoming['product_qty']?>' stock_service_id='<?=$incoming['service_id']?>' sku_size="<?=$incoming['sku_size']?>" sender_outlet='<?=$incoming['business_outlet_id']?>'><i class='fa fa-check'>Accept</i></button>
-																<button class='btn btn-danger rejectInventory'  trans_data_id='<?=$incoming['inventory_transfer_data_id']?>'><i class='fa fa-times'>Reject</i></button>
-																<?php }else{?>
-																	Accepted
-																<?php }?>
-															</td>
-															</tr>
-															<?php $count++; }?>
-														</tbody>
-													</table>
+											</div>
+											<div class="row">
+												<div class="col-md-12">
+													<div class="card">
+														<div class="card-header">
+															<h5 class="card-title">Incomming Inventory Details</h5>
+														</div>
+														<div class="card-body">
+														<table class="table table-hover datatables-basic" style="width: 100%;">
+																<thead>
+																	<th>Sr. No.</th>
+																	<th>Invoice Number</th>
+																	<th>Invoice Date</th>
+																	<th>Product Name</th>
+																	<th>Type</th>
+																	<th>Barcode</th>
+																	<th>SKU size</th>
+																	<th>Product Qty</th>
+																	<th>MRP</th>
+																	<th>Vendor Name</th>
+																</thead>
+																<tbody>
+																	<?php $count=1; foreach($inventory_details as $inventory){ ?>
+																		<tr>
+																	<td><?=$count?></td>
+																	<td><a class="showInventory" inventory_id="<?=$inventory['inventory_id']?>" style="color:blue;" data-toggle="modal" data-target="#ModalShowInvoiceDetails"><?=$inventory['invoice_number'];?></a></td>
+																	<td><?=$inventory['invoice_date'];?></td>
+																	<td><?=$inventory['product_name'];?></td>
+																	<td><?=$inventory['product_type'];?></td>
+																	<td><?=$inventory['product_barcode'];?></td>
+																	<td><?=$inventory['sku_size'].' '.$stock['service_unit'];?></td>
+																	<td><?=$inventory['product_qty'];?></td>
+																	<td><?=$inventory['product_mrp'];?></td>
+																	<td><?=$inventory['vendor_name'];?></td>
+																	</tr>
+																	<?php $count++; }?>
+																</tbody>
+															</table>
+
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -584,24 +630,30 @@
 													<table class="table table-hover datatables-basic" style="width: 100%;">
 														<thead>
 															<th>Sr. No.</th>
+															<th>Txn id.</th>
 															<th>Product Name</th>
 															<th>Type</th>
 															<th>Barcode</th>
 															<th>SKU size</th>
 															<th>Product Qty</th>
 															<th>MRP</th>
+															<th>Transfer Date</th>
+															<th>Destination</th>
 															<th>Status</th>
 														</thead>
 														<tbody>
 															<?php $count=1; foreach($stock_outgoing as $outgoing){ ?>
 																<tr>
 															<td><?=$count?></td>
+															<td><?=$outgoing['inventory_transfer_id'];?></td>
 															<td><?=$outgoing['product_name'];?></td>
 															<td><?=$outgoing['product_type'];?></td>
 															<td><?=$outgoing['product_barcode'];?></td>
 															<td><?=$outgoing['sku_size'].' '.$stock['service_unit'];?></td>
 															<td><?=$outgoing['product_qty'];?></td>
 															<td><?=$outgoing['product_mrp'];?></td>
+															<td><?=$outgoing['invoice_date'];?></td>
+															<td><?=$outgoing['business_outlet_name'];?></td>
 															<td>
 																<?php if($outgoing['transfer_status']==0){?>
 																<button class='btn btn-warning' disabled>No action</button>
@@ -731,87 +783,84 @@
 													</div>
 												</div>
 											</div>
-										</div>
-										<div class="tab-pane" id="tab-8" role="tabpanel">
 											<div class="card">
 												<div class="card-header">
-													<h5 class="card-title">Pending Payments	</h5>
+													<h5 class="card-title">Pending Payments</h5>
 												</div>
 												<div class="card-body">
 													<div class="row">
-															<div class="col-md-12">
+														<div class="col-md-12">
 															<table class="table table-hover table-striped datatables-basic" id="PendingPayment" style="width: 100%;">
-                                            <thead>
-                                                <tr class="text-primary">
-                                                    <!-- <th>Expense Id</th> -->
-																										<th>Date</th>
-																										<th>Invoice No</th>
-                                                    <th>Expense Name</th>
-																										<th>Expense Type</th>
-																										<th>Vendor Name</th>
-                                                    <th>Total Amount</th>
-                                                    <th>Amount Pending</th>                                                    
-																										<!-- <th>Mode</th> -->
-																										<th>Paid To</th>
-                                                    <th>Status </th>
-                                                    
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-																									foreach ($pending_payment as $pending):
-																									?>
-                                                <tr>
-                                                    <!-- <td><?=$pending['expense_id']?></td> -->
-																										<td><?=$pending['expense_date']?></td>
-																										<td><?=$pending['invoice_number']?></td>
-                                                    <td><?=$pending['item_name']?></td>
-																										<td><?=$pending['expense_type']?></td>
-                                                    <td><?=$pending['payment_to_name']?></td>
-                                                    <td><?=$pending['total_amount']?></td>
-                                                    <td><?=$pending['pending_amount']?></td>
-                                                    <td><?=$pending['payment_type']?></td>
-                                                    
-                                                    <!-- <td><?=$pending['payment_mode']?></td> -->
-                                                    <td><?=$pending['expense_status']?></td>
-                                                    <!-- <td><?=$pending['employee']?></td> -->
+																	<thead>
+																			<tr class="text-primary">
+																					<!-- <th>Expense Id</th> -->
+																					<th>Date</th>
+																					<th>Invoice No</th>
+																					<th>Expense Name</th>
+																					<th>Expense Type</th>
+																					<th>Vendor Name</th>
+																					<th>Total Amount</th>
+																					<th>Amount Pending</th>                                                    
+																					<!-- <th>Mode</th> -->
+																					<th>Paid To</th>
+																					<th>Status </th>
+																					
+																					<th>Action</th>
+																			</tr>
+																	</thead>
+																	<tbody>
+																			<?php
+																				foreach ($pending_payment as $pending):
+																				?>
+																			<tr>
+																					<!-- <td><?=$pending['expense_id']?></td> -->
+																					<td><?=$pending['expense_date']?></td>
+																					<td><?=$pending['invoice_number']?></td>
+																					<td><?=$pending['item_name']?></td>
+																					<td><?=$pending['expense_type']?></td>
+																					<td><?=$pending['payment_to_name']?></td>
+																					<td><?=$pending['total_amount']?></td>
+																					<td><?=$pending['pending_amount']?></td>
+																					<td><?=$pending['payment_type']?></td>
+																					
+																					<!-- <td><?=$pending['payment_mode']?></td> -->
+																					<td><?=$pending['expense_status']?></td>
+																					<!-- <td><?=$pending['employee']?></td> -->
 
 
-                                                    
-                                                    <td>
-                                                        <button type="button"
-                                                            class="btn btn-primary pending-expense-edit-btn"
-                                                            expense_id="<?=$pending['expense_id']?>"
-                                                            expense_date="<?=$pending['expense_date']?>"
-                                                            expense_name="<?=$pending['item_name']?>"
-                                                            expense_type="<?=$pending['expense_type']?>"
-                                                            employee_name="<?=$pending['employee_name']?>"
-                                                            payment_type="<?=$pending['payment_type']?>"
-                                                            payment_to="<?=$pending['payment_to']?>"
-                                                            payment_to_name="<?=$pending['payment_to_name']?>"
-                                                            total_amount="<?=$pending['total_amount']?>"
-                                                            pending_amount="<?=$pending['pending_amount']?>"
-                                                            amount="<?=$pending['amount']?>"
-                                                            payment_mode="<?=$pending['payment_mode']?>"
-                                                            expense_status="<?=$pending['expense_status']?>"
-                                                            invoice_number="<?=$pending['invoice_number']?>"
-                                                            expense_date="<?=$pending['expense_date']?>"
-                                                            expense_type_id="<?=$pending['expense_type_id']?>"
-                                                            remark="<?=$pending['remarks']?>">
-                                                            <i class="align-middle" data-feather="edit-2"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <?php	                    	
-																									endforeach;
-																								?>
-                                            </tbody>
-                                        </table>
-															</div>
+																					
+																					<td>
+																							<button type="button"
+																									class="btn btn-primary pending-expense-edit-btn"
+																									expense_id="<?=$pending['expense_id']?>"
+																									expense_date="<?=$pending['expense_date']?>"
+																									expense_name="<?=$pending['item_name']?>"
+																									expense_type="<?=$pending['expense_type']?>"
+																									employee_name="<?=$pending['employee_name']?>"
+																									payment_type="<?=$pending['payment_type']?>"
+																									payment_to="<?=$pending['payment_to']?>"
+																									payment_to_name="<?=$pending['payment_to_name']?>"
+																									total_amount="<?=$pending['total_amount']?>"
+																									pending_amount="<?=$pending['pending_amount']?>"
+																									amount="<?=$pending['amount']?>"
+																									payment_mode="<?=$pending['payment_mode']?>"
+																									expense_status="<?=$pending['expense_status']?>"
+																									invoice_number="<?=$pending['invoice_number']?>"
+																									expense_date="<?=$pending['expense_date']?>"
+																									expense_type_id="<?=$pending['expense_type_id']?>"
+																									remark="<?=$pending['remarks']?>">
+																									<i class="align-middle" data-feather="edit-2"></i>
+																							</button>
+																					</td>
+																			</tr>
+																			<?php	                    	
+																				endforeach;
+																			?>
+																	</tbody>
+															</table>
+														</div>
 													</div>
 												</div>
-											</div>
 										</div>									
 									</div>
 								</div>
@@ -889,6 +938,33 @@
 													<div class="alert-message">
 													</div>
 												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal fade" id="ModalShowInvoiceDetails" tabindex="-1" role="dialog" aria-hidden="true">
+									<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title text-white">Inventory Details</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">×</span>
+												</button>
+											</div>
+											<div class="modal-body">
+												<table class="table table-hover" width="100%" >
+													<thead>
+														<th>Invoice Number</th>
+														<th>Invoice Date</th>
+														<th>Product Name</th>
+														<th>Product Qty</th>
+														<th>Product Price</th>
+														<th>Product Type</th>
+														<th>Vendor Name</th>
+													</thead>
+													<tbody id="invoice_Details">
+													</tbody>
+												</table>
 											</div>
 										</div>
 									</div>
@@ -1074,7 +1150,7 @@
 			
 			rowno = rowno+1;
 			
-			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+			$("#addProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 		});
 
 		$("#DeleteRowProductTable").click(function(event){
@@ -1191,21 +1267,45 @@
     });
 
 		// $("#addProductTable tr:last .gst").on('input',function(e){			
-		$('body').on('input','#addProductTable tr:last .gst',function(e){	
+		$('body').on('input','#addProductTable tr:last .product_price',function(e){	
   			var product_qty=  Number($("#addProductTable tr:last .product_qty").val());
 				var product_price=  Number($("#addProductTable tr:last .product_price").val());
 				var product_gst=  Number($("#addProductTable tr:last .gst").val());
 				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
-				$("#addProductTable tr:last .total_cost").val(mrp);
+				$("#addProductTable tr:last .total_cost").val(mrp);				
 								
     });
 		// $("#transProductTable tr:last .gst").on('input',function(e){		
-			$('body').on('input','#transProductTable tr:last .gst',function(e){		
+			$('body').on('input','#transProductTable tr:last .product_price',function(e){		
   			var product_qty=  Number($("#transProductTable tr:last .product_qty").val());
 				var product_price=  Number($("#transProductTable tr:last .product_price").val());
 				var product_gst=  Number($("#transProductTable tr:last .gst").val());
 				var mrp = Number((product_price+(product_price*product_gst*.01))* product_qty);
 				$("#transProductTable tr:last .total_cost").val(mrp);
+								
+    });
+
+		$('body').on('blur','#addProductTable tr:last .product_price',function(e){		
+			var total_len=$("#AddProduct input[name^=total_cost]").length;
+				var array= $("#AddProduct input[name^=total_cost]");
+				var t_cost=0;
+				for(var i=0;i< total_len;i++){
+					t_cost+=Number(array[i].value);
+				}
+				// alert(t_cost);
+				$("#AddProduct input[name=amount_paid]").val(t_cost);
+								
+    });
+
+		$('body').on('blur','#transProductTable tr:last .product_price',function(e){		
+			var total_len=$("#TransProduct input[name^=total_cost]").length;
+				var array= $("#TransProduct input[name^=total_cost]");
+				var t_cost=0;
+				for(var i=0;i< total_len;i++){
+					t_cost+=Number(array[i].value);
+				}
+				// alert(t_cost);
+				$("#TransProduct input[name=amount_paid]").val(t_cost);
 								
     });
 
@@ -1229,11 +1329,22 @@
 					t_cost+=Number(array[i].value);
 				}
 				if(t_cost < inv_amt){
-					alert("Total Cost is less than Invoice Amount.");
+					let result = confirm('Total Cost is less than Invoice Amount. Do you want to Continue ?');
+					if(result){
+						alert("Transaction will be Processed");
+					}else{
+						alert("Transaction Canceled");
+						return false;
+					}
 				}else if(t_cost > inv_amt){
-					alert("Total Cost is more than Invoice Amount.");
-				}
-				
+					let result = confirm('Total Cost is More than Invoice Amount. Do you want to Continue ?');					
+					if(result){
+						alert("Transaction will be Processed");
+					}else{
+						alert("Transaction Canceled");
+						return false;
+					}			
+				}				
 				var formData = $("#AddProduct").serialize(); 
 				$.ajax({
 	        url: "<?=base_url()?>BusinessAdmin/AddInventory",
@@ -1275,7 +1386,7 @@
 				
 				rowno = rowno+1;
 				
-				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\"></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
+				$("#transProductTable tr:last").after("<tr><td>"+rowno+"</td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control searchProductByName\" name=\"product_name[]\" readonly><input type=\"hidden\" class=\"product_id\" name=\"product_id[]\"></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_type\" name=\"product_type[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"text\" class=\"form-control product_barcode\" name=\"product_barcode[]\" readonly></div></td><td><div class=\"form-group\" ><input type=\"text\" class=\"form-control sku_size\" name=\"sku_size[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control mrp\" name=\"product_mrp[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_qty\" name=\"product_qty[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control product_price\" name=\"product_price[]\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control gst\" name=\"product_gst[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control total_cost\" name=\"total_cost[]\" readonly></div></td><td><div class=\"form-group\"><input type=\"date\" class=\"form-control\" value=\"<?=date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))));?>\" name=\"product_exp_date[]\" ></div></td></tr>");
 			});
 
 			$("#DeleteRowProductTransTable").click(function(event){
@@ -1981,7 +2092,7 @@
 				'status' :  $(this).val()
 			};
 			$.getJSON("<?=base_url()?>BusinessAdmin/InventoryStatus", parameters)
-		.done(function(data, textStatus, jqXHR) {
+			.done(function(data, textStatus, jqXHR) {
 				// alert(data.stock);
 				if((data.stock == 'Slow')){
 					$('#labeltotal').text("Rs "+data.total);
@@ -2030,6 +2141,34 @@
 			console.log(errorThrown.toString());
 			});
 		});
+
+		$(".showInventory").on('click',function(e){
+			var parameters = {
+				'inventory_id' :  $(this).attr('inventory_id')
+			};
+			
+			$.getJSON("<?=base_url()?>BusinessAdmin/GetInventoryDetails", parameters)
+			.done(function(data, textStatus, jqXHR) {
+				var temp_str="";
+					for(var i = 0;i < data.message.length;i++){				
+						temp_str += "<tr>";
+						temp_str += "<td>" + data.message[i]['invoice_number'] + "</td>";
+						temp_str += "<td>" + data.message[i]['invoice_date'] + "</td>";
+						temp_str += "<td>" + data.message[i]['product_name']+"</td>";
+						temp_str += "<td>" + data.message[i]['product_qty'] + "</td>";
+						temp_str += "<td>" + data.message[i]['product_mrp']+ "</td>";
+						temp_str += "<td>" + data.message[i]['product_type']+ "</td>";
+						temp_str += "<td>" + data.message[i]['vendor_name']+ "</td>";
+						temp_str += "</tr>";
+					}
+					$("#invoice_Details").html(temp_str);
+					$("#ModalShowInvoiceDetails").modal('show');
+			})
+			.fail(function(jqXHR, textStatus, errorThrown) {
+			console.log(errorThrown.toString());
+			});
+		});
+
 	});
 </script>
 <script>

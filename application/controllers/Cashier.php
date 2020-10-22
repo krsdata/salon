@@ -2655,9 +2655,9 @@ class Cashier extends CI_Controller {
    		$msg = rawurlencode($msg);   //This for encode your message content                 		
  			
  			// API 
-			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
 
-			// $url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
+			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
 				log_message('info', $url);
 			
   		$ch = curl_init($url);
@@ -7098,11 +7098,15 @@ public function AddToCartRedeemPoints(){
 								$insert_stock=$this->CashierModel->Insert($data4,'inventory_stock');
 							}
 
-							//making entry i expense table
+							//making entry in expense table
+								$outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
+									$admin_id= $this->session->userdata['logged_in']['business_admin_id'];
+									$expense_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();			
+          				$expense_unique_serial_id = strval("EA".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($expense_counter['business_outlet_expense_counter']));
 							$data5=array(
-								'expense_unique_serial_id'	=>	'E1010Y',
+								'expense_unique_serial_id'	=>	$expense_unique_serial_id,
 								'expense_date'							=>	date('Y-m-d'),
-								'expense_type_id'						=>	'10000',
+								'expense_type_id'						=>	'1',
 								'item_name'									=>	'Inventory',
 								'employee_name'							=>	$this->session->userdata['logged_in']['employee_name'],
 								'total_amount'							=>	$this->input->post('invoice_amount'),
@@ -7119,7 +7123,8 @@ public function AddToCartRedeemPoints(){
 							);
 
 							$insert_expense=$this->CashierModel->Insert($data5,'mss_expenses');
-
+							$query = "UPDATE mss_business_outlets SET business_outlet_expense_counter = business_outlet_expense_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
+							$this->db->query($query);
 						}
 						$this->db->trans_complete();
 						if ($this->db->trans_status() === FALSE){
