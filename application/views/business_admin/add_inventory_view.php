@@ -582,10 +582,25 @@
 												<div class="col-md-12">
 													<div class="card">
 														<div class="card-header">
-															<h5 class="card-title">Incomming Inventory Details</h5>
+															<div class="row">
+																	<div class="col-md-2">
+																	<h5 class="card-title">Inventory Details</h5>
+																	</div>
+																	<form class="form-inline" style="width:60%;" method="POST" action="#" id="txn200">
+																		<div class="form-group col-md-3">
+																			<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
+																		</div>
+																		<div class="form-group col-md-2">
+																			<input type="submit" class="btn btn-primary" id="get_txn"  value="Submit" />
+																		</div>
+																	</form>
+																	<div class="col-md-2">
+																	<button class="btn btn-primary" onclick="exportTableToExcel('inv_table','Inventory')"><i class="fa fa-download"></i> Download</button>
+																	</div>
+																</div>
 														</div>
 														<div class="card-body">
-														<table class="table table-hover datatables-basic" style="width: 100%;">
+														<table class="table table-hover datatables-basic" id="inv_table" style="width: 100%;">
 																<thead>
 																	<th>Sr. No.</th>
 																	<th>Invoice Number</th>
@@ -1086,6 +1101,14 @@
 		autoUpdateInput : false,
 		locale: {
       format: 'YYYY-MM-DD'
+		}
+	});
+
+	$("input[name=\"daterange\"]").daterangepicker({
+		daterangepicker: true,
+		showDropdowns: true,
+		locale: {
+    format: 'YYYY-MM-DD'
 		}
 	});
 	$('.date').on('apply.daterangepicker', function(ev, picker) {
@@ -2168,6 +2191,42 @@
 			console.log(errorThrown.toString());
 			});
 		});
+
+		$(document).on('click',"#get_txn",function(event){
+    	event.preventDefault();
+      this.blur();
+			var dr=$("#txn200 input[name=daterange]").val();
+	      var parameters = {
+	        from_date : dr.substring(0, 10),
+					to_date :	dr.substring(12, 23)
+	      };
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetInventoryTransactions", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					if(data.success == 'true'){
+						var str_2 = "";
+						// alert(data.service.res_arr.length);
+						for(var i=0;i< data.message.length;i++){
+							str_2+="<tr>";
+							str_2 += "<td>" + parseInt(i+1) + "</td>";
+							str_2 += "<td>" + data.message[i].invoice_number + "</td>";
+							str_2 += "<td>" + data.message[i].invoice_date + "</td>";
+							str_2 += "<td>" + data.message[i].product_name + "</td>";
+							str_2 += "<td>" + data.message[i].product_type + "</td>";	
+							str_2 += "<td>" + data.message[i].product_barcode + "</td>";
+							str_2 += "<td>" + data.message[i].sku_size + "</td>";
+							str_2 += "<td>" + data.message[i].product_qty + "</td>";
+							str_2 += "<td>" + data.message[i].product_mrp + "</td>";
+							str_2 += "<td>" + data.message[i].vendor_name + "</td>";
+							str_2+="</tr>";
+						}
+						$("#inv_table tbody tr").remove();
+						$("#inv_table tbody").append(str_2);
+					}
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+			});
+  	});
 
 	});
 </script>
