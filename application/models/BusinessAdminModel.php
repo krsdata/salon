@@ -5727,7 +5727,12 @@ public function GetAttendanceAll($data){
     public function UpdateExpense($data){
         // $sql="SELECT * FROM mss_expenses,mss_expense_types WHERE expense_status='Unpaid' AND bussiness_outlet_id=".$this->session->userdata['outlets']['current_outlet']."";
                      
-        $sql="UPDATE mss_expenses_unpaid SET amount=".$this->db->escape($data['amount']).",pending_amount=".$this->db->escape($data['pending_amount']).",payment_mode=".$this->db->escape($data['payment_mode']).",expense_status=".$this->db->escape($data['expense_status'])." WHERE expense_id=".$this->db->escape($data['expense_id'])."";
+        $sql="UPDATE mss_expenses_unpaid 
+		SET amount=".$this->db->escape($data['amount']).",
+		pending_amount=".$this->db->escape($data['pending_amount']).",
+		payment_mode=".$this->db->escape($data['payment_mode']).",
+		expense_status=".$this->db->escape($data['expense_status'])." 
+		WHERE expense_id=".$this->db->escape($data['expense_id'])."";
           $query = $this->db->query($sql);  
           
           if($query){
@@ -10609,10 +10614,19 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 	}
 
 	public function GetAllExpenses($where){
-        $sql = "SELECT * FROM mss_expense_types,mss_expenses WHERE mss_expense_types.expense_type_id = mss_expenses.expense_type_id AND mss_expense_types.expense_type_business_admin_id = ".$this->db->escape($where['expense_type_business_admin_id'])." AND mss_expense_types.expense_type_business_outlet_id = ".$this->db->escape($where['expense_type_business_outlet_id'])."";
-
-        $query = $this->db->query($sql);
-        
+        $sql = "SELECT 
+		mss_expenses.*, 
+		mss_expense_types.*,
+		mss_vendors.vendor_name 
+		FROM mss_expense_types,
+		mss_expenses,
+		mss_vendors 
+		WHERE 
+		mss_expense_types.expense_type_id = mss_expenses.expense_type_id 
+		AND mss_expenses.payment_type='vendor'
+		AND mss_expenses.payment_to= mss_vendors.vendor_id
+		AND mss_expense_types.expense_type_business_admin_id = ".$this->db->escape($where['expense_type_business_admin_id'])." AND mss_expense_types.expense_type_business_outlet_id = ".$this->db->escape($where['expense_type_business_outlet_id'])." ";
+        $query = $this->db->query($sql);        
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
         }
@@ -10622,7 +10636,13 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 	}
 	
 	public function GetVendorPendingPayment(){
-        $sql="SELECT * FROM mss_expense_types,mss_expenses_unpaid WHERE mss_expense_types.expense_type_id = mss_expenses_unpaid.expense_type_id AND mss_expense_types.expense_type_business_admin_id =".$this->session->userdata['logged_in']['business_admin_id']."  AND mss_expense_types.expense_type_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND (expense_status='Unpaid' OR expense_status='Partialy_paid')";
+        $sql="SELECT mss_expense_types.*, mss_expenses_unpaid.* FROM 
+		mss_expense_types,
+		mss_expenses_unpaid 
+		WHERE mss_expense_types.expense_type_id = mss_expenses_unpaid.expense_type_id
+		AND mss_expenses_unpaid.payment_type='vendor'
+		AND mss_expenses_unpaid.pending_amount > 0
+		AND mss_expense_types.expense_type_business_admin_id =".$this->session->userdata['logged_in']['business_admin_id']."  AND mss_expense_types.expense_type_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND (mss_expenses_unpaid.expense_status='unpaid' OR mss_expenses_unpaid. expense_status='partial paid')";
         $query = $this->db->query($sql);
         
         if($query){
