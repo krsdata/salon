@@ -5713,7 +5713,7 @@ public function GetAttendanceAll($data){
  public function GetPendingPayment(){
         // $sql="SELECT * FROM mss_expenses,mss_expense_types WHERE expense_status='Unpaid' AND bussiness_outlet_id=".$this->session->userdata['outlets']['current_outlet']."";
                     
-        $sql="SELECT * FROM mss_expense_types,mss_expenses_unpaid WHERE mss_expense_types.expense_type_id = mss_expenses_unpaid.expense_type_id AND mss_expense_types.expense_type_business_admin_id =".$this->session->userdata['logged_in']['business_admin_id']."  AND mss_expense_types.expense_type_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND (expense_status='Unpaid' OR expense_status='Partialy_paid')";
+        $sql="SELECT * FROM mss_expense_types,mss_expenses_unpaid WHERE mss_expense_types.expense_type_id = mss_expenses_unpaid.expense_type_id AND mss_expense_types.expense_type_business_admin_id =".$this->session->userdata['logged_in']['business_admin_id']."  AND mss_expense_types.expense_type_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND (expense_status='Unpaid' OR expense_status='Partialy Paid')";
         $query = $this->db->query($sql);
         
         if($query){
@@ -10642,7 +10642,7 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 		WHERE mss_expense_types.expense_type_id = mss_expenses_unpaid.expense_type_id
 		AND mss_expenses_unpaid.payment_type='vendor'
 		AND mss_expenses_unpaid.pending_amount > 0
-		AND mss_expense_types.expense_type_business_admin_id =".$this->session->userdata['logged_in']['business_admin_id']."  AND mss_expense_types.expense_type_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND (mss_expenses_unpaid.expense_status='unpaid' OR mss_expenses_unpaid. expense_status='partial paid')";
+		AND mss_expense_types.expense_type_business_admin_id =".$this->session->userdata['logged_in']['business_admin_id']."  AND mss_expense_types.expense_type_business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND (mss_expenses_unpaid.expense_status='Unpaid' OR mss_expenses_unpaid. expense_status='Partialy Paid')";
         $query = $this->db->query($sql);
         
         if($query){

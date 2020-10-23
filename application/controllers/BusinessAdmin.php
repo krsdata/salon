@@ -2428,9 +2428,15 @@ class BusinessAdmin extends CI_Controller {
                 );
                 $da=$this->BusinessAdminModel->SelectMaxIdExpense($datam);
                 $da=$da['res_arr'][0]['id'];
-                $expense_id= "E1010Y".$this->session->userdata['outlets']['current_outlet'].($da+1);
+								$expense_id= "E1010Y".$this->session->userdata['outlets']['current_outlet'].($da+1);
+								
+									$outlet_id = $this->session->userdata['outlets']['current_outlet'];
+									$admin_id= $this->session->userdata['logged_in']['business_admin_id'];
+									$expense_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();			
+          				$expense_unique_serial_id = strval("EA".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($expense_counter['business_outlet_expense_counter']));
+
                 $data = array(
-                'expense_unique_serial_id' =>$expense_id, 
+                'expense_unique_serial_id' =>$expense_unique_serial_id, 
                 'expense_date'      => date('Y-m-d'),
                 'expense_type_id'   => $this->input->post('expense_type_id'),
                 'item_name'         => $this->input->post('item_name'),
@@ -2469,9 +2475,14 @@ class BusinessAdmin extends CI_Controller {
               if($_POST['expense_status'] != 'Unpaid'){
                 $result = $this->BusinessAdminModel->Insert($data,'mss_expenses');
                 }
-                if($_POST['expense_status'] != 'paid'){
+                if($_POST['expense_status'] != 'Paid'){
                     $result = $this->BusinessAdminModel->Insert($data1,'mss_expenses_unpaid');
-                }
+								}
+								
+								//update expense counter
+								$query = "UPDATE mss_business_outlets SET business_outlet_expense_counter = business_outlet_expense_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
+								$this->db->query($query);
+
               if($result['success'] == 'true'){
                 $this->ReturnJsonArray(true,false,"Expense added successfully!");
                 die;
@@ -12510,7 +12521,7 @@ public function daybook(){
 						'invoice_type'		=>	'challan',
 						'amount_paid'			=>	0,
 						'payment_type'		=>	'',
-						'payment_status'	=>	'unpaid',
+						'payment_status'	=>	'Unpaid',
 						'notes'						=>	$_POST['remarks'],
 						'business_outlet_id'	=> $this->session->userdata['outlets']['current_outlet']
 					);

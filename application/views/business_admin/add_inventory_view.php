@@ -758,8 +758,8 @@
 																										<th>Sr. No.</th>
 																										<th>Invoice No.</th>
 																										<th>Date</th>	
-																										<th>Invoice Amount</th>	
 																										<th>Vendor Name</th>
+																										<th>Invoice Amount</th>																										
 																										<th>Amount Paid</th>
 																										<th>Pending Amount</th>																								
 																										<th>Updated By</th>
@@ -776,8 +776,8 @@
 																										<td><?=$i=$i+1;?></td>																										
 																										<td><?=$expense['invoice_number']?></td>
 																										<td><?=$expense['expense_date']?></td>
-																										<td><?=$expense['total_amount']?></td>
-																										<td><?=$expense['vendor_name']?></td> 
+																										<td><?=$expense['vendor_name']?></td>
+																										<td><?=$expense['total_amount']?></td>																										 
 																										<td><?=$expense['amount']?></td>
 																										<td><?=$expense['pending_amount']?></td>
 																										<td><?=$expense['employee_name']?></td>
@@ -808,8 +808,8 @@
 																				<!-- <th>Exp Id</th> -->
 																				<th>Invoice No.</th>
 																				<th>Date</th>	
-																				<th>Invoice Amount</th>	
 																				<th>Vendor Name</th>
+																				<th>Invoice Amount</th>																				
 																				<th>Amount Paid</th>
 																				<th>Pending Amount</th>																								
 																				<th>Updated By</th>
@@ -828,8 +828,8 @@
 																				<!-- <td><?=$pending['expense_unique_serial_id']?></td> -->
 																				<td><?=$pending['invoice_number']?></td>
 																				<td><?=$pending['expense_date']?></td>
-																				<td><?=$pending['total_amount']?></td>
 																				<td><?=$pending['payment_to_name']?></td> 
+																				<td><?=$pending['total_amount']?></td>																				
 																				<td><?=$pending['amount']?></td>
 																				<td><?=$pending['pending_amount']?></td>
 																				<td><?=$pending['employee_name']?></td>
@@ -1038,9 +1038,9 @@
                                                 <label>Payment Status</label>
                                                 <select class="form-control" name="expense_status" id="select_expense_status">
                                                     <option disabled selected>Select</option>
-                                                    <option value="paid">Paid</option>
+                                                    <option value="Paid">Paid</option>
                                                     <!-- <option value="Advance">Advance</option> -->
-                                                    <option value="partial paid">Partialy Paid</option>
+                                                    <option value="Partialy Paid">Partialy Paid</option>
                                                     <select>
                                             </div>
                                             
@@ -1292,14 +1292,14 @@ function calPendAmt() {
   			var amt_paid=  Number($(this).val());
 				var invoice_amount= Number($("#AddProduct input[name=invoice_amount]").val());
 				if(amt_paid==invoice_amount){
-					$("#AddProduct input[name=payment_status]").attr('value',"paid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Paid");
 				}else if(amt_paid > 0 && amt_paid < invoice_amount){
-					$("#AddProduct input[name=payment_status]").attr('value',"partial paid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Partialy Paid");
 				}else if(amt_paid == 0){
-					$("#AddProduct input[name=payment_status]").attr('value',"unpaid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Unpaid");
 				}else{
 					alert("Amount Paid is much than Invoice Amount.");
-					$("#AddProduct input[name=payment_status]").attr('value',"over paid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Over Paid");
 				}	
     });
 
@@ -1331,6 +1331,19 @@ function calPendAmt() {
 				}
 				// alert(t_cost);
 				$("#AddProduct input[name=amount_paid]").val(t_cost);
+
+				// var amt_paid=  Number($(this).val());
+				var invoice_amount= Number($("#AddProduct input[name=invoice_amount]").val());
+				if(t_cost==invoice_amount){
+					$("#AddProduct input[name=payment_status]").attr('value',"Paid");
+				}else if(t_cost > 0 && t_cost < invoice_amount){
+					$("#AddProduct input[name=payment_status]").attr('value',"Partialy Paid");
+				}else if(t_cost == 0){
+					$("#AddProduct input[name=payment_status]").attr('value',"Unpaid");
+				}else{
+					alert("Amount Paid is much than Invoice Amount.");
+					$("#AddProduct input[name=payment_status]").attr('value',"Over Paid");
+				}	
 								
     });
 
@@ -1343,6 +1356,7 @@ function calPendAmt() {
 				}
 				// alert(t_cost);
 				$("#TransProduct input[name=amount_paid]").val(t_cost);
+				
 								
     });
 
@@ -1529,14 +1543,14 @@ function calPendAmt() {
   			var amt_paid=  Number($(this).val());
 				var invoice_amount= Number($("#TransProduct input[name=invoice_amount]").val());
 				if(amt_paid==invoice_amount){
-					$("#TransProduct input[name=payment_status]").attr('value',"paid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Paid");
 				}else if(amt_paid > 0 && amt_paid < invoice_amount){
-					$("#TransProduct input[name=payment_status]").attr('value',"partial paid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Partialy Paid");
 				}else if(amt_paid == 0){
-					$("#TransProduct input[name=payment_status]").attr('value',"unpaid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Unpaid");
 				}else{
 					alert("Amount Paid is much than Invoice Amount.");
-					$("#TransProduct input[name=payment_status]").attr('value',"over paid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Over Paid");
 				}	
     });
 
