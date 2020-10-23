@@ -74,22 +74,16 @@ $this->load->view('business_admin/ba_header_view');
 														</li>
 														<li class="nav-item">
 															<a class="nav-link" data-toggle="tab" href="#tab-2">Staff</a>
-
 														</li>
-
 														<li class="nav-item">
 															<a class="nav-link" data-toggle="tab" href="#tab-3">Customer</a>
-
 														</li>														
-
 													</ul>
 										</div>
 										<div class="col-md-4">
 											<button type="submit" class="btn btn-primary float-md-right" data-toggle="modal" data-target="#ModalCreateTrigger"><i class="fa fa-plus"></i> New Trigger</button>
-
 										</div>
 									</div>
-
 								</div>
 								<div class="card-body">
 									<div class="tab-content">
@@ -103,13 +97,14 @@ $this->load->view('business_admin/ba_header_view');
 														<div class="card-body">
 															<table class="datatables-basic table table-hover" style="width:100%;">
 																<thead>
-																	<th> S. No.</th>
-																	<th>Trigger Description</th>
-																	<th>Communication Script</th>
-																	<!-- <th>Expert Sms Script</th> -->
-																	<!-- <th>Customer Sms Script</th> -->
-																	<th>Outlet Applicable</th>
-																	<th>Action</th>
+																	<th width="2%"> S.No.</th>
+																	<th width="10%">Trigger Name
+																	<th width="15%">Description</th>
+																	<th width="15%">Frequency</th>
+																	<th width="5%">Mode</th>
+																	<th width="40%">Communication Script</th>
+																	<th width="10%">Outlets</th>
+																	<th width="3%">Action</th>
 																</thead>
 																<tbody>
 																	<?php
@@ -120,10 +115,11 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Day Closing Report' ?></td>
+																			<td><?php echo 'Day Closing Report' ?></td>
+																			<td><?php echo 'Daily @ 10:30pm' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td width="60%">Hi #Branch Name,#Location !
-
 																				Business Update till 10pm
-
 																				Sales: Rs#Sales
 																				Collection: Rs#Collection
 																				Expenses : Rs#Expenes
@@ -152,6 +148,10 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Generate Report SMS[Weekly]' ?></td>
+																			<td><?php echo 'Generate Report SMS[Weekly]' ?></td>
+																			<td><?php echo '"♦ Every Monday @ 8:30AM<br>
+																			♦ 1st of every month @ 10AM"' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td width="60%">Hi #Branch Name,#Location !
 
 																				Business Update: From Date - To Date
@@ -184,6 +184,9 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Pending Amount SMS[Weekly]' ?></td>
+																			<td><?php echo 'Pending Amount SMS[Weekly]' ?></td>
+																			<td><?php echo '"♦ Every Monday @ 8:30AM"' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td width="60%">"Pending Amount Update
 																				#Branch Name,#Location
 																				Duration: FromDt- ToDt
@@ -216,6 +219,9 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Generate Report SMS[Monthly]' ?></td>
+																			<td><?php echo 'Generate Report SMS[Monthly]' ?></td>
+																			<td><?php echo 'Generate Report SMS[Monthly]' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #Branch Name,#Location !
 
 																				Business Update: From Date - To Date
@@ -250,6 +256,9 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Pending Amount SMS[Monthly]' ?></td>
+																			<td><?php echo 'Pending Amount SMS[Monthly]' ?></td>
+																			<td><?php echo 'Pending Amount SMS[Monthly]' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>Pending Amount Update #Branch Name,#Location Duration: FromDt- ToDt Generated:Rs#Amt Received: Rs#Amt Cum.Due Amt till dt: #Amt
 																			</td>
 																			<!-- <td width="20%">-</td>
@@ -274,6 +283,9 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Packages/Products/Services Sales' ?></td>
+																			<td><?php echo 'Packages/Products/Services Sales' ?></td>
+																			<td><?php echo '♦Daily @ 10:30pm' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td >"Hi #Branch Name,#Location ! 
 																				Business Update till 10pm
 
@@ -306,6 +318,9 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Packages/Products/Services Sales' ?></td>
+																			<td><?php echo 'Packages/Products/Services Sales' ?></td>
+																			<td><?php echo '"♦ Every Monday @ 8:30AM"' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #Branch Name,#Location ! 
 
 																				Business Update: From Date - To Date
@@ -339,9 +354,12 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
-																			<td><?php echo '"Combined Summary of Renewals & Expiry <br>
+																			<td><?php echo '"Combined Summary of Renewals & Expiry"	' ?></td>
+																				<td><?php echo '"Combined Summary of Renewals & Expiry <br>
 																				♦All the packages/memberships due for expiry in next week"
 																				' ?></td>
+																				<td><?php echo 'Every Tuesday @ 10AM' ?></td>
+																				<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #Salon Name, Location Package Renewals weekly Update:
 																					Pkg/Mships expired: #LstWk Exp
 																					Pkg/Mships expiring: #thisWk Exp"
@@ -451,13 +469,14 @@ $this->load->view('business_admin/ba_header_view');
 														<div class="card-body">
 															<table class="datatables-basic table table-hover" style="width:100%;">
 																<thead>
-																	<th> S. No.</th>
-																	<th>Trigger Description</th>
-																	<th>Communication Script</th>
-																	<!-- <th>Expert Sms Script</th> -->
-																	<!-- <th>Customer Sms Script</th> -->
-																	<th>Outlet Applicable</th>
-																	<th>Action</th>
+																	<th width="2%"> S.No.</th>
+																	<th width="10%">Trigger Name
+																	<th width="15%">Description</th>
+																	<th width="15%">Frequency</th>
+																	<th width="5%">Mode</th>
+																	<th width="40%">Communication Script</th>
+																	<th width="10%">Outlets</th>
+																	<th width="3%">Action</th>
 																</thead>
 																<tbody>
 																	<?php
@@ -468,6 +487,9 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Before Appointment SMS' ?></td>
+																			<td><?php echo 'Before Appointment SMS' ?></td>
+																			<td><?php echo 'One Hour before Appointment' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td width="60%">-</td>
 																			<!-- <td width="20%">Dear #ExpertName,You've an upcoming service with #CustomerName,#CustMobile in 30mins. Please be ready to serve the patron with your best expertise.
 																			</td>
@@ -496,6 +518,9 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Daily Revenue Achievemnt (@MRP)' ?></td>
+																			<td><?php echo 'Daily Revenue Achievemnt (@MRP)' ?></td>
+																			<td><?php echo '♦Daily 10:30 PM' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #ExpertName,
 																					Today's Rev.Achmt  till 10pm
 																					Total Sale:#Rs
@@ -527,6 +552,9 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Daily Revenue Achievemnt (@Net Billed Amount)' ?></td>
+																			<td><?php echo 'Daily Revenue Achievemnt (@Net Billed Amount)' ?></td>
+																			<td><?php echo '♦Daily 10:30 PM' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #ExpertName,
 																					Today's Rev.Achmt  till 10pm
 																					Total Sale:#Rs
@@ -558,6 +586,9 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'MTD Revenue Achievement with Store Ranking (MRP)' ?></td>
+																			<td><?php echo 'MTD Revenue Achievement with Store Ranking (MRP)' ?></td>
+																			<td><?php echo '♦Daily 9:30 PM' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #ExpertName,
 																						MTD  Rev.Achmt  Rankings :
 																						1.Emp1 : MTD Amt
@@ -589,14 +620,15 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'MTD Revenue Achievement with Store Ranking (Net Billed Amt)' ?></td>
+																			<td><?php echo 'MTD Revenue Achievement with Store Ranking (Net Billed Amt)' ?></td>
+																			<td><?php echo '♦Daily 9:30 AM' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #ExpertName,
 																					MTD  Rev.Achmt  Rankings :
 																					1.Emp1 : MTD Amt
 																					2.Emp2 : MTD Amt
 																					3.Emp3 : MTD Amt
 																					n..Emp n : MTD Amt"
-
-
 																			</td>
 																			<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
@@ -620,6 +652,9 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'MTD Attendance/Leaves update' ?></td>
+																			<td><?php echo 'MTD Attendance/Leaves update' ?></td>
+																			<td><?php echo '♦Every 25th  10:30 AM' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>
 
 																			</td>
@@ -669,13 +704,14 @@ $this->load->view('business_admin/ba_header_view');
 												<div class="card-body">
 													<table class="datatables-basic table table-hover" style="width:100%;">
 																<thead>
-																	<th> S. No.</th>
-																	<th>Trigger Description</th>
-																	<th>Communication Script</th>
-																	<!-- <th>Expert Sms Script</th> -->
-																	<!-- <th>Customer Sms Script</th> -->
-																	<th>Outlet Applicable</th>
-																	<th>Action</th>
+																<th width="2%"> S.No.</th>
+																	<th width="10%">Trigger Name
+																	<th width="15%">Description</th>
+																	<th width="15%">Frequency</th>
+																	<th width="5%">Mode</th>
+																	<th width="40%">Communication Script</th>
+																	<th width="10%">Outlets</th>
+																	<th width="3%">Action</th>
 																</thead>
 																<tbody>
 																	<?php
@@ -686,6 +722,10 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Before Appointment SMS' ?></td>
+																			<td><?php echo 'Before Appointment SMS' ?></td>
+																			<td><?php echo 'One Hour before Appointment' ?></td>
+																			<td><?php echo 'Sms' ?></td>
+
 																			<td width="60%">-</td>
 																			<!-- <td width="20%">Dear #ExpertName,You've an upcoming service with #CustomerName,#CustMobile in 30mins. Please be ready to serve the patron with your best expertise.
 																			</td>
@@ -714,6 +754,10 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Membership Expiry Date' ?></td>
+																			<td><?php echo 'Membership Expiry Date' ?></td>
+																			<td><?php echo '"♦ Packages expiring in next 30days
+																					sent on every 10th of month @ 11 AM"' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Dear #Cname, Your #PkgName, is due for renewal in next 30days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services. 
 																			Team #SalonName
 																			#Salon PhoneNo.
@@ -741,6 +785,11 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Membership Expiry Date' ?></td>
+																			<td><?php echo 'Membership Expiry Date' ?></td>
+																			<td><?php echo '"♦ Packages expiring in next 15days
+																				sent on every 1st & 15th of month @ 10AM"
+																				' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Dear #Cname, Your #PkgName, is due for renewal in next 15days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services. 
 																			Team #SalonName
 																			#Salon PhoneNo.
@@ -770,6 +819,12 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Membership Expiry By Date' ?></td>
+																			<td><?php echo 'Membership Expiry By Date' ?></td>
+																			<td><?php echo '"♦ Packages expiring in next 7days
+
+sent on every Friday @ 11AM"
+' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Dear #Cname, Your #PkgName, is due for renewal in next  7days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services. 
 																			Team #SalonName
 																			#Salon PhoneNo.
@@ -797,6 +852,12 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Membership Expiry By Date' ?></td>
+																			<td><?php echo 'Membership Expiry By Date' ?></td>
+																			<td><?php echo '"♦ Packages expiring in next 7days
+
+sent on every Friday @ 11AM"
+' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Dear #Cname, Your #PkgName, is due for renewal in next  7days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services. 
 																			Team #SalonName
 																			#Salon PhoneNo.
@@ -824,10 +885,13 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
+																			<td><?php echo "Package Expiry by service count"; ?></td>												
 																			<td><?php echo '"Package Expiry by service count -<br>
 																			♦ Customer to get message if all the services in the package have been utilized. <br>
 																			♦Package Expiry Date shuld be >7days from the date of sending the message"
 																			' ?></td>
+																			<td><?php echo "Every Wednesday @ 11AM"; ?></td>
+																			<td><?php echo "Sms"; ?></td>
 																			<td>
 
 																			</td>
@@ -852,8 +916,13 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
+																			<td><?php echo '"Wallet Balance Reminder"' ?></td>
 																			<td><?php echo '"Wallet Balance Reminder -<br>
-																						♦ Customer to get reminder every month/fortnight for the pending balance in his wallet "' ?></td>
+																						♦ Customer to get reminder every month/fortnight for the pending balance in his wallet "' ?></td>																			
+																			<td><?php echo '"Monthly on every 7th
+♦ 7th of every month @ 12:30pm"
+' ?></td>
+																			<td><?php echo 'Sms' ?></td>		
 																			<td>"Dear #Cname,  Utilize ur balance of #WalletBalance, with #SalonName, and experience the fantastic services before it expires. 
 																			Team #SalonName
 																			#Salon PhoneNo.
@@ -882,11 +951,15 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
+																			<td>	<?php echo '"Package Usage Notification"' ?></td>
 																			<td><?php echo '"Package Usage Notification -<br> 
 																			♦Customer to get SMS everytime he redeems a package service in the Salon. "
 																			' ?></td>
+																			
+																			<td><?php echo 'On actual transaction, of service redemption
+' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>
-
 																			</td>
 																			<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
@@ -909,9 +982,16 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
+																			<td><?php echo '"Package/Membership Renewal: Post Expiry"' ?></td>
 																			<td><?php echo '"Package/Membership Renewal: Post Expiry<br>
 																			♦Customer to be reminded to renew his/her package/membership post expiry"
 																			' ?></td>
+																			
+																			<td><?php echo '"♦Reminder to renew package after 2days of package Expiry
+--Daily
+"
+' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Dear #Cname, your #Pckage typ, package #PackageName, has expired 2days back. To enjoy always fantastic services, please renew today. 
 																			Team #SalonName
 																			#Salon Phone No.
@@ -939,8 +1019,10 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo 'Wallet redemption Update' ?></td>
-																			<td>NEED TO CHECK THIS AS IT IS CURRENTLY ACTIVE (TRNSACTIONAL BASIS)
-																			</td>
+																			<td><?php echo 'Wallet redemption Update' ?></td>
+																			<td><?php echo 'On actual transaction, of wallet redemption' ?></td>
+																			<td><?php echo 'Sms' ?></td>
+																			<td>			</td>
 																			<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
 																			<td><?php echo $outlet['business_outlet_name'] ?></td>
@@ -962,11 +1044,17 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
+																			<td><?php echo 'Bday Special Discount' ?></td>
 																			<td><?php echo '"Bday Special Discount -<br> 
 																			♦Reminders to customers for the special Bday/Anniversary Discount to its customers. <br>
 																			♦The customers should be able to use this discount throughout the month or 30 days prior to the month"
-
-																				' ?></td>
+																				' ?></td>																				
+																				<td><?php echo '"♦Every month on
+♦ 5th @ 9:30 AM
+♦ 15th @ 9:30 AM
+♦ 25th @ 9:30 AM"
+' ?></td>
+																				<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #Cname, Wishing u a very Happy Birthday from #SalonName.
 																					Enjoy special treat with us and get #OfferDetails for this full Calendar month. Visit us @ 
 																					#SalonName,
@@ -996,10 +1084,17 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
+																			<td><?php echo 'Anniversary Special Discount' ?></td>
 																			<td><?php echo '"Anniversary Special Discount -<br> 
 																			♦Reminders to customers for the special Bday/Anniversary Discount to its customers. <br>
 																			♦The customers should be able to use this discount throughout the month or 30 days prior to the month"
-																			' ?></td>
+																			' ?></td>																			
+																			<td><?php echo '"♦Every month on
+♦ 5th @ 9:30 AM
+♦ 15th @ 9:30 AM
+♦ 25th @ 9:30 AM"
+' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #Cname, Wishing u a very Happy Anniversary from #SalonName.
 																			Enjoy special treat with us and get #OfferDetails for this full Calendar month. Visit us @ 
 																			#SalonName,
@@ -1029,9 +1124,13 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
+																			<td><?php echo 'Due Amount Reminder' ?></td>
 																			<td><?php echo '"Due Amount Reminder -<br> 
 																				♦Business Admins should be able to send messages every month for pending payments above a certain threshold value to its customers (TBD by Client)"
 																				' ?></td>
+																				<td><?php echo '♦Every Tuesday @ 10:30AM
+' ?></td>
+																				<td><?php echo 'Sms' ?></td>
 																			<td>"Dear #CustomerName, 
 																					You have a due amt of Rs.#DueAmount with #SalonName,#Location.
 																					Kindly clear your dues.
@@ -1060,9 +1159,13 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
+																			<td><?php echo 'Re-visit for Regular Services' ?></td>
 																			<td><?php echo '"Re-visit for Regular Services -<br>
 																				♦Customer to get reminder after general usage pattern - such as 45 days for Hair Cut for male, 90 days for Hair Color, 30 days for Facial etc.  "
 																				' ?></td>
+																				
+																				<td><?php echo '♦Daily to a dynamic base of customers, fetched basis the queries' ?></td>
+																				<td><?php echo 'Sms' ?></td>
 																			<td>"Dear #Cname, Its time to get a #ServiceName !
 																					Visit #SalonName, to give urself the extra dose of awesomeness. Do check out exciting offers!
 																					Team #Salon Name
@@ -1090,9 +1193,12 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
+																			<td><?php echo 'Re-visit for Re-Fill your Products' ?>
 																			<td><?php echo '"Re-visit for Re-Fill your Products:<br>
 																				♦Customer to get reminder after the product usage : Generally defined as per product SKU :: 30days for Serie Expert 250mL Shampoo &Likewise"
 																				' ?></td>
+																				</td><td><?php echo '♦Daily to a dynamic base of customers, fetched basis the queries' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Dear #Cname, Its time to get a refill of  #ProductName !
 																				Call out @#SalonMobile, for Free Home Delivery! 
 																				COD Avlbl!
@@ -1122,9 +1228,14 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
+																			<td><?php echo 'Products for special Services' ?></td>													
 																			<td><?php echo '"Products for special Services - <br>
 																			♦Customer to get reminder for purchasing products suitable after getting specific services - as soon as the customer does the transaction"
 																			' ?></td>
+																			<td><?php echo '"♦Transactional; 
+As soon as a Service is added in the Billing Cart, for which there is recommended product available, a trigger sends the message to the customer"
+' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hey! Feeling Fantastic after a treat of #ServiceName! 
 																					Don't forget to buy #ProductName, for best results !!!
 																					Contact the Staff for details!
@@ -1152,9 +1263,14 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
+																			<td><?php echo 'Loyalty Points' ?></td>
+																			
 																			<td><?php echo '"Loyalty Points -<br>
 																				♦ Customer get monthly reminder for his accumulated points and his mode of redemption - by offer or cashback"
 																				' ?></td>
+																				<td><?php echo '♦Every 5th and 20th of every month @ 11 AM
+' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Dear #Cname, You've #RewardPoints pts in ur account @ #SalonName. 
 																				Visit today to redeem awesome benefits!
 																				#Salon Name
@@ -1182,9 +1298,10 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
-																			<td><?php echo '"Not Visited Customers: <br>
-																					♦At Risk Customers"
-																					' ?></td>
+																			<td><?php echo '"Not Visited Customers"	' ?></td>
+																			<td><?php echo '"Not Visited Customers: <br>♦At Risk Customers"	' ?></td>
+																			<td><?php echo '♦Daily @ 12:30 pm' ?></td>
+																			<td><?php echo '"Sms"	' ?></td>
 																			<td>"Hi #CName, its been a while since you've come in for your regular services.#SalonName Family is missing your presence.We Hope to see u soon!
 																			Appts. @#Phone"
 																			</td>
@@ -1209,9 +1326,13 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
-																			<td><?php echo '"Not Visited Customers: <br>
+																			<td><?php echo '"Not Visited Customers"' ?></td>
+																				<td><?php echo '"Not Visited Customers: <br>
 																				♦Dormant Customers"
 																				' ?></td>
+																				<td><?php echo '♦Daily @ 12:30 pm
+																				' ?></td>
+																				<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #CName, its been a while since you've come in for your regular services.#SalonName Family is missing your presence.We Hope to see u soon!
 																			Appts. @#Phone"
 
@@ -1237,9 +1358,12 @@ $this->load->view('business_admin/ba_header_view');
 																		</tr>
 																		<tr>
 																			<td><?php echo ++$i ?></td>
-																			<td><?php echo '"Not Visited Customers:<br>
+																			<td><?php echo '"Not Visited Customers"' ?></td>
+																				<td><?php echo '"Not Visited Customers:<br>
 																				♦Churned Customers"
 																				' ?></td>
+																				<td><?php echo '♦Daily @ 12:30 pm' ?></td>
+																				<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #CName, its been a while since you've come in for your regular services.#SalonName Family is missing your presence.We Hope to see u soon!
 																			Appts. @#Phone"
 

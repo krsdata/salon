@@ -2448,7 +2448,6 @@ class BusinessAdmin extends CI_Controller {
                 'bussiness_outlet_id'=>$this->session->userdata['outlets']['current_outlet']
               );
               $data1 = array(
-             
                 'expense_date'      => date('Y-m-d'),
                 'expense_type_id'   => $this->input->post('expense_type_id'),
                 'item_name'         => $this->input->post('item_name'),
@@ -8317,7 +8316,15 @@ public function InsertSalary(){
                 );
                 $da=$this->BusinessAdminModel->SelectMaxIdExpense($datam);
                 $da=$da['res_arr'][0]['id'];
-                $expense_id= "E1010Y".$this->session->userdata['outlets']['current_outlet'].($da+1);
+								// $expense_id= "E1010Y".$this->session->userdata['outlets']['current_outlet'].($da+1);
+								
+								//
+								$outlet_id = $this->session->userdata['outlets']['current_outlet'];
+									$admin_id= $this->session->userdata['logged_in']['business_admin_id'];
+									$expense_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();			
+          				$expense_unique_serial_id = strval("EA".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($expense_counter['business_outlet_expense_counter']));
+								//
+
                 $data = array(
                 'expense_id'=>$_POST['expense_id'],
                 'expense_date'=>$_POST['entry_date'],
@@ -8335,7 +8342,7 @@ public function InsertSalary(){
                 'bussiness_outlet_id'   =>$this->session->userdata['outlets']['current_outlet']
                 );
                 $data1 = array(
-                'expense_unique_serial_id'=>$expense_id,
+                'expense_unique_serial_id'=>$expense_unique_serial_id,
                 'expense_date'=>$_POST['entry_date'],
                 'expense_type_id'=>$_POST['expense_type_id'],
                 'item_name'=>$_POST['item_name'],
@@ -8352,12 +8359,16 @@ public function InsertSalary(){
                 'expense_status'=>$_POST['expense_status'],
                 'bussiness_outlet_id'   =>$this->session->userdata['outlets']['current_outlet']
                 );
-            //   $this->PrettyPrintArray($data);
+            
             //   exit;
                 $result = $this->BusinessAdminModel->Insert($data1,'mss_expenses');
-                $result = $this->BusinessAdminModel->UpdateExpense($data);
-            
-                if($result['success'] == 'true'){
+                $result1 = $this->BusinessAdminModel->UpdateExpense($data);
+								//Update expense Counter
+								$query = "UPDATE mss_business_outlets SET business_outlet_expense_counter = business_outlet_expense_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
+					
+								$this->db->query($query);
+
+                if($result1['success'] == 'true'){
                 $this->ReturnJsonArray(true,false,"Expense Updated successfully!");
                 die;
                 }
@@ -10995,6 +11006,7 @@ public function InsertSalary(){
 									$admin_id= $this->session->userdata['logged_in']['business_admin_id'];
 									$expense_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();			
           				$expense_unique_serial_id = strval("EA".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($expense_counter['business_outlet_expense_counter']));
+									$emp=$this->BusinessAdminModel->DetailsById($_POST['source_name'],'mss_vendors','vendor_id');
 
 									$data5=array(
 										'expense_unique_serial_id'	=>  $expense_unique_serial_id,
@@ -11005,8 +11017,8 @@ public function InsertSalary(){
 										'total_amount'							=>	$this->input->post('invoice_amount'),
 										'amount'										=>	$this->input->post('amount_paid'),
 										'payment_type'							=>	$this->input->post('source_type'),
-										'payment_to'								=>	$this->input->post('source_type'),
-										'payment_to_name'						=>	$this->input->post('source_name'),
+										'payment_to'								=>	$this->input->post('source_name'),
+										'payment_to_name'						=>	$emp['res_arr']['vendor_name'],
 										'invoice_number'						=>	$this->input->post('invoice_number'),
 										'remarks'										=>	$this->input->post('note'),
 										'payment_mode'							=>	$this->input->post('payment_mode'),
@@ -11015,7 +11027,29 @@ public function InsertSalary(){
 										'bussiness_outlet_id'				=>	$this->session->userdata['outlets']['current_outlet']
 									);
 									$insert_expense=$this->CashierModel->Insert($data5,'mss_expenses');
+									//Add Expense Unpaid E
+									if($_POST['invoice_amount'] > $_POST['amount_paid']){
+											$data1 = array(
+												'expense_date'      => date('Y-m-d'),
+												'expense_type_id'   => 1,
+												'item_name'         => 'Inventory',
+												'total_amount'      =>$this->input->post('invoice_amount'),
+												'amount'            => $this->input->post('amount_paid'),
+												'remarks'           => $this->input->post('note'),
+												'payment_type'      => $this->input->post('source_type'),
+												'payment_to'        => $this->input->post('source_name'),
+												'payment_to_name'   => $emp['res_arr']['vendor_name'],
+												'payment_mode'      => $this->input->post('payment_mode'),
+												'pending_amount'    => ($this->input->post('invoice_amount')- $this->input->post('amount_paid')),
+												'expense_status'    => $this->input->post('payment_status'),
+												'employee_name'     => $this->session->userdata['logged_in']['business_admin_name'],
+												'invoice_number'    => $this->input->post('invoice_number'),
+												'bussiness_outlet_id'=>$this->session->userdata['outlets']['current_outlet']
+											);				
+										    $result = $this->BusinessAdminModel->Insert($data1,'mss_expenses_unpaid');
+										}
 
+									//
 									$query = "UPDATE mss_business_outlets SET business_outlet_expense_counter = business_outlet_expense_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
 					
 									$this->db->query($query);
@@ -11061,7 +11095,7 @@ public function InsertSalary(){
 							$data['pending_payment']=$this->BusinessAdminModel->GetVendorPendingPayment();
               $data['pending_payment']=$data['pending_payment']['res_arr'];
 
-                // $this->PrettyPrintArray($data['stock_outgoing']);
+                // $this->PrettyPrintArray($data['pending_payment']);
                 // exit;
 							$data['categories']  = $this->GetCategoriesOtc($this->session->userdata['outlets']['current_outlet']);
 							$data['sub_categories']  = $this->GetSubCategories($this->session->userdata['outlets']['current_outlet']);
