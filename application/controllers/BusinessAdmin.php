@@ -5606,7 +5606,8 @@ public function GetEmployee(){
                             $ac[] = $a['outlet_id']."_".$a['services_number'];
                         }
                     }  
-                    $data['activity'] = $ac;                                      
+										$data['activity'] = $ac;       
+										$data['sidebar_collapsed']="true";
 					$this->load->view('business_admin/ba_autoEngage_view',$data);
 			}
 			else{

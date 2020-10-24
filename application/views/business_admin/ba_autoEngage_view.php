@@ -99,10 +99,10 @@ $this->load->view('business_admin/ba_header_view');
 																<thead>
 																	<th width="2%"> S.No.</th>
 																	<th width="10%">Trigger Name
-																	<th width="15%">Description</th>
-																	<th width="15%">Frequency</th>
+																	<th width="20%">Description</th>
+																	<th width="20%">Frequency</th>
 																	<th width="5%">Mode</th>
-																	<th width="40%">Communication Script</th>
+																	<th width="30%">Communication Script</th>
 																	<th width="10%">Outlets</th>
 																	<th width="3%">Action</th>
 																</thead>
@@ -118,7 +118,7 @@ $this->load->view('business_admin/ba_header_view');
 																			<td><?php echo 'Day Closing Report' ?></td>
 																			<td><?php echo 'Daily @ 10:30pm' ?></td>
 																			<td><?php echo 'Sms' ?></td>
-																			<td width="60%">Hi #Branch Name,#Location !
+																			<td>Hi #Branch Name,#Location !
 																				Business Update till 10pm
 																				Sales: Rs#Sales
 																				Collection: Rs#Collection
@@ -152,7 +152,7 @@ $this->load->view('business_admin/ba_header_view');
 																			<td><?php echo '"♦ Every Monday @ 8:30AM<br>
 																			♦ 1st of every month @ 10AM"' ?></td>
 																			<td><?php echo 'Sms' ?></td>
-																			<td width="60%">Hi #Branch Name,#Location !
+																			<td>Hi #Branch Name,#Location !
 
 																				Business Update: From Date - To Date
 																				Sales: Rs#Sales
@@ -187,7 +187,7 @@ $this->load->view('business_admin/ba_header_view');
 																			<td><?php echo 'Pending Amount SMS[Weekly]' ?></td>
 																			<td><?php echo '"♦ Every Monday @ 8:30AM"' ?></td>
 																			<td><?php echo 'Sms' ?></td>
-																			<td width="60%">"Pending Amount Update
+																			<td>"Pending Amount Update
 																				#Branch Name,#Location
 																				Duration: FromDt- ToDt
 																				Generated:Rs#Amt
@@ -470,11 +470,11 @@ $this->load->view('business_admin/ba_header_view');
 															<table class="datatables-basic table table-hover" style="width:100%;">
 																<thead>
 																	<th width="2%"> S.No.</th>
-																	<th width="10%">Trigger Name
-																	<th width="15%">Description</th>
-																	<th width="15%">Frequency</th>
+																	<th width="10%">Trigger Name</th>
+																	<th width="20%">Description</th>
+																	<th width="20%">Frequency</th>
 																	<th width="5%">Mode</th>
-																	<th width="40%">Communication Script</th>
+																	<th width="30%">Communication Script</th>
 																	<th width="10%">Outlets</th>
 																	<th width="3%">Action</th>
 																</thead>
@@ -490,7 +490,7 @@ $this->load->view('business_admin/ba_header_view');
 																			<td><?php echo 'Before Appointment SMS' ?></td>
 																			<td><?php echo 'One Hour before Appointment' ?></td>
 																			<td><?php echo 'Sms' ?></td>
-																			<td width="60%">-</td>
+																			<td>-</td>
 																			<!-- <td width="20%">Dear #ExpertName,You've an upcoming service with #CustomerName,#CustMobile in 30mins. Please be ready to serve the patron with your best expertise.
 																			</td>
 																			<td width="20%">Dear #Customer,You've an upcoming appointment with #SalonName in 30mins.
@@ -706,10 +706,10 @@ $this->load->view('business_admin/ba_header_view');
 																<thead>
 																<th width="2%"> S.No.</th>
 																	<th width="10%">Trigger Name
-																	<th width="15%">Description</th>
-																	<th width="15%">Frequency</th>
+																	<th width="20%">Description</th>
+																	<th width="20%">Frequency</th>
 																	<th width="5%">Mode</th>
-																	<th width="40%">Communication Script</th>
+																	<th width="30%">Communication Script</th>
 																	<th width="10%">Outlets</th>
 																	<th width="3%">Action</th>
 																</thead>
@@ -726,7 +726,7 @@ $this->load->view('business_admin/ba_header_view');
 																			<td><?php echo 'One Hour before Appointment' ?></td>
 																			<td><?php echo 'Sms' ?></td>
 
-																			<td width="60%">-</td>
+																			<td>-</td>
 																			<!-- <td width="20%">Dear #ExpertName,You've an upcoming service with #CustomerName,#CustMobile in 30mins. Please be ready to serve the patron with your best expertise.
 																			</td>
 																			<td width="20%">Dear #Customer,You've an upcoming appointment with #SalonName in 30mins.

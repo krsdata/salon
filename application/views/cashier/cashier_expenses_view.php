@@ -145,7 +145,7 @@
 																			<option value="Paid" selected>Paid</option>
 																			<option value="Advance">Advance</option>
 																			<option value="Unpaid">Unpaid</option>
-																			<option value="Partialy_paid">Partialy paid</option>
+																			<option value="Partialy Paid">Partialy paid</option>
 																			<select>
 																	</div>
 																	<div class="form-group col-md-3" id="pend_amt" hidden>
@@ -459,9 +459,9 @@
 	        url: "<?=base_url()?>Cashier/ExpensesSummaryRange",
 	        data: formData,
 	        type: "GET",
-	        // crossDomain: true,
+	        crossDomain: true,
 					cache: false,
-	        // dataType : "json",
+	        dataType : "json",
 	    		success: function(data) {
 						var str = "";
 						for(var i=0;i<data.length;i++){
@@ -601,7 +601,7 @@
         $("#expense_status").on('change', function(e) {
             var exp_status = document.getElementById('expense_status').value;
             // alert(exp_status);
-            if (exp_status == 'Partialy_paid') {
+            if (exp_status == 'Partialy Paid') {
                 $("#pend_amt").removeAttr('hidden');
             }
         });
