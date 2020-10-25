@@ -3391,12 +3391,20 @@ class Cashier extends CI_Controller {
                 $datam=array(
                     'outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
                 );
-                $da=$this->BusinessAdminModel->SelectMaxIdExpense($datam);
+                // $da=$this->BusinessAdminModel->SelectMaxIdExpense($datam);
                 // $this->PrettyPrintArray($da);
-                $da=$da['res_arr'][0]['id'];
-                $expense_id= "E1010Y".$this->session->userdata['logged_in']['business_outlet_id'].($da+1);
+                // $da=$da['res_arr'][0]['id'];
+								// $expense_id= "E1010Y".$this->session->userdata['logged_in']['business_outlet_id'].($da+1);
+								
+								//Unique serial id
+									$outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
+									$admin_id= $this->session->userdata['logged_in']['business_admin_id'];
+									$expense_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();			
+          				$expense_unique_serial_id = strval("EA".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($expense_counter['business_outlet_expense_counter']));
+									// $emp=$this->BusinessAdminModel->DetailsById($_POST['source_name'],'mss_vendors','vendor_id');
+
                     $data = array(
-                        'expense_unique_serial_id'=>$expense_id, 
+                        'expense_unique_serial_id'=>$expense_unique_serial_id, 
                         'expense_date'      => $this->input->post('entry_date'),
                         'expense_type_id'   => $this->input->post('expense_type_id'),
                         'item_name'         => $this->input->post('item_name'),
@@ -3441,9 +3449,12 @@ class Cashier extends CI_Controller {
                     if($_POST['expense_status'] != 'Unpaid'){
                         $result = $this->BusinessAdminModel->Insert($data,'mss_expenses');
                         }
-                        if($_POST['expense_status'] != 'paid'){
+                        if($_POST['expense_status'] != 'Paid'){
                             $result = $this->BusinessAdminModel->Insert($data1,'mss_expenses_unpaid');
-                        }
+												}
+												
+												$query = "UPDATE mss_business_outlets SET business_outlet_expense_counter = business_outlet_expense_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
+												$this->db->query($query);
                         if($result['success'] == 'true'){
                             $this->ReturnJsonArray(true,false,"Expense added successfully!");
                             die;

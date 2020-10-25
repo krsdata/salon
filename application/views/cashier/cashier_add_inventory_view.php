@@ -795,14 +795,14 @@
   			var amt_paid=  Number($(this).val());
 				var invoice_amount= Number($("#AddProduct input[name=invoice_amount]").val());
 				if(amt_paid==invoice_amount){
-					$("#AddProduct input[name=payment_status]").attr('value',"paid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Paid");
 				}else if(amt_paid > 0 && amt_paid < invoice_amount){
-					$("#AddProduct input[name=payment_status]").attr('value',"partial paid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Partialy Paid");
 				}else if(amt_paid == 0){
-					$("#AddProduct input[name=payment_status]").attr('value',"unpaid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Unpaid");
 				}else{
 					alert("Amount Paid is much than Invoice Amount.");
-					$("#AddProduct input[name=payment_status]").attr('value',"over paid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Over Paid");
 				}	
     });
 
@@ -835,6 +835,17 @@
 				}
 				// alert(t_cost);
 				$("#AddProduct input[name=amount_paid]").val(t_cost);
+				var invoice_amount= Number($("#AddProduct input[name=invoice_amount]").val());
+				if(t_cost==invoice_amount){
+					$("#AddProduct input[name=payment_status]").attr('value',"Paid");
+				}else if(t_cost > 0 && t_cost < invoice_amount){
+					$("#AddProduct input[name=payment_status]").attr('value',"Partialy Paid");
+				}else if(t_cost == 0){
+					$("#AddProduct input[name=payment_status]").attr('value',"Unpaid");
+				}else{
+					alert("Amount Paid is much than Invoice Amount.");
+					$("#AddProduct input[name=payment_status]").attr('value',"Over Paid");
+				}	
 								
     });
 
@@ -1034,14 +1045,14 @@
   			var amt_paid=  Number($(this).val());
 				var invoice_amount= Number($("#TransProduct input[name=invoice_amount]").val());
 				if(amt_paid==invoice_amount){
-					$("#TransProduct input[name=payment_status]").attr('value',"paid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Paid");
 				}else if(amt_paid > 0 && amt_paid < invoice_amount){
-					$("#TransProduct input[name=payment_status]").attr('value',"partial paid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Partialy Paid");
 				}else if(amt_paid == 0){
-					$("#TransProduct input[name=payment_status]").attr('value',"unpaid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Unpaid");
 				}else{
 					alert("Amount Paid is much than Invoice Amount.");
-					$("#TransProduct input[name=payment_status]").attr('value',"over paid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Over Paid");
 				}	
     });
 
