@@ -52,9 +52,9 @@
 							</div>
 							<div class="card-body">
                                <div class="row">
-                                    <div class="col-lg-2 col-lg-2" style="margin-top:20px">
-                                       <a href="<?= base_url() ?>BusinessAdmin/SetTags" class="btn btn-primary btn-lg btn-block">Create New Tag</a>
-                                   </div> 
+																	<div class="col-lg-2 col-lg-2" style="margin-top:20px">
+																			<a href="<?= base_url() ?>BusinessAdmin/SetTags" class="btn btn-primary btn-lg btn-block">Create New Tag</a>
+																	</div> 
                                </div>
                                <div class="row">
                                    

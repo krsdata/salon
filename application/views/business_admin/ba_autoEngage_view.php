@@ -68,7 +68,7 @@ $this->load->view('business_admin/ba_header_view');
 										<div class="col-md-8">
 											<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight: bolder">
 												<li class="nav-item">
-													<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight: bolder">														
+													<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight: bolder">
 														<li class="nav-item">
 															<a class="nav-link active" data-toggle="tab" href="#tab-1">Business Ops</a>
 														</li>
@@ -77,7 +77,7 @@ $this->load->view('business_admin/ba_header_view');
 														</li>
 														<li class="nav-item">
 															<a class="nav-link" data-toggle="tab" href="#tab-3">Customer</a>
-														</li>														
+														</li>
 													</ul>
 										</div>
 										<div class="col-md-4">
@@ -286,7 +286,7 @@ $this->load->view('business_admin/ba_header_view');
 																			<td><?php echo 'Packages/Products/Services Sales' ?></td>
 																			<td><?php echo '♦Daily @ 10:30pm' ?></td>
 																			<td><?php echo 'Sms' ?></td>
-																			<td >"Hi #Branch Name,#Location ! 
+																			<td>"Hi #Branch Name,#Location !
 																				Business Update till 10pm
 
 																				Total Sales: Rs#Sales
@@ -321,7 +321,7 @@ $this->load->view('business_admin/ba_header_view');
 																			<td><?php echo 'Packages/Products/Services Sales' ?></td>
 																			<td><?php echo '"♦ Every Monday @ 8:30AM"' ?></td>
 																			<td><?php echo 'Sms' ?></td>
-																			<td>"Hi #Branch Name,#Location ! 
+																			<td>"Hi #Branch Name,#Location !
 
 																				Business Update: From Date - To Date
 
@@ -355,14 +355,14 @@ $this->load->view('business_admin/ba_header_view');
 																		<tr>
 																			<td><?php echo ++$i ?></td>
 																			<td><?php echo '"Combined Summary of Renewals & Expiry"	' ?></td>
-																				<td><?php echo '"Combined Summary of Renewals & Expiry <br>
+																			<td><?php echo '"Combined Summary of Renewals & Expiry <br>
 																				♦All the packages/memberships due for expiry in next week"
 																				' ?></td>
-																				<td><?php echo 'Every Tuesday @ 10AM' ?></td>
-																				<td><?php echo 'Sms' ?></td>
+																			<td><?php echo 'Every Tuesday @ 10AM' ?></td>
+																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #Salon Name, Location Package Renewals weekly Update:
-																					Pkg/Mships expired: #LstWk Exp
-																					Pkg/Mships expiring: #thisWk Exp"
+																				Pkg/Mships expired: #LstWk Exp
+																				Pkg/Mships expiring: #thisWk Exp"
 																			</td>
 																			<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
@@ -382,10 +382,10 @@ $this->load->view('business_admin/ba_header_view');
 																				<?php
 																					}
 																				?></td>
-																		</tr>																		
-																		
+																		</tr>
+
 																	<?php
-																	break;
+																		break;
 																	}
 																	?>
 																</tbody>
@@ -522,12 +522,12 @@ $this->load->view('business_admin/ba_header_view');
 																			<td><?php echo '♦Daily 10:30 PM' ?></td>
 																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #ExpertName,
-																					Today's Rev.Achmt  till 10pm
-																					Total Sale:#Rs
-																					Services:
-																					Products:
-																					Packages:
-																					Memberships:"
+																				Today's Rev.Achmt till 10pm
+																				Total Sale:#Rs
+																				Services:
+																				Products:
+																				Packages:
+																				Memberships:"
 
 																			</td>
 																			<!-- <td width="20%">-</td>
@@ -556,12 +556,12 @@ $this->load->view('business_admin/ba_header_view');
 																			<td><?php echo '♦Daily 10:30 PM' ?></td>
 																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #ExpertName,
-																					Today's Rev.Achmt  till 10pm
-																					Total Sale:#Rs
-																					Services:
-																					Products:
-																					Packages:
-																					Memberships:"
+																				Today's Rev.Achmt till 10pm
+																				Total Sale:#Rs
+																				Services:
+																				Products:
+																				Packages:
+																				Memberships:"
 
 																			</td>
 																			<!-- <td width="20%">-</td>
@@ -590,11 +590,11 @@ $this->load->view('business_admin/ba_header_view');
 																			<td><?php echo '♦Daily 9:30 PM' ?></td>
 																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #ExpertName,
-																						MTD  Rev.Achmt  Rankings :
-																						1.Emp1 : MTD Amt
-																						2.Emp2 : MTD Amt
-																						3.Emp3 : MTD Amt
-																						n..Emp n : MTD Amt"
+																				MTD Rev.Achmt Rankings :
+																				1.Emp1 : MTD Amt
+																				2.Emp2 : MTD Amt
+																				3.Emp3 : MTD Amt
+																				n..Emp n : MTD Amt"
 
 
 																			</td>
@@ -624,11 +624,11 @@ $this->load->view('business_admin/ba_header_view');
 																			<td><?php echo '♦Daily 9:30 AM' ?></td>
 																			<td><?php echo 'Sms' ?></td>
 																			<td>"Hi #ExpertName,
-																					MTD  Rev.Achmt  Rankings :
-																					1.Emp1 : MTD Amt
-																					2.Emp2 : MTD Amt
-																					3.Emp3 : MTD Amt
-																					n..Emp n : MTD Amt"
+																				MTD Rev.Achmt Rankings :
+																				1.Emp1 : MTD Amt
+																				2.Emp2 : MTD Amt
+																				3.Emp3 : MTD Amt
+																				n..Emp n : MTD Amt"
 																			</td>
 																			<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
@@ -677,9 +677,9 @@ $this->load->view('business_admin/ba_header_view');
 																					}
 																				?></td>
 																		</tr>
-																		
+
 																	<?php
-																	break;
+																		break;
 																	}
 																	?>
 																</tbody>
@@ -703,696 +703,697 @@ $this->load->view('business_admin/ba_header_view');
 												</div>
 												<div class="card-body">
 													<table class="datatables-basic table table-hover" style="width:100%;">
-																<thead>
-																<th width="2%"> S.No.</th>
-																	<th width="10%">Trigger Name
-																	<th width="20%">Description</th>
-																	<th width="20%">Frequency</th>
-																	<th width="5%">Mode</th>
-																	<th width="30%">Communication Script</th>
-																	<th width="10%">Outlets</th>
-																	<th width="3%">Action</th>
-																</thead>
-																<tbody>
-																	<?php
-																	$index = 1;
-																	$i = 0;
-																	foreach ($business_outlet_details as $outlet) {
-																	?>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Before Appointment SMS' ?></td>
-																			<td><?php echo 'Before Appointment SMS' ?></td>
-																			<td><?php echo 'One Hour before Appointment' ?></td>
-																			<td><?php echo 'Sms' ?></td>
+														<thead>
+															<th width="2%"> S.No.</th>
+															<th width="10%">Trigger Name
+															<th width="20%">Description</th>
+															<th width="20%">Frequency</th>
+															<th width="5%">Mode</th>
+															<th width="30%">Communication Script</th>
+															<th width="10%">Outlets</th>
+															<th width="3%">Action</th>
+														</thead>
+														<tbody>
+															<?php
+															$index = 1;
+															$i = 0;
+															foreach ($business_outlet_details as $outlet) {
+															?>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Before Appointment SMS' ?></td>
+																	<td><?php echo 'Before Appointment SMS' ?></td>
+																	<td><?php echo 'One Hour before Appointment' ?></td>
+																	<td><?php echo 'Sms' ?></td>
 
-																			<td>-</td>
-																			<!-- <td width="20%">Dear #ExpertName,You've an upcoming service with #CustomerName,#CustMobile in 30mins. Please be ready to serve the patron with your best expertise.
+																	<td>-</td>
+																	<!-- <td width="20%">Dear #ExpertName,You've an upcoming service with #CustomerName,#CustMobile in 30mins. Please be ready to serve the patron with your best expertise.
 																			</td>
 																			<td width="20%">Dear #Customer,You've an upcoming appointment with #SalonName in 30mins.
 																				Look forward to ur patronage.
 																				Team #SalonName
 																				#SalonContact No.
 																				#Location URL</td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_1", $activity)) {
-																					?>
-																					<button type="button" service_id="1" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="1" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Membership Expiry Date' ?></td>
-																			<td><?php echo 'Membership Expiry Date' ?></td>
-																			<td><?php echo '"♦ Packages expiring in next 30days
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_1", $activity)) {
+																			?>
+																			<button type="button" service_id="1" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="1" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Membership Expiry Date' ?></td>
+																	<td><?php echo 'Membership Expiry Date' ?></td>
+																	<td><?php echo '"♦ Packages expiring in next 30days
 																					sent on every 10th of month @ 11 AM"' ?></td>
-																			<td><?php echo 'Sms' ?></td>
-																			<td>"Dear #Cname, Your #PkgName, is due for renewal in next 30days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services. 
-																			Team #SalonName
-																			#Salon PhoneNo.
-																			#Location URL"
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Dear #Cname, Your #PkgName, is due for renewal in next 30days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services.
+																		Team #SalonName
+																		#Salon PhoneNo.
+																		#Location URL"
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Membership Expiry Date' ?></td>
-																			<td><?php echo 'Membership Expiry Date' ?></td>
-																			<td><?php echo '"♦ Packages expiring in next 15days
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Membership Expiry Date' ?></td>
+																	<td><?php echo 'Membership Expiry Date' ?></td>
+																	<td><?php echo '"♦ Packages expiring in next 15days
 																				sent on every 1st & 15th of month @ 10AM"
 																				' ?></td>
-																			<td><?php echo 'Sms' ?></td>
-																			<td>"Dear #Cname, Your #PkgName, is due for renewal in next 15days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services. 
-																			Team #SalonName
-																			#Salon PhoneNo.
-																			#Location URL"
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Dear #Cname, Your #PkgName, is due for renewal in next 15days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services.
+																		Team #SalonName
+																		#Salon PhoneNo.
+																		#Location URL"
 
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Membership Expiry By Date' ?></td>
-																			<td><?php echo 'Membership Expiry By Date' ?></td>
-																			<td><?php echo '"♦ Packages expiring in next 7days
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Membership Expiry By Date' ?></td>
+																	<td><?php echo 'Membership Expiry By Date' ?></td>
+																	<td><?php echo '"♦ Packages expiring in next 7days
 
-sent on every Friday @ 11AM"
-' ?></td>
-																			<td><?php echo 'Sms' ?></td>
-																			<td>"Dear #Cname, Your #PkgName, is due for renewal in next  7days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services. 
-																			Team #SalonName
-																			#Salon PhoneNo.
-																			#Location URL"
-																			</td>
-																			<!-- <td width="20%">-</td>
+															sent on every Friday @ 11AM"
+															' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Dear #Cname, Your #PkgName, is due for renewal in next 7days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services.
+																		Team #SalonName
+																		#Salon PhoneNo.
+																		#Location URL"
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Membership Expiry By Date' ?></td>
-																			<td><?php echo 'Membership Expiry By Date' ?></td>
-																			<td><?php echo '"♦ Packages expiring in next 7days
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Membership Expiry By Date' ?></td>
+																	<td><?php echo 'Membership Expiry By Date' ?></td>
+																	<td><?php echo '"♦ Packages expiring in next 7days
 
-sent on every Friday @ 11AM"
-' ?></td>
-																			<td><?php echo 'Sms' ?></td>
-																			<td>"Dear #Cname, Your #PkgName, is due for renewal in next  7days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services. 
-																			Team #SalonName
-																			#Salon PhoneNo.
-																			#Location URL"
+											sent on every Friday @ 11AM"
+											' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Dear #Cname, Your #PkgName, is due for renewal in next 7days.Expiring on #ExpiryDt. Please renew it today, to keep availing the awesome services.
+																		Team #SalonName
+																		#Salon PhoneNo.
+																		#Location URL"
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo "Package Expiry by service count"; ?></td>												
-																			<td><?php echo '"Package Expiry by service count -<br>
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo "Package Expiry by service count"; ?></td>
+																	<td><?php echo '"Package Expiry by service count -<br>
 																			♦ Customer to get message if all the services in the package have been utilized. <br>
 																			♦Package Expiry Date shuld be >7days from the date of sending the message"
 																			' ?></td>
-																			<td><?php echo "Every Wednesday @ 11AM"; ?></td>
-																			<td><?php echo "Sms"; ?></td>
-																			<td>
+																	<td><?php echo "Every Wednesday @ 11AM"; ?></td>
+																	<td><?php echo "Sms"; ?></td>
+																	<td>
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo '"Wallet Balance Reminder"' ?></td>
-																			<td><?php echo '"Wallet Balance Reminder -<br>
-																						♦ Customer to get reminder every month/fortnight for the pending balance in his wallet "' ?></td>																			
-																			<td><?php echo '"Monthly on every 7th
-♦ 7th of every month @ 12:30pm"
-' ?></td>
-																			<td><?php echo 'Sms' ?></td>		
-																			<td>"Dear #Cname,  Utilize ur balance of #WalletBalance, with #SalonName, and experience the fantastic services before it expires. 
-																			Team #SalonName
-																			#Salon PhoneNo.
-																			#Location URL"
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo '"Wallet Balance Reminder"' ?></td>
+																	<td><?php echo '"Wallet Balance Reminder -<br>
+																						♦ Customer to get reminder every month/fortnight for the pending balance in his wallet "' ?></td>
+																	<td><?php echo '"Monthly on every 7th
+												♦ 7th of every month @ 12:30pm"
+												' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Dear #Cname, Utilize ur balance of #WalletBalance, with #SalonName, and experience the fantastic services before it expires.
+																		Team #SalonName
+																		#Salon PhoneNo.
+																		#Location URL"
 
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td>	<?php echo '"Package Usage Notification"' ?></td>
-																			<td><?php echo '"Package Usage Notification -<br> 
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td> <?php echo '"Package Usage Notification"' ?></td>
+																	<td><?php echo '"Package Usage Notification -<br> 
 																			♦Customer to get SMS everytime he redeems a package service in the Salon. "
 																			' ?></td>
-																			
-																			<td><?php echo 'On actual transaction, of service redemption
-' ?></td>
-																			<td><?php echo 'Sms' ?></td>
-																			<td>
-																			</td>
-																			<!-- <td width="20%">-</td>
+
+																	<td><?php echo 'On actual transaction, of service redemption
+																			' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo '"Package/Membership Renewal: Post Expiry"' ?></td>
-																			<td><?php echo '"Package/Membership Renewal: Post Expiry<br>
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo '"Package/Membership Renewal: Post Expiry"' ?></td>
+																	<td><?php echo '"Package/Membership Renewal: Post Expiry<br>
 																			♦Customer to be reminded to renew his/her package/membership post expiry"
 																			' ?></td>
-																			
-																			<td><?php echo '"♦Reminder to renew package after 2days of package Expiry
---Daily
-"
-' ?></td>
-																			<td><?php echo 'Sms' ?></td>
-																			<td>"Dear #Cname, your #Pckage typ, package #PackageName, has expired 2days back. To enjoy always fantastic services, please renew today. 
-																			Team #SalonName
-																			#Salon Phone No.
-																			#Location URL"
-																			</td>
-																			<!-- <td width="20%">-</td>
+
+																	<td><?php echo '"♦Reminder to renew package after 2days of package Expiry
+																		--Daily
+																		"
+																		' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Dear #Cname, your #Pckage typ, package #PackageName, has expired 2days back. To enjoy always fantastic services, please renew today.
+																		Team #SalonName
+																		#Salon Phone No.
+																		#Location URL"
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>																		
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Wallet redemption Update' ?></td>
-																			<td><?php echo 'Wallet redemption Update' ?></td>
-																			<td><?php echo 'On actual transaction, of wallet redemption' ?></td>
-																			<td><?php echo 'Sms' ?></td>
-																			<td>			</td>
-																			<!-- <td width="20%">-</td>
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Wallet redemption Update' ?></td>
+																	<td><?php echo 'Wallet redemption Update' ?></td>
+																	<td><?php echo 'On actual transaction, of wallet redemption' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td> </td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Bday Special Discount' ?></td>
-																			<td><?php echo '"Bday Special Discount -<br> 
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Bday Special Discount' ?></td>
+																	<td><?php echo '"Bday Special Discount -<br> 
 																			♦Reminders to customers for the special Bday/Anniversary Discount to its customers. <br>
 																			♦The customers should be able to use this discount throughout the month or 30 days prior to the month"
-																				' ?></td>																				
-																				<td><?php echo '"♦Every month on
-♦ 5th @ 9:30 AM
-♦ 15th @ 9:30 AM
-♦ 25th @ 9:30 AM"
-' ?></td>
-																				<td><?php echo 'Sms' ?></td>
-																			<td>"Hi #Cname, Wishing u a very Happy Birthday from #SalonName.
-																					Enjoy special treat with us and get #OfferDetails for this full Calendar month. Visit us @ 
-																					#SalonName,
-																					#Address,
-																					#Phone
-																					TnC"
+																				' ?></td>
+																	<td><?php echo '"♦Every month on
+																								♦ 5th @ 9:30 AM
+																								♦ 15th @ 9:30 AM
+																								♦ 25th @ 9:30 AM"
+																								' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Hi #Cname, Wishing u a very Happy Birthday from #SalonName.
+																		Enjoy special treat with us and get #OfferDetails for this full Calendar month. Visit us @
+																		#SalonName,
+																		#Address,
+																		#Phone
+																		TnC"
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Anniversary Special Discount' ?></td>
-																			<td><?php echo '"Anniversary Special Discount -<br> 
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Anniversary Special Discount' ?></td>
+																	<td><?php echo '"Anniversary Special Discount -<br> 
 																			♦Reminders to customers for the special Bday/Anniversary Discount to its customers. <br>
 																			♦The customers should be able to use this discount throughout the month or 30 days prior to the month"
-																			' ?></td>																			
-																			<td><?php echo '"♦Every month on
-♦ 5th @ 9:30 AM
-♦ 15th @ 9:30 AM
-♦ 25th @ 9:30 AM"
-' ?></td>
-																			<td><?php echo 'Sms' ?></td>
-																			<td>"Hi #Cname, Wishing u a very Happy Anniversary from #SalonName.
-																			Enjoy special treat with us and get #OfferDetails for this full Calendar month. Visit us @ 
-																			#SalonName,
-																			#Address,
-																			#Phone
-																			TnC"
+																			' ?></td>
+																	<td><?php echo '"♦Every month on
+																				♦ 5th @ 9:30 AM
+																				♦ 15th @ 9:30 AM
+																				♦ 25th @ 9:30 AM"
+																				' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Hi #Cname, Wishing u a very Happy Anniversary from #SalonName.
+																		Enjoy special treat with us and get #OfferDetails for this full Calendar month. Visit us @
+																		#SalonName,
+																		#Address,
+																		#Phone
+																		TnC"
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Due Amount Reminder' ?></td>
-																			<td><?php echo '"Due Amount Reminder -<br> 
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Due Amount Reminder' ?></td>
+																	<td><?php echo '"Due Amount Reminder -<br> 
 																				♦Business Admins should be able to send messages every month for pending payments above a certain threshold value to its customers (TBD by Client)"
 																				' ?></td>
-																				<td><?php echo '♦Every Tuesday @ 10:30AM
-' ?></td>
-																				<td><?php echo 'Sms' ?></td>
-																			<td>"Dear #CustomerName, 
-																					You have a due amt of Rs.#DueAmount with #SalonName,#Location.
-																					Kindly clear your dues.
-																					Look forward to keep serving u!
-																					Team #SalonName"
+																	<td><?php echo '♦Every Tuesday @ 10:30AM
+																	' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Dear #CustomerName,
+																		You have a due amt of Rs.#DueAmount with #SalonName,#Location.
+																		Kindly clear your dues.
+																		Look forward to keep serving u!
+																		Team #SalonName"
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Re-visit for Regular Services' ?></td>
-																			<td><?php echo '"Re-visit for Regular Services -<br>
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Re-visit for Regular Services' ?></td>
+																	<td><?php echo '"Re-visit for Regular Services -<br>
 																				♦Customer to get reminder after general usage pattern - such as 45 days for Hair Cut for male, 90 days for Hair Color, 30 days for Facial etc.  "
 																				' ?></td>
-																				
-																				<td><?php echo '♦Daily to a dynamic base of customers, fetched basis the queries' ?></td>
-																				<td><?php echo 'Sms' ?></td>
-																			<td>"Dear #Cname, Its time to get a #ServiceName !
-																					Visit #SalonName, to give urself the extra dose of awesomeness. Do check out exciting offers!
-																					Team #Salon Name
-																					#Location URL"
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	<td><?php echo '♦Daily to a dynamic base of customers, fetched basis the queries' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Dear #Cname, Its time to get a #ServiceName !
+																		Visit #SalonName, to give urself the extra dose of awesomeness. Do check out exciting offers!
+																		Team #Salon Name
+																		#Location URL"
+
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Re-visit for Re-Fill your Products' ?>
-																			<td><?php echo '"Re-visit for Re-Fill your Products:<br>
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Re-visit for Re-Fill your Products' ?>
+																	<td><?php echo '"Re-visit for Re-Fill your Products:<br>
 																				♦Customer to get reminder after the product usage : Generally defined as per product SKU :: 30days for Serie Expert 250mL Shampoo &Likewise"
 																				' ?></td>
-																				</td><td><?php echo '♦Daily to a dynamic base of customers, fetched basis the queries' ?></td>
-																			<td><?php echo 'Sms' ?></td>
-																			<td>"Dear #Cname, Its time to get a refill of  #ProductName !
-																				Call out @#SalonMobile, for Free Home Delivery! 
-																				COD Avlbl!
-																				Visit 4 exciting offers !
-																				Team #Salon Name
-																				#Location URL"
+																	</td>
+																	<td><?php echo '♦Daily to a dynamic base of customers, fetched basis the queries' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Dear #Cname, Its time to get a refill of #ProductName !
+																		Call out @#SalonMobile, for Free Home Delivery!
+																		COD Avlbl!
+																		Visit 4 exciting offers !
+																		Team #Salon Name
+																		#Location URL"
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Products for special Services' ?></td>													
-																			<td><?php echo '"Products for special Services - <br>
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Products for special Services' ?></td>
+																	<td><?php echo '"Products for special Services - <br>
 																			♦Customer to get reminder for purchasing products suitable after getting specific services - as soon as the customer does the transaction"
 																			' ?></td>
-																			<td><?php echo '"♦Transactional; 
-As soon as a Service is added in the Billing Cart, for which there is recommended product available, a trigger sends the message to the customer"
-' ?></td>
-																			<td><?php echo 'Sms' ?></td>
-																			<td>"Hey! Feeling Fantastic after a treat of #ServiceName! 
-																					Don't forget to buy #ProductName, for best results !!!
-																					Contact the Staff for details!
-																					Team #SalonName"
+																	<td><?php echo '"♦Transactional; 
+																					As soon as a Service is added in the Billing Cart, for which there is recommended product available, a trigger sends the message to the customer"
+																					' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Hey! Feeling Fantastic after a treat of #ServiceName!
+																		Don't forget to buy #ProductName, for best results !!!
+																		Contact the Staff for details!
+																		Team #SalonName"
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo 'Loyalty Points' ?></td>
-																			
-																			<td><?php echo '"Loyalty Points -<br>
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo 'Loyalty Points' ?></td>
+
+																	<td><?php echo '"Loyalty Points -<br>
 																				♦ Customer get monthly reminder for his accumulated points and his mode of redemption - by offer or cashback"
 																				' ?></td>
-																				<td><?php echo '♦Every 5th and 20th of every month @ 11 AM
-' ?></td>
-																			<td><?php echo 'Sms' ?></td>
-																			<td>"Dear #Cname, You've #RewardPoints pts in ur account @ #SalonName. 
-																				Visit today to redeem awesome benefits!
-																				#Salon Name
-																				#LocationURL"
+																	<td><?php echo '♦Every 5th and 20th of every month @ 11 AM
+																' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Dear #Cname, You've #RewardPoints pts in ur account @ #SalonName.
+																		Visit today to redeem awesome benefits!
+																		#Salon Name
+																		#LocationURL"
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo '"Not Visited Customers"	' ?></td>
-																			<td><?php echo '"Not Visited Customers: <br>♦At Risk Customers"	' ?></td>
-																			<td><?php echo '♦Daily @ 12:30 pm' ?></td>
-																			<td><?php echo '"Sms"	' ?></td>
-																			<td>"Hi #CName, its been a while since you've come in for your regular services.#SalonName Family is missing your presence.We Hope to see u soon!
-																			Appts. @#Phone"
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo '"Not Visited Customers"	' ?></td>
+																	<td><?php echo '"Not Visited Customers: <br>♦At Risk Customers"	' ?></td>
+																	<td><?php echo '♦Daily @ 12:30 pm' ?></td>
+																	<td><?php echo '"Sms"	' ?></td>
+																	<td>"Hi #CName, its been a while since you've come in for your regular services.#SalonName Family is missing your presence.We Hope to see u soon!
+																		Appts. @#Phone"
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo '"Not Visited Customers"' ?></td>
-																				<td><?php echo '"Not Visited Customers: <br>
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo '"Not Visited Customers"' ?></td>
+																	<td><?php echo '"Not Visited Customers: <br>
 																				♦Dormant Customers"
 																				' ?></td>
-																				<td><?php echo '♦Daily @ 12:30 pm
+																	<td><?php echo '♦Daily @ 12:30 pm
 																				' ?></td>
-																				<td><?php echo 'Sms' ?></td>
-																			<td>"Hi #CName, its been a while since you've come in for your regular services.#SalonName Family is missing your presence.We Hope to see u soon!
-																			Appts. @#Phone"
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Hi #CName, its been a while since you've come in for your regular services.#SalonName Family is missing your presence.We Hope to see u soon!
+																		Appts. @#Phone"
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>
-																		<tr>
-																			<td><?php echo ++$i ?></td>
-																			<td><?php echo '"Not Visited Customers"' ?></td>
-																				<td><?php echo '"Not Visited Customers:<br>
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+																<tr>
+																	<td><?php echo ++$i ?></td>
+																	<td><?php echo '"Not Visited Customers"' ?></td>
+																	<td><?php echo '"Not Visited Customers:<br>
 																				♦Churned Customers"
 																				' ?></td>
-																				<td><?php echo '♦Daily @ 12:30 pm' ?></td>
-																				<td><?php echo 'Sms' ?></td>
-																			<td>"Hi #CName, its been a while since you've come in for your regular services.#SalonName Family is missing your presence.We Hope to see u soon!
-																			Appts. @#Phone"
+																	<td><?php echo '♦Daily @ 12:30 pm' ?></td>
+																	<td><?php echo 'Sms' ?></td>
+																	<td>"Hi #CName, its been a while since you've come in for your regular services.#SalonName Family is missing your presence.We Hope to see u soon!
+																		Appts. @#Phone"
 
-																			</td>
-																			<!-- <td width="20%">-</td>
+																	</td>
+																	<!-- <td width="20%">-</td>
 																			<td width="20%"></td> -->
-																			<td><?php echo $outlet['business_outlet_name'] ?></td>
-																			<td><?php
-																					if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
-																					?>
-																					<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
-																						<i class="align-middle" data-feather="unlock"></i>
-																					</button>
-																				<?php
-																					} else {
-																				?>
-																					<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
-																						<i class="align-middle" data-feather="lock"></i>
-																					</button>
-																				<?php
-																					}
-																				?></td>
-																		</tr>																		
-																	<?php
-																	break;
-																	}
-																	?>
-																</tbody>
-															</table>
+																	<td><?php echo $outlet['business_outlet_name'] ?></td>
+																	<td><?php
+																			if (in_array($outlet['business_outlet_id'] . "_6", $activity)) {
+																			?>
+																			<button type="button" service_id="6" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="6" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?></td>
+																</tr>
+															<?php
+																break;
+															}
+															?>
+														</tbody>
+													</table>
 												</div>
 											</div>
 
@@ -1402,8 +1403,8 @@ As soon as a Service is added in the Billing Cart, for which there is recommende
 										</div>
 									</div>
 								</div>
-						</div>
-						<!-- <div class="col-md-12">
+							</div>
+							<!-- <div class="col-md-12">
 							<div class="card">
 								<div class="card-header">
 									<div class="row">
@@ -1450,7 +1451,7 @@ As soon as a Service is added in the Billing Cart, for which there is recommende
 								</div>
 							</div>
 						</div> -->
-						<!-- <div class="col-md-12">
+							<!-- <div class="col-md-12">
 							<div class="card">
 								<div class="card-header">
 									<div class="row">
@@ -1480,7 +1481,7 @@ As soon as a Service is added in the Billing Cart, for which there is recommende
 								</div>
 							</div>
 						</div> -->
-						<!-- <div class="col-md-12">
+							<!-- <div class="col-md-12">
 							<div class="card">
 								<div class="card-header">
 									<div class="row">
@@ -1544,222 +1545,211 @@ As soon as a Service is added in the Billing Cart, for which there is recommende
 						</div> -->
 
 
-						<!-- modal -->
-						<div class="modal" id="defaultModalSuccess" tabindex="-1" role="dialog" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title">Success</h5>
-										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-										</button>
-									</div>
-									<div class="modal-body m-3">
-										<p class="mb-0" id="SuccessModalMessage">
-											<p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="modal" id="defaultModalDanger" tabindex="-1" role="dialog" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title">Error</h5>
-										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-										</button>
-									</div>
-									<div class="modal-body m-3">
-										<p class="mb-0" id="ErrorModalMessage"></p>
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="modal" id="ModalEditTrigger" tabindex="-1" role="dialog" aria-hidden="true">
-							<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title  text-white font-weight-bold">Edit Trigger</h5>
-										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-										</button>
-									</div>
-									<div class="modal-body m-3">
-										<div class="row">
-											<div class="col-md-12">
-												<form method="POST" action="" id="editTrigger">
-													<div class="form-row">
-														<div class="form-group col-md-3">
-															<label>Select Trigger Type</label>
-															<select class="form-control" name="trigger">
-																<!-- <option value="Birthday">Birthday</option>
-															<option value="Anniversary">Anniversary</option> -->
-																<option value="Daily Update Expert">Daily Update Expert</option>
-																<!-- <option value="Appointment Reminder">Appointment Reminder</option>
-															<option value="Package Expiry">Package Expiry</option>
-																<option value="Pending Amount">Pending Amount</option> -->
-															</select>
-														</div>
-														<div class="form-group col-md-3">
-															<label>Days to trigger</label>
-															<input type="number" name="day_to_trigger" class="form-control" required />
-														</div>
-														<div class="form-group col-md-3">
-															<label>Offer</label>
-															<input type="number" name="offer" class="form-control" required />
-														</div>
-														<div class="form-group col-md-3">
-															<label>Outlet</label>
-															<select name="business_outlet_id" class="form-control">
-																<option value="" selected>Select Outlet</option>
-																<?php
-																foreach ($business_outlet_details as $outlet) {
-																	echo "<option value=" . $outlet['business_outlet_id'] . ">" . $outlet['business_outlet_name'] . "</option>";
-																}
-																?>
-															</select>
-														</div>
-													</div>
-													<div class="form-row">
-														<div class="form-group col-md-3">
-															<input type="hidden" name="auto_engage_id" />
-															<button type="submit" class="btn btn-primary">Submit</button>
-														</div>
-
-													</div>
-												</form>
-												<div class="alert alert-dismissible feedback" role="alert">
-													<button type="button" class="close" data-dismiss="alert" aria-label="Close" style="margin:0px;">
-														<span aria-hidden="true">&times;</span>
-													</button>
-													<div class="alert-message">
-													</div>
-												</div>
-											</div>
+							<!-- modal -->
+							<div class="modal" id="defaultModalSuccess" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">Success</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body m-3">
+											<p class="mb-0" id="SuccessModalMessage">
+												<p>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						<div class="modal fade" id="ModalCreateTrigger" tabindex="-1" role="dialog" aria-hidden="true">
-							<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-								<div class="modal-content">
-									<div class="modal-header" style="background-color:#47bac1;">
-										<h5 class="modal-title text-white">Create Trigger</h5>
-										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-										</button>
+							<div class="modal" id="defaultModalDanger" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">Error</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body m-3">
+											<p class="mb-0" id="ErrorModalMessage"></p>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+										</div>
 									</div>
-									<div class="modal-body m-3">
-										<div class="row">
-											<div class="col-md-12">
-												<form id="CreateTrigger" method="POST" action="#">
-													<div class="form-row">
-														<div class="form-group col-md-4">
-															<div class="form-group col-md-2">
-																<label>Trigger Name</label>
-																<input type="text" class="form-control" placeholder="Trigger Name" name="trigger_name">
+								</div>
+							</div>
+							<div class="modal" id="ModalEditTrigger" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title  text-white font-weight-bold">Edit Trigger</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body m-3">
+											<div class="row">
+												<div class="col-md-12">
+													<form method="POST" action="" id="editTrigger">
+														<div class="form-row">
+															<div class="form-group col-md-3">
+																<label>Select Trigger Type</label>
+																<select class="form-control" name="trigger">
+																	<!-- <option value="Birthday">Birthday</option>
+															<option value="Anniversary">Anniversary</option> -->
+																	<option value="Daily Update Expert">Daily Update Expert</option>
+																	<!-- <option value="Appointment Reminder">Appointment Reminder</option>
+															<option value="Package Expiry">Package Expiry</option>
+																<option value="Pending Amount">Pending Amount</option> -->
+																</select>
 															</div>
-															<div class="form-group col-md-4">
-																<label>Trigger Discription</label>
-																<input type="text" class="form-control" placeholder="Description" name="business_outlet_firm_name">
+															<div class="form-group col-md-3">
+																<label>Days to trigger</label>
+																<input type="number" name="day_to_trigger" class="form-control" required />
 															</div>
-															<div class="form-group col-md-4">
-																<label>Mode</label>
-																<select name="mode" class="form-control">
-																	<option value="">SMS</option>
-																	<option value="">WA</option>
+															<div class="form-group col-md-3">
+																<label>Offer</label>
+																<input type="number" name="offer" class="form-control" required />
+															</div>
+															<div class="form-group col-md-3">
+																<label>Outlet</label>
+																<select name="business_outlet_id" class="form-control">
+																	<option value="" selected>Select Outlet</option>
+																	<?php
+																	foreach ($business_outlet_details as $outlet) {
+																		echo "<option value=" . $outlet['business_outlet_id'] . ">" . $outlet['business_outlet_name'] . "</option>";
+																	}
+																	?>
 																</select>
 															</div>
 														</div>
 														<div class="form-row">
-															<div class="form-group col-md-4">
-																<label>Frequency Type</label>
-																<input type="text" class="form-control" placeholder="Frequncy Type" name="business_outlet_address">
+															<div class="form-group col-md-3">
+																<input type="hidden" name="auto_engage_id" />
+																<button type="submit" class="btn btn-primary">Submit</button>
 															</div>
-															<div class="form-group col-md-4">
-																<label>Frequency Details</label>
-																<input type="email" class="form-control" placeholder="Frequency detail" name="business_outlet_email">
-															</div>
-															<div class="form-group col-md-4">
-																<label>Message Text</label>
-																<textarea type="text" class="form-control" placeholder="" name="business_outlet_mobile" style="height:130px;"></textarea>
-															</div>
+
 														</div>
-														<input type="text" class="form-control" placeholder="Description" name="trigger_discription">
+													</form>
+													<div class="alert alert-dismissible feedback" role="alert">
+														<button type="button" class="close" data-dismiss="alert" aria-label="Close" style="margin:0px;">
+															<span aria-hidden="true">&times;</span>
+														</button>
+														<div class="alert-message">
+														</div>
 													</div>
-													<div class="form-group col-md-2">
-														<label>Mode</label>
-														<select name="mode" class="form-control">
-															<option value="1">SMS</option>
-															<option value="2">WhatsApp</option>
-														</select>
-													</div>
-													<div class="form-group col-md-2">
-														<label>Outlet</label>
-														<select name="business_outlet_id" class="form-control">
-															<option value="" selected>Select Outlet</option>
-															<?php
-															foreach ($business_outlet_details as $outlet) {
-																echo "<option value=" . $outlet['business_outlet_id'] . ">" . $outlet['business_outlet_name'] . "</option>";
-															}
-															?>
-														</select>
-													</div>
-													<div class="form-group col-md-2">
-														<label>Reciptents</label>
-														<select name="reciptents" class="form-control">
-															<option value="1">Buisness Admin</option>
-															<option value="2">Experts</option>
-															<option value="3">Both</option>
-														</select>
-													</div>
-											</div>
-
-											<!-- <div class="form-row">
-																
-
-															</div> -->
-											<div class="form-row">
-												<!-- <div class="col-md-3" style="text-align:end;float:right;">
-												From <i class="fa fa-calendar" style="color:red;"></i>
-											</div> -->
-												<div class="from-group col-md-3">
-													<label>Set Date</label>
-													<input type="text" name="dates" class="form-control pull-right">
-												</div>
-												<div class="form-group col-md-3">
-													<label>Frequency Type</label>
-													<select name="ftype" class="form-control">
-														<option value="1">Reminder /Approaching Type: </option>
-														<option value="2">Regular /Ongoing: </option>
-													</select>
-												</div>
-												<div class="form-group col-md-3 frequency_detail" style="display:none;">
-													<label>Frequency Details</label>
-													<select multiple name="frequency_detail[]" class="form-control">
-													</select>
-												</div>
-												<div class="form-group col-md-3">
-													<label>Message Text</label>
-													<textarea type="text" class="form-control" placeholder="" name="message" style="height:130px;"></textarea>
 												</div>
 											</div>
-
 										</div>
-
 									</div>
-									<button type="submit" class="btn btn-primary">Submit</button>
-									</form>
-									<div class="alert alert-dismissible feedback" role="alert">
-										<button type="button" class="close" data-dismiss="alert" aria-label="Close" style="margin:0px;">
-											<span aria-hidden="true">&times;</span>
-										</button>
-										<div class="alert-message">
+								</div>
+							</div>
+							<div class="modal fade" id="ModalCreateTrigger" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header" style="background-color:#47bac1;">
+											<h5 class="modal-title text-white">Create Trigger</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body m-3">
+											<div class="row">
+												<div class="col-md-12">
+													<form id="CreateTrigger" method="POST" action="#">
+															<div class="form-row">
+																<div class="form-group col-md-4">
+																	<label>Trigger Name</label>
+																	<input type="text" class="form-control" placeholder="Trigger Name" name="trigger_name">
+																</div>
+																<div class="form-group col-md-4">
+																	<label>Trigger Discription</label>
+																	<input type="text" class="form-control" placeholder="Description" name="description">
+																</div>
+																<div class="form-group col-md-4">
+																	<label>Mode</label>
+																	<select name="mode" class="form-control">
+																		<option value="1">SMS</option>
+																		<option value="2">WhatsApp</option>
+																	</select>
+																</div>
+															</div>
+															<div class="form-row">
+																<div class="form-group col-md-4">
+																	<label>Outlet</label>
+																	<select name="business_outlet_id" class="form-control">
+																		<option value="" selected>Select Outlet</option>
+																		<?php
+																		foreach ($business_outlet_details as $outlet) {
+																			echo "<option value=" . $outlet['business_outlet_id'] . ">" . $outlet['business_outlet_name'] . "</option>";
+																		}
+																		?>
+																	</select>
+																</div>
+																<div class="form-group col-md-4">
+																	<label>Tags</label>
+																	<select name="reciptents" class="form-control">
+																	<option value="" selected>Select tag </option>
+																		<?php foreach($tags as $tags){?>
+
+																		<option value="<?=$tags['id']?>"><?=$tags['rule_name']?></option>
+																		<?php }?>
+																	</select>
+																</div>
+																<div class="from-group col-md-4">
+																	<label>Set Date</label>
+																	<input type="text" name="dates" class="form-control pull-right">
+																</div>
+															</div>
+															<div class="form-row">
+																<!-- <div class="form-group col-md-4">
+																	<label>Frequency Type</label>
+																	<input type="text" class="form-control" placeholder="Frequncy Type" name="frequency_type">
+																</div>
+																<div class="form-group col-md-4">
+																	<label>Frequency Details</label>
+																	<input type="text" class="form-control" placeholder="Frequency detail" name="detail">
+																</div> -->
+																<div class="form-group col-md-4">
+																	<label>Frequency Type</label>
+																	<select name="ftype" class="form-control">
+																		<option value="1">Reminder /Approaching Type: </option>
+																		<option value="2">Regular /Ongoing: </option>
+																	</select>
+																</div>
+																<div class="form-group col-md-4 frequency_detail" style="display:none;">
+																	<label>Frequency Details</label>
+																	<select multiple name="frequency_detail[]" class="form-control">
+																	</select>
+																</div>
+																<div class="form-group col-md-4">
+																	<label>Message Text</label>
+																	<textarea type="text" class="form-control" id="smsscript1" placeholder="Enter Your Message" rows="4" name="sms_text" ></textarea>
+																	<span id="rchars1">0</span> Character =&ensp;
+																	<span id="smscount1"> 1 </span> SMS
+																</div>
+															</div>
+															<!-- <input type="text" class="form-control" placeholder="Description" name="trigger_discription"> -->
+															
+															<!-- <div class="form-row">
+																
+																<div class="form-group col-md-4">
+																	<label>Message Text</label>
+																	<textarea type="text" class="form-control" id="smsscript"  placeholder="Enter Your Message" name="message" rows="4" ></textarea>
+																	<span id="rchars">0</span> Character =&ensp;
+																	<span id="smscount"> 1 </span> SMS
+																</div>
+															</div> -->
+														<button type="submit" class="btn btn-primary">Submit</button>
+													</form>
+										<div class="alert alert-dismissible feedback" role="alert">
+											<button type="button" class="close" data-dismiss="alert" aria-label="Close" style="margin:0px;">
+												<span aria-hidden="true">&times;</span>
+											</button>
+											<div class="alert-message">
+											</div>
 										</div>
 									</div>
 								</div>
@@ -1767,12 +1757,11 @@ As soon as a Service is added in the Billing Cart, for which there is recommende
 						</div>
 				</div>
 			</div>
-	</div>
-	<!-- end -->
-<?php
+			<!-- end -->
+		<?php
 					}
-?>
-</div>
+		?>
+	</div>
 </div>
 </main>
 <div id="reminder_text" style='display:none;'><?php echo $interval; ?></div>
@@ -1825,6 +1814,27 @@ $this->load->view('business_admin/ba_footer_view');
 		$(document).ajaxStop(function() {
 			$("#load_screen").hide();
 		});
+
+		// var maxLength = 160;
+			$('#smsscript').keyup(function() {
+				var textlen = $(this).val().length;
+				$('#rchars').text(textlen);
+				if(textlen > 160){
+					$('#smscount').text(2);
+				}else{
+					$('#smscount').text(1);
+				}
+			});
+			// var maxLength1 = 0;
+			$('#smsscript1').keyup(function() {
+				var textlength = $(this).val().length;
+				$('#rchars1').text(textlength);
+				if(textlength > 160){
+					$('#smscount1').text(2);
+				}else{
+					$('#smscount1').text(1);
+				}
+			});
 
 		$("#autoEngage").validate({
 			errorElement: "div",
