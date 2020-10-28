@@ -5586,7 +5586,10 @@ public function GetEmployee(){
 					$data['triggers']=$data['triggers']['res_arr'];
 					$data['upcomingDate']=$this->BusinessAdminModel->UpcomingDate($where);
 					$data['upcomingDate']=$data['upcomingDate']['res_arr'];
-					// $this->PrettyPrintArray($data['upcomingDate']);
+
+					$data['tags']=$this->BusinessAdminModel->GetTags();
+					$data['tags']=$data['tags']['res_arr'];
+					// $this->PrettyPrintArray($data['tags']);
 					// exit;
                     $trigger_detail =$this->BusinessAdminModel->GetTrigger();
                     $data['trigger_detail'] = [];
@@ -5744,8 +5747,8 @@ public function GetEmployee(){
 							'business_outlet_id' => $this->session->userdata['outlets']['current_outlet']
 						);
 						$result = $this->BusinessAdminModel->GetCustomerBill($data);			
-                        echo $this->db->last_query();
-						die('Test');
+            //             echo $this->db->last_query();
+						// die('Test');
 						if($result['success'] == 'true'){
 							//ReSend Bill SMS
 							$res =$result['res_arr'][0];
@@ -5753,7 +5756,7 @@ public function GetEmployee(){
 							$customer_id=$res['customer_id'];
 							$detail_id=$res['id'];
 							$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
-                            $bill_url =     str_replace("https", "http", $bill_url);
+            	$bill_url = str_replace("https", "http", $bill_url);
 							$bill_url = shortUrl($bill_url);
 							$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
 							$this->ReturnJsonArray(true,false,"Message Send.");
@@ -9539,7 +9542,7 @@ public function InsertSalary(){
     //Insert Camapign Details 
     public function InsertCampaignData(){
         if($this->IsLoggedIn('business_admin')){
-                // $data = explode('&',$_POST);
+								// $data = explode('&',$_POST);
                 $res1 = $this->BusinessAdminModel->DetailsById($this->session->userdata['outlets']['current_outlet'],'mss_business_outlets','business_outlet_id');
                 $data=array(
                     'campaign_mode' => $_POST['ftype'],
@@ -9616,11 +9619,15 @@ public function InsertSalary(){
             if($data['timeline']['success'] == 'true'){
                 $res=array(
 					
-                     'id' => $data['timeline']['res_arr']['id'],
-                     'r1' => $data['timeline']['res_arr']['r1'],
-                     'r2' => $data['timeline']['res_arr']['r2'],
-                     'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
-                     'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+                     'id' 					=> $data['timeline']['res_arr']['id'],
+                     'r1' 					=> $data['timeline']['res_arr']['r1'],
+                     'r2' 					=> $data['timeline']['res_arr']['r2'],
+										 'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
+										 'no_risk'			=> $data['timeline']['res_arr']['no_risk'],
+										 'dormant_r1'		=> $data['timeline']['res_arr']['dormant_r1'],
+										 'dormant_r2'		=> $data['timeline']['res_arr']['dormant_r2'],
+										 'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										 'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
                      'lost_customer' => $data['timeline']['res_arr']['lost_customer']
                 );
             }
@@ -9629,9 +9636,13 @@ public function InsertSalary(){
                     'id' => 0,
                     'r1' => 2,
                     'r2' => 5,
-                    'regular_cust' => 5,
-                    'at_risk_cust' => 30,
-                    'lost_customer' => 90
+										'regular_cust' => 5,
+										'no_risk'			=>30 ,
+										'dormant_r1'	=>	31,
+										'dormant_r2'	=>	60,
+										'at_risk_cust' => 61,
+										'at_risk_cust2'	=>90,
+                    'lost_customer' => 91
                );
             }
             if($datasend['recipient'] == 'Manual')
@@ -9707,11 +9718,33 @@ public function InsertSalary(){
                     $res=$res['res_arr'];
                     $this->SendSmsCampaign($res1['business_outlet_sender_id'],$res1['api_key'],$res['customer_mobile'],$datasend['campaign_name'],$datasend['name'],$value['customer_name'],$datasend['message'],$res1['business_outlet_name']);
                 }
-            }elseif($datasend['recipient'] == 'Risk'){
+						}elseif($datasend['recipient'] == 'NoRisk'){
+							$data['no_risk']=$this->BusinessAdminModel->NoRiskCustomer($res);
+							if($data['no_risk']['success'] == 'true'){
+									$data['no_risk']=($data['no_risk']['res_arr']);
+							}
+							// $this->PrettyPrintArray($data['no_risk']);
+							foreach($data['no_risk'] as $key=>$value){
+									$res=$this->BusinessAdminModel->DetailsById($value['txn_customer_id'],'mss_customers','customer_id');
+									$res=$res['res_arr'];
+									$this->SendSmsCampaign($res1['business_outlet_sender_id'],$res1['api_key'],$res['customer_mobile'],$datasend['campaign_name'],$datasend['name'],$value['customer_name'],$datasend['message'],$res1['business_outlet_name']);
+							}
+					}elseif($datasend['recipient'] == 'Dormant'){
+						$data['dormant']=$this->BusinessAdminModel->DormantCustomer($res);
+						if($data['dormant']['success'] == 'true'){
+								$data['dormant']=($data['dormant']['res_arr']);
+						}
+						
+						foreach($data['dormant'] as $key=>$value){
+								$res=$this->BusinessAdminModel->DetailsById($value['txn_customer_id'],'mss_customers','customer_id');
+								$res=$res['res_arr'];
+								$this->SendSmsCampaign($res1['business_outlet_sender_id'],$res1['api_key'],$res['customer_mobile'],$datasend['campaign_name'],$datasend['name'],$value['customer_name'],$datasend['message'],$res1['business_outlet_name']);
+						}
+				}elseif($datasend['recipient'] == 'Risk'){
                 $data['risk']=$this->BusinessAdminModel->RiskCustomerService($res);
-					if($data['risk']['success']='true'){
-						$data['risk']=($data['risk']['res_arr']);
-					}
+								if($data['risk']['success']='true'){
+									$data['risk']=($data['risk']['res_arr']);
+								}
 
                 foreach($data['risk'] as $key=>$value){
                     // $this->PrettyPrintArray($value); 
@@ -9848,12 +9881,16 @@ public function InsertSalary(){
             $res1=$res1['res_arr'];
             if($data['timeline']['success'] == 'true'){
                 $res=array(
-                     'id' => $data['timeline']['res_arr']['id'],
-                     'r1' => $data['timeline']['res_arr']['r1'],
-                     'r2' => $data['timeline']['res_arr']['r2'],
-                     'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
-                     'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
-                     'lost_customer' => $data['timeline']['res_arr']['lost_customer']
+										'id' => $data['timeline']['res_arr']['id'],
+										'r1' => $data['timeline']['res_arr']['r1'],
+										'r2' => $data['timeline']['res_arr']['r2'],
+										'regular_cust' => $data['timeline']['res_arr']['regular_cust'],
+										'no_risk' => $data['timeline']['res_arr']['no_risk'],
+										'dormant_r1' => $data['timeline']['res_arr']['dormant_r1'],
+										'dormant_r2' => $data['timeline']['res_arr']['dormant_r2'],
+										'at_risk_cust' => $data['timeline']['res_arr']['at_risk_cust'],
+										'at_risk_cust2' => $data['timeline']['res_arr']['at_risk_cust2'],
+										'lost_customer' => $data['timeline']['res_arr']['lost_customer']
                 );
             }
             else{
@@ -9861,9 +9898,13 @@ public function InsertSalary(){
                     'id' => 0,
                     'r1' => 2,
                     'r2' => 5,
-                    'regular_cust' => 5,
-                    'at_risk_cust' => 30,
-                    'lost_customer' => 90
+										'regular_cust' => 5,
+										'no_risk' 			=>30,
+										'dormant_r1'		=>31,
+										'dormant_r2'		=>60,
+										'at_risk_cust' 	=> 61,
+										'at_risk_cust2' => 90,
+                    'lost_customer' => 91
                );
             }
                 //Return the report view
@@ -9900,7 +9941,7 @@ public function InsertSalary(){
                             'success' => 'true',
                             'res_arr'   => $ReportRiskS
                         );
-                        $this->PrettyPrintArray($result);
+                        // $this->PrettyPrintArray($result);
                     }elseif($_GET['category'] == 'Lost'){
                         $lostS=array(); 
                         $data['lostS']=$this->BusinessAdminModel->LostCustomerService($res);
@@ -11844,7 +11885,8 @@ public function daybook(){
             $result = $this->BusinessAdminModel->GetExpenseRecord($date);
         }            
         if($result['success']){
-            $transaction = $result['res_arr']['transaction'];
+						$transaction = $result['res_arr']['transaction'];
+						
             $expenses = $result['res_arr']['expenses'];
             $pending_amount = $result['res_arr']['pending_amount'];
             $temp = [];

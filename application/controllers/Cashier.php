@@ -6862,12 +6862,12 @@ public function AddToCartRedeemPoints(){
             }else{
                 $date = date('Y-m-d');    
                 $one_day_before = date('Y-m-d',strtotime("-1 days"));
-            }
-           
+            }           
             $result = $this->BusinessAdminModel->GetExpenseRecord($date);
         }            
         if($result['success']){
-            $transaction = $result['res_arr']['transaction'];
+						$transaction = $result['res_arr']['transaction'];
+						// $this->PrettyPrintArray($transaction);
             $expenses = $result['res_arr']['expenses'];
             $pending_amount = $result['res_arr']['pending_amount'];
             $temp = [];
@@ -7077,7 +7077,7 @@ public function AddToCartRedeemPoints(){
                     }                                    
                 }
 
-        }
+				}
         
         $p_mode = array_filter($p_mode);        
         $p_mode = call_user_func_array('array_merge', $p_mode);

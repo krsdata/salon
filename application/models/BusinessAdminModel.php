@@ -10291,25 +10291,34 @@ WHERE
             $outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
         }        
 
-        $sql = "SELECT payment_mode, SUM(amount) as total_amount FROM `mss_expenses` WHERE `expense_date` = '$date' and bussiness_outlet_id = ".$outlet_id." GROUP BY payment_mode";
+        $sql = "SELECT payment_mode, 
+			SUM(amount) as total_amount 
+		FROM `mss_expenses` 
+		WHERE `expense_date` = '$date' and bussiness_outlet_id = ".$outlet_id." 
+		GROUP BY payment_mode";
         
         $query = $this->db->query($sql);
         $data['expenses'] = $query->result_array();
 
 
-        $sql = "SELECT payment_type, SUM(pending_amount_submitted) as total_amount FROM `mss_pending_amount_tracker` WHERE DATE(`date_time`)  = '$date' and business_outlet_id = ".$outlet_id." GROUP BY payment_type";
+        $sql = "SELECT payment_type, 
+			SUM(pending_amount_submitted) as total_amount 
+		FROM `mss_pending_amount_tracker` 
+		WHERE DATE(`date_time`)  = '$date' and 
+		business_outlet_id = ".$outlet_id." GROUP BY payment_type";
 
         $query = $this->db->query($sql);
         $data['pending_amount'] = $query->result_array();
 
         $sql = 'SELECT t2.txn_settlement_payment_mode, 
-       t2.txn_settlement_amount_received AS total_price 
-FROM   `mss_transactions` t1 
-       LEFT JOIN mss_transaction_settlements t2 
-              ON t1.`txn_id` = t2.txn_settlement_txn_id 
-       LEFT JOIN mss_employees t3 on t1.`txn_cashier` = t3.employee_id
-WHERE  Date(t1.txn_datetime) = "'.$date.'" and t3.employee_business_outlet = '.$outlet_id.' GROUP  BY t2.txn_settlement_txn_id';
-    // $sql = 'SELECT t2.txn_settlement_payment_mode, t2.txn_settlement_amount_received AS total_price FROM `mss_transactions` t1 LEFT JOIN mss_transaction_settlements t2 ON t1.`txn_id` = t2.txn_settlement_txn_id WHERE Date(t1.txn_datetime) = "2020-07-12" GROUP BY t2.txn_settlement_txn_id';
+       (t2.txn_settlement_amount_received) AS total_price 
+		FROM   `mss_transactions` t1 
+			LEFT JOIN mss_transaction_settlements t2 
+				ON t1.`txn_id` = t2.txn_settlement_txn_id 
+			LEFT JOIN mss_employees t3 on t1.`txn_cashier` = t3.employee_id
+		WHERE  Date(t1.txn_datetime) = "'.$date.'" and 
+		t3.employee_business_outlet = '.$outlet_id.' GROUP  BY t2.txn_settlement_txn_id';
+			// $sql = 'SELECT t2.txn_settlement_payment_mode, t2.txn_settlement_amount_received AS total_price FROM `mss_transactions` t1 LEFT JOIN mss_transaction_settlements t2 ON t1.`txn_id` = t2.txn_settlement_txn_id WHERE Date(t1.txn_datetime) = "2020-07-12" GROUP BY t2.txn_settlement_txn_id';
 
     // echo $sql;die;
         $query = $this->db->query($sql);
@@ -10651,6 +10660,7 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
         else{
         return $this->ModelHelper(false,true,"DB error!");   
         } 
-    } 
+	} 
+	 
 
 }
