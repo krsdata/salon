@@ -78,11 +78,12 @@ $this->load->view('business_admin/ba_header_view');
 														<li class="nav-item">
 															<a class="nav-link" data-toggle="tab" href="#tab-3">Customer</a>
 														</li>
+														<li class="nav-item">
+															<a class="nav-link" data-toggle="tab" href="#tab-4">Marketing 2.0</a>
+														</li>
 													</ul>
 										</div>
-										<div class="col-md-4">
-											<button type="submit" class="btn btn-primary float-md-right" data-toggle="modal" data-target="#ModalCreateTrigger"><i class="fa fa-plus"></i> New Trigger</button>
-										</div>
+										
 									</div>
 								</div>
 								<div class="card-body">
@@ -1401,6 +1402,67 @@ $this->load->view('business_admin/ba_header_view');
 
 
 										</div>
+										<div class="tab-pane" id="tab-4" role="tabpanel">
+											<div class="card">
+												<div class="card-header">
+													<div class="row">
+														<div class="col-md-8">
+															<h3>Triggers</h3>
+														</div>
+														<div class="col-md-4">
+															<button type="submit" class="btn btn-primary float-md-right" data-toggle="modal" data-target="#ModalCreateTrigger"><i class="fa fa-plus"></i> New Trigger</button>
+														</div>
+													</div>
+												</div>
+												<div class="card-body">
+													<table class="datatables-basic table table-hover" style="width:100%;">
+														<thead>
+															<th width="2%"> S.No.</th>
+															<th width="10%">Trigger Name
+															<th width="20%">Description</th>
+															<th width="20%">Frequency</th>
+															<th width="5%">Mode</th>
+															<th width="30%">Communication Script</th>
+															<th width="3%">Action</th>
+														</thead>
+														<tbody>
+															<?php $count=1; foreach($trigger_detail as $detail){?>
+																<tr>
+																<td><?=$count?></td>
+																	<td><?=$detail['trigger_name']?></td>
+																	<td><?=$detail['trigger_description']?></td>
+																	<td><?php if($detail['set_frequency']==1){echo 'Reminder/Approaching Type';}else{echo 'Regular/Ongoing';}?></td>
+																	<td><?php if($detail['mode']==1){echo 'SMS';}else{echo 'WhatsApp';}?></td>
+																	<td><?=$detail['sms']?></td>
+																	<td>
+																	<?php
+																			if ($detail['is_active']==1) {
+																			?>
+																			<button type="button" service_id="1" class="btn btn-success deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="0">
+																				<i class="align-middle" data-feather="unlock"></i>
+																			</button>
+																		<?php
+																			} else {
+																		?>
+																			<button type="button" service_id="1" class="btn btn-danger deleteSMSTrigBtn" auto_engage_id="<?= $outlet['business_outlet_id'] ?>" is_active="1">
+																				<i class="align-middle" data-feather="lock"></i>
+																			</button>
+																		<?php
+																			}
+																		?>
+																	</td>
+																</tr>
+															<?php }?>
+															
+														</tbody>
+													</table>
+												</div>
+											</div>
+
+
+
+
+										</div>
 									</div>
 								</div>
 							</div>
@@ -1649,7 +1711,7 @@ $this->load->view('business_admin/ba_header_view');
 							<div class="modal fade" id="ModalCreateTrigger" tabindex="-1" role="dialog" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 									<div class="modal-content">
-										<div class="modal-header" style="background-color:#47bac1;">
+										<div class="modal-header">
 											<h5 class="modal-title text-white">Create Trigger</h5>
 											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 												<span aria-hidden="true">&times;</span>
@@ -1666,7 +1728,7 @@ $this->load->view('business_admin/ba_header_view');
 																</div>
 																<div class="form-group col-md-4">
 																	<label>Trigger Discription</label>
-																	<input type="text" class="form-control" placeholder="Description" name="description">
+																	<input type="text" class="form-control" placeholder="Description" name="trigger_discription">
 																</div>
 																<div class="form-group col-md-4">
 																	<label>Mode</label>
@@ -1726,7 +1788,7 @@ $this->load->view('business_admin/ba_header_view');
 																</div>
 																<div class="form-group col-md-4">
 																	<label>Message Text</label>
-																	<textarea type="text" class="form-control" id="smsscript1" placeholder="Enter Your Message" rows="4" name="sms_text" ></textarea>
+																	<textarea type="text" class="form-control" id="smsscript1" placeholder="Enter Your Message" rows="4" name="message" ></textarea>
 																	<span id="rchars1">0</span> Character =&ensp;
 																	<span id="smscount1"> 1 </span> SMS
 																</div>
