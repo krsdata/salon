@@ -318,7 +318,7 @@ die;
         $outlets = $this->CronModel->getOutLetsAdmin();                    
         if(empty($outlets))
             return true;
-        $date = date('Y-m-d');
+        $date = "2020-10-23";date('Y-m-d');
         foreach ($outlets['res_arr'] as $key => $ol) {                        
             $activity =$this->BusinessAdminModel->GetOutLetSMSActivity([$ol['business_outlet_id']]);
 
@@ -342,18 +342,17 @@ die;
                 $data['visit'] = $detail['res_arr']['visit'];
 
             $where = array('business_outlet_id'=>$ol['business_outlet_id'],'business_admin_id'=>$ol['business_admin_id'],'date'=>$date);
-            $result = $this->CronModel->GetPaymentWiseReport($where);       
-
+            $result = $this->CronModel->GetPaymentWiseReport($where);
             $service_Amt = 0;
             if($result['success']){
-                $service_Amt = $result['res_arr'][0]['Total Amount'];
+                $service_Amt = $result['res_arr'][0]['Total_Amount'];
             }
 
             $result = $this->CronModel->GetPackageReport($where);
             
             $package_Amt = 0;
             if($result['success']){
-                $package_Amt = $result['res_arr'][0]['Bill Amount'];
+                $package_Amt = $result['res_arr'][0]['Bill_Amount'];
             }       
             
             $collection = $this->daybook($date,$ol['business_outlet_id']);
@@ -411,9 +410,9 @@ die;
             $msg = "Hi ".$ol['business_outlet_name'].", ".$ol['business_outlet_location']." ! Business Update till 10pm
             Sales: Rs.$service_Amt, Collection: Rs.$total_t, Expenses : Rs.$total_e, Due Amt : Rs.$total_p          Visits:".$data['visit'];
 
-            //echo $msg."<br><br>";
-            $this->sendMessage($ol['business_admin_mobile'],$msg);     
-            $this->sendWatsupMessage($ol['business_admin_mobile'],$msg);       
+            echo $msg."<br><br>";
+            //$this->sendMessage($ol['business_admin_mobile'],$msg);     
+            //$this->sendWatsupMessage($ol['business_admin_mobile'],$msg);       
         }
         die;
     }

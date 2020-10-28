@@ -57,7 +57,7 @@ class CronModel extends CI_Model {
 
         public function GetPaymentWiseReport($data){    
         $sql = "SELECT 
-        sum(mss_transaction_services.txn_service_discounted_price),mss_services.inventory_type_id
+        sum(mss_transaction_services.txn_service_discounted_price) as Total_Amount,mss_services.inventory_type_id
 
             FROM mss_transactions, mss_employees,mss_services,mss_transaction_services
             
@@ -66,10 +66,9 @@ class CronModel extends CI_Model {
             AND mss_transaction_services.txn_service_service_id= mss_services.service_id
             AND mss_employees.employee_business_outlet= ".$this->db->escape($data['business_outlet_id'])." 
             AND date(mss_transactions.txn_datetime) = ".$this->db->escape($data['date'])."
-            AND mss_services.inventory_type_id in ('1')
-            GROUP BY mss_services.inventory_type_id";
-        $query = $this->db->query($sql);
-        
+            AND mss_services.inventory_type_id in ('0')
+            GROUP BY mss_services.inventory_type_id";            
+        $query = $this->db->query($sql);        
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
         }
@@ -79,7 +78,7 @@ class CronModel extends CI_Model {
     }
 
     public function GetPackageReport($data){       
-        $sql = "SELECT SUM(mss_package_transactions.package_txn_value) AS 'Bill Amount' 
+        $sql = "SELECT SUM(mss_package_transactions.package_txn_value) AS 'Bill_Amount' 
         
         FROM mss_package_transactions, mss_employees
 
