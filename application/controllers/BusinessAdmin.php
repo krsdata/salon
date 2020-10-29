@@ -5611,6 +5611,7 @@ public function GetEmployee(){
                     }  
 										$data['activity'] = $ac;       
 										$data['sidebar_collapsed']="true";
+										// $this->PrettyPrintArray($data);
 					$this->load->view('business_admin/ba_autoEngage_view',$data);
 			}
 			else{
@@ -10517,7 +10518,8 @@ public function InsertSalary(){
                     'tag_id'=>$counter+1,
                     'business_outlet_id'=>$this->session->userdata['outlets']['current_outlet'],
                     'business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id'],
-                    'master_admin_id'=>$this->session->userdata['logged_in']['master_admin_id']
+										'master_admin_id'=>$this->session->userdata['logged_in']['master_admin_id'],
+										'service_id'	=> $this->input->post('service_name')
                 );
                 $result = $this->BusinessAdminModel->Insert($res,'mss_tags_rule');
             }
