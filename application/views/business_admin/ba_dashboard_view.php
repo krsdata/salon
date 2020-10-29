@@ -238,13 +238,13 @@
 											<table style="width:100%;">
 												<tr><td><h5><b>Total</b></h5></td><td>
 													<?php
-														echo "<h5><b>".(($sales_till_date+$package_sales_till_date)-($monthly_sales_payment_wise['monthly_virtual_wallet']+$monthly_package_sales_payment_wise['virtual_wallet'])+$product_sales_till_date)."</h5></b>";
+														echo "<h5><b>".($sales_till_date+$package_sales_till_date+$product_sales_till_date)."</h5></b>";
 													?>
 												</td></tr>
 												<tr><td>Services : </td><td><?=$sales_till_date?></td></tr>
 												<tr><td>Packages : </td><td><?=$package_sales_till_date?></td></tr>
 												<tr><td>Product : </td><td><?=$product_sales_till_date?></td></tr>
-												<tr style="color: red"><td>VW : </td><td>-<?=($monthly_sales_payment_wise['monthly_virtual_wallet']+$monthly_package_sales_payment_wise['virtual_wallet'])?></td></tr> 	
+												<!-- <tr style="color: red"><td>VW : </td><td>-<?=($monthly_sales_payment_wise['monthly_virtual_wallet']+$monthly_package_sales_payment_wise['virtual_wallet'])?></td></tr> 	 -->
 												
 											</table>
 										</div>
@@ -373,11 +373,11 @@
 									<div class="row d-flex align-items-center mb-1">
 										<div class="col-md-12">
 											<table style="width:100%;">
-												<tr><td><h5><b>Total</b></h5></td><td><?php echo "<h5><b>".($cards_data['last_month_sales']['last_month_sales']+$last_month_package_sales-($last_month_package_sales_payment_wise['virtual_wallet']+$last_month_sales_payment_wise['last_month_virtual_wallet'])+$cards_data['last_month_product_sales']['last_month_product_sales'])."</h5></b>"?></td></tr>
+												<tr><td><h5><b>Total</b></h5></td><td><?php echo "<h5><b>".($cards_data['last_month_sales']['last_month_sales']+$last_month_package_sales+$cards_data['last_month_product_sales']['last_month_product_sales'])."</h5></b>"?></td></tr>
 												<tr><td>Services : </td><td><?=$cards_data['last_month_sales']['last_month_sales']?></td></tr>
 												<tr><td>Packages : </td><td><?=$last_month_package_sales?></td></tr>
 												<tr><td>Product : </td><td><?=$cards_data['last_month_product_sales']['last_month_product_sales']?></td></tr>
-												<tr style="color: red"><td>VW : </td><td>-<?=$last_month_package_sales_payment_wise['virtual_wallet']+$last_month_sales_payment_wise['last_month_virtual_wallet']?></td></tr>
+												<!-- <tr style="color: red"><td>VW : </td><td>-<?=$last_month_package_sales_payment_wise['virtual_wallet']+$last_month_sales_payment_wise['last_month_virtual_wallet']?></td></tr> -->
 											</table>
 										</div>
 									</div>

@@ -621,7 +621,7 @@
                                                             <option value="Paid" selected>Paid</option>
                                                             <option value="Advance">Advance</option>
                                                             <option value="Unpaid">Unpaid</option>
-                                                            <option value="Partialy_paid">Partialy paid</option>
+                                                            <option value="Partialy Paid">Partialy paid</option>
                                                             <select>
                                                     </div>
                                                     <div class="form-group col-md-3" id="pend_amt" hidden>
@@ -727,7 +727,7 @@
                                                     <option disabled selected>Select</option>
                                                     <option value="Paid" disabled>Paid</option>
                                                     <!-- <option value="Advance">Advance</option> -->
-                                                    <option value="Partialy_paid">Partialy Paid</option>
+                                                    <option value="Partialy Paid">Partialy Paid</option>
                                                     <select>
                                             </div>
                                             
@@ -1739,7 +1739,7 @@
         $("#expense_status").on('change', function(e) {
             var exp_status = document.getElementById('expense_status').value;
             // alert(exp_status);
-            if (exp_status == 'Partialy_paid') {
+            if (exp_status == 'Partialy Paid') {
                 $("#pend_amt").removeAttr('hidden');
             }
         });
@@ -1748,7 +1748,7 @@
             $("#expense_status").on('change', function(e) {
                 var exp_status = document.getElementById('expense_status').value;
                 // alert(exp_status);
-                if (exp_status == 'Partialy_paid') {
+                if (exp_status == 'Partialy Paid') {
                     $("#pend_amt").removeAttr('hidden');
                 }
             });

@@ -582,10 +582,25 @@
 												<div class="col-md-12">
 													<div class="card">
 														<div class="card-header">
-															<h5 class="card-title">Incomming Inventory Details</h5>
+															<div class="row">
+																	<div class="col-md-2">
+																	<h5 class="card-title">Inventory Details</h5>
+																	</div>
+																	<form class="form-inline" style="width:60%;" method="POST" action="#" id="txn200">
+																		<div class="form-group col-md-3">
+																			<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
+																		</div>
+																		<div class="form-group col-md-2">
+																			<input type="submit" class="btn btn-primary" id="get_txn"  value="Submit" />
+																		</div>
+																	</form>
+																	<div class="col-md-2">
+																	<button class="btn btn-primary" onclick="exportTableToExcel('inv_table','Inventory')"><i class="fa fa-download"></i> Download</button>
+																	</div>
+																</div>
 														</div>
 														<div class="card-body">
-														<table class="table table-hover datatables-basic" style="width: 100%;">
+														<table class="table table-hover datatables-basic" id="inv_table" style="width: 100%;">
 																<thead>
 																	<th>Sr. No.</th>
 																	<th>Invoice Number</th>
@@ -740,18 +755,16 @@
 															<table class="table table-hover table-striped datatables-basic" id="adminExpense" style="width: 100%;text-align:center">
                                             <thead>
                                                 <tr class="text-primary">
-																										<th>Date</th>
+																										<th>Sr. No.</th>
 																										<th>Invoice No.</th>
-																										<th>Expense Id</th>
-                                                    <th>Expense Type</th>
-                                                    <th>Item Name</th>
-                                                    <th>Cashier Name</th>
-                                                    <th>Payement Type</th>
-                                                    <th>Paid To</th>
-                                                    <th>Total Amount</th>
-                                                    <th>Amount</th>
-                                                    <th>Pending Amount</th>
+																										<th>Date</th>	
+																										<th>Vendor Name</th>
+																										<th>Invoice Amount</th>																										
+																										<th>Amount Paid</th>
+																										<th>Pending Amount</th>																								
+																										<th>Updated By</th>
                                                     <th>Payment Status</th>
+                                                    <th>Tender</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -760,19 +773,17 @@
 																								foreach ($all_expenses as $expense):
 																								?>
                                                 <tr>
-                                                    <!--<td><?=$i=$i+1;?></td>-->
-                                                    <td><?=$expense['expense_unique_serial_id']?></td>
-                                                    <td><?=$expense['expense_date']?></td>
-                                                    <td><?=$expense['expense_type']?></td>
-                                                    <td><?=$expense['item_name']?></td>
-                                                    <td><?=$expense['employee_name']?></td>
-                                                    <td><?=$expense['payment_type']?></td>
-                                                    <td><?=$expense['payment_to_name']?></td>
-                                                    <td><?=$expense['total_amount']?></td>
-                                                    <td><?=$expense['amount']?></td>
-                                                    <td><?=$expense['pending_amount']?></td>
+																										<td><?=$i=$i+1;?></td>																										
+																										<td><?=$expense['invoice_number']?></td>
+																										<td><?=$expense['expense_date']?></td>
+																										<td><?=$expense['vendor_name']?></td>
+																										<td><?=$expense['total_amount']?></td>																										 
+																										<td><?=$expense['amount']?></td>
+																										<td><?=$expense['pending_amount']?></td>
+																										<td><?=$expense['employee_name']?></td>
+																										<td><?=$expense['expense_status']?></td>                                                                                        
                                                     <td><?=$expense['payment_mode']?></td>
-                                                    <td><?=$expense['expense_status']?></td>
+                                                    
                                                 </tr>
                                                 <?php	                    	
 																								endforeach;
@@ -793,42 +804,37 @@
 															<table class="table table-hover table-striped datatables-basic" id="PendingPayment" style="width: 100%;">
 																	<thead>
 																			<tr class="text-primary">
-																					<!-- <th>Expense Id</th> -->
-																					<th>Date</th>
-																					<th>Invoice No</th>
-																					<th>Expense Name</th>
-																					<th>Expense Type</th>
-																					<th>Vendor Name</th>
-																					<th>Total Amount</th>
-																					<th>Amount Pending</th>                                                    
-																					<!-- <th>Mode</th> -->
-																					<th>Paid To</th>
-																					<th>Status </th>
-																					
+																				<th>Sr. No.</th>
+																				<!-- <th>Exp Id</th> -->
+																				<th>Invoice No.</th>
+																				<th>Date</th>	
+																				<th>Vendor Name</th>
+																				<th>Invoice Amount</th>																				
+																				<th>Amount Paid</th>
+																				<th>Pending Amount</th>																								
+																				<th>Updated By</th>
+																				<th>Payment Status</th>
+																				<th>Tender</th>																					
 																					<th>Action</th>
 																			</tr>
 																	</thead>
 																	<tbody>
 																			<?php
+																			$i=0;
 																				foreach ($pending_payment as $pending):
 																				?>
 																			<tr>
-																					<!-- <td><?=$pending['expense_id']?></td> -->
-																					<td><?=$pending['expense_date']?></td>
-																					<td><?=$pending['invoice_number']?></td>
-																					<td><?=$pending['item_name']?></td>
-																					<td><?=$pending['expense_type']?></td>
-																					<td><?=$pending['payment_to_name']?></td>
-																					<td><?=$pending['total_amount']?></td>
-																					<td><?=$pending['pending_amount']?></td>
-																					<td><?=$pending['payment_type']?></td>
-																					
-																					<!-- <td><?=$pending['payment_mode']?></td> -->
-																					<td><?=$pending['expense_status']?></td>
-																					<!-- <td><?=$pending['employee']?></td> -->
-
-
-																					
+																				<td><?=$i=$i+1;?></td>																										
+																				<!-- <td><?=$pending['expense_unique_serial_id']?></td> -->
+																				<td><?=$pending['invoice_number']?></td>
+																				<td><?=$pending['expense_date']?></td>
+																				<td><?=$pending['payment_to_name']?></td> 
+																				<td><?=$pending['total_amount']?></td>																				
+																				<td><?=$pending['amount']?></td>
+																				<td><?=$pending['pending_amount']?></td>
+																				<td><?=$pending['employee_name']?></td>
+																				<td><?=$pending['expense_status']?></td>                                                                                        
+																				<td><?=$pending['payment_mode']?></td>																					
 																					<td>
 																							<button type="button"
 																									class="btn btn-primary pending-expense-edit-btn"
@@ -1012,8 +1018,7 @@
                                             <div class="form-group col-md-3">
                                                 <label>Amount</label>
                                                 <input type="number" class="form-control" min="0" name="amount1" id="reamt" onkeyup="calPendAmt()">
-                                            </div>
-                                         
+                                            </div>                                         
                                             <div class="form-group col-md-3">
                                                 <label>Remaing Amount</label>
                                                 <input type="number" class="form-control" name="remaining_amt"  id="remaining_amt" readonly>
@@ -1023,19 +1028,19 @@
                                             <div class="form-group col-md-3">
                                                 <label>Payment Mode</label>
                                                 <select class="form-control" name="payment_mode">
-                                                    <option value="Cash" selected>Cash</option>
-                                                    <option value="Card">Card</option>
-                                                    <option value="Bank">Cheque/Bank</option>
-                                                    <option value="Wallet">Wallet/ Others</option>
+                                                    <option value="cash" selected>Cash</option>
+                                                    <option value="card">Card</option>
+                                                    <option value="cank">Cheque/Bank</option>
+                                                    <option value="wallet">Wallet/ Others</option>
                                                     <select>
                                             </div>
                                             <div class="form-group col-md-3">
                                                 <label>Payment Status</label>
                                                 <select class="form-control" name="expense_status" id="select_expense_status">
                                                     <option disabled selected>Select</option>
-                                                    <option value="Paid" disabled>Paid</option>
+                                                    <option value="Paid">Paid</option>
                                                     <!-- <option value="Advance">Advance</option> -->
-                                                    <option value="Partialy_paid">Partialy Paid</option>
+                                                    <option value="Partialy Paid">Partialy Paid</option>
                                                     <select>
                                             </div>
                                             
@@ -1058,7 +1063,6 @@
                                             </div>
                                         </div>
                                         <button type="submit" class="btn btn-primary">Submit</button>
-                                        <span aria-hidden="true">&times;&times;</span>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
@@ -1080,12 +1084,45 @@
 	$this->load->view('business_admin/ba_footer_view');
 ?>
 <script type="text/javascript">
+
+function calPendAmt() {
+            var t1 = parseInt(document.getElementById("reamt").value);
+            var t2 = parseInt(document.getElementById("pendamtValue").value);
+            
+            if(t1 <= t2){
+                var t3 = t2 - t1;
+               document.getElementById("remaining_amt").value = t3;
+            }else{
+                alert("Amount is Greater than Pending Amount");
+                document.getElementById("reamt").value=0;
+                document.getElementById("remaining_amt").value = t2;
+                document.getElementById("reamt").autofocus;
+                
+            }
+            if(t3 == 0){
+                document.getElementById("select_expense_status").options[1].disabled = false;
+                document.getElementById("select_expense_status").options[1].selected = true; 
+            }
+            else{
+                document.getElementById("select_expense_status").options[2].selected = true;
+                document.getElementById("select_expense_status").options[1].disabled = true;
+            }
+        }
+
 	$(".date").daterangepicker({
 		singleDatePicker: true,
 		showDropdowns: true,
 		autoUpdateInput : false,
 		locale: {
       format: 'YYYY-MM-DD'
+		}
+	});
+
+	$("input[name=\"daterange\"]").daterangepicker({
+		daterangepicker: true,
+		showDropdowns: true,
+		locale: {
+    format: 'YYYY-MM-DD'
 		}
 	});
 	$('.date').on('apply.daterangepicker', function(ev, picker) {
@@ -1255,14 +1292,14 @@
   			var amt_paid=  Number($(this).val());
 				var invoice_amount= Number($("#AddProduct input[name=invoice_amount]").val());
 				if(amt_paid==invoice_amount){
-					$("#AddProduct input[name=payment_status]").attr('value',"paid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Paid");
 				}else if(amt_paid > 0 && amt_paid < invoice_amount){
-					$("#AddProduct input[name=payment_status]").attr('value',"partial paid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Partialy Paid");
 				}else if(amt_paid == 0){
-					$("#AddProduct input[name=payment_status]").attr('value',"unpaid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Unpaid");
 				}else{
 					alert("Amount Paid is much than Invoice Amount.");
-					$("#AddProduct input[name=payment_status]").attr('value',"over paid");
+					$("#AddProduct input[name=payment_status]").attr('value',"Over Paid");
 				}	
     });
 
@@ -1294,6 +1331,19 @@
 				}
 				// alert(t_cost);
 				$("#AddProduct input[name=amount_paid]").val(t_cost);
+
+				// var amt_paid=  Number($(this).val());
+				var invoice_amount= Number($("#AddProduct input[name=invoice_amount]").val());
+				if(t_cost==invoice_amount){
+					$("#AddProduct input[name=payment_status]").attr('value',"Paid");
+				}else if(t_cost > 0 && t_cost < invoice_amount){
+					$("#AddProduct input[name=payment_status]").attr('value',"Partialy Paid");
+				}else if(t_cost == 0){
+					$("#AddProduct input[name=payment_status]").attr('value',"Unpaid");
+				}else{
+					alert("Amount Paid is much than Invoice Amount.");
+					$("#AddProduct input[name=payment_status]").attr('value',"Over Paid");
+				}	
 								
     });
 
@@ -1306,6 +1356,7 @@
 				}
 				// alert(t_cost);
 				$("#TransProduct input[name=amount_paid]").val(t_cost);
+				
 								
     });
 
@@ -1492,14 +1543,14 @@
   			var amt_paid=  Number($(this).val());
 				var invoice_amount= Number($("#TransProduct input[name=invoice_amount]").val());
 				if(amt_paid==invoice_amount){
-					$("#TransProduct input[name=payment_status]").attr('value',"paid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Paid");
 				}else if(amt_paid > 0 && amt_paid < invoice_amount){
-					$("#TransProduct input[name=payment_status]").attr('value',"partial paid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Partialy Paid");
 				}else if(amt_paid == 0){
-					$("#TransProduct input[name=payment_status]").attr('value',"unpaid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Unpaid");
 				}else{
 					alert("Amount Paid is much than Invoice Amount.");
-					$("#TransProduct input[name=payment_status]").attr('value',"over paid");
+					$("#TransProduct input[name=payment_status]").attr('value',"Over Paid");
 				}	
     });
 
@@ -1764,20 +1815,16 @@
                         url: "<?=base_url()?>BusinessAdmin/UpdateExpense",
                         data: formData,
                         type: "POST",
-                        // crossDomain: true,
                         cache: false,
-                        // dataType: "json",
                         success: function(data) {
-                            // alert(data.success);
-
                             if (data.success == 'true') {
                                 $("#UpdatePendingExpense").modal('hide');
                                 toastr["success"](data.message,"", {
-							positionClass: "toast-top-right",
-							progressBar: "toastr-progress-bar",
-							newestOnTop: "toastr-newest-on-top",
-							rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
-							timeOut: 500
+																positionClass: "toast-top-right",
+																progressBar: "toastr-progress-bar",
+																newestOnTop: "toastr-newest-on-top",
+																rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+																timeOut: 500
 						});
 						setTimeout(function () { window.location.reload();}, 500);
                             } else if (data.success == 'false') {
@@ -2168,6 +2215,42 @@
 			console.log(errorThrown.toString());
 			});
 		});
+
+		$(document).on('click',"#get_txn",function(event){
+    	event.preventDefault();
+      this.blur();
+			var dr=$("#txn200 input[name=daterange]").val();
+	      var parameters = {
+	        from_date : dr.substring(0, 10),
+					to_date :	dr.substring(12, 23)
+	      };
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetInventoryTransactions", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					if(data.success == 'true'){
+						var str_2 = "";
+						// alert(data.service.res_arr.length);
+						for(var i=0;i< data.message.length;i++){
+							str_2+="<tr>";
+							str_2 += "<td>" + parseInt(i+1) + "</td>";
+							str_2 += "<td>" + data.message[i].invoice_number + "</td>";
+							str_2 += "<td>" + data.message[i].invoice_date + "</td>";
+							str_2 += "<td>" + data.message[i].product_name + "</td>";
+							str_2 += "<td>" + data.message[i].product_type + "</td>";	
+							str_2 += "<td>" + data.message[i].product_barcode + "</td>";
+							str_2 += "<td>" + data.message[i].sku_size + "</td>";
+							str_2 += "<td>" + data.message[i].product_qty + "</td>";
+							str_2 += "<td>" + data.message[i].product_mrp + "</td>";
+							str_2 += "<td>" + data.message[i].vendor_name + "</td>";
+							str_2+="</tr>";
+						}
+						$("#inv_table tbody tr").remove();
+						$("#inv_table tbody").append(str_2);
+					}
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+			});
+  	});
 
 	});
 </script>

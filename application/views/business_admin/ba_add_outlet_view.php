@@ -357,7 +357,7 @@
 											<th>Landline</th>
 											<th>Action</th>
 											<th>SMS Status</th>
-											<th>What's App SMS</th>
+											<th>WhatsApp SMS</th>
 										</tr>
 									</thead>
 									<tbody>

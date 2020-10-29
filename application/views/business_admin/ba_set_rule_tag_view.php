@@ -93,7 +93,8 @@
                                                                     <option value="billing_date">Billing Date</option>
                                                                     <option value="birthday">BirthDay</option>
                                                                     <option value="anniversary">Anniversary</option>
-                                                                    <option value="package_expiry">Package Expiry Days Remaining</option>
+																	<option value="package_expiry">Package Expiry Days Remaining</option>
+																	<option value="repeat_service_reminder">Repeat Service Reminder</option>
                                                                 </select> 
                                                             </div>
                                                         </td>
@@ -135,7 +136,30 @@
                                                                     </select>
                                                             </div>
                                                         </td>
-                                                    </tr>	
+													</tr>
+													<tr>
+														<td>
+															<div class="form-group col-md-12" id="">
+																<select name="caegory" class="form-control">
+																
+																</select>
+															</div> 
+														</td>
+														<td>
+														<div class="form-group col-md-12" id="srange">
+															<select name="caegory" class="form-control">
+																
+																</select>
+                                                        </div> 
+														</td>
+														<td>
+														<div class="form-group col-md-12" id="srange">
+														<select name="caegory" class="form-control">
+																
+																</select>
+                                                        </div> 
+														</td>
+													</tr>	
                                                 </table>
                                             </div>						
                                             <div class="row">

@@ -530,12 +530,37 @@ class CashierModel extends CI_Model {
         */
 		// $this->PrintArray($_POST);
 		//exit;
-				if($data['cashback']>0)
+				if($data['cashback'] > 0)
                 {
-                    $data_cashback = array(
-                        'business_outlet_id' => $outlet_id,
-                        'net_amount' => $data['txn_data']['txn_value']
-                    );
+					//Cashback calculation if paid by cashcash and some other mode
+					if($data['txn_settlement']['txn_settlement_way'] == 'Split Payment'){
+						$sp_array=array(json_decode($_POST['txn_settlement']['txn_settlement_payment_mode'],true));
+						$sp_array=$sp_array[0];
+						foreach($sp_array as $k=>$v){
+							if($v['payment_type']=="cashback_wallet"){
+								$split_loyalty_payment= $v['payment_type'];
+								$payment_form_rewards= $v['amount_received'];
+							}
+							// //
+							// if($v['payment_type']=="Virtual_Wallet"){
+							// 	$payment_type= $v['payment_type'];
+							// 	$payment_amount= $v['amount_received'];
+							// }
+						}
+						$data_cashback = array(
+							'business_outlet_id' => $outlet_id,
+							'net_amount' => ($data['txn_data']['txn_value']- $payment_form_rewards)
+						);
+						    
+					}else{
+						$data_cashback = array(
+							'business_outlet_id' => $outlet_id,
+							'net_amount' => $data['txn_data']['txn_value']
+						);
+
+					}
+					//
+                    
                     $cashback = $this->CheckRule($data_cashback,'mss_loyalty_rules','business_outlet_id');
 					if($cashback['success'] == 'true')
 					{
@@ -547,7 +572,8 @@ class CashierModel extends CI_Model {
 						$cashback = $cashback['res_arr'];
 					}
 				}
-				// $this->PrintArray($cashback);
+				
+				// $this->PrintArray($_POST);
                 //jitesh ends code
         		//end of calculate points
         $this->db->trans_start();
@@ -571,9 +597,7 @@ class CashierModel extends CI_Model {
 					{
 						$data['txn_data']+=['txn_loyalty_cashback'=>$cashback['cashback_generated']];
 						$data['txn_data']+=['txn_loyalty_cashback_expiry'=>date('Y-m-d', strtotime("+".$cashback['cashback_validity'], strtotime(date("Y-m-d"))))];   
-					}
-							//
-					
+					}					
 				}
 				else
 				{
