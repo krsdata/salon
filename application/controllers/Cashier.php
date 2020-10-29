@@ -2655,9 +2655,9 @@ class Cashier extends CI_Controller {
    		$msg = rawurlencode($msg);   //This for encode your message content                 		
  			
  			// API 
-			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+			 $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
 
-			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
+			//$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
 				log_message('info', $url);
 			
   		$ch = curl_init($url);

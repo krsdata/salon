@@ -3,114 +3,114 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Crone extends CI_Controller {
 
-	public function index()
-	{
-		// $this->load->view('welcome_message');
-		redirect(base_url('home'), 'refresh');
-	}
+    public function index()
+    {
+        // $this->load->view('welcome_message');
+        redirect(base_url('home'), 'refresh');
+    }
 
-	function sendDailyReport(){
-		$this->load->model('CronModel');
-		//$this->load->model('BusinessAdminModel');
+    function sendDailyReport(){
+        $this->load->model('CronModel');
+        //$this->load->model('BusinessAdminModel');
 
-		$outlets = $this->CronModel->getOutLetsAdmin();
-		if(empty($outlets))
-			return true;
+        $outlets = $this->CronModel->getOutLetsAdmin();
+        if(empty($outlets))
+            return true;
 
 
-		foreach ($outlets['res_arr'] as $key => $ol) {
+        foreach ($outlets['res_arr'] as $key => $ol) {
 
-			$detail = $this->CronModel->DetailsById($ol['business_admin_id'],date('Y-m-d'));
-			$data['visit'] = 0;
-			if($detail['success'])
-				$data['visit'] = $detail['res_arr']['visit'];
+            $detail = $this->CronModel->DetailsById($ol['business_admin_id'],date('Y-m-d'));
+            $data['visit'] = 0;
+            if($detail['success'])
+                $data['visit'] = $detail['res_arr']['visit'];
 
-			$where = array('business_outlet_id'=>$ol['business_outlet_id'],'business_admin_id'=>$ol['business_admin_id'],'date'=>date('Y-m-d'));
-			$result = $this->CronModel->GetPaymentWiseReport($where);		
-			$service_Amt = 0;
-			if($result['success']){
-				$service_Amt = $result['res_arr'][0]['Total Amount'];
-			}
+            $where = array('business_outlet_id'=>$ol['business_outlet_id'],'business_admin_id'=>$ol['business_admin_id'],'date'=>date('Y-m-d'));
+            $result = $this->CronModel->GetPaymentWiseReport($where);       
+            $service_Amt = 0;
+            if($result['success']){
+                $service_Amt = $result['res_arr'][0]['Total Amount'];
+            }
 
-			$result = $this->CronModel->GetPackageReport($where);
-			//echo $this->db->last_query();
-			$package_Amt = 0;
-			if($result['success']){
-				$package_Amt = $result['res_arr'][0]['Bill Amount'];
-			}		
-			
-			$collection = $this->daybook(date('Y-m-d'),$ol['business_outlet_id']);
-			
-			$data['collection'] = $collection;
-			$data['service_Amt'] = $service_Amt;
-			$data['package_Amt'] = $package_Amt;
-			$data['total_sp_Amt'] = $package_Amt+$service_Amt;
-			$data['package_Amt'] = $package_Amt;
-			$data['admin_name'] = $ol['business_admin_first_name']." ".$ol['business_admin_last_name'];
-			$data['business_outlet_name'] = $ol['business_outlet_name'];
+            $result = $this->CronModel->GetPackageReport($where);
+            //echo $this->db->last_query();
+            $package_Amt = 0;
+            if($result['success']){
+                $package_Amt = $result['res_arr'][0]['Bill Amount'];
+            }       
+            
+            $collection = $this->daybook(date('Y-m-d'),$ol['business_outlet_id']);
+            
+            $data['collection'] = $collection;
+            $data['service_Amt'] = $service_Amt;
+            $data['package_Amt'] = $package_Amt;
+            $data['total_sp_Amt'] = $package_Amt+$service_Amt;
+            $data['package_Amt'] = $package_Amt;
+            $data['admin_name'] = $ol['business_admin_first_name']." ".$ol['business_admin_last_name'];
+            $data['business_outlet_name'] = $ol['business_outlet_name'];
             $data['business_outlet_location'] = $ol['business_outlet_location'];
             $data['business_outlet_state'] = $ol['business_outlet_state'];
             $data['business_outlet_city'] = $ol['business_outlet_city'];
             $data['business_outlet_country'] = $ol['business_outlet_country'];
 
 
-			// email send
+            // email send
 
-			 $config = Array(    
+             $config = Array(    
 
-				      'protocol' => 'smtp',
+                      'protocol' => 'smtp',
 
-				      'smtp_host' => 'ssl://smtp.gmail.com',
+                      'smtp_host' => 'ssl://smtp.gmail.com',
 
-				      'smtp_port' => 465,
+                      'smtp_port' => 465,
 
-				      'smtp_user' => 'test.developer124@gmail.com',
+                      'smtp_user' => 'test.developer124@gmail.com',
 
-				      'smtp_pass' => 'codemeg@1234',
+                      'smtp_pass' => 'codemeg@1234',
 
-				      'smtp_timeout' => '4',
+                      'smtp_timeout' => '4',
 
-				      'mailtype' => 'html',
+                      'mailtype' => 'html',
 
-				      'charset' => 'iso-8859-1'
+                      'charset' => 'iso-8859-1'
 
-				    );
+                    );
 
-				    $this->load->library('email', $config);
+                    $this->load->library('email', $config);
 
-				  $this->email->set_newline("\r\n");
+                  $this->email->set_newline("\r\n");
 
-				  
+                  
 
-				    $this->email->from('test.developer124@gmail.com', 'Daily collection');
+                    $this->email->from('test.developer124@gmail.com', 'Daily collection');
 
-				  
+                  
 
-				    $this->email->to('ansari.ismael90@gmail.com'); // replace it with receiver mail id
+                    $this->email->to('ansari.ismael90@gmail.com'); // replace it with receiver mail id
 
-				  $this->email->subject('Daily collection Report'); // replace it with relevant subject
+                  $this->email->subject('Daily collection Report'); // replace it with relevant subject
 
-				  // echo "<pre>";
-				  // print_r($data);
-				  // die;
+                  // echo "<pre>";
+                  // print_r($data);
+                  // die;
 
-				    $body = $this->load->view('kpi',$data,TRUE);
+                    $body = $this->load->view('kpi',$data,TRUE);
 
-				  $this->email->message($body); 
+                  $this->email->message($body); 
 
-				    $this->email->send();
+                    $this->email->send();
 
 
 die;
-			// echo "<pre>";
-			// print_r($data);
-			// die;
-		}
+            // echo "<pre>";
+            // print_r($data);
+            // die;
+        }
 
-		//$this->load->view('kpi',$data);
-	}
+        //$this->load->view('kpi',$data);
+    }
 
-	public function daybook($date,$outlet_id){        			
+    public function daybook($date,$outlet_id){                  
         $this->load->model('CronModel');
         $one_day_before = date($date,strtotime("-1 days"));
         $result = $this->CronModel->GetExpenseRecord($date,$outlet_id); 
@@ -342,18 +342,17 @@ die;
                 $data['visit'] = $detail['res_arr']['visit'];
 
             $where = array('business_outlet_id'=>$ol['business_outlet_id'],'business_admin_id'=>$ol['business_admin_id'],'date'=>$date);
-            $result = $this->CronModel->GetPaymentWiseReport($where);       
-
+            $result = $this->CronModel->GetPaymentWiseReport($where);
             $service_Amt = 0;
             if($result['success']){
-                $service_Amt = $result['res_arr'][0]['Total Amount'];
+                $service_Amt = $result['res_arr'][0]['Total_Amount'];
             }
 
             $result = $this->CronModel->GetPackageReport($where);
             
             $package_Amt = 0;
             if($result['success']){
-                $package_Amt = $result['res_arr'][0]['Bill Amount'];
+                $package_Amt = $result['res_arr'][0]['Bill_Amount'];
             }       
             
             $collection = $this->daybook($date,$ol['business_outlet_id']);
@@ -411,7 +410,7 @@ die;
             $msg = "Hi ".$ol['business_outlet_name'].", ".$ol['business_outlet_location']." ! Business Update till 10pm
             Sales: Rs.$service_Amt, Collection: Rs.$total_t, Expenses : Rs.$total_e, Due Amt : Rs.$total_p          Visits:".$data['visit'];
 
-            //echo $msg."<br><br>";
+            #echo $msg."<br><br>";
             $this->sendMessage($ol['business_admin_mobile'],$msg);     
             $this->sendWatsupMessage($ol['business_admin_mobile'],$msg);       
         }
@@ -690,16 +689,16 @@ die;
                     'day'    => $day
                 );
             $packageExpiry = $this->CronModel->packageExpiry($where);
-		echo $this->db->last_query();
+        echo $this->db->last_query();
 echo "<br>";
-	echo "<pre>";
+    echo "<pre>";
 print_r($packageExpiry);
 echo "</pre>";
             if($packageExpiry['success']){                
                 $packageExpiry = $packageExpiry['res_arr'];
                 foreach ($packageExpiry as $key => $p) {
                     $msg = "Dear ".$p['customer_name'].", Your  ".$p['salon_package_name'].", is due for renewal in next $day days.Expiring on ".$p['package_expiry_date'].". Please renew it today, to keep availing the awesome services. Team ".$ol['business_outlet_name']." ".$ol['business_outlet_mobile'].". ".$ol['business_outlet_location'];                    
-			echo $msg."<br>";
+            echo $msg."<br>";
                    // $this->sendMessage($p['customer_mobile'],$msg);
                 }
             }
