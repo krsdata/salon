@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class CronModel extends CI_Model {
 
-	//Generic function which will give all details by primary key of table
+    //Generic function which will give all details by primary key of table
 
     public function getOutLetsAdmin(){
         $sql = "SELECT t1.business_admin_id,t1.business_master_admin_id,t2.business_outlet_id,t2.business_outlet_mobile,t1.business_admin_email,t1.business_admin_mobile,t1.business_admin_first_name,t1.business_admin_last_name,t2.business_outlet_name,t2.business_outlet_address,t2.business_outlet_state,t2.business_outlet_city,t2.business_outlet_country,t2.business_outlet_location  FROM `mss_business_admin` t1 INNER JOIN mss_business_outlets t2 on t1.`business_admin_id` = t2.business_outlet_business_admin WHERE t2.business_outlet_status = 1  AND t2.business_outlet_id =1  GROUP by t1.business_admin_email ORDER by t1.business_admin_id asc";

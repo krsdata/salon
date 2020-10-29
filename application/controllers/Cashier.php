@@ -2595,8 +2595,8 @@ class Cashier extends CI_Controller {
 					$customer_details = $this->GetCustomerBilling($_POST['customer_pending_data']['customer_id']);
 					//4.Send a msg
 					$this->session->set_userdata('bill_url',$bill_url);
-					$sms_status = $this->db->select('business_outlet_sms_status,whats_app_sms_status')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
-						// $this->PrettyPrintArray($sms_status);
+					$sms_status = $this->db->select('business_outlet_sms_status')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+						
 					if($sms_status['business_outlet_sms_status']==1){
 							if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
 								if($_POST['txn_data']['txn_value']==0){
@@ -2613,14 +2613,7 @@ class Cashier extends CI_Controller {
 								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 								}
 							}
-					 	}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
-							$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-							$this->SendWhatsAppSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-
-						}elseif($sms_status['whats_app_sms_status']==1){
-							print_r($this->SendWhatsAppSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']));
-
-						}
+					 	}
 					//
         
 					$this->ReturnJsonArray(true,false,"Transaction is successful!");
@@ -2662,54 +2655,9 @@ class Cashier extends CI_Controller {
    		$msg = rawurlencode($msg);   //This for encode your message content                 		
  			
  			// API 
-			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+			 $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
 
-			// $url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
-				log_message('info', $url);
-			
-  		$ch = curl_init($url);
-  		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-  		curl_setopt($ch,CURLOPT_POST,1);
-  		curl_setopt($ch,CURLOPT_POSTFIELDS,"");
-  		curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
-  		
-  		$data = curl_exec($ch);
-  		return json_encode($data);
-		}
-		else{
-			$this->LogoutUrl(base_url()."Cashier/");
-		}				
-	}
-
-	public function SendWhatsAppSms($sender_id,$api_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
-		if($this->IsLoggedIn('cashier')){
-			$bill_url = $this->session->userdata('bill_url');
-			$loyalty = $this->session->userdata('loyalty_point');
-		error_log("URL ============1 ".$bill_url);
-  		//API key & sender ID
-  		// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
-			// $apisender = "BILLIT";
-			// $apikey="32kO6tWy5UuN16e3fOQpPg";
-			// $apisender="DSASSH";
-			// $this->PrettyPrintArray($loyalty);
-  		//$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again!Review us on ".$google_url." to serve you better and Please find the invoice on ".$bill_url;
-  		if(!empty($loyalty) && $loyalty > 0){
-  			if(!empty($google_url)){
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url Review us on Google: $google_url";
-  			}else{
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url ";
-  			}  			
-  		}else if(!empty($google_url)){
-  			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Review us on Google: $google_url";
-  		}else{
-  			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Look forward to serve you again.";
-  		}  		
-   		$msg = rawurlencode($msg);   //This for encode your message content                 		
- 			
- 			// API 
-			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
-
-			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
+			//$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
 				log_message('info', $url);
 			
   		$ch = curl_init($url);
@@ -3391,20 +3339,12 @@ class Cashier extends CI_Controller {
                 $datam=array(
                     'outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
                 );
-                // $da=$this->BusinessAdminModel->SelectMaxIdExpense($datam);
+                $da=$this->BusinessAdminModel->SelectMaxIdExpense($datam);
                 // $this->PrettyPrintArray($da);
-                // $da=$da['res_arr'][0]['id'];
-								// $expense_id= "E1010Y".$this->session->userdata['logged_in']['business_outlet_id'].($da+1);
-								
-								//Unique serial id
-									$outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
-									$admin_id= $this->session->userdata['logged_in']['business_admin_id'];
-									$expense_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();			
-          				$expense_unique_serial_id = strval("EA".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($expense_counter['business_outlet_expense_counter']));
-									// $emp=$this->BusinessAdminModel->DetailsById($_POST['source_name'],'mss_vendors','vendor_id');
-
+                $da=$da['res_arr'][0]['id'];
+                $expense_id= "E1010Y".$this->session->userdata['logged_in']['business_outlet_id'].($da+1);
                     $data = array(
-                        'expense_unique_serial_id'=>$expense_unique_serial_id, 
+                        'expense_unique_serial_id'=>$expense_id, 
                         'expense_date'      => $this->input->post('entry_date'),
                         'expense_type_id'   => $this->input->post('expense_type_id'),
                         'item_name'         => $this->input->post('item_name'),
@@ -3449,12 +3389,9 @@ class Cashier extends CI_Controller {
                     if($_POST['expense_status'] != 'Unpaid'){
                         $result = $this->BusinessAdminModel->Insert($data,'mss_expenses');
                         }
-                        if($_POST['expense_status'] != 'Paid'){
+                        if($_POST['expense_status'] != 'paid'){
                             $result = $this->BusinessAdminModel->Insert($data1,'mss_expenses_unpaid');
-												}
-												
-												$query = "UPDATE mss_business_outlets SET business_outlet_expense_counter = business_outlet_expense_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
-												$this->db->query($query);
+                        }
                         if($result['success'] == 'true'){
                             $this->ReturnJsonArray(true,false,"Expense added successfully!");
                             die;
@@ -6862,12 +6799,12 @@ public function AddToCartRedeemPoints(){
             }else{
                 $date = date('Y-m-d');    
                 $one_day_before = date('Y-m-d',strtotime("-1 days"));
-            }           
+            }
+           
             $result = $this->BusinessAdminModel->GetExpenseRecord($date);
         }            
         if($result['success']){
-						$transaction = $result['res_arr']['transaction'];
-						// $this->PrettyPrintArray($transaction);
+            $transaction = $result['res_arr']['transaction'];
             $expenses = $result['res_arr']['expenses'];
             $pending_amount = $result['res_arr']['pending_amount'];
             $temp = [];
@@ -7077,7 +7014,7 @@ public function AddToCartRedeemPoints(){
                     }                                    
                 }
 
-				}
+        }
         
         $p_mode = array_filter($p_mode);        
         $p_mode = call_user_func_array('array_merge', $p_mode);
@@ -7166,8 +7103,7 @@ public function AddToCartRedeemPoints(){
 									$admin_id= $this->session->userdata['logged_in']['business_admin_id'];
 									$expense_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();			
           				$expense_unique_serial_id = strval("EA".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($expense_counter['business_outlet_expense_counter']));
-									$emp=$this->BusinessAdminModel->DetailsById($_POST['source_name'],'mss_vendors','vendor_id');
-									$data5=array(
+							$data5=array(
 								'expense_unique_serial_id'	=>	$expense_unique_serial_id,
 								'expense_date'							=>	date('Y-m-d'),
 								'expense_type_id'						=>	'1',
@@ -7176,8 +7112,8 @@ public function AddToCartRedeemPoints(){
 								'total_amount'							=>	$this->input->post('invoice_amount'),
 								'amount'										=>	$this->input->post('amount_paid'),
 								'payment_type'							=>	$this->input->post('source_type'),
-								'payment_to'								=>	$this->input->post('source_name'),
-								'payment_to_name'						=>	$emp['res_arr']['vendor_name'],
+								'payment_to'								=>	$this->input->post('source_type'),
+								'payment_to_name'						=>	$this->input->post('source_name'),
 								'invoice_number'						=>	$this->input->post('invoice_number'),
 								'remarks'										=>	$this->input->post('note'),
 								'payment_mode'							=>	$this->input->post('payment_mode'),
@@ -7187,29 +7123,6 @@ public function AddToCartRedeemPoints(){
 							);
 
 							$insert_expense=$this->CashierModel->Insert($data5,'mss_expenses');
-
-							//Add Expense Unpaid E
-							if($_POST['invoice_amount'] > $_POST['amount_paid']){
-								$data1 = array(
-									'expense_date'      => date('Y-m-d'),
-									'expense_type_id'   => 1,
-									'item_name'         => 'Inventory',
-									'total_amount'      =>$this->input->post('invoice_amount'),
-									'amount'            => $this->input->post('amount_paid'),
-									'remarks'           => $this->input->post('note'),
-									'payment_type'      => $this->input->post('source_type'),
-									'payment_to'        => $this->input->post('source_name'),
-									'payment_to_name'   => $emp['res_arr']['vendor_name'],
-									'payment_mode'      => $this->input->post('payment_mode'),
-									'pending_amount'    => ($this->input->post('invoice_amount')- $this->input->post('amount_paid')),
-									'expense_status'    => $this->input->post('payment_status'),
-									'employee_name'     => $this->session->userdata['logged_in']['employee_name'],
-									'invoice_number'    => $this->input->post('invoice_number'),
-									'bussiness_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
-								);				
-									$result = $this->BusinessAdminModel->Insert($data1,'mss_expenses_unpaid');
-							}
-
 							$query = "UPDATE mss_business_outlets SET business_outlet_expense_counter = business_outlet_expense_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
 							$this->db->query($query);
 						}
