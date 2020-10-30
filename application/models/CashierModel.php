@@ -2417,6 +2417,7 @@ class CashierModel extends CI_Model {
 		mss_transactions.txn_customer_id,
         mss_transactions.txn_datetime,
         mss_transactions.txn_loyalty_points,
+		mss_transactions.txn_loyalty_cashback,
 		mss_employees.employee_first_name,
         mss_employees.employee_last_name,
 		mss_transactions.txn_value,
