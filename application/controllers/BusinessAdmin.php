@@ -5100,7 +5100,22 @@ public function GetEmployee(){
 				$data=array(	'txn_id'=>$_POST['txn_id'],
 											'txn_status'	=>0,
 											'txn_remarks'=>$_POST['remarks']
-										);		
+										);	
+					//get IP
+					if (!empty($_SERVER['HTTP_CLIENT_IP'])) {   //check ip from share internet
+						$ip = $_SERVER['HTTP_CLIENT_IP'];
+					} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {   //to check ip is pass from proxy
+							$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+					} else {
+							$ip = $_SERVER['REMOTE_ADDR'];
+					}						
+				$data2=array(
+					'txn_id'=>$_POST['txn_id'],
+					'txn_remarks'=>$_POST['remarks'],
+					'business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id'],
+					'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet'],
+					'ip_address'	=> $ip
+				);
 				// $data = $this->BusinessAdminModel->CancelBills($data);	
 				$result = $this->BusinessAdminModel->BusinessAdminByEmail($this->session->userdata['logged_in']['business_admin_email']);	
 				$txn_details=$this->BusinessAdminModel->DetailsById($_POST['txn_id'],'mss_transactions','txn_id');
@@ -5109,7 +5124,10 @@ public function GetEmployee(){
 				$result2= $this->BusinessAdminModel->UpdateCustomerPendingAmount($cust_id,$pending_amount);
 
 				if(password_verify($_POST['password'],$result['res_arr']['business_admin_password']))	{
-					$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');			
+					$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');	
+					// log_message('info', 'Bill Edited By Admin id=' . $result['res_arr']['business_admin_id']);
+					log_message('Error','Bill Edited By Admin id='.$this->session->userdata['logged_in']['business_admin_id'].'IP'.$_SERVER['REMOTE_ADDR']);	
+					$this->BusinessAdminModel->Insert($data2,'mss_edit_bill_info');	
 					if($result['success'] == 'true'){	
 						$this->ReturnJsonArray(true,false,"Bill Deleted successfully!");
 						die;
@@ -5229,9 +5247,31 @@ public function GetEmployee(){
 					'txn_service_service_id'=>$_POST['txn_service_service_id'],
 					'txn_service_discounted_price'=>$_POST['txn_service_discounted_price'],
 					'txn_service_status'=>0
+				);
+				//Get IP ADDRESS
+					if (!empty($_SERVER['HTTP_CLIENT_IP'])) {   //check ip from share internet
+						$ip = $_SERVER['HTTP_CLIENT_IP'];
+					} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {   //to check ip is pass from proxy
+							$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+					} else {
+							$ip = $_SERVER['REMOTE_ADDR'];
+					}
+				$data2=array(
+					'txn_id'=>$_POST['txn_id'],
+					'txn_service_id'			=>$_POST['txn_service_service_id'],
+					'business_admin_id'		=> $this->session->userdata['logged_in']['business_admin_id'],
+					'business_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
+					'ip_address'					=>	$ip,
+					'txn_remarks'					=> 'Edited Individual Service'
+					
 				);		
-				$update_txn_services=$this->BusinessAdminModel->UpdateTransactionService($data);	
+				$update_txn_services=$this->BusinessAdminModel->UpdateTransactionService($data);
+
 				if($update_txn_services['success']=='true'){
+					//genereate log for edit service
+						log_message('Error','Bill Edited By Admin id='.$this->session->userdata['logged_in']['business_admin_id'].' MAC'.$_SERVER['REMOTE_ADDR']);	
+					//capture data for edited bill
+						$this->BusinessAdminModel->Insert($data2,'mss_edit_bill_info');
 						$this->ReturnJsonArray(true,false,"Bill Deleted Successfully!");
 						die;				
 				}else{
@@ -5968,8 +6008,7 @@ public function GetEmployee(){
 		}	
 	}
 
-	public function AddDeals(){
-	    
+	public function AddDeals(){	    
 		if($this->IsLoggedIn('business_admin')){
 // 			$this->PrettyPrintArray($_POST);
 			if(isset($_POST) && !empty($_POST)){ 
@@ -6018,6 +6057,7 @@ public function GetEmployee(){
 						'maximum_amt' 				=> $this->input->post('maximum_amt'),
 						'total_services'			=>$this->input->post('total_service'),
 						'discount'						=>$this->input->post('discount'),
+						'deal_for'						=>$this->input->post('tag_name'),
 						'deal_business_outlet_id' 	=> $this->session->userdata['outlets']['current_outlet'],
 						'deal_business_admin_id' 	=> $this->session->userdata['logged_in']['business_admin_id']
 					);
