@@ -1342,6 +1342,41 @@ class CashierModel extends CI_Model {
         else{
            return $this->ModelHelper(false,true,"No Deal Found!");
         }   
+	  }
+	  
+
+
+	  public function GetAllDealInfo($data){
+        $sql = "SELECT 
+				mss_deals_discount.deal_code,
+				mss_deals_discount.start_date,
+				mss_deals_discount.end_date,
+				mss_deals_discount.start_time,
+				mss_deals_discount.end_time,
+				mss_deals_discount.minimum_amt,
+				mss_deals_discount.maximum_amt,
+				mss_deals_discount.discount,
+				mss_deals_discount.deal_for,
+				mss_deals_data.service_id,
+				mss_deals_data.service_count
+			FROM
+				mss_deals_discount,
+				mss_deals_data
+			WHERE
+				mss_deals_data.deal_id = mss_deals_discount.deal_id AND
+				mss_deals_discount.deal_code = ".$this->db->escape($data['coupon_code'])." AND
+				mss_deals_discount.deal_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])." AND
+				mss_deals_discount.deal_business_admin_id = ".$this->db->escape($data['business_admin_id'])." ";
+
+				//execute the query
+				$query = $this->db->query($sql);
+        // $this->PrintArray($query->result_array());
+        if ($query->num_rows() >0){
+           return $this->ModelHelper(true,false,'',$query->result_array());
+        } 
+        else{
+           return $this->ModelHelper(false,true,"No Deal Found!");
+        }   
   	}
 
 	public function GetCustomerTransactionDiscount($customer_id){

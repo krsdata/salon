@@ -3970,8 +3970,8 @@ class BusinessAdminModel extends CI_Model {
 				mss_transactions, mss_transaction_settlements 
 				SET mss_transaction_services.txn_service_status=0,
 				mss_transactions.txn_total_tax=mss_transactions.txn_total_tax-$tax,	
-				mss_transaction_settlements.txn_settlement_amount_received=(mss_transaction_settlements.txn_settlement_amount_received- ".$this->db->escape($data['txn_service_discounted_price'])."),	mss_transactions.txn_value=(mss_transactions.txn_value- ".$this->db->escape($data['txn_service_discounted_price'])."),
-				mss_transaction_settlements.txn_settlement_amount_received=(mss_transaction_settlements.txn_settlement_amount_received-".$this->db->escape($data['txn_service_discounted_price'])."),
+				mss_transaction_settlements.txn_settlement_amount_received=(mss_transaction_settlements.txn_settlement_amount_received- ".$this->db->escape($data['txn_service_discounted_price'])."),	
+				mss_transactions.txn_value=(mss_transactions.txn_value- ".$this->db->escape($data['txn_service_discounted_price'])."),
 				mss_transaction_settlements.txn_settlement_reversed=".$this->db->escape($data['txn_service_discounted_price'])."
 				WHERE mss_transaction_services.txn_service_service_id=".$this->db->escape($data['txn_service_service_id'])." AND
 				mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." AND 
@@ -3980,7 +3980,9 @@ class BusinessAdminModel extends CI_Model {
 			
 			$all_service_status=$this->MultiWhereSelect('mss_transaction_services',array('txn_service_txn_id'=>$data['txn_id'],'txn_service_status'=>1));
 			if($all_service_status['res_arr']=="" || $all_service_status['res_arr']==null){
-				$q="UPDATE mss_transactions SET txn_status=0  WHERE mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." ";
+				$q="UPDATE mss_transactions 
+				SET txn_status=0  
+				WHERE mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." ";
 	
 				$this->db->query($q);
 			}
@@ -7297,12 +7299,12 @@ $sql = str_replace(",)",")",$sql);
     }
     public function RuleTotalAmountSpent($data){
         $sql="Select 
-        txn_customer_id as 'cust_id' from mss_transactions_replica,mss_customers 
+        txn_customer_id as 'cust_id' from mss_transactions,mss_customers 
                 WHERE 
-                    mss_transactions_replica.txn_customer_id=mss_customers.customer_id
+                    mss_transactions.txn_customer_id=mss_customers.customer_id
                     AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-                GROUP BY mss_transactions_replica.txn_customer_id
-                HAVING sum(mss_transactions_replica.txn_value) BETWEEN ".$this->db->escape($data['start_range'])." AND ".$this->db->escape($data['end_range'])."
+                GROUP BY mss_transactions.txn_customer_id
+                HAVING sum(mss_transactions.txn_value) BETWEEN ".$this->db->escape($data['start_range'])." AND ".$this->db->escape($data['end_range'])."
            ";
             $query = $this->db->query($sql);
             if($query){
@@ -7313,12 +7315,12 @@ $sql = str_replace(",)",")",$sql);
             } 
     }
     public function RuleVisits($data){
-            $sql="Select mss_transactions_replica.txn_customer_id as 'cust_id' from mss_transactions_replica,mss_customers 
+            $sql="Select mss_transactions.txn_customer_id as 'cust_id' from mss_transactions,mss_customers 
                     WHERE 
-                        mss_transactions_replica.txn_customer_id=mss_customers.customer_id
+                        mss_transactions.txn_customer_id=mss_customers.customer_id
                         AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-                    GROUP BY mss_transactions_replica.txn_customer_id
-                    HAVING count(mss_transactions_replica.txn_id) BETWEEN ".$this->db->escape($data['start_range'])." AND ".$this->db->escape($data['end_range'])."
+                    GROUP BY mss_transactions.txn_customer_id
+                    HAVING count(mss_transactions.txn_id) BETWEEN ".$this->db->escape($data['start_range'])." AND ".$this->db->escape($data['end_range'])."
                ";
             $query = $this->db->query($sql);
             if($query){
@@ -7329,12 +7331,12 @@ $sql = str_replace(",)",")",$sql);
             } 
     }
     public function RuleLastVisitDate($data){
-        $sql="Select mss_transactions_replica.txn_customer_id as 'cust_id' from mss_transactions_replica,mss_customers 
+        $sql="Select mss_transactions.txn_customer_id as 'cust_id' from mss_transactions,mss_customers 
         WHERE 
-            mss_transactions_replica.txn_customer_id=mss_customers.customer_id  
+            mss_transactions.txn_customer_id=mss_customers.customer_id  
             AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-        GROUP BY mss_transactions_replica.txn_customer_id
-        HAVING MAX(date(mss_transactions_replica.txn_datetime)) = ".$this->db->escape($data['date'])."
+        GROUP BY mss_transactions.txn_customer_id
+        HAVING MAX(date(mss_transactions.txn_datetime)) = ".$this->db->escape($data['date'])."
         ";
             $query = $this->db->query($sql);
             if($query){
@@ -7385,12 +7387,12 @@ $sql = str_replace(",)",")",$sql);
             } 
     }
     public function RuleAverageOrder($data){
-        $sql="Select mss_transactions_replica.txn_customer_id as 'cust_id' from mss_transactions_replica,mss_customers 
+        $sql="Select mss_transactions.txn_customer_id as 'cust_id' from mss_transactions,mss_customers 
         WHERE 
-            mss_transactions_replica.txn_customer_id=mss_customers.customer_id
+            mss_transactions.txn_customer_id=mss_customers.customer_id
             AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-        GROUP BY mss_transactions_replica.txn_customer_id
-        HAVING sum(mss_transactions_replica.txn_value)/count(mss_transactions_replica.txn_id) =  ".$this->db->escape($data['value'])."
+        GROUP BY mss_transactions.txn_customer_id
+        HAVING sum(mss_transactions.txn_value)/count(mss_transactions.txn_id) =  ".$this->db->escape($data['value'])."
         ";
                 $query = $this->db->query($sql);
                 if($query){
@@ -7401,12 +7403,12 @@ $sql = str_replace(",)",")",$sql);
                 } 
     }
     public function RuleBillingDate($data){
-        $sql="Select mss_transactions_replica.txn_customer_id as 'cust_id' from mss_transactions_replica,mss_customers 
+        $sql="Select mss_transactions.txn_customer_id as 'cust_id' from mss_transactions,mss_customers 
         WHERE 
-            mss_transactions_replica.txn_customer_id=mss_customers.customer_id
+            mss_transactions.txn_customer_id=mss_customers.customer_id
             AND mss_customers.customer_business_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-            AND date(mss_transactions_replica.txn_datetime) BETWEEN ".$this->db->escape($data['start_range_date'])." AND ".$this->db->escape($data['end_range_date'])."
-        GROUP BY mss_transactions_replica.txn_customer_id
+            AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['start_range_date'])." AND ".$this->db->escape($data['end_range_date'])."
+        GROUP BY mss_transactions.txn_customer_id
      ";
           $query = $this->db->query($sql);
           if($query){
