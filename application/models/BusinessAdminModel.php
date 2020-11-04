@@ -997,12 +997,14 @@ class BusinessAdminModel extends CI_Model {
                      mss_transactions.txn_unique_serial_id AS 'Txn Unique Serial Id',
                      mss_customers.customer_mobile AS 'Customer Mobile',
                      mss_customers.customer_name AS 'Customer Name',
-                     date(mss_transactions.txn_datetime) AS 'Billing Date',
+                     date(mss_transactions.txn_datetime) AS 'Bill Date',
                      mss_categories.category_name AS 'Category',
                      mss_sub_categories.sub_category_name AS 'Sub-Category',
                      mss_services.service_name AS 'Service',
                      IFNULL(mss_services.inventory_type,'Service') AS 'Type' ,
-                     ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'MRP',
+                     ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'MRP_MENU',
+					 mss_transaction_services.txn_add_on_amount AS 'Add on Amt',
+					 (ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))+ mss_transaction_services.txn_add_on_amount) AS 'MRP_New',
                      mss_transaction_services.txn_service_quantity AS 'Quantity',
                      (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
                      mss_employees.employee_first_name As 'Expert Name',
@@ -1040,13 +1042,16 @@ class BusinessAdminModel extends CI_Model {
                     mss_package_transactions.package_txn_unique_serial_id AS 'Txn Unique Serial Id',                    
                     mss_customers.customer_mobile AS 'Customer Mobile',
                     mss_customers.customer_name AS 'Customer Name',
-                    date(mss_package_transactions.datetime) AS 'Billing Date',
+                    date(mss_package_transactions.datetime) AS 'Bill Date',
                     mss_salon_packages.salon_package_name AS 'Service',
                     mss_salon_packages.salon_package_type AS 'Package Type',
                     mss_salon_packages.salon_package_name AS 'Sub-Category',
                     IF(mss_package_transactions.package_txn_unique_serial_id,'Package','Package') AS 'Type' ,
-                    mss_package_transactions.package_txn_value AS 'Bill Amount',    
-                    IF(mss_salon_packages.salon_package_type,'','') AS 'Quantity',
+                    mss_package_transactions.package_txn_value AS 'Bill Amount',  
+					'0' AS 'Add On Amt',
+					mss_package_transactions.package_txn_value,
+                    -- IF(mss_salon_packages.salon_package_type,'','') AS 'Quantity',
+					'1' AS 'Quantity',
                     mss_package_transactions.package_txn_discount AS 'Discount Given',
                     mss_employees.employee_first_name AS 'Expert Name',
                     -- mss_package_transactions.package_txn_pending_amount AS 'Pending Amount',
@@ -1342,26 +1347,29 @@ class BusinessAdminModel extends CI_Model {
     private function GetBillWiseSalesReport($data){
         $sql = "SELECT 
         mss_transactions.txn_unique_serial_id AS 'Txn Unique Serial Id',
-        date(mss_transactions.txn_datetime) AS 'Billing Date',
+        date(mss_transactions.txn_datetime) AS 'Bill Date',
         mss_customers.customer_mobile AS 'Mobile No',
         mss_customers.customer_name AS 'Customer Name',
-        (mss_transactions.txn_discount+mss_transactions.txn_value) AS 'MRP Amt',
-        mss_transactions.txn_discount AS 'Discount',
-        mss_transactions.txn_value AS 'Net Amount',
-        mss_transactions.txn_status AS 'billed=1/canceled=0',
-        mss_transactions.txn_remarks AS 'Remarks',
-        mss_transactions.txn_total_tax AS 'Total Tax (Rs.)',
-        mss_transactions.txn_pending_amount AS 'Pending Amount',
-        mss_transaction_settlements.txn_settlement_way AS 'Settlement Way',
-        mss_transaction_settlements.txn_settlement_payment_mode AS 'Payment Mode'
+        (mss_transactions.txn_discount+mss_transactions.txn_value) AS 'MRP Amt_Menu',
+		mss_transaction_services.txn_add_on_amount AS 'Add on Amt', 
+		(mss_transactions.txn_discount+mss_transactions.txn_value+mss_transaction_services.txn_add_on_amount) AS 'MRP Amt_New',
+        mss_transactions.txn_discount AS 'Discount Amt',
+        mss_transactions.txn_value AS 'Billed Amount',
+		mss_transactions.txn_pending_amount AS 'Pending Amount',		
+		mss_transactions.txn_total_tax AS 'Total Tax (Rs.)',        
+        mss_transactions.txn_remarks AS 'Remarks',   
+		mss_transactions.txn_status AS 'valid=1/cancel=0',
+		mss_transaction_settlements.txn_settlement_payment_mode AS 'Payment Mode' 
         
     FROM 
         mss_customers,
         mss_transactions,
         mss_transaction_settlements,
+		mss_transaction_services,
         mss_employees
     WHERE 
         mss_transactions.txn_customer_id = mss_customers.customer_id
+		AND mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id
         AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
         AND mss_transactions.txn_cashier= mss_employees.employee_id
         AND mss_transactions.txn_status=1
@@ -2484,7 +2492,7 @@ class BusinessAdminModel extends CI_Model {
           date(mss_transactions.txn_datetime) AS 'billing_date',
           mss_customers.customer_mobile AS 'mobile',
           mss_customers.customer_name AS 'name',
-          IF(mss_transactions.txn_id,'Service','Service') AS 'Type' ,
+          IF(mss_transactions.txn_id,'Service','Service') AS 'type' ,
           (mss_transactions.txn_discount+mss_transactions.txn_value) AS 'mrp_amt',
           mss_transactions.txn_discount AS 'discount',
           mss_transactions.txn_value AS 'net_amt',
@@ -2513,12 +2521,13 @@ class BusinessAdminModel extends CI_Model {
             $result1 = $query->result_array();            
             $sql = "SELECT
                     mss_package_transactions.package_txn_id AS 'bill_no',
+					mss_package_transactions.package_txn_status AS 'txn_status',
                     mss_package_transactions.package_txn_unique_serial_id AS 'txn_id',
                     date(mss_package_transactions.datetime) AS 'billing_date',
                     mss_customers.customer_mobile AS 'mobile',
                     mss_customers.customer_name AS 'name',            
                     -- IF(mss_package_transactions.package_txn_id,'1','1') AS 'txn_status' ,
-                    IF(mss_package_transactions.package_txn_id,'Package','Package') AS 'Type' ,
+                    IF(mss_package_transactions.package_txn_id,'Package','Package') AS 'type' ,
                     mss_package_transactions.package_txn_value AS 'mrp_amt',  
                     mss_package_transactions.package_txn_discount AS 'discount',
                     mss_package_transactions.package_txn_value AS 'net_amt',
@@ -2556,7 +2565,7 @@ class BusinessAdminModel extends CI_Model {
                     ORDER BY
                         mss_package_transactions.package_txn_id desc";  
                         
-                        $query = $this->db->query($sql); 
+                    $query = $this->db->query($sql); 
                     $result2 = $query->result_array();
                     $result = array_merge($result1,$result2);
 
@@ -3995,7 +4004,8 @@ class BusinessAdminModel extends CI_Model {
 	}
 	//
 	public function GetFullTransactionDetail($data){
-		$sql="SELECT mss_transactions.txn_id,
+		if($data['txn_type']=="Service"){
+			$sql="SELECT mss_transactions.txn_id,
 				date(mss_transactions.txn_datetime) AS 'date',
 				mss_services.service_name,
 				mss_customers.customer_name,
@@ -4011,6 +4021,7 @@ class BusinessAdminModel extends CI_Model {
 				mss_transaction_services.txn_service_discounted_price,
 				mss_transaction_services.txn_service_expert_id,
 				mss_employees.employee_first_name AS  'expert',
+				'service' AS 'type',
 				mss_transaction_settlements.txn_settlement_payment_mode AS 'payment_mode',
 				mss_transaction_settlements.txn_settlement_amount_received
 			FROM
@@ -4028,8 +4039,28 @@ class BusinessAdminModel extends CI_Model {
 				mss_services.service_id= mss_transaction_services.txn_service_service_id AND
 				mss_transaction_settlements.txn_settlement_txn_id=mss_transactions.txn_id AND
 				mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id AND
-			mss_transactions.txn_id=".$this->db->escape($data)." GROUP BY mss_transaction_services.txn_service_id";
-
+				mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." GROUP BY mss_transaction_services.txn_service_id";
+		}else{
+				$sql="SELECT 
+				mss_package_transactions.package_txn_id,
+				mss_package_transactions.package_txn_discount,
+				mss_package_transactions.package_txn_value,
+				date(mss_package_transactions.datetime) AS 'date',
+				mss_package_transactions.package_txn_expert,
+				mss_employees.employee_first_name AS expert,
+                mss_salon_packages.salon_package_name AS 'package_name',
+				'package' AS 'type' 
+				FROM 
+					mss_package_transactions,
+					mss_employees,
+                    mss_salon_packages,
+                    mss_transaction_package_details
+				WHERE 
+                	mss_transaction_package_details.package_txn_id= mss_package_transactions.package_txn_id AND
+                    mss_salon_packages.salon_package_id = mss_transaction_package_details.salon_package_id AND
+					mss_employees.employee_id=mss_package_transactions.package_txn_expert AND
+					mss_package_transactions.package_txn_id = ".$this->db->escape($data['txn_id'])." ";
+		}
 			$query = $this->db->query($sql);
 			
 			if($query->num_rows()>0){
@@ -10663,6 +10694,136 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
         return $this->ModelHelper(false,true,"DB error!");   
         } 
 	} 
-	 
+
+		//Update transaction Services(date, expert,discount)
+		public function UpdateTransactionOne($data){
+			$sql = "UPDATE 
+			mss_transaction_services,
+			mss_transactions
+			SET mss_transaction_services.txn_service_discount_absolute= ".$this->db->escape($data['txn_service_discount_absolute'])." ,
+			mss_transaction_services.txn_service_discounted_price=(mss_transaction_services.txn_service_discounted_price+".$this->db->escape($data['txn_discounted_result'])."),
+			mss_transaction_services.txn_service_expert_id= ".$this->db->escape($data['txn_expert']).",
+			mss_transactions.txn_datetime = ".$this->db->escape($data['txn_datetime']).",
+			mss_transactions.txn_discount= (mss_transactions.txn_discount-".$this->db->escape($data['txn_discounted_result'])."),
+			mss_transactions.txn_value= (mss_transactions.txn_value+".$this->db->escape($data['txn_discounted_result']).")	
+			WHERE 
+			mss_transaction_services.txn_service_id=".$this->db->escape($data['txn_service_id'])." AND 
+			mss_transaction_services.txn_service_txn_id=".$this->db->escape($data['txn_id'])." AND 
+			mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
+
+		public function UpdateTransactionTwo($data){
+			$sql = "UPDATE 
+			mss_transaction_services,
+			mss_transactions
+			SET 
+			mss_transaction_services.txn_service_expert_id= ".$this->db->escape($data['txn_expert']).",
+			mss_transactions.txn_datetime = ".$this->db->escape($data['txn_datetime'])."	
+			WHERE 
+			mss_transaction_services.txn_service_id=".$this->db->escape($data['txn_service_id'])." AND 
+			mss_transaction_services.txn_service_txn_id=".$this->db->escape($data['txn_id'])." AND 
+			mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
+
+		public function UpdateTransactionThree($data){
+			$sql = "UPDATE 
+			mss_transaction_services,
+			mss_transactions
+			SET mss_transaction_services.txn_service_discount_absolute= ".$this->db->escape($data['txn_service_discount_absolute'])." ,
+			mss_transaction_services.txn_service_discounted_price=(mss_transaction_services.txn_service_discounted_price+".$this->db->escape($data['txn_discounted_result'])."),
+			mss_transaction_services.txn_service_expert_id= ".$this->db->escape($data['txn_expert']).",
+			mss_transactions.txn_discount= (mss_transactions.txn_discount-".$this->db->escape($data['txn_discounted_result'])."),
+			mss_transactions.txn_value= (mss_transactions.txn_value+".$this->db->escape($data['txn_discounted_result']).")	
+			WHERE 
+			mss_transaction_services.txn_service_id=".$this->db->escape($data['txn_service_id'])." AND 
+			mss_transaction_services.txn_service_txn_id=".$this->db->escape($data['txn_id'])." AND 
+			mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
+
+		public function UpdateTransactionFour($data){
+			$sql = "UPDATE 
+			mss_transaction_services,
+			mss_transactions
+			SET mss_transaction_services.txn_service_discount_absolute= ".$this->db->escape($data['txn_service_discount_absolute'])." ,
+			mss_transaction_services.txn_service_discounted_price=(mss_transaction_services.txn_service_discounted_price+".$this->db->escape($data['txn_discounted_result'])."),
+			mss_transactions.txn_datetime = ".$this->db->escape($data['txn_datetime']).",
+			mss_transactions.txn_discount= (mss_transactions.txn_discount-".$this->db->escape($data['txn_discounted_result'])."),
+			mss_transactions.txn_value= (mss_transactions.txn_value+".$this->db->escape($data['txn_discounted_result']).")	
+			WHERE 
+			mss_transaction_services.txn_service_id=".$this->db->escape($data['txn_service_id'])." AND 
+			mss_transaction_services.txn_service_txn_id=".$this->db->escape($data['txn_id'])." AND 
+			mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
+
+		public function UpdateTransactionFive($data){
+			$sql = "UPDATE 
+			mss_transaction_services
+			SET 
+			mss_transaction_services.txn_service_expert_id= ".$this->db->escape($data['txn_expert'])."	
+			WHERE 
+			mss_transaction_services.txn_service_id=".$this->db->escape($data['txn_service_id'])." AND 
+			mss_transaction_services.txn_service_txn_id=".$this->db->escape($data['txn_id'])."  ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
+		public function UpdateTransactionSix($data){
+			$sql = "UPDATE 
+			mss_transaction_services,
+			mss_transactions
+			SET mss_transaction_services.txn_service_discount_absolute= ".$this->db->escape($data['txn_service_discount_absolute'])." ,
+			mss_transaction_services.txn_service_discounted_price=(mss_transaction_services.txn_service_discounted_price+".$this->db->escape($data['txn_discounted_result'])."),
+			mss_transactions.txn_discount= (mss_transactions.txn_discount-".$this->db->escape($data['txn_discounted_result'])."),
+			mss_transactions.txn_value= (mss_transactions.txn_value+".$this->db->escape($data['txn_discounted_result']).")	
+			WHERE 
+			mss_transaction_services.txn_service_id=".$this->db->escape($data['txn_service_id'])." AND 
+			mss_transaction_services.txn_service_txn_id=".$this->db->escape($data['txn_id'])." AND 
+			mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
 
 }
