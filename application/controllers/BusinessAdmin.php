@@ -4459,8 +4459,10 @@ public function GetEmployee(){
 					'employee_business_admin' => $this->session->userdata['logged_in']['business_admin_id'],
 					'employee_business_outlet' => $this->session->userdata['outlets']['current_outlet']
 				);
-				$data['expert']=$this->BusinessAdminModel->MultiWhereSelect('mss_employees',$where);
-				$data['expert']=$data['expert']['res_arr'];
+				$data['expert1']=$this->BusinessAdminModel->MultiWhereSelect('mss_employees',$where);
+				$data['expert']=$data['expert1']['res_arr'];
+				$data['emp']=$data['expert1']['res_arr'];
+				// $this->PrettyPrintArray($data);
 				$this->load->view('business_admin/ba_reports_view',$data);
 			}
 			else if(isset($_GET) && !empty($_GET)){
@@ -5081,7 +5083,7 @@ public function GetEmployee(){
 											'business_outlet_id'=>	$this->session->userdata['outlets']['current_outlet']);
 											
 				$data = $this->BusinessAdminModel->GenerateBills($where);
-
+				// $this->PrettyPrintArray($data);
 				if($data['success'] == 'true'){	
 					header("Content-type: application/json");
 					print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
@@ -5151,55 +5153,78 @@ public function GetEmployee(){
 		public function UpdateTransaction(){	
 			if($this->IsLoggedIn('business_admin')){
 				if(isset($_POST) && !empty($_POST)){
-					if(empty($_POST['txn_date'])){
+					// $this->PrettyPrintArray($_POST);					
+					if(!empty($_POST['txn_date']) && !empty($_POST['txn_expert']) && !empty($_POST['txn_abs_disc'])){
 						$data=array(	
-							'txn_id'=>$_POST['txn_id'],
-							'txn_datetime'=>$_POST['old_txn_date']
+							'txn_id'												=> $_POST['txn_id'],
+							'txn_datetime'									=> $_POST['txn_date'],
+							'txn_service_id'								=> $_POST['txn_service_id'],
+							'txn_service_discount_absolute' => $_POST['txn_abs_disc'],
+							'txn_discounted_result'					=> ($_POST['old_txn_disc']-$_POST['txn_abs_disc']),
+							'txn_expert'										=> $_POST['txn_expert']
 						);
-					}else{
+						
+						$result=$this->BusinessAdminModel->UpdateTransactionOne($data);
+					}else if(!empty($_POST['txn_date']) && !empty($_POST['txn_expert']) && (!isset($_POST['txn_abs_disc']))){
 						$data=array(	
-							'txn_id'=>$_POST['txn_id'],
-							'txn_datetime'=>$_POST['txn_date']
+							'txn_id'												=> $_POST['txn_id'],
+							'txn_datetime'									=> $_POST['txn_date'],
+							'txn_service_id'								=> $_POST['txn_service_id'],
+							'txn_expert'										=> $_POST['txn_expert']
 						);
-					}
-					if(empty($_POST['txn_expert'])){
-						$data2=array(	
-							'txn_service_id'=>$_POST['txn_service_id'],
-							'txn_service_expert_id'=>$_POST['old_txn_expert']
+						
+						$result=$this->BusinessAdminModel->UpdateTransactionTwo($data);
+					}else if(!empty($_POST['txn_expert']) && !empty($_POST['txn_abs_disc']) && (!isset($_POST['txn_date']))){
+						$data=array(	
+							'txn_id'												=> $_POST['txn_id'],
+							'txn_service_id'								=> $_POST['txn_service_id'],
+							'txn_service_discount_absolute' => $_POST['txn_abs_disc'],
+							'txn_discounted_result'					=> ($_POST['old_txn_disc']-$_POST['txn_abs_disc']),
+							'txn_expert'										=> $_POST['txn_expert']
 						);
+						
+						$result=$this->BusinessAdminModel->UpdateTransactionThree($data);
+					}else if(!empty($_POST['txn_date']) && !empty($_POST['txn_abs_disc']) && (!isset($_POST['txn_expert']))){
+						$data=array(	
+							'txn_id'												=> $_POST['txn_id'],
+							'txn_datetime'									=> $_POST['txn_date'],
+							'txn_service_id'								=> $_POST['txn_service_id'],
+							'txn_service_discount_absolute' => $_POST['txn_abs_disc'],
+							'txn_discounted_result'					=> ($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
+						);
+						
+						$result=$this->BusinessAdminModel->UpdateTransactionFour($data);
+					}else if(!empty($_POST['txn_date']) && (!isset($_POST['txn_abs_disc'])) && (!isset($_POST['txn_expert']))){
+						$data=array(	
+							'txn_id'												=> $_POST['txn_id'],
+							'txn_datetime'									=> $_POST['txn_date']
+						);
+						
+						$result=$this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');
+					}else if(!empty($_POST['txn_expert']) && (!isset($_POST['txn_date']))  && (!isset($_POST['txn_abs_disc']))){
+						$data=array(	
+							'txn_id'												=> $_POST['txn_id'],
+							'txn_service_id'								=> $_POST['txn_service_id'],
+							'txn_expert'										=> $_POST['txn_expert']
+						);
+						
+						$result=$this->BusinessAdminModel->UpdateTransactionFive($data);
+					}else if(!empty($_POST['txn_abs_disc']) && (!isset($_POST['txn_date'])) && (!isset($_POST['txn_expert']))){
+						$data=array(	
+							'txn_id'												=> $_POST['txn_id'],
+							'txn_service_id'								=> $_POST['txn_service_id'],
+							'txn_service_discount_absolute' => $_POST['txn_abs_disc'],
+							'txn_discounted_result'					=> ($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
+						);
+						
+						$result=$this->BusinessAdminModel->UpdateTransactionSix($data);
 					}else{
-						$data2=array(	
-							'txn_service_id'=>$_POST['txn_service_id'],
-							'txn_service_expert_id'=>$_POST['txn_expert']
-						);
+						$this->ReturnJsonArray(false,true,"Bill Not Updated.");
+						die;
 					}
-					if(empty($_POST['txn_abs_disc'] )){
-						$data3=array(	
-							'txn_id'=>$_POST['txn_id'],
-							'txn_service_id'=>$_POST['txn_service_id'],
-							'txn_service_discount_absolute'=>$_POST['old_txn_disc'],
-							'txn_discounted_result'	=>($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
-						);
-						if($_POST['txn_abs_disc']==0){
-							$data3=array(	
-								'txn_id'=>$_POST['txn_id'],
-								'txn_service_id'=>$_POST['txn_service_id'],
-								'txn_service_discount_absolute'=>$_POST['txn_abs_disc'],
-								'txn_discounted_result'	=>($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
-							);
-						}
-					}else{
-						$data3=array(	
-							'txn_id'=>$_POST['txn_id'],
-							'txn_service_id'=>$_POST['txn_service_id'],
-							'txn_service_discount_absolute'=>$_POST['txn_abs_disc'],
-							'txn_discounted_result'	=>($_POST['old_txn_disc']-$_POST['txn_abs_disc'])
-						);
-					}
-						$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');	
-						$result2 = $this->BusinessAdminModel->Update($data2,'mss_transaction_services','txn_service_id');	
-						$result3 = $this->BusinessAdminModel->UpdateAbsDiscount($data3);			
-						if($result['success'] == 'true' || $result2['success'] == 'true' || $result3['success']){	
+						
+						// $result3 = $this->BusinessAdminModel->UpdateAbsDiscount($data3);			
+						if($result['success'] == 'true'){	
 							$this->ReturnJsonArray(true,false,"Bill Updated successfully!");
 							die;
 						}else{
@@ -5213,13 +5238,65 @@ public function GetEmployee(){
 			}
 		}
 
+		//Update Package bills
+		public function UpdatePackageTransaction(){	
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_POST) && !empty($_POST)){
+					// $this->PrettyPrintArray($_POST);
+					if(isset($_POST['txn_expert']) && isset($_POST['txn_discount'])){
+						$data2=array(	
+							'package_txn_id'				=>$_POST['package_txn_id'],
+							'package_txn_expert'		=>$_POST['txn_expert'],
+							'package_txn_discount'	=>$_POST['txn_discount'],
+							'txn_discounted_result'			=>($_POST['old_discount']-$_POST['txn_discount'])
+						);
+						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionOne($data2);	
+					}else if(isset($_POST['txn_expert']) && !isset($_POST['txn_discount'])){
+						
+						$data2=array(	
+							'package_txn_id'				=>$_POST['package_txn_id'],
+							'package_txn_expert'		=>$_POST['txn_expert']
+						);
+						$result2 = $this->BusinessAdminModel->Update($data2,'mss_package_transactions','package_txn_id');	
+					}else if(!isset($_POST['txn_expert']) && isset($_POST['txn_discount'])){
+						
+						$data2=array(	
+							'package_txn_id'				=>$_POST['package_txn_id'],
+							'package_txn_discount'	=>$_POST['txn_discount'],
+							'txn_discounted_result'			=>($_POST['old_discount']-$_POST['txn_discount'])
+						);
+						
+						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionThree($data2);	
+					}else{
+						$this->ReturnJsonArray(false,true,"Package Transaction Not Updated!");
+						die;
+					}								
+						if($result2['success'] == 'true'){	
+							$this->ReturnJsonArray(true,false,"Bill Updated successfully!");
+							die;
+						}else{
+							$this->ReturnJsonArray(false,true,"No Bill Updated!");
+							die;
+						}					
+				}
+				else{
+					$this->LogoutUrl(base_url()."BusinessAdmin/");
+				}
+			}
+		}
+
 	//delete bills
 	public function VerifyPassword(){	
 		if($this->IsLoggedIn('business_admin')){
 			if(isset($_GET) && !empty($_GET)){
 				$data=array('business_admin_password'=>$_GET['admin_password']);		
 				$result = $this->BusinessAdminModel->BusinessAdminByEmail($this->session->userdata['logged_in']['business_admin_email']);	
-				$result1=$this->BusinessAdminModel->GetFullTransactionDetail($_GET['txn_id']);
+				$where=array(
+					'txn_id' 		=> $_GET['txn_id'],
+					'txn_type' 	=> $_GET['txn_type']
+				);
+				$result1=$this->BusinessAdminModel->GetFullTransactionDetail($where);
+				// $this->PrettyPrintArray($result1);
 					
 				if(password_verify($data['business_admin_password'],$result['res_arr']['business_admin_password']))	{
 						header("Content-type: application/json" && $result1['res_arr']!=null);

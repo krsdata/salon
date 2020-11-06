@@ -1350,9 +1350,9 @@ class BusinessAdminModel extends CI_Model {
         date(mss_transactions.txn_datetime) AS 'Bill Date',
         mss_customers.customer_mobile AS 'Mobile No',
         mss_customers.customer_name AS 'Customer Name',
-        (mss_transactions.txn_discount+mss_transactions.txn_value) AS 'MRP Amt_Menu',
+        ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'MRP_MENU',
 		mss_transaction_services.txn_add_on_amount AS 'Add on Amt', 
-		(mss_transactions.txn_discount+mss_transactions.txn_value+mss_transaction_services.txn_add_on_amount) AS 'MRP Amt_New',
+		(ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))+mss_transaction_services.txn_add_on_amount) AS 'MRP Amt_New',
         mss_transactions.txn_discount AS 'Discount Amt',
         mss_transactions.txn_value AS 'Billed Amount',
 		mss_transactions.txn_pending_amount AS 'Pending Amount',		
@@ -1366,10 +1366,12 @@ class BusinessAdminModel extends CI_Model {
         mss_transactions,
         mss_transaction_settlements,
 		mss_transaction_services,
-        mss_employees
+        mss_employees,
+		mss_services
     WHERE 
         mss_transactions.txn_customer_id = mss_customers.customer_id
 		AND mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id
+		AND mss_services.service_id = mss_transaction_services.txn_service_service_id
         AND mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
         AND mss_transactions.txn_cashier= mss_employees.employee_id
         AND mss_transactions.txn_status=1
@@ -2528,7 +2530,7 @@ class BusinessAdminModel extends CI_Model {
                     mss_customers.customer_name AS 'name',            
                     -- IF(mss_package_transactions.package_txn_id,'1','1') AS 'txn_status' ,
                     IF(mss_package_transactions.package_txn_id,'Package','Package') AS 'type' ,
-                    mss_package_transactions.package_txn_value AS 'mrp_amt',  
+                    (mss_package_transactions.package_txn_value+mss_package_transactions.package_txn_discount) AS 'mrp_amt',  
                     mss_package_transactions.package_txn_discount AS 'discount',
                     mss_package_transactions.package_txn_value AS 'net_amt',
                     IF(mss_salon_packages.service_gst_percentage,'0','0') AS 'total_tax',
@@ -10816,6 +10818,43 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 			mss_transaction_services.txn_service_id=".$this->db->escape($data['txn_service_id'])." AND 
 			mss_transaction_services.txn_service_txn_id=".$this->db->escape($data['txn_id'])." AND 
 			mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
+
+		//Update Package Transactions
+		public function UpdatePackageTransactionOne($data){
+			$sql = "UPDATE 
+			mss_package_transactions
+			SET 
+			mss_package_transactions.package_txn_expert= ".$this->db->escape($data['package_txn_expert']).",
+			mss_package_transactions.package_txn_discount= ".$this->db->escape($data['package_txn_discount']).",
+			mss_package_transactions.package_txn_value= (mss_package_transactions.package_txn_value+".$this->db->escape($data['txn_discounted_result']).")	
+			WHERE 
+			mss_package_transactions.package_txn_id=".$this->db->escape($data['package_txn_id'])." ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
+		public function UpdatePackageTransactionThree($data){
+			$sql = "UPDATE 
+			mss_package_transactions
+			SET 
+			mss_package_transactions.package_txn_discount=  ".$this->db->escape($data['package_txn_discount']).",
+			mss_package_transactions.package_txn_value= (mss_package_transactions.package_txn_value+".$this->db->escape($data['txn_discounted_result']).")	
+			WHERE 
+			mss_package_transactions.package_txn_id=".$this->db->escape($data['package_txn_id'])."";
 	
 			$query = $this->db->query($sql);
 			if($query){
