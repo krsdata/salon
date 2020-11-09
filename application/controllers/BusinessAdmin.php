@@ -5097,12 +5097,24 @@ public function GetEmployee(){
 	}
 	//delete bills
 	public function DeleteBills(){	
+		// $this->PrettyPrintArray($_POST);
 		if($this->IsLoggedIn('business_admin')){
 			if(isset($_POST) && !empty($_POST)){
-				$data=array(	'txn_id'=>$_POST['txn_id'],
-											'txn_status'	=>0,
-											'txn_remarks'=>$_POST['remarks']
-										);	
+				if($_POST['txn_type']=='Service'){
+					$data=array(	
+						'txn_id'				=>		$_POST['txn_id'],
+						'txn_status'		=>0,
+						'txn_remarks'		=>$_POST['remarks']
+					);
+				}else{
+					$data=array(	
+						'package_txn_id'				=>		$_POST['txn_id'],
+						'package_txn_status'		=>0,
+						'package_txn_remarks'		=>$_POST['remarks']
+					);
+				}
+				
+					
 					//get IP
 					if (!empty($_SERVER['HTTP_CLIENT_IP'])) {   //check ip from share internet
 						$ip = $_SERVER['HTTP_CLIENT_IP'];
@@ -5119,14 +5131,26 @@ public function GetEmployee(){
 					'ip_address'	=> $ip
 				);
 				// $data = $this->BusinessAdminModel->CancelBills($data);	
-				$result = $this->BusinessAdminModel->BusinessAdminByEmail($this->session->userdata['logged_in']['business_admin_email']);	
-				$txn_details=$this->BusinessAdminModel->DetailsById($_POST['txn_id'],'mss_transactions','txn_id');
-				$cust_id=$txn_details['res_arr']['txn_customer_id'];
-				$pending_amount= $txn_details['res_arr']['txn_pending_amount'];
-				$result2= $this->BusinessAdminModel->UpdateCustomerPendingAmount($cust_id,$pending_amount);
+				
+					$result = $this->BusinessAdminModel->BusinessAdminByEmail($this->session->userdata['logged_in']['business_admin_email']);	
+					if($_POST['txn_type']=='Service'){
+						$txn_details=$this->BusinessAdminModel->DetailsById($_POST['txn_id'],'mss_transactions','txn_id');
+						$cust_id=$txn_details['res_arr']['txn_customer_id'];
+						$pending_amount= $txn_details['res_arr']['txn_pending_amount'];
+						$result2= $this->BusinessAdminModel->UpdateCustomerPendingAmount($cust_id,$pending_amount);
+					}else{
+						$txn_details=$this->BusinessAdminModel->DetailsById($_POST['txn_id'],'mss_package_transactions','package_txn_id');
+						$cust_id=$txn_details['res_arr']['package_txn_customer_id'];
+						$pending_amount= $txn_details['res_arr']['package_txn_pending_amount'];
+						$result2= $this->BusinessAdminModel->UpdateCustomerPendingAmount($cust_id,$pending_amount);
+					}
 
 				if(password_verify($_POST['password'],$result['res_arr']['business_admin_password']))	{
-					$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');	
+					if($_POST['txn_type']=='Package'){
+						$result = $this->BusinessAdminModel->Update($data,'mss_package_transactions','package_txn_id');
+					}else{
+						$result = $this->BusinessAdminModel->Update($data,'mss_transactions','txn_id');
+					}						
 					// log_message('info', 'Bill Edited By Admin id=' . $result['res_arr']['business_admin_id']);
 					log_message('Error','Bill Edited By Admin id='.$this->session->userdata['logged_in']['business_admin_id'].'IP'.$_SERVER['REMOTE_ADDR']);	
 					$this->BusinessAdminModel->Insert($data2,'mss_edit_bill_info');	
@@ -5848,6 +5872,7 @@ public function GetEmployee(){
 	public function ReSendBill(){
 		if($this->IsLoggedIn('business_admin')){	
 			$this->load->helper('ssl');//loading pdf helper
+			// $this->PrettyPrintArray($_POST);
 			if(isset($_POST) && !empty($_POST)){
 				$this->form_validation->set_rules('txn_id', 'Transaction Id', 'trim|required');
 				if ($this->form_validation->run() == FALSE){
@@ -5860,6 +5885,7 @@ public function GetEmployee(){
 						print(json_encode($data, JSON_PRETTY_PRINT));
 						die;
 				}else{
+					if($_POST['txn_type']=='Service'){
 						$data=array(
 							'txn_id' => $this->input->post('txn_id'),
 							'business_outlet_id' => $this->session->userdata['outlets']['current_outlet']
@@ -5879,14 +5905,35 @@ public function GetEmployee(){
 							$this->ReSendBillSms($res['customer_name'],$res['customer_mobile'],$res['business_outlet_name'],$res['txn_value'], $res['sender_id'],$res['api_key'], $bill_url);
 							$this->ReturnJsonArray(true,false,"Message Send.");
 							die;
-						}else{
+						}
+
+					}else{
+						$data=array(
+							'package_txn_id' => $this->input->post('txn_id'),
+							'business_outlet_id' => $this->session->userdata['outlets']['current_outlet']
+						);
+						$result = $this->BusinessAdminModel->GetCustomerPackageBillDetails($data);	
+            // $this->PrettyPrintArray($result);
+
+							if($result['success'] == 'true'){
+								//ReSend Bill SMS
+								$res =$result['res_arr'][0];							
+								// $customer_id=$res['customer_id'];
+								// $detail_id=$res['id'];
+								// $bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
+								// $bill_url = str_replace("https", "http", $bill_url);
+								// $bill_url = shortUrl($bill_url);
+								$this->ReSendPackageBillSms($res['customer_name'],$res['customer_mobile'],$res['salon_package_name'],$res['salon_package_validity'], $res['sender_id'],$res['api_key']);
+								$this->ReturnJsonArray(true,false,"Message Send.");
+								die;
+							}else{
 							$this->ReturnJsonArray(false,true,$result['message']);
 							die;
-						}
+							}
 					}
 				}
-		}
-		else{
+			}
+		}else{
 			$this->LogoutUrl(base_url()."BusinessAdmin/Login/");
 		}
 	}
@@ -11896,6 +11943,32 @@ public function InsertSalary(){
 			$this->LogoutUrl(base_url()."BusinessAdmin/Login");
 		}				
 	}
+
+	public function ReSendPackageBillSms($customer_name, $mobile, $package_name, $package_validity, $sender_id, $api_key){
+		if($this->IsLoggedIn('business_admin')){
+			// $bill_url = $this->session->userdata('bill_url');
+			// error_log("URL ============1 ".$bill_url);
+			
+			$msg = "Dear ".$customer_name.", Thanks for Visiting. You've bought ".$package_name." Package Valid for  ".$package_validity." months. Look forward to serve you again!.";
+   		$msg = rawurlencode($msg);   //This for encode your message content                 		
+ 			
+ 			// API 
+			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+        
+  		$ch = curl_init($url);
+  		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+  		curl_setopt($ch,CURLOPT_POST,1);
+  		curl_setopt($ch,CURLOPT_POSTFIELDS,"");
+  		curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
+  		
+  		$data = curl_exec($ch);
+  		return json_encode($data);
+		}
+		else{
+			$this->LogoutUrl(base_url()."BusinessAdmin/Login");
+		}				
+	}
+
 
 	public function RePrintBill(){
 		$this->load->helper('pdfhelper');//loading pdf helper

@@ -1352,7 +1352,7 @@ class BusinessAdminModel extends CI_Model {
         mss_customers.customer_name AS 'Customer Name',
         ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'MRP_MENU',
 		mss_transaction_services.txn_add_on_amount AS 'Add on Amt', 
-		(ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))+mss_transaction_services.txn_add_on_amount) AS 'MRP Amt_New',
+		ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))+mss_transaction_services.txn_add_on_amount AS 'MRP Amt_New',
         mss_transactions.txn_discount AS 'Discount Amt',
         mss_transactions.txn_value AS 'Billed Amount',
 		mss_transactions.txn_pending_amount AS 'Pending Amount',		
@@ -4018,6 +4018,7 @@ class BusinessAdminModel extends CI_Model {
 				ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'mrp',
 				mss_transaction_services.txn_service_discount_percentage AS 'disc1',
         		mss_transaction_services.txn_service_discount_absolute AS 'disc2',
+                mss_transaction_services.txn_add_on_amount AS 'add_on',
 				mss_transaction_services.txn_service_service_id AS 'service_id',
 				mss_transaction_services.txn_service_quantity,
 				mss_transaction_services.txn_service_discounted_price,
@@ -10165,7 +10166,22 @@ $sql = str_replace(",)",")",$sql);
     }
 
     public function GetCustomerPackageBill($where){
-        $sql = "SELECT mss_package_transactions.package_txn_value, mss_package_transactions.package_txn_unique_serial_id, Date(mss_package_transactions.datetime) AS 'date', mss_customers.customer_id, mss_customers.customer_name, mss_customers.customer_mobile, mss_business_outlets.business_outlet_sender_id AS 'sender_id', mss_business_outlets.api_key, mss_business_outlets.business_outlet_name, mss_transaction_cart.id FROM mss_package_transactions, mss_customers, mss_business_outlets, mss_transaction_cart WHERE mss_business_outlets.business_outlet_id =  ".$this->db->escape($where['business_outlet_id'])." AND mss_package_transactions.package_txn_id = ".$this->db->escape($where['txn_id'])." group by mss_package_transactions.package_txn_id";
+            $sql = "SELECT 
+            mss_package_transactions.package_txn_value, 
+            mss_package_transactions.package_txn_unique_serial_id, 
+            date(mss_package_transactions.datetime) AS 'date', 
+            mss_customers.customer_id, 
+            mss_customers.customer_name, 
+            mss_customers.customer_mobile, 
+            mss_business_outlets.business_outlet_sender_id AS 'sender_id', 
+            mss_business_outlets.api_key, 
+            mss_business_outlets.business_outlet_name, 
+            mss_transaction_cart.id 
+            FROM mss_package_transactions, 
+            mss_customers, 
+            mss_business_outlets, 
+            mss_transaction_cart 
+            WHERE mss_business_outlets.business_outlet_id =  ".$this->db->escape($where['business_outlet_id'])." AND mss_package_transactions.package_txn_id = ".$this->db->escape($where['txn_id'])." group by mss_package_transactions.package_txn_id";
         
          $query = $this->db->query($sql);
          if($query){
@@ -10175,6 +10191,40 @@ $sql = str_replace(",)",")",$sql);
              return $this->ModelHelper(false,true,"DB error!");   
          }
     }
+
+    public function GetCustomerPackageBillDetails($where){
+        $sql = "SELECT    
+        mss_package_transactions.package_txn_value,
+        mss_salon_packages.salon_package_name,
+        mss_salon_packages.salon_package_validity,
+		mss_customers.customer_id,
+        mss_customers.customer_name, 
+        mss_customers.customer_mobile, 
+        mss_business_outlets.business_outlet_sender_id AS 'sender_id', 
+        mss_business_outlets.api_key, 
+        mss_business_outlets.business_outlet_name
+    FROM 
+        mss_package_transactions, 
+        mss_transaction_package_details,
+        mss_customers, 
+        mss_business_outlets, 
+        mss_salon_packages
+    WHERE 
+        mss_transaction_package_details.package_txn_id = mss_package_transactions.package_txn_id AND
+        mss_salon_packages.salon_package_id = mss_transaction_package_details.salon_package_id AND
+        mss_customers.customer_id = mss_package_transactions.package_txn_customer_id AND
+        mss_package_transactions.package_txn_id = ".$this->db->escape($where['package_txn_id'])." AND
+        mss_business_outlets.business_outlet_id = ".$this->db->escape($where['business_outlet_id'])."        
+    GROUP BY mss_package_transactions.package_txn_id ";
+    
+     $query = $this->db->query($sql);
+     if($query){
+         return $this->ModelHelper(true,false,'',$query->result_array());
+     }
+     else{
+         return $this->ModelHelper(false,true,"DB error!");   
+     }
+}
 	
 	public function GetTransactionDetailByTxnId($where){
         $sql = "SELECT mss_customers.customer_name,

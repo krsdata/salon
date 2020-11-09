@@ -80,7 +80,7 @@
                                                     <td><?=$tag['no_rules']?></td>
                                                     <td><?=$tag['datetime']?></td>
                                                     <td><?=$tag['customers']?></td>
-                                                    <td style="width:30px"><button type="submit" style="float:right;margin-left:0%" class="btn btn-primary Edit" tag_id="<?=$tag['tag_id']?>">Edit</button></td>
+                                                    <td style="width:30px"><button type="submit" style="float:right;margin-left:0%" class="btn btn-primary Edit" tag_id="<?=$tag['tag_id']?>">View</button></td>
                                                     <td style="width:30px"><button type="submit" style="text-align:center" class="btn btn-primary Delete" tag_id="<?=$tag['tag_id']?>">Delete</button></td>
                                                     <td style="width:30px"><button type="submit" style="float:left" class="btn btn-primary Download" tag_id="<?=$tag['tag_id']?>">Download</button></td>
                                                     
