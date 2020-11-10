@@ -1124,31 +1124,47 @@ class Cashier extends CI_Controller {
 				else{	
 					$customer_id = $this->input->post('customer_id');
 					$total_bill= $this->input->post('total_bill'); 
-					$coupon_code= $this->input->post('coupon_code');
+					$coupon_code= strtoupper($this->input->post('coupon_code'));
 					$curr_sess_cart_data = $this->session->userdata['cart'][''.$customer_id.''];
 					$where=array(
 						'customer_id'=>$this->input->post('customer_id'),
-						'coupon_code'=>$this->input->post('coupon_code'),
+						'coupon_code'=> strtoupper($this->input->post('coupon_code')),
+						'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id'],
+						'business_admin_id'	=>$this->session->userdata['logged_in']['business_admin_id']
+					);
+					$where2=array(
+						'coupon_code'=> strtoupper($this->input->post('coupon_code')),
 						'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id'],
 						'business_admin_id'	=>$this->session->userdata['logged_in']['business_admin_id']
 					);
 					$code_info=$this->CashierModel->GetDealInfo($where);
-				// 	$this->PrettyPrintArray($code_info);
-					if($code_info['success'] == 'false')
+					if($code_info['success'] == 'false'){
+						$code_info_for_all=$this->CashierModel->GetAllDealInfo($where2);
+					}
+					// print_r($code_info_for_all);
+					//  $this->PrettyPrintArray($code_info_for_all);
+					if($code_info['success'] == 'false' && $code_info_for_all['success'] == 'false')
 					{
 						$this->ReturnJsonArray(false,true,"No coupon found!");
 						die;
-						// $code_info=['res_arr'=>''];
-						// $code_info=$code_info['res_arr'];
+						
 					}else{
 						$code_info=$code_info['res_arr'];
+						if(empty($code_info) || $code_info==null || $code_info==""){
+							if($code_info_for_all['res_arr'][0]['deal_for']=="All"){
+								$code_info = $code_info_for_all['res_arr'];	
+							}else{
+							$this->ReturnJsonArray(false,true,"Coupon is Not valid for This Customer.");
+							die;
+							}
+						}
+						// $this->PrettyPrintArray($code_info);
 						$service_arr=array();
 						foreach($code_info as $info){
 							array_push($service_arr,$info['service_id']);
 						}
 
-						// $this->PrettyPrintArray($service_arr);
-						if($code_info[0]['deal_code']==$coupon_code && $total_bill > $code_info[0]['minimum_amt'] && $total_bill < $code_info[0]['maximum_amt'] && substr($code_info[0]['start_time'],0,5) < substr(date("H:i:s"),0,5) && substr($code_info[0]['end_time'],0,5) > substr(date("H:i:s"),0,5)){
+						if($code_info[0]['deal_code']==$coupon_code && $total_bill >= $code_info[0]['minimum_amt'] && $total_bill <= $code_info[0]['maximum_amt'] && substr($code_info[0]['start_time'],0,5) < substr(date("H:i:s"),0,5) && substr($code_info[0]['end_time'],0,5) > substr(date("H:i:s"),0,5)){
 							$session_data=array();
 							if(isset($curr_sess_cart_data) || empty($curr_sess_cart_data)){
 								foreach($curr_sess_cart_data as $data){
@@ -1156,11 +1172,12 @@ class Cashier extends CI_Controller {
 										$data['service_discount_percentage']=$code_info[0]['discount'];
 										array_push($session_data,$data);
 									}else{
-										// $data['service_discount_percentage']=$code_info[0]['discount'];
 									  array_push($session_data,$data);
 									}
 								}
 							}
+							// $this->PrettyPrintArray($session_data);
+
 							$curr_sess_cart_data  = ["".$this->input->post('customer_id')."" => $session_data];
 							$this->session->set_userdata('cart', $curr_sess_cart_data);
 							// $this->session->userdata['cart'][''.$customer_id.'']=$session_data;
