@@ -66,7 +66,7 @@ class CronModel extends CI_Model {
             AND mss_transaction_services.txn_service_service_id= mss_services.service_id
             AND mss_employees.employee_business_outlet= ".$this->db->escape($data['business_outlet_id'])." 
             AND date(mss_transactions.txn_datetime) = ".$this->db->escape($data['date'])."
-            AND mss_services.inventory_type_id in ('0')
+            AND mss_services.inventory_type_id in ('0','2')
             GROUP BY mss_services.inventory_type_id";            
         $query = $this->db->query($sql);        
         if($query){
