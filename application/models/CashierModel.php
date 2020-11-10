@@ -541,15 +541,18 @@ class CashierModel extends CI_Model {
 								$split_loyalty_payment= $v['payment_type'];
 								$payment_form_rewards= $v['amount_received'];
 							}
-							// //
-							// if($v['payment_type']=="Virtual_Wallet"){
-							// 	$payment_type= $v['payment_type'];
-							// 	$payment_amount= $v['amount_received'];
-							// }
+							
+							if($v['payment_type']=="Virtual_Wallet"){
+								$payment_type_virtual= $v['payment_type'];
+								$payment_amount_virtual= $v['amount_received'];
+							}else{
+								$payment_amount_virtual= 0;	
+							}
 						}
+
 						$data_cashback = array(
 							'business_outlet_id' => $outlet_id,
-							'net_amount' => ($data['txn_data']['txn_value']- $payment_form_rewards)
+							'net_amount' => ($data['txn_data']['txn_value']- ($payment_form_rewards + $payment_amount_virtual))
 						);
 						    
 					}else{
@@ -2505,8 +2508,10 @@ class CashierModel extends CI_Model {
 		mss_package_transaction_settlements,
 		mss_customers
 		WHERE
-		mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
-		mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
+		
+		mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id 
+		AND	mss_package_transactions.package_txn_status = 1
+		AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
 		AND mss_package_transactions.package_txn_expert=mss_employees.employee_id
 		AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."
 		AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
@@ -2544,6 +2549,7 @@ class CashierModel extends CI_Model {
 			 WHERE
 			mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
 			mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
+			AND	mss_package_transactions.package_txn_status = 1
 			AND mss_package_transactions.package_txn_cashier =mss_employees.employee_id
 			AND date(mss_package_transactions.datetime) = date(now())
 			AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
@@ -2832,6 +2838,7 @@ class CashierModel extends CI_Model {
         mss_customers,
         mss_employees
         where date(mss_package_transactions.datetime) = date(now())
+		AND	mss_package_transactions.package_txn_status = 1
         AND mss_package_transactions.package_txn_cashier= mss_employees.employee_id
         AND mss_package_transactions.package_txn_customer_id=mss_customers.customer_id
         AND mss_employees.employee_business_admin=".$this->session->userdata['logged_in']['business_admin_id']."
@@ -3346,6 +3353,7 @@ class CashierModel extends CI_Model {
                     mss_package_transaction_settlements
                 WHERE
                     mss_package_transactions.package_txn_id = mss_transaction_package_details.package_txn_id
+					AND	mss_package_transactions.package_txn_status = 1
                     AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_txn_id
                     AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
                     AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
