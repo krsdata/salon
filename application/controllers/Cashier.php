@@ -1163,31 +1163,44 @@ class Cashier extends CI_Controller {
 						foreach($code_info as $info){
 							array_push($service_arr,$info['service_id']);
 						}
-
-						if($code_info[0]['deal_code']==$coupon_code && $total_bill >= $code_info[0]['minimum_amt'] && $total_bill <= $code_info[0]['maximum_amt'] && substr($code_info[0]['start_time'],0,5) < substr(date("H:i:s"),0,5) && substr($code_info[0]['end_time'],0,5) > substr(date("H:i:s"),0,5)){
-							$session_data=array();
-							if(isset($curr_sess_cart_data) || empty($curr_sess_cart_data)){
-								foreach($curr_sess_cart_data as $data){
-									if(in_array($data['service_id'],$service_arr)){
-										$data['service_discount_percentage']=$code_info[0]['discount'];
-										array_push($session_data,$data);
-									}else{
-									  array_push($session_data,$data);
+						//get  No of Redemption
+						$deal_redemption_count= $this->CashierModel->GetCustomerDealRedemptionCount($where);
+						// $this->PrettyPrintArray($deal_redemption_count);
+						if($deal_redemption_count['res_arr'][0]['count'] < $code_info[0]['total_services']){
+							if($code_info[0]['deal_code']==$coupon_code && $total_bill >= $code_info[0]['minimum_amt'] && $total_bill <= $code_info[0]['maximum_amt'] && substr($code_info[0]['start_time'],0,5) < substr(date("H:i:s"),0,5) && substr($code_info[0]['end_time'],0,5) > substr(date("H:i:s"),0,5)){
+								$session_data=array();
+								if(isset($curr_sess_cart_data) || empty($curr_sess_cart_data)){
+									foreach($curr_sess_cart_data as $data){
+										if(in_array($data['service_id'],$service_arr)){
+											$data['service_discount_percentage']=$code_info[0]['discount'];
+											array_push($session_data,$data);
+										}else{
+											array_push($session_data,$data);
+										}
 									}
 								}
+								
+								$coupon=array(
+									'deal_id'		=> $code_info[0]['deal_id'],
+									'deal_code' => $coupon_code,
+									'discount'	=> $code_info[0]['discount']
+								); 
+								$curr_sess_cart_data  = ["".$this->input->post('customer_id')."" => $session_data];
+								$this->session->set_userdata('cart', $curr_sess_cart_data);
+								$this->session->set_userdata('coupon_details', $coupon);
+								// $this->PrettyPrintArray($this->session->userdata());
+								// $this->session->userdata['cart'][''.$customer_id.'']=$session_data;
+								// $this->session->set_userdata('cart', $session_data);
+								// $this->PrettyPrintArray($this->session->userdata['cart'][''.$customer_id.'']);
+								$this->ReturnJsonArray(true,false,"Coupon applied successfully!");
+								die;
+							}else{
+								$this->ReturnJsonArray(false,true,"Invalid Coupon!");
+								die;
 							}
-							// $this->PrettyPrintArray($session_data);
-
-							$curr_sess_cart_data  = ["".$this->input->post('customer_id')."" => $session_data];
-							$this->session->set_userdata('cart', $curr_sess_cart_data);
-							// $this->session->userdata['cart'][''.$customer_id.'']=$session_data;
-							// $this->session->set_userdata('cart', $session_data);
-							// $this->PrettyPrintArray($this->session->userdata['cart'][''.$customer_id.'']);
-							$this->ReturnJsonArray(true,false,"Coupon applied successfully!");
-							die;
 						}else{
-							$this->ReturnJsonArray(false,true,"Invalid Coupon!");
-							die;
+							$this->ReturnJsonArray(false,true,"You Have Redeemed Maximum Count!");
+								die;
 						}
 					}					
 				}

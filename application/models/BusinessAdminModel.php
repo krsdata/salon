@@ -8097,6 +8097,36 @@ $sql = str_replace(",)",")",$sql);
            return $this->ModelHelper(false,true,"No Data Found!");
         } 
 	}
+
+	//Redeem Deals
+	public function GetDealRedemption($where){
+        $sql = "SELECT 
+		mss_customers.customer_name,
+		mss_customers.customer_mobile,
+		mss_deal_redemption.deal_id,
+		mss_deal_redemption.txn_id,
+		mss_deal_redemption.txn_unique_serial_id,
+		mss_deal_redemption.deal_code,
+		mss_deal_redemption.total_discount,
+		mss_deal_redemption.datetime,
+		mss_transactions.txn_value
+	FROM
+		mss_customers,
+		mss_deal_redemption,
+		mss_transactions
+	WHERE
+		mss_deal_redemption.txn_id = mss_transactions.txn_id AND
+		mss_deal_redemption.customer_id = mss_customers.customer_id AND
+		mss_deal_redemption.business_outlet_id = ".$this->db->escape($where['business_outlet_id'])." ";
+        //execute the query
+        $query = $this->db->query($sql);
+        if($query->num_rows() >0){
+           return $this->ModelHelper(true,false,'',$query->result_array());
+        } 
+        else{
+           return $this->ModelHelper(false,true,"No Data Found!");
+        } 
+	}
 	
 	//04-05-2020
     public function ServicesAll($where){
