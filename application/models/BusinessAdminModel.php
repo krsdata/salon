@@ -944,6 +944,7 @@ class BusinessAdminModel extends CI_Model {
                 WHERE
                     mss_package_transactions.package_txn_id = mss_transaction_package_details.package_txn_id
                     AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_txn_id
+					AND	mss_package_transactions.package_txn_status = 1
                     AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
                     AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
 					AND mss_package_transactions.package_txn_expert= mss_employees.employee_id
@@ -1289,6 +1290,7 @@ class BusinessAdminModel extends CI_Model {
                     mss_transaction_package_details
                 WHERE
                     mss_package_transactions.package_txn_id = mss_transaction_package_details.package_txn_id
+					AND	mss_package_transactions.package_txn_status = 1
                     AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
                     AND mss_salon_packages.business_admin_id = ".$this->db->escape($data['business_admin_id'])."
                     AND mss_salon_packages.business_outlet_id = ".$this->db->escape($data['business_outlet_id'])."
@@ -2693,6 +2695,7 @@ class BusinessAdminModel extends CI_Model {
 					WHERE
 					mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
 					AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+					AND	mss_package_transactions.package_txn_status = 1
 					AND date(mss_package_transactions.datetime) = date(now())
 					AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])." 
 					AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."";
@@ -2774,6 +2777,7 @@ class BusinessAdminModel extends CI_Model {
 			mss_package_transaction_settlements,
 			mss_employees
 		WHERE 
+			mss_package_transactions.package_txn_status = 1 AND
 			mss_package_transactions.package_txn_id= mss_package_transaction_settlements.package_txn_id AND
 			mss_package_transaction_settlements.settlement_way='Split Payment' AND 
 			mss_package_transactions.package_txn_cashier=mss_employees.employee_id AND
@@ -2892,6 +2896,7 @@ class BusinessAdminModel extends CI_Model {
 				WHERE 
 					date(mss_package_transactions.datetime) >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH) AND
 					mss_package_transactions.package_txn_customer_id = mss_customers.customer_id 
+					AND	mss_package_transactions.package_txn_status = 1
 					AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_transaction_settlement_id
 					AND mss_package_transaction_settlements.settlement_way = 'Split Payment'
 					AND mss_customers.customer_business_admin_id =".$this->db->escape($where['business_admin_id'])."
@@ -3008,6 +3013,7 @@ class BusinessAdminModel extends CI_Model {
 				WHERE 
 					date(mss_package_transactions.datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH) AND
 					mss_package_transactions.package_txn_customer_id = mss_customers.customer_id 
+					AND	mss_package_transactions.package_txn_status = 1
 					AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_transaction_settlement_id
 					AND mss_package_transaction_settlements.settlement_way = 'Split Payment'
 					AND mss_customers.customer_business_admin_id =".$this->db->escape($where['business_admin_id'])."
@@ -3104,6 +3110,7 @@ class BusinessAdminModel extends CI_Model {
 		WHERE 
 			date(mss_package_transactions.datetime)= date(now()) AND
 			mss_package_transactions.package_txn_customer_id=mss_customers.customer_id AND
+			mss_package_transactions.package_txn_status = 1 AND
 			mss_customers.customer_business_admin_id=".$this->db->escape($data['business_admin_id'])." AND
 			mss_customers.customer_business_outlet_id=".$this->db->escape($data['business_outlet_id'])."";
 
@@ -3430,6 +3437,7 @@ class BusinessAdminModel extends CI_Model {
 		 FROM mss_package_transactions , 
 		 mss_employees 		
         WHERE mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+		AND	mss_package_transactions.package_txn_status = 1
         AND date(mss_package_transactions.datetime) BETWEEN date_add(date_add(LAST_DAY(CURRENT_DATE),INTERVAL 1 DAY),INTERVAL -1 MONTH) AND (CURRENT_DATE - INTERVAL 1 DAY)
         AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." ";
 
@@ -3447,6 +3455,7 @@ class BusinessAdminModel extends CI_Model {
 		$sql = "SELECT SUM(mss_package_transactions.package_txn_value) AS package_sales
 		FROM mss_package_transactions , mss_employees 		
         WHERE mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+		AND	mss_package_transactions.package_txn_status = 1
         AND date(mss_package_transactions.datetime) BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH,'%Y-%m-01') AND ((date(now())) - INTERVAL 1 MONTH - INTERVAL +1 DAY)
         AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."";
 
