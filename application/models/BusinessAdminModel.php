@@ -1350,9 +1350,8 @@ class BusinessAdminModel extends CI_Model {
         date(mss_transactions.txn_datetime) AS 'Bill Date',
         mss_customers.customer_mobile AS 'Mobile No',
         mss_customers.customer_name AS 'Customer Name',
-        ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)) AS 'MRP_MENU',
-		mss_transaction_services.txn_add_on_amount AS 'Add on Amt', 
-		ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))+mss_transaction_services.txn_add_on_amount AS 'MRP Amt_New',
+        (mss_transactions.txn_value + mss_transactions.txn_discount) AS 'MRP_MENU',
+		SUM(mss_transaction_services.txn_add_on_amount) AS 'Add on Amt', 
         mss_transactions.txn_discount AS 'Discount Amt',
         mss_transactions.txn_value AS 'Billed Amount',
 		mss_transactions.txn_pending_amount AS 'Pending Amount',		
@@ -1378,7 +1377,6 @@ class BusinessAdminModel extends CI_Model {
         AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
         AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." 
         AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])." GROUP BY mss_transactions.txn_id ";
-        
 
         $query = $this->db->query($sql);
         
