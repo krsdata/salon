@@ -6115,7 +6115,8 @@ public function GetEmployee(){
 	public function DealsDiscount(){
 		if($this->IsLoggedIn('business_admin')){
 			$where=array(
-				'business_admin_id'=> $this->session->userdata['logged_in']['business_admin_id']
+				'business_admin_id'=> $this->session->userdata['logged_in']['business_admin_id'],
+				'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
 			);
 				$data = $this->GetDataForAdmin("Deals & Discount");
 				$data['business_outlet_details'] = $this->GetBusinessOutlets();
@@ -6123,7 +6124,11 @@ public function GetEmployee(){
 				$data['deals']=$data['deals']['res_arr'];
 				$data['tag']=$this->BusinessAdminModel->GetTag($where);
 				$data['tag']=$data['tag']['res_arr'];
-				// $this->PrettyPrintArray($data['upcomingDate']);
+				// $this->PrettyPrintArray($where);
+
+				$data['deal_redeemed']=$this->BusinessAdminModel->GetDealRedemption($where);
+
+				$data['deal_redeemed']=$data['deal_redeemed']['res_arr'];
 				// exit;
 				$this->load->view('business_admin/ba_deals&discount_view',$data);
 		}
@@ -6182,6 +6187,7 @@ public function GetEmployee(){
 						'total_services'			=>$this->input->post('total_service'),
 						'discount'						=>$this->input->post('discount'),
 						'deal_for'						=>$this->input->post('tag_name'),
+						'deal_description'		=>$this->input->post('deal_description'),
 						'deal_business_outlet_id' 	=> $this->session->userdata['outlets']['current_outlet'],
 						'deal_business_admin_id' 	=> $this->session->userdata['logged_in']['business_admin_id']
 					);
