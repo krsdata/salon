@@ -1379,7 +1379,6 @@ class BusinessAdminModel extends CI_Model {
         AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
         AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])." 
         AND date(mss_transactions.txn_datetime) BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])." GROUP BY mss_transactions.txn_id ";
-        
 
         $query = $this->db->query($sql);
         
