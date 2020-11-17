@@ -862,10 +862,10 @@
 													<th>Package Type</th>
 													<th>Creation Date</th>
 													<!--<th>Current Status</th>-->
-													<th>Price</th>
-													<th>GST</th>
-													<th>Total</th>
-													<th>Validity (Months)</th>
+													<th>Gross Price</th>
+													<th>GST(Rs.)</th>
+													<th>MRP</th>
+													<th>Validity</th>
 													<th>Actions</th>
 												</tr>
 											</thead>
