@@ -84,7 +84,7 @@
 															<div class="row">
 																<div class="col-md-4">
 																	<h5 class="card-title"><a href="#" data-toggle="collapse" data-target="#collapseOneE" aria-expanded="true" aria-controls="collapseOneE">
-																	Service Transaction
+																	Bill Wise Transaction History
 																</a></h5>
 																</div>
 																
@@ -96,18 +96,17 @@
 																	<thead>
 																		<tr>
 																			<th>S.No</th>
-																			<th>Outlet</th>
-																			<th>Date</th>
-																			
-																			<th>Transaction Id</th>
-																			<th>Name</th>
+																			<th>Outlet Name</th>
+																			<th>Bil Date</th>																			
+																			<th>Bill No.</th>
+																			<th>Customer Name</th>
 																			<th>Mobile No.</th>
-																			<th>MRP Bill Amt</th>
+																			<th>MRP Amt</th>
 																			<th>Discount</th>
 																			<th>GST</th>
-																			<th>Pending Amount</th>
-																			<th>Net Payable Amt</th>
-																			<th>Loyalty Earned</th>
+																			<th>Pending Amt</th>
+																			<th>Billed Amt</th>
+																			<th>Rewards Earned</th>
 																			
 																		</tr>
 																	</thead>

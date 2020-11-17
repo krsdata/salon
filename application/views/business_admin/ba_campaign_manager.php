@@ -255,6 +255,7 @@ $this->load->view('business_admin/ba_header_view');
 			});
 
 			$("form#AddEmployee").submit(function(form) {
+				this.disabled=true;
 				form.preventDefault();
 				// form.preventDefault();
 				// var pdf = new formData();

@@ -49,15 +49,15 @@
 							<div class="card-header">
 								<div class="row">
 									<div class="col-md-9">
-										<h5 class="card-title">Configure Scheme</h5>
+										<h5 class="card-title">Configure New Deal</h5>
 									</div>									
 								</div>								
 							</div>
 							<div class="card-body">
 								<form method="POST" action="" id="addDeals">
 									<div class="form-row">
-										<div class="form-group col-md-3">
-											<label>Applicable to</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Select Customer Segment</label>
 											<select class="form-control" name="tag_name">
 											    <option value="All">All Customer</option>
                                                 <option value="New">New Customer</option>
@@ -70,34 +70,34 @@
                                             <?php }?>										
     											</select>
 										</div>
-										<div class="form-group col-md-3">
-											<label>Deals Name</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Deal Name</label>
 											<input type="text" name="deal_name" class="form-control" required placeholder="Deals Name" />
 										</div>
-										<div class="form-group col-md-3">
-											<label>Deals Code</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Deal Code</label>
 											<input type="text" name="deal_code" class="form-control" maxlength="8" minlength="4" placeholder="Deals Code" required />
 										</div>
 										<div class="form-group col-md-3">
-											<label>Price</label>
-											<input type="number" class="form-control" name="deal_price" placeholder="Deals Price" required />	
+											<label>Deal Description</label>
+											<input type="text" class="form-control" name="deal_description" placeholder="Deals Description" />	
 										</div>
 									</div>
 									<div class="form-row">
-										<div class="form-group col-md-3">
-											<label>Validity</label>
-											<input type="text" class="form-control" name="daterange" required />
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Validity</label>
+											<input type="text" class="form-control " name="daterange" required />
 										</div>
-										<div class="form-group col-md-3">
-											<label>Deals Time From</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Deal Time From</label>
 											<input type="time" name="start_time" class="form-control" required />
 										</div>
-										<div class="form-group col-md-3">
-											<label>To</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">To</label>
 											<input type="time" name="end_time" class="form-control" required />
 										</div>
-										<div class="form-group col-md-3">
-											<label>Applicable on Weekends</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Applicable on Weekends</label>
 											<select name="weekend" class="form-control">
 												<option value="1">Yes</option>
 												<option value="0">No</option>
@@ -105,22 +105,22 @@
 										</div>
 									</div>
 									<div class="form-row">
-										<div class="form-group col-md-3">
-											<label>Applicable on national holidays</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Applicable on National Holidays</label>
 											<select name="national_holiday" class="form-control">
 												<option value="1">Yes</option>
 												<option value="0">No</option>
 											</select>
 										</div>
-										<div class="form-group col-md-3">
-											<label>Applicable on Bday/Anni.</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Applicable on B'day/Anniv.</label>
 											<select name="bday_anni" class="form-control">
 												<option value="1">Yes</option>
 												<option value="0">No</option>
 											</select>
 										</div>
-										<div class="form-group col-md-3">
-											<label>Select weekdays</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Select Weekdays</label>
 											<select name="weekday" class="form-control">
 												<option value="all">Select All</option>
 												<option value="monday">Monday</option>
@@ -132,8 +132,8 @@
 												<option value="monday">Sunday</option>
 											</select>
 										</div>
-										<div class="form-group col-md-3">
-											<label>Benifit Type</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Benefit Type</label>
 											<select name="benifit_type" class="form-control">
 												<option value="discount">Discount</option>
 												<!-- <option value="cashback">Cashback</option> -->
@@ -142,30 +142,31 @@
 										</div>
 									</div>
 									<div class="form-row">
-										<div class="form-group col-md-3">
-											<label>Invoice Min Amount</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Invoice Min Amount</label>
 											<input type="number" class="form-control" name="minimum_amt" placeholder="Invoice Min Amount" required />
 										</div>
-										<div class="form-group col-md-3">
-											<label>Invoice Max Amount</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Invoice Max Amount</label>
 											<input type="number" class="form-control" name="maximum_amt" placeholder="Invoice Max Amount" required />
 										</div>
-										<div class="form-group col-md-3">
-											<label>Total Redemptions</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label"># Redemptions(Max)</label>
 											<input type="number" class="form-control" name="total_service" placeholder="Total Number of Redemptions" required>
 										</div>
-										<div class="form-group col-md-3">
-											<label>Discount</label>
+										<div class="form-group col-md-3 required">
+											<label class="control-label">Discount</label>
 											<input type="number" class="form-control" name="discount" placeholder="Discount % " required />
 										</div>
 									</div>
 									<div class="form-row">
+										
 										<table id="specialMembershipTable1" class="table">
 											<tbody>
 												<tr>
 													<td style="width:30%;">
 														<div class="form-group">
-															<!-- <label>Cat. Type</label> -->
+														<label><b>Select Service / Product</b></label>
 															<select class="form-control" name="category_type1[]">
 																<option value="" selected>Category type</option>
 																<option value="Service">Service</option>
@@ -175,19 +176,19 @@
 													</td>
 													<td style="width:30%;">
 														<div class="form-group">
-															<!-- <label>Min Price</label> -->
+														<label><b>Minimum Value</b></label>
 															<input type="text" class="form-control" name="min_price1[]" temp="min_price1" placeholder="Min Price">
 														</div>
 													</td>
 													<td style="width:30%;">
 														<div class="form-group">
-															<!-- <label>Max Price</label> -->
+														<label><b>Maximum Value</b></label>
 															<input type="text" class="form-control" min="0" name="max_price1[]"  placeholder="Max Price" >
 														</div>
 													</td>		
 													<td style="width:10%;">
-													<button type="button" class="btn btn-success mb-1 ml-1" id="AddRowSpecialMembership1"><i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
-											<button type="button" class="btn btn-danger mb-1" id="DeleteRowSpecialMembership1"><i class="fa fa-trash" aria-hidden="true"></i></button>
+													<button type="button" class="btn btn-success ml-1" id="AddRowSpecialMembership1"><i class="fa fa-plus" aria-hidden="true"></i></button>&ensp;
+											<button type="button" class="btn btn-danger" id="DeleteRowSpecialMembership1"><i class="fa fa-trash" aria-hidden="true"></i></button>
 													</td>											
 												</tr>																				
 											</tbody>
@@ -366,12 +367,13 @@
 											<th>Sr No.</th>
 											<th>Deal Name</th>
 											<th>Deal Code</th>
-											<th>Valid From</th>
-											<th>To</th>
-											<th>App. For</th>
-											<th>Benifit Type</th>
-											<th>Benifit</th>
-											<th>Number Of Redemptions</th>
+											<th>Valid Date Range</th>
+											<th>Valid Time Range</th>
+											<th># Redemptions(Max)</th>
+											<th>Benefit Value</th>
+											<th>Benefit Type</th>
+											<!-- <th>Customer Segment(Tags)</th> -->
+											<th>Base Count</th>
 										</tr>
 									</thead>
 										<tbody>
@@ -385,10 +387,61 @@
 													<td><?=$deals['deal_code']?></td>
 													<td><?=$deals['start_date']?></td>
 													<td><?=$deals['end_date']?></td>
-													<td><?=$deals['tag_id']?></td>
-													<td><?=$deals['benifit_type']?></td>
+													<td><?=$deals['total_services']?></td>
 													<td><?=$deals['discount']?> %</td>
-													<td>10</td>
+													<td><?=$deals['benifit_type']?></td>
+													<td><?=$deals['total_services']?></td>
+												</tr>	
+												<?php	
+														$index = $index + 1;	
+													endforeach;
+												?>
+								
+										</tbody>
+								</table>
+							</div>
+						</div>	
+					</div>
+					<div class="col-md-12">
+						<div class="card">
+							<div class="card-header">
+								<div class="row">
+									<div class="col-md-9">
+										<h5 class="card-title">Redemption Data</h5>
+									</div>
+									<div class="col-md-3">
+											<button class="btn btn-primary mb-2" onclick="exportTableToExcel('redemptionTable','Deals')"><i class="fa fa-file-export"></i>Export</button>
+									</div>
+								</div>								
+							</div>
+							<div class="card-body">
+								<table class="table table-striped datatables-basic" style="width:100%" id="redemptionTable">
+									<thead>
+										<tr>
+											<th>Sr No.</th>
+											<th>Transaction Date</th>
+											<th>Bill No.</th>
+											<th>Deal Code</th>
+											<th>Customer Mobile</th>
+											<th>Customer Name</th>
+											<th>Txn Value</th>
+											<th>Deal Discount(Rs.)</th>
+										</tr>
+									</thead>
+										<tbody>
+										<?php
+													$index = 1;
+													foreach ($deal_redeemed as $deal_redeemed):
+												?>
+												<tr>
+													<td><?=$index;?></td>
+													<td><?=$deal_redeemed['datetime']?></td>
+													<td><?=$deal_redeemed['txn_unique_serial_id']?></td>
+													<td><?=$deal_redeemed['deal_code']?></td>
+													<td><?=$deal_redeemed['customer_mobile']?></td>
+													<td><?=$deal_redeemed['customer_name']?></td>
+													<td><?=$deal_redeemed['txn_value']?></td>
+													<td><?=$deal_redeemed['total_discount']?> %</td>
 												</tr>	
 												<?php	
 														$index = $index + 1;	

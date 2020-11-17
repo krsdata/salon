@@ -219,10 +219,10 @@
 									<div class="card-header">
 									<div class="row">
 											<div class="col-md-6">
-											<h5 class="card-title">Added Employees</h5>
+											<h5 class="card-title">Employee Details</h5>
 											</div>								
 											<div class="col-md-6">
-											<button class="btn btn-success float-right" data-toggle="modal" data-target="#ModalAddEmployee"><i class="fas fa-fw fa-plus"></i>Add Expert</button>
+											<button class="btn btn-success float-right" data-toggle="modal" data-target="#ModalAddEmployee"><i class="fas fa-fw fa-plus"></i>Add Employee</button>
 											</div>
 										</div>
 										
