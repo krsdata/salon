@@ -70,59 +70,59 @@
                             <div class="card-body">
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="tab-1" role="tabpanel">
-                                    <div class="row">
-										<div class="form-group col-md-6">
-                                            <button class="btn btn-success mb-2" data-toggle="modal"
-                                            data-target="#ModalAddExpense"><i class="fas fa-fw fa-plus"></i>Add
-                                            Expense</button>
-                                            <!-- <button class="btn btn-primary float-right mb-2"
-                                            onclick="exportTableToExcel('adminExpense','Expense')"><i
-                                                class="fa fa-file-export"></i>Export</button> -->
-                                        </div> 
-                                        <div class="form-group col-md-2">       
-                                                <select id="expense_group" class="btn form-control" style="font-weight:bold;background-color:#f7f7f8"> 
-                                                    <option selected disabled>Select</option>
-                                                    <option value="7days">Last 7 Days</option>
-                                                    <option value="30days">Last 30 Days</option>
-                                                    <option value="mtd">MTD</option>
-                                                    <option value="range">Date Range</option>
-                                                </select>
-                                        </div> 
-                                        <!--<div class="form-group col-md-2" id="altrdiv">-->
+										<div class="row">
+											<div class="form-group col-md-6">
+												<button class="btn btn-success mb-2" data-toggle="modal"
+												data-target="#ModalAddExpense"><i class="fas fa-fw fa-plus"></i>Add
+												Expense</button>
+												<!-- <button class="btn btn-primary float-right mb-2"
+												onclick="exportTableToExcel('adminExpense','Expense')"><i
+													class="fa fa-file-export"></i>Export</button> -->
+											</div> 
+											<div class="form-group col-md-2">       
+													<select id="expense_group" class="btn form-control" style="font-weight:bold;background-color:#f7f7f8"> 
+														<option selected disabled>Select</option>
+														<option value="7days">Last 7 Days</option>
+														<option value="30days">Last 30 Days</option>
+														<option value="mtd">MTD</option>
+														<option value="range">Date Range</option>
+													</select>
+											</div> 
+											<!--<div class="form-group col-md-2" id="altrdiv">-->
 
-                                        <!--</div>       -->
-                                        <div class="form-group col-md-2" id="hide" hidden>        
-                                                <!-- <input type="text" name="to_date"  id="to_date" class="btn bg-white date" placeholder="To Date" hidden> -->
-                                                <input class="form-control" type="text" id="daterange" name="daterange" style="float: right" placeholder="Select Range"/>
-                                        </div>
-                                        <!-- <div class="btn bg-white col-sm-2">       
-                                                <input type="text" name="from_date" id="from_date" style="float: left" class="btn bg-white date" placeholder="From Date" hidden>
-                                        </div>
-                                        <div class="btn bg-white col-md-2">        
-                                                <input type="text" name="to_date" style="float: left" id="to_date" class="btn bg-white date" placeholder="To Date" hidden>
-                                        </div> -->
-                                        <div class="form-group col-md-2">        
-                                            <button class="btn btn-primary download float-left mb-2" style="float: right" id="download"><i
-                                                class="fa fa-download"></i>Download</button>  
-                                        </div>
-                                    </div>    
+											<!--</div>       -->
+											<div class="form-group col-md-2" id="hide" hidden>        
+													<!-- <input type="text" name="to_date"  id="to_date" class="btn bg-white date" placeholder="To Date" hidden> -->
+													<input class="form-control" type="text" id="daterange" name="daterange" style="float: right" placeholder="Select Range"/>
+											</div>
+											<!-- <div class="btn bg-white col-sm-2">       
+													<input type="text" name="from_date" id="from_date" style="float: left" class="btn bg-white date" placeholder="From Date" hidden>
+											</div>
+											<div class="btn bg-white col-md-2">        
+													<input type="text" name="to_date" style="float: left" id="to_date" class="btn bg-white date" placeholder="To Date" hidden>
+											</div> -->
+											<div class="form-group col-md-2">        
+												<button class="btn btn-primary download float-left mb-2" style="float: right" id="download"><i
+													class="fa fa-download"></i>Download</button>  
+											</div>
+										</div>    
                                         <table class="table table-hover table-striped datatables-basic"
                                             id="adminExpense" style="width: 100%;text-align:center">
                                             <thead>
                                                 <tr class="text-primary">
                                                     <!--<th>Sr No</th>-->
                                                     <th>Expense Id</th>
-                                                    <th>Date</th>
-                                                    <th>Expense Type</th>
+                                                    <th>Expense Date</th>
+                                                    <th>Expense Category</th>
                                                     <th>Item Name</th>
-                                                    <th>Cashier Name</th>
-                                                    <th>Payement Type</th>
-                                                    <th>Paid To</th>
-                                                    <th>Total Amount</th>
+                                                    <th>Party Name</th>
+                                                    <!-- <th>Paid To</th> -->
+                                                    <th>Total Amt</th>
                                                     <th>Amount</th>
-                                                    <th>Pending Amount</th>
-                                                    <th>Mode</th>
-                                                    <th>Payment Status</th>
+                                                    <th>Due Amount</th>
+                                                    <th>Pay Mode</th>
+													<th>Status</th>
+													<th>Cashier</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -135,15 +135,15 @@
                                                     <td><?=$expense['expense_unique_serial_id']?></td>
                                                     <td><?=$expense['expense_date']?></td>
                                                     <td><?=$expense['expense_type']?></td>
-                                                    <td><?=$expense['item_name']?></td>
-                                                    <td><?=$expense['employee_name']?></td>
-                                                    <td><?=$expense['payment_type']?></td>
+                                                    <td><?=$expense['item_name']?></td>                                                    
+                                                    <!-- <td><?=$expense['payment_type']?></td> -->
                                                     <td><?=$expense['payment_to_name']?></td>
                                                     <td><?=$expense['total_amount']?></td>
                                                     <td><?=$expense['amount']?></td>
                                                     <td><?=$expense['pending_amount']?></td>
                                                     <td><?=$expense['payment_mode']?></td>
-                                                    <td><?=$expense['expense_status']?></td>
+													<td><?=$expense['expense_status']?></td>
+													<td><?=$expense['employee_name']?></td>
                                                 </tr>
                                                 <?php	                    	
 												endforeach;
@@ -541,7 +541,7 @@
                                             <form id="AddDailyExpenses" method="POST" action="#">
                                                 <div class="row">
                                                     <div class="form-group col-md-3">
-                                                        <label align="center">Entry Date</label>
+                                                        <label>Entry Date</label>
                                                         <br>
                                                         <!-- <label><?php echo date('d-m-Y'); ?></label> -->
                                                         <input class="form-control" type="text" name="entry_date"  >

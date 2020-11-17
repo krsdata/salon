@@ -731,7 +731,23 @@ class BusinessAdminModel extends CI_Model {
     }
 
     public function GetAllPackages($where){
-        $sql = "SELECT * FROM mss_salon_packages WHERE business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND business_outlet_id = ".$this->db->escape($where['business_outlet_id'])."";
+        $sql = "SELECT * FROM mss_salon_packages 
+		WHERE business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND 
+		business_outlet_id = ".$this->db->escape($where['business_outlet_id'])." AND is_active=1";
+
+        $query = $this->db->query($sql);
+        
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	public function DeActivePackages($where){
+        $sql = "SELECT * FROM mss_salon_packages 
+		WHERE 
+		business_outlet_id = ".$this->db->escape($where['business_outlet_id'])." AND is_active=0";
 
         $query = $this->db->query($sql);
         
@@ -10953,4 +10969,17 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 			}
 		}
 
+		public function GetOutletEmployee($data){
+			
+			$sql = "SELECT * FROM `mss_employees` 
+			WHERE mss_employees.employee_business_admin=".$this->db->escape($data['employee_business_admin'])."
+			ORDER BY mss_employees.employee_is_active DESC";
+			 $query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'',$query->result_array());
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
 }
