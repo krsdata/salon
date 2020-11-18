@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-$url = "https://salonfirst.in";
+$url = "http://localhost/salon";
 ?>
 <html lang="en">
 
