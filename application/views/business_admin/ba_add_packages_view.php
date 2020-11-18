@@ -48,9 +48,14 @@
 						<div class="card">
 							<div class="card-header">
 								<div class="row">
-									<div class="col-md-6">
-										<h5 class="card-title">Active Packages</h5>
-									</div>								
+									<ul class="nav nav-pills" role="tablist" style="font-weight: bold">
+										<li class="nav-item">
+												<a class="nav-link active" data-toggle="tab" href="#tab-1">Active Packages</a>
+										</li>
+										<li class="nav-item">
+												<a class="nav-link" data-toggle="tab" href="#tab-2">Inactive Packages</a>
+										</li>
+                  </ul>								
 									<div class="col-md-6">
 										<button class="btn btn-success float-right" data-toggle="modal" data-target="#ModalAddPackage" style="margin-left:10vw;"><i class="fas fa-fw fa-plus"></i>Create New Package</button>
 									</div>
@@ -58,9 +63,132 @@
 							</div>
 							<div class="card-body">
 								<div class="tab-content" >
-									<div class="tab-pane show active" id="tab-1" role="tabpanel">
-										<!--MODAL AREA-->
-										<div class="modal" id="defaultModalSuccess" tabindex="-1" role="dialog" aria-hidden="true">
+									<div class="tab-pane show active" id="tab-1" role="tabpanel">											
+										<table class="table table-striped datatables-basic" style="width:100%">
+											<thead>
+												<tr>
+													<th>Sno.</th>
+													<th>Package Name</th>
+													<th>Package Type</th>
+													<th>Creation Date</th>
+													<th>Gross Price</th>
+													<th>GST(Rs.)</th>
+													<th>MRP</th>
+													<th>Validity</th>
+													<th>Actions</th>
+												</tr>
+											</thead>
+											<tbody>
+											<?php
+												$count = 0; 
+												foreach($packages as $package):
+												$count = $count + 1;
+											?>
+											<tr>
+												<td><?=$count?></td>
+												<td><?=$package['salon_package_name']?></td>
+												<td><?=$package['salon_package_type']?></td>
+												<td><?=$package['salon_package_date']?></td>
+												<td><?=number_format($package['salon_package_price'])?></td>
+												<td><?=$package['service_gst_percentage']*$package['salon_package_price']/100?></td>
+												<td><?=number_format($package['salon_package_price']+($package['service_gst_percentage']*$package['salon_package_price']/100))?></td>
+												<td><?=$package['salon_package_validity']?></td>
+												<td class="table-action">
+												<?php
+													if($package['is_active'] == 1){
+												?>
+													<button type="button" class="btn btn-info package-edit-btn"  salon_package_id="<?=$package['salon_package_id']?>">
+														<i class="align-middle" data-feather="edit"></i>
+													</button>
+													<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="<?=$package['salon_package_id']?>">
+														<i class="align-middle" data-feather="package"></i>
+													</button>
+												<?php
+													}
+													else{
+												?>
+													<button type="button" class="btn btn-info disabled" salon_package_id="<?=$package['salon_package_id']?>">
+														<i class="align-middle" data-feather="edit"></i>
+													</button>
+													<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="<?=$package['salon_package_id']?>">
+														<i class="align-middle" data-feather="package"></i>
+													</button>
+												<?php
+													}
+												?>
+												</td>
+											</tr>
+											<?php
+												endforeach;
+											?>
+												</tbody>
+										</table>										
+									</div>
+									<div class="tab-pane" id="tab-2" role="tabpanel">											
+										<table class="table table-striped datatables-basic" style="width:100%">
+											<thead>
+												<tr>
+													<th>Sno.</th>
+													<th>Package Name</th>
+													<th>Package Type</th>
+													<th>Creation Date</th>
+													<th>Gross Price</th>
+													<th>GST(Rs.)</th>
+													<th>MRP</th>
+													<th>Validity</th>
+													<th>Actions</th>
+												</tr>
+											</thead>
+											<tbody>
+											<?php
+												$count = 0;												
+												foreach($deactive_packages as $de_package):
+												$count = $count + 1;
+											?>											
+											<tr>
+												<td><?=$count?></td>
+												<td><?=$de_package['salon_package_name']?></td>
+												<td><?=$de_package['salon_package_type']?></td>
+												<td><?=$de_package['salon_package_date']?></td>
+												<td><?=number_format($de_package['salon_package_price'])?></td>
+												<td><?=$de_package['service_gst_percentage']*$de_package['salon_package_price']/100?></td>
+												<td><?=number_format($de_package['salon_package_price']+($de_package['service_gst_percentage']*$de_package['salon_package_price']/100))?></td>
+												<td><?=$de_package['salon_package_validity']?></td>
+												<td class="table-action">
+												<?php
+													if($de_package['is_active'] == 1){
+												?>
+													<button type="button" class="btn btn-info package-edit-btn"  salon_package_id="<?=$de_package['salon_package_id']?>">
+														<i class="align-middle" data-feather="edit"></i>
+													</button>
+													<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="<?=$de_package['salon_package_id']?>">
+														<i class="align-middle" data-feather="package"></i>
+													</button>
+												<?php
+													}else{
+												?>
+													<button type="button" class="btn btn-info disabled" salon_package_id="<?=$de_package['salon_package_id']?>">
+														<i class="align-middle" data-feather="edit"></i>
+													</button>
+													<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="<?=$de_package['salon_package_id']?>">
+														<i class="align-middle" data-feather="package"></i>
+													</button>
+												<?php
+													}
+												?>
+												</td>
+											</tr>
+											<?php
+												endforeach;
+											?>
+												</tbody>
+										</table>										
+									</div>					
+								</div>
+							</div>
+						</div>
+						<!--MODAL AREA-->
+						<div class="modal" id="defaultModalSuccess" tabindex="-1" role="dialog" aria-hidden="true">
 											<div class="modal-dialog" role="document">
 												<div class="modal-content">
 													<div class="modal-header">
@@ -853,71 +981,7 @@
 											</div>
 										</div>
 
-										<!--MODAL AREA END-->		
-										<table class="table table-striped datatables-basic" style="width:100%">
-											<thead>
-												<tr>
-													<th>Sno.</th>
-													<th>Package Name</th>
-													<th>Package Type</th>
-													<th>Creation Date</th>
-													<!--<th>Current Status</th>-->
-													<th>Gross Price</th>
-													<th>GST(Rs.)</th>
-													<th>MRP</th>
-													<th>Validity</th>
-													<th>Actions</th>
-												</tr>
-											</thead>
-											<tbody>
-											<?php
-												$count = 0; 
-												foreach($packages as $package):
-												$count = $count + 1;
-											?>
-											<tr>
-												<td><?=$count?></td>
-												<td><?=$package['salon_package_name']?></td>
-												<td><?=$package['salon_package_type']?></td>
-												<td><?=$package['salon_package_date']?></td>
-												<td><?=$package['salon_package_price']?></td>
-												<td><?=$package['service_gst_percentage']*$package['salon_package_price']/100?></td>
-												<td><?=($package['salon_package_price']+($package['service_gst_percentage']*$package['salon_package_price']/100))?></td>
-												<td><?=$package['salon_package_validity']?></td>
-												<td class="table-action">
-												<?php
-													if($package['is_active'] == 1){
-												?>
-													<button type="button" class="btn btn-info package-edit-btn"  salon_package_id="<?=$package['salon_package_id']?>">
-														<i class="align-middle" data-feather="edit"></i>
-													</button>
-													<button type="button" class="btn btn-success package-deactivate-btn" salon_package_id="<?=$package['salon_package_id']?>">
-														<i class="align-middle" data-feather="package"></i>
-													</button>
-												<?php
-													}
-													else{
-												?>
-													<button type="button" class="btn btn-info disabled" salon_package_id="<?=$package['salon_package_id']?>">
-														<i class="align-middle" data-feather="edit"></i>
-													</button>
-													<button type="button" class="btn btn-danger package-activate-btn" salon_package_id="<?=$package['salon_package_id']?>">
-														<i class="align-middle" data-feather="package"></i>
-													</button>
-												<?php
-													}
-												?>
-												</td>
-											</tr>
-											<?php
-												endforeach;
-											?>
-												</tbody>
-										</table>										
-									</div>					
-								</div>
-							</div>
-						</div>
+										<!--MODAL AREA END-->	
 					</div>
 					<?php
 						}

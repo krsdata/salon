@@ -3917,6 +3917,7 @@ public function GetEmployee(){
 			);
 
 			$data = $this->BusinessAdminModel->MultiWhereSelect('mss_employees',$where);
+			// $data = $this->BusinessAdminModel->GetOutletEmployee($where);
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
 			}
@@ -4372,6 +4373,8 @@ public function GetEmployee(){
 					$data['sub_categories'] = $this->GetSubCategories($this->session->userdata['outlets']['current_outlet']); 
 					$data['categories'] = $this->GetCategories($this->session->userdata['outlets']['current_outlet']);	
 					$data['packages'] = $this->ActivePackages($this->session->userdata['outlets']['current_outlet']);
+					$data['deactive_packages'] = $this->BusinessAdminModel->DeActivePackages($this->session->userdata['outlets']['current_outlet']);
+					$data['deactive_packages'] = $data['deactive_packages']['res_arr'];
 				}
 				$this->load->view('business_admin/ba_add_packages_view',$data);
 			}
