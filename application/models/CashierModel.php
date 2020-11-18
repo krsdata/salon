@@ -529,13 +529,40 @@ class CashierModel extends CI_Model {
             5. Last but not least if composition is available then update the stock for the services taken.
         */
 		// $this->PrintArray($_POST);
+		// $this->PrintArray($this->session->userdata());
 		//exit;
-				if($data['cashback']>0)
+				if($data['cashback'] > 0)
                 {
-                    $data_cashback = array(
-                        'business_outlet_id' => $outlet_id,
-                        'net_amount' => $data['txn_data']['txn_value']
-                    );
+					//Cashback calculation if paid by cashcash and some other mode
+					if($data['txn_settlement']['txn_settlement_way'] == 'Split Payment'){
+						$sp_array=array(json_decode($_POST['txn_settlement']['txn_settlement_payment_mode'],true));
+						$sp_array=$sp_array[0];
+						foreach($sp_array as $k=>$v){
+							if($v['payment_type']=="cashback_wallet"){
+								$split_loyalty_payment= $v['payment_type'];
+								$payment_form_rewards= $v['amount_received'];
+							}
+							
+							if($v['payment_type']=="Virtual_Wallet"){
+								$payment_type_virtual= $v['payment_type'];
+								$payment_amount_virtual= $v['amount_received'];
+							}else{
+								$payment_amount_virtual= 0;	
+							}
+						}
+
+						$data_cashback = array(
+							'business_outlet_id' => $outlet_id,
+							'net_amount' => ($data['txn_data']['txn_value']- ($payment_form_rewards + $payment_amount_virtual))
+						);
+						    
+					}else{
+						$data_cashback = array(
+							'business_outlet_id' => $outlet_id,
+							'net_amount' => $data['txn_data']['txn_value']
+						);
+					}
+					//                    
                     $cashback = $this->CheckRule($data_cashback,'mss_loyalty_rules','business_outlet_id');
 					if($cashback['success'] == 'true')
 					{
@@ -547,7 +574,8 @@ class CashierModel extends CI_Model {
 						$cashback = $cashback['res_arr'];
 					}
 				}
-				// $this->PrintArray($cashback);
+				
+				// $this->PrintArray($_POST);
                 //jitesh ends code
         		//end of calculate points
         $this->db->trans_start();
@@ -571,9 +599,7 @@ class CashierModel extends CI_Model {
 					{
 						$data['txn_data']+=['txn_loyalty_cashback'=>$cashback['cashback_generated']];
 						$data['txn_data']+=['txn_loyalty_cashback_expiry'=>date('Y-m-d', strtotime("+".$cashback['cashback_validity'], strtotime(date("Y-m-d"))))];   
-					}
-							//
-					
+					}					
 				}
 				else
 				{
@@ -585,7 +611,6 @@ class CashierModel extends CI_Model {
 					$query = "UPDATE mss_business_outlets SET business_outlet_bill_counter = business_outlet_bill_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
 					
 					$this->db->query($query);
-				// 	$this->PrintArray("affected rows ".$this->db->affected_rows());
 					
 				//Update CustomerCoupon table for used coupon
 				$count_discount=0;
@@ -739,7 +764,22 @@ class CashierModel extends CI_Model {
 						}   
 					}      
 				}
-		
+		//insert coupon redemption detalis 
+		if(!empty($this->session->userdata['coupon_details'])){
+			$txn_d = $this->db->select('*')->from('mss_transactions')->where('txn_id',$result_1['res_arr']['insert_id'])->get()->row_array();
+			$redemption_details=array(
+				'deal_id'				=> $this->session->userdata['coupon_details']['deal_id'],
+				'txn_id'  				=> $txn_d['txn_id'],
+				'customer_id'			=> $txn_d['txn_customer_id'],
+				'txn_unique_serial_id'	=> $txn_d['txn_unique_serial_id'],
+				'deal_code'				=> $this->session->userdata['coupon_details']['deal_code'],
+				'total_discount'		=> $this->session->userdata['coupon_details']['discount'],
+				'datetime'				=> date('Y-m-d'),
+				'business_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id']
+			);
+			// $this->PrintArray($txn_d);
+			$deal_txn = $this->Insert($redemption_details,'mss_deal_redemption');
+		}
 		//
         // if($data['txn_settlement']['txn_settlement_payment_mode'] == 'Virtual_Wallet' && $data['txn_settlement']['txn_settlement_way'] == 'Split Payment'){
         //     //Update the customer wallet as well
@@ -1318,7 +1358,64 @@ class CashierModel extends CI_Model {
         else{
            return $this->ModelHelper(false,true,"No Deal Found!");
         }   
+	  }
+	  
+
+
+	  public function GetAllDealInfo($data){
+        $sql = "SELECT 
+				mss_deals_discount.deal_id,
+				mss_deals_discount.deal_code,
+				mss_deals_discount.start_date,
+				mss_deals_discount.end_date,
+				mss_deals_discount.start_time,
+				mss_deals_discount.end_time,
+				mss_deals_discount.minimum_amt,
+				mss_deals_discount.maximum_amt,
+				mss_deals_discount.discount,
+				mss_deals_discount.deal_for,
+				mss_deals_data.service_id,
+				mss_deals_data.service_count
+			FROM
+				mss_deals_discount,
+				mss_deals_data
+			WHERE
+				mss_deals_data.deal_id = mss_deals_discount.deal_id AND
+				mss_deals_discount.deal_code = ".$this->db->escape($data['coupon_code'])." AND
+				mss_deals_discount.deal_business_outlet_id = ".$this->db->escape($data['business_outlet_id'])." AND
+				mss_deals_discount.deal_business_admin_id = ".$this->db->escape($data['business_admin_id'])." ";
+
+				//execute the query
+				$query = $this->db->query($sql);
+        // $this->PrintArray($query->result_array());
+        if ($query->num_rows() >0){
+           return $this->ModelHelper(true,false,'',$query->result_array());
+        } 
+        else{
+           return $this->ModelHelper(false,true,"No Deal Found!");
+        }   
   	}
+
+	  public function GetCustomerDealRedemptionCount($data){
+        $sql = "SELECT 
+					COUNT(mss_deal_redemption.customer_id) AS 'count'
+				FROM
+					mss_deal_redemption
+				WHERE 
+					mss_deal_redemption.customer_id = ".$this->db->escape($data['customer_id'])." AND
+					mss_deal_redemption.deal_code = ".$this->db->escape($data['coupon_code'])." ";
+
+				//execute the query
+				$query = $this->db->query($sql);
+        // $this->PrintArray($query->result_array());
+        if ($query->num_rows() >0){
+           return $this->ModelHelper(true,false,'',$query->result_array());
+        } 
+        else{
+           return $this->ModelHelper(false,true,"No Redemption Found!");
+        }   
+  	}
+
 
 	public function GetCustomerTransactionDiscount($customer_id){
 				$sql = "SELECT 
@@ -2393,6 +2490,7 @@ class CashierModel extends CI_Model {
 		mss_transactions.txn_customer_id,
         mss_transactions.txn_datetime,
         mss_transactions.txn_loyalty_points,
+		mss_transactions.txn_loyalty_cashback,
 		mss_employees.employee_first_name,
         mss_employees.employee_last_name,
 		mss_transactions.txn_value,
@@ -2445,8 +2543,10 @@ class CashierModel extends CI_Model {
 		mss_package_transaction_settlements,
 		mss_customers
 		WHERE
-		mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
-		mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
+		
+		mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id 
+		AND	mss_package_transactions.package_txn_status = 1
+		AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
 		AND mss_package_transactions.package_txn_expert=mss_employees.employee_id
 		AND mss_employees.employee_business_outlet = ".$this->db->escape($data['business_outlet_id'])."
 		AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
@@ -2484,6 +2584,7 @@ class CashierModel extends CI_Model {
 			 WHERE
 			mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
 			mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
+			AND	mss_package_transactions.package_txn_status = 1
 			AND mss_package_transactions.package_txn_cashier =mss_employees.employee_id
 			AND date(mss_package_transactions.datetime) = date(now())
 			AND mss_employees.employee_business_admin = ".$this->db->escape($data['business_admin_id'])."
@@ -2772,6 +2873,7 @@ class CashierModel extends CI_Model {
         mss_customers,
         mss_employees
         where date(mss_package_transactions.datetime) = date(now())
+		AND	mss_package_transactions.package_txn_status = 1
         AND mss_package_transactions.package_txn_cashier= mss_employees.employee_id
         AND mss_package_transactions.package_txn_customer_id=mss_customers.customer_id
         AND mss_employees.employee_business_admin=".$this->session->userdata['logged_in']['business_admin_id']."
@@ -2836,7 +2938,7 @@ class CashierModel extends CI_Model {
                     AND mss_categories.category_business_admin_id = ".$this->db->escape($business_admin_id)."
                     AND mss_categories.category_business_outlet_id = ".$this->db->escape($business_outlet_id)."
                     AND mss_services.service_is_active = TRUE
-                    AND (mss_services.service_name LIKE '%$search_term%' OR  mss_services.barcode LIKE '$search_term%')
+                    AND (mss_services.service_name LIKE '%$search_term%' OR  mss_services.barcode LIKE '%$search_term%' OR  mss_services.qty_per_item LIKE '%$search_term%')
                     AND mss_services.inventory_type != '' 
                     ORDER BY mss_services.service_name LIMIT 15";
         $query = $this->db->query($sql);
@@ -3286,6 +3388,7 @@ class CashierModel extends CI_Model {
                     mss_package_transaction_settlements
                 WHERE
                     mss_package_transactions.package_txn_id = mss_transaction_package_details.package_txn_id
+					AND	mss_package_transactions.package_txn_status = 1
                     AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_txn_id
                     AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
                     AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id
@@ -3362,6 +3465,62 @@ class CashierModel extends CI_Model {
             return $this->ModelHelper(false,true,"Product not available in stock.");
         } 
 	}
+
+	public function StockInventoryDetails($data){
+		$sql="SELECT
+			inventory.inventory_id,
+			inventory.invoice_number,
+			inventory.invoice_date,
+			inventory_data.*,
+			mss_vendors.vendor_name
+		FROM
+			inventory,
+			mss_vendors,
+			inventory_data
+		WHERE
+			inventory.inventory_id = inventory_data.inventory_id AND
+			inventory.source_name = mss_vendors.vendor_id AND
+			inventory.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])."
+		GROUP BY
+			inventory_data.inventory_data_id ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not available in stock.");
+        } 
+	}
+
+	public function StockInventoryDetailsById($data){
+		$sql="SELECT
+			inventory.inventory_id,
+			inventory.invoice_number,
+			inventory.invoice_date,
+			inventory_data.*,
+			mss_vendors.vendor_name
+		FROM
+			inventory,
+			mss_vendors,
+			inventory_data
+		WHERE
+			inventory.inventory_id = inventory_data.inventory_id AND
+			inventory.source_name = mss_vendors.vendor_id AND
+			inventory.inventory_id= ".$this->db->escape($data['inventory_id'])."
+		GROUP BY
+			inventory_data.inventory_data_id ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not available in stock.");
+        } 
+	}
+
+
 	public function OutgoingStock($data){
 		$sql="SELECT inventory_transfer.*,
 		inventory_transfer_data.* ,
@@ -3546,6 +3705,7 @@ class CashierModel extends CI_Model {
                     mss_package_transaction_settlements
                 WHERE
                     mss_package_transactions.package_txn_id = mss_transaction_package_details.package_txn_id
+					AND mss_package_transactions.package_txn_status=1
                     AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_txn_id
                     AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
                     AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id

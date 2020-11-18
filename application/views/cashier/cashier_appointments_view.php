@@ -27,7 +27,7 @@
 										<div class="tab">
 											<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight:bolder;">
 												<li class="nav-item ml-2"><a class="nav-link active" href="#primary-calTab-1" data-toggle="tab" role="tab">Marks-Retech Calendar</a></li>
-												<li class="nav-item ml-2"><a class="nav-link" href="#primary-calTab-2" data-toggle="tab" role="tab">Facebook Appointment Calendar</a></li>
+												<!-- <li class="nav-item ml-2"><a class="nav 56-link" href="#primary-calTab-2" data-toggle="tab" role="tab">Facebook Appointment Calendar</a></li> -->
 											</ul>
 											<div class="tab-content">
 												<div class="tab-pane active" id="primary-calTab-1" role="tabpanel">

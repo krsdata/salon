@@ -148,6 +148,7 @@
 															
 														</div>
 														<input type="hidden" class="form-control" name="txn_id" id="txn_id" />
+														<input type="hidden" class="form-control" name="txn_type" />
 														<button type="submit" class="btn btn-primary">Submit</button>
 													</form>
 													<div class="alert alert-dismissible feedback1" style="margin:0px;" role="alert">
@@ -180,6 +181,7 @@
 														<div class="form-group col-md-12">
 															<input type="password" name="admin_password" class="form-control" placeholder="Enter Password">
 															<input type="hidden" name="txn_id">
+															<input type="hidden" name="txn_type">
 														</div>														
 													</div>
 														<!-- <input type="hidden" class="form-control" name="txn_id" id="txn_id" /> -->
@@ -217,11 +219,12 @@
 														<div class="form-row">
 															<table id="edit_bill">
 																<thead>
-																	<th>Service</th>
+																	<th>Service Name</th>
 																	<th>Mrp</th>
-																	<th>Discount %</th>
-																	<th>Discount Abs</th>
-																	<th>Net Amount</th>
+																	<th>Disc %</th>
+																	<th>Disc Abs</th>
+																	<th>Add On</th>
+																	<th>Net Amt</th>
 																	<th>Txn Date </th>
 																	<th>Expert</th>
 																	<th colspan="2">Action</th>
@@ -232,6 +235,51 @@
 															</table>												
 														</div>
 														<button type="button" id="close_edit_btn" class="btn btn-primary float-right" data-dismiss="modal">Close</button>
+													</form>
+													<!-- <div class="alert alert-dismissible feedback1" style="margin:0px;" role="alert">
+														<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+														<div class="alert-message">
+														</div>
+													</div> -->
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal fade show" id="ModalEditPackageBill" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title text-white">
+												Edit Package Bill
+											</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<div class="row">
+												<div class="col-md-12">
+													<form id="edit_bill2" method="POST" action="#">
+														<div class="form-row">
+															<table id="edit_package_bill">
+																<thead>
+																	<th>Package Name</th>
+																	<th>Package MRP</th>
+																	<th>Discount</th>
+																	<th>Net Amount</th>
+																	<th>Expert</th>
+																	<th colspan="2">Action</th>
+																</thead>
+																<tbody id="">
+																	
+																</tbody>		
+															</table>												
+														</div>
+														<button type="button" id="" class="btn btn-primary float-right" data-dismiss="modal">Close</button>
 													</form>
 													<!-- <div class="alert alert-dismissible feedback1" style="margin:0px;" role="alert">
 														<button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -428,8 +476,7 @@
 		}
 </script>
 <script>
-  $(document).ready(function() {
-		
+  $(document).ready(function() {		
 		var Sales = [
 			{
 				display: "OverAll Bill Wise Sales Report",
@@ -483,12 +530,28 @@
 
 		var Inventory = [
 			{
-				display: "Inventory Stock Report",
+				display: "Current Stock Report",
 				value: "SROTC"
 			},
 			{
-				display: "Transaction Wise Report",
-				value: "TWR"
+				display: "Current Stock Report-Retail",
+				value: "CSRR"
+			},
+			{
+				display: "Current Stock Report-Raw Material",
+				value: "CSRRM"
+			},
+			// {
+			// 	display: "Transaction Wise Report",
+			// 	value: "TWR"
+			// },
+			{
+				display:"Vendor Invoice Tracker",
+				value: "VIT"
+			},
+			{
+				display : "Product Wise Vendor Invoice Tracker",
+				value	: "PVIT"
 			}
 		];
 
@@ -646,7 +709,7 @@
 							str_2 += "<td>"+data[i].txn_id+"</td>";
 							str_2 += "<td>"+data[i].mobile+"</td>";
 							str_2 += "<td>"+data[i].name+"</td>";
-							str_2 += "<td>"+data[i].Type+"</td>";
+							str_2 += "<td>"+data[i].type+"</td>";
 							str_2 += "<td>"+data[i].billing_date+"</td>";
 							str_2 += "<td>"+data[i].mrp_amt+"</td>";
 							str_2 += "<td>"+data[i].discount+"</td>";						
@@ -657,11 +720,11 @@
 						if(data[i].txn_status==1 && data[i].net_amt > 0){
 							// alert(edit_bill);
 							if(edit_bill!=''){
-							str_2 += "<td><button class='btn btn-primary editBtn' data-toggle='Modal' data-target='#ModalEditBill' txn_id='"+data[i].bill_no+"'><i class='fa fa-edit'></i></button></td>";
+							str_2 += "<td><button class='btn btn-primary editBtn' data-toggle='Modal' data-target='#ModalEditBill' txn_id='"+data[i].bill_no+"' txn_type='"+data[i].type+"'><i class='fa fa-edit'></i></button></td>";
 							}
-							str_2 += "<td><button class='btn btn-success cancelBtn' data-toggle='Modal' data-target='#ModalCancelBill' txn_id='"+data[i].bill_no+"' ><i class='fa fa-trash'></i></button></td>";
-							str_2 += "<td><button class='btn btn-warning sendSmsBtn'  txn_id='"+data[i].bill_no+"'><i class='fa fa-sms'></i></button></td>";
-							str_2 += "<td><a href='<?=base_url()?>BusinessAdmin/RePrintBill/"+data[i].bill_no+"' target='_blank' class='btn btn-danger' ><i class='fa fa-print'></i></a></td>";
+							str_2 += "<td><button class='btn btn-success cancelBtn' data-toggle='Modal' data-target='#ModalCancelBill' txn_id='"+data[i].bill_no+"' txn_type='"+data[i].type+"'><i class='fa fa-trash'></i></button></td>";
+							str_2 += "<td><button class='btn btn-warning sendSmsBtn'  txn_id='"+data[i].bill_no+"' txn_type='"+data[i].type+"'><i class='fa fa-sms'></i></button></td>";
+							str_2 += "<td><a href='<?=base_url()?>BusinessAdmin/RePrintBill/"+data[i].bill_no+"' target='_blank' class='btn btn-danger' txn_type='"+data[i].type+"'><i class='fa fa-print'></i></a></td>";
 						}else{
 							if(edit_bill!=''){
 							str_2 += "<td><button class='btn btn-primary editBtn' data-toggle='Modal' data-target='#ModalEditBill' txn_id='"+data[i].txn_id+"' disabled><i class='fa fa-edit'></i></button></td>";
@@ -686,6 +749,7 @@
 				this.blur();
 	      var parameters = {
 	        txn_id: $("#verify_password input[name='txn_id']").val(),
+					txn_type : $("#verify_password input[name='txn_type']").val(),
 					admin_password : $("#verify_password input[name='admin_password']").val()
 	      };
 	     
@@ -693,26 +757,40 @@
 					.done(function(data, textStatus, jqXHR) { 
 						$("#ModalVerifyPassword").modal('hide');
 						var str_2 = "";		
-								
-						for(var i=0;i<data.length;i++){						
+						if(data[0].type=='service'){								
+							for(var i=0;i<data.length;i++){						
+								str_2 += "<tr>";
+								str_2 += "<td style='width:20%;'><div class='form-group'><input type='text' class='form-control editTransaction' name='service_name[]' value='"+data[i].service_name+"' readonly></div></td>";
+								str_2 += "<td style='width:10%;'><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discounted_price[]' value="+data[i].mrp+" readonly></div></td>";
+								str_2 += "<td style='width:10%;'><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discount_percent[]' value="+data[i].disc1+" readonly></div></td>";
+								str_2 += "<td style='width:10%;'><div class='form-group'><input type='number' min='0' class='form-control serviceAbsDisc editTransaction' name='txn_discount_abs[]' value="+data[i].disc2+"></div></td>";
+								str_2 += "<td style='width:10%;'><div class='form-group'><input type='number' min='0' class='form-control' name='' value="+data[i].add_on+" readonly></div></td>";
+								str_2 += "<td style='width:10%;'><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discounted_price[]' value="+data[i].txn_service_discounted_price+" readonly></div></td>";
+								str_2 += "<td style='width:15%;'><div class='form-group'><input type='date' class='form-control serviceTxnDate editTransaction' name='txn_datetime' value="+data[i].date+"></div></td>";
+								str_2 += "<td style='width:15%;'><div class='form-group'><select class='form-control serviceExpert' name='expert[]'><option value='"+data[i].txn_service_expert_id+"' selected >"+data[i].expert+"</option><?php foreach($expert as $expert){ echo "<option value=".$expert['employee_id'].">".$expert['employee_first_name']."</option>";}?></select></div></td>";
+								str_2 += "<td><div class='form-group'><input type='hidden'  name='txn_id' value="+data[i].txn_id+"></div></td>";
+								str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-danger  Edit_individual_service' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_discounted_price='"+data[i].txn_service_discounted_price+"'> <i class='fa fa-trash'></i></button><div></td>";
+								str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-success updateService' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_id='"+data[i].txn_service_id+"' old_txn_date='"+data[i].date+"' old_txn_expert='"+data[i].txn_service_expert_id+"'  old_abs_disc='"+data[i].disc2+"'>Save</button></div></td>";
+								str_2 += "</tr>";
+							}				
+							$("#edit_bill tbody tr").remove();
+							$("#edit_bill tbody").append(str_2);
+							$("#ModalEditBill").modal('show');
+						}else{
 							str_2 += "<tr>";
-							str_2 += "<td><div class='form-group'><input type='text' class='form-control editTransaction' name='service_name[]' value='"+data[i].service_name+"' readonly></div></td>";
-							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discounted_price[]' value="+data[i].mrp+" readonly></div></td>";
-							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discount_percent[]' value="+data[i].disc1+" readonly></div></td>";
-							str_2 += "<td><div class='form-group'><input type='number' min='0' class='form-control serviceAbsDisc editTransaction' name='txn_discount_abs[]' value="+data[i].disc2+"></div></td>";
-							str_2 += "<td><div class='form-group'><input type='number' class='form-control editTransaction' name='txn_discounted_price[]' value="+data[i].txn_service_discounted_price+" readonly></div></td>";
-							str_2 += "<td><div class='form-group'><input type='date' class='form-control serviceTxnDate editTransaction' name='txn_datetime' value="+data[i].date+"></div></td>";
-							str_2 += "<td><div class='form-group'><select class='form-control serviceExpert' name='expert[]'><option value='"+data[i].txn_service_expert_id+"' selected >"+data[i].expert+"</option><?php foreach($expert as $expert){ echo "<option value=".$expert['employee_id'].">".$expert['employee_first_name']."</option>";}?></select></div></td>";
-							str_2 += "<td><div class='form-group'><input type='hidden'  name='txn_id' value="+data[i].txn_id+"></div></td>";
-							str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-danger  Edit_individual_service' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_discounted_price='"+data[i].txn_service_discounted_price+"'> <i class='fa fa-trash'></i></button><div></td>";
-							str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-success updateService' txn_id='"+data[i].txn_id+"' txn_service_service_id='"+data[i].service_id+"' txn_service_id='"+data[i].txn_service_id+"' old_txn_date='"+data[i].date+"' old_txn_expert='"+data[i].txn_service_expert_id+"'  old_abs_disc='"+data[i].disc2+"'>Save</button></div></td>";
-
-						str_2 += "</tr>";
-						}				
-			
-						$("#edit_bill tbody tr").remove();
-						$("#edit_bill tbody").append(str_2);
-						$("#ModalEditBill").modal('show');
+								str_2 += "<td><div class='form-group'><input type='text' class='form-control' name='package_name' value='"+data[0].package_name+"' readonly></div></td>";
+								str_2 += "<td><div class='form-group'><input type='number' class='form-control ' name='txn_discounted_price[]' value="+(Number(data[0].package_txn_value)+(Number(data[0].package_txn_discount)))+" readonly></div></td>";
+								str_2 += "<td><div class='form-group'><input type='number' class='form-control packageDiscount' name='txn_discount_percent' value="+data[0].package_txn_discount+"></div></td>";
+								str_2 += "<td><div class='form-group'><input type='number' class='form-control ' name='txn_discount_percent' value="+data[0].package_txn_value+" readonly></div></td>";
+								str_2 += "<td><div class='form-group'><select class='form-control packageExpert' name='expert'><option value='"+data[0].package_txn_expert+"' selected >"+data[0].expert+"</option><?php foreach($emp as $exp){ echo "<option value=".$exp['employee_id'].">".$exp['employee_first_name']."</option>";}?></select></div></td>";
+								str_2 += "<td><div class='form-group'><input type='hidden'  name='txn_id' value="+data[0].txn_id+"></div></td>";
+								
+								str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-success updatePackageTxn' txn_id='"+data[0].package_txn_id+"'  old_expert='"+data[0].package_txn_expert+"'  old_discount='"+data[0].package_txn_discount+"'>Save</button></div></td>";
+								str_2 += "</tr>";
+							$("#edit_package_bill tbody tr").remove();
+							$("#edit_package_bill tbody").append(str_2);
+							$("#ModalEditPackageBill").modal('show');
+						}
 					})
 					.fail(function(jqXHR, textStatus, errorThrown) {
 						console.log(errorThrown.toString());
@@ -736,62 +814,95 @@
 			$(document).on('click',".updateService",function(event){
 				event.preventDefault();
 				this.blur();
-				var parameters = {
-        "txn_id" : $(this).attr('txn_id'),
-        "txn_expert" : $(this).attr('txn_expert'),
-        "txn_date" : $(this).attr('txn_date'),
-				"txn_service_id" : $(this).attr('txn_service_id'),
-				"old_txn_date"	: $(this).attr('old_txn_date'),
-				"old_txn_expert" : $(this).attr('old_txn_expert'),
-				"txn_abs_disc"	: $(this).attr('txn_abs_disc'),
-				"old_txn_disc"	: $(this).attr('old_abs_disc')
-      };
+					var parameters = {
+					"txn_id" : $(this).attr('txn_id'),
+					"txn_expert" : $(this).attr('txn_expert'),
+					"txn_date" : $(this).attr('txn_date'),
+					"txn_service_id" : $(this).attr('txn_service_id'),
+					"old_txn_date"	: $(this).attr('old_txn_date'),
+					"old_txn_expert" : $(this).attr('old_txn_expert'),
+					"txn_abs_disc"	: $(this).attr('txn_abs_disc'),
+					"old_txn_disc"	: $(this).attr('old_abs_disc')
+				};
 			
-      $.ajax({
-        url: "<?=base_url()?>BusinessAdmin/UpdateTransaction",
-        data: parameters,
-        type: "POST",
-				cache: false,
-    		success: function(data) {
-          if(data.success == 'true'){
-						// $("#ModalEditBill").modal('hide');
-						// 		toastr["success"](data.message,"", {
-						// 		positionClass: "toast-top-right",
-						// 		progressBar: "toastr-progress-bar",
-						// 		newestOnTop: "toastr-newest-on-top",
-						// 		rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
-						// 		timeOut: 500
-						// 	});
-						// 	setTimeout(function () { location.reload(1); }, 500);
-          }
-          else if (data.success == 'false'){  
-						$("#ModalEditBill").modal('hide');                 
-      	    $('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
-							$("#ErrorModalMessage").html("").html(data.message);
-						})
-          }
-        }
+				$.ajax({
+					url: "<?=base_url()?>BusinessAdmin/UpdateTransaction",
+					data: parameters,
+					type: "POST",
+					cache: false,
+					success: function(data) {
+						if(data.success == 'true'){
+							// $("#ModalEditBill").modal('hide');
+							// 		toastr["success"](data.message,"", {
+							// 		positionClass: "toast-top-right",
+							// 		progressBar: "toastr-progress-bar",
+							// 		newestOnTop: "toastr-newest-on-top",
+							// 		rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+							// 		timeOut: 500
+							// 	});
+							// 	setTimeout(function () { location.reload(1); }, 500);
+						}
+						else if (data.success == 'false'){  
+							$("#ModalEditBill").modal('hide');                 
+							$('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
+								$("#ErrorModalMessage").html("").html(data.message);
+							})
+						}
+					}
+				});
 			});
-				//
-				// var rowno = $("#edit_bill tr").length;				
-				// rowno = rowno+1;
+			//edit Package Transactions
+			$(document).on('change','.packageExpert',function(event){
+				$('.updatePackageTxn').attr('txn_expert',$(this).val());
+			});
+			$(document).on('change','.packageDiscount',function(event){
+				$('.updatePackageTxn').attr('txn_discount',$(this).val());
+			});
+			$(document).on('click',".updatePackageTxn",function(event){
+				event.preventDefault();
+				this.blur();
+					var parameters = {
+					"package_txn_id": $(this).attr('txn_id'),
+					"txn_expert" 		: $(this).attr('txn_expert'),
+					"old_expert" 		: $(this).attr('old_expert'),
+					"txn_discount"	: $(this).attr('txn_discount'),
+					"old_discount"	: $(this).attr('old_discount')
+				};
+			
+				$.ajax({
+					url: "<?=base_url()?>BusinessAdmin/UpdatePackageTransaction",
+					data: parameters,
+					type: "POST",
+					cache: false,
+					success: function(data) {
+						if(data.success == 'true'){
+							$("#ModalPackageEditBill").modal('hide');
+									toastr["success"](data.message,"", {
+									positionClass: "toast-top-right",
+									progressBar: "toastr-progress-bar",
+									newestOnTop: "toastr-newest-on-top",
+									rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+									timeOut: 500
+								});
+								setTimeout(function () { location.reload(1); }, 500);
+						}
+						else if (data.success == 'false'){  
+							$("#ModalPackageEditBill").modal('hide');                 
+							$('#defaultModalDanger').modal('show').on('shown.bs.modal', function (e){
+								$("#ErrorModalMessage").html("").html(data.message);
+							})
+						}
+					}
+				});
+			});
 
-				// var emp_data = JSON.parse($('#emp_data').text());
-				// var drp = '<select  class="form-control" name="expert[]">';
-				// $(emp_data).each(function(index,value){
-				// 	drp += "<option value='"+value.id+"'>"+value.name+"</option>";
-				
-				// });
-				// drp += "</select>";
-				
-				// $("#edit_bill tr:last").after("<tr><td><div class=\"form-group\"><input type=\"text\" name=\"service_name\" class=\"form-control\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"txn_service_discounted_price[]\" temp=\"Count\" ></div><td><div class=\"form-group\"><input type=\"number\" name=\"service_name\" class=\"form-control\"></div></td><td><div class=\"form-group\"><input type=\"number\" class=\"form-control\" name=\"txn_service_discounted_price[]\" temp=\"Count\" ></div></td><td><div class=\"form-group\">"+drp+"</div></td></tr>");
-			});
-			
+			//
 		//EDIT Bills with remarks
 		$(document).on('click','.editBtn',function(event) {
       event.preventDefault();
       this.blur(); // Manually remove focus from clicked link.
 				$("#verify_password input[name=txn_id]").val($(this).attr('txn_id'));
+				$("#verify_password input[name=txn_type]").val($(this).attr('txn_type'));
       	$("#ModalVerifyPassword").modal('show');		      
     });
 		//delete individual service
@@ -838,7 +949,8 @@
       this.blur(); // Manually remove focus from clicked link.
 			// alert($(this).attr('txn_id'));
 			var parameters={
-				"txn_id" : $(this).attr('txn_id')
+				"txn_id" 		: $(this).attr('txn_id'),
+				"txn_type"	:	$(this).attr('txn_type')
 			};
 			$.ajax({
 		        url: "<?=base_url()?>BusinessAdmin/ReSendBill",
@@ -876,6 +988,7 @@
       this.blur(); // Manually remove focus from clicked link.
 			// alert($(this).attr('txn_id'));
 			$("#cancel_bill input[name=txn_id]").val($(this).attr('txn_id'));
+			$("#cancel_bill input[name=txn_type]").val($(this).attr('txn_type'));
       $("#ModalCancelBill").modal('show');
       
     });

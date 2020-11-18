@@ -1,5 +1,5 @@
 <?php 
-    $con = mysqli_connect("localhost","root","Server@db2019","dev_salon");
+    $con = mysqli_connect("localhost","root","Server@db2019","marksalon");
     // $con = mysqli_connect("localhost","root","","marks_salon_solution");
 
   // Check connection
@@ -81,9 +81,10 @@
 			$employee_business_admin=$row['employee_business_admin'];
 			$business_master_admin_id=$row['business_master_admin_id'];
 
-			$query="INSERT INTO mss_transaction_services_replica (txn_service_id,txn_service_service_id, txn_service_expert_id,expert_name, txn_service_txn_id,txn_datetime, business_outlet_name, cust_id, cust_mobile, cust_name,service_name,service_type,txn_service_quantity, txn_service_discount_percentage, txn_service_discount_absolute, txn_service_discounted_price, CGST, SGST, other_tax, txn_service_status, business_outlet_id, business_admin_id, master_admin_id) VALUES ($txn_service_id, $txn_service_service_id, $txn_service_expert_id,'$expert_name',$txn_service_txn_id,'$txn_datetime', '$business_outlet_name', $customer_id, $customer_mobile, '$customer_name','$service_name', '$service_type', $txn_service_quantity, $txn_service_discount_percentage,$txn_service_discount_absolute, $txn_service_discounted_price, 0, 0, 0, $txn_service_status, $employee_business_outlet, $employee_business_admin, $business_master_admin_id)";
+			$query="INSERT INTO mss_transaction_services_replica (txn_service_id,txn_service_service_id, txn_service_expert_id,expert_name, txn_service_txn_id,txn_datetime, business_outlet_name, cust_id, cust_mobile, cust_name,service_name,service_type,txn_service_quantity, txn_service_discount_percentage, txn_service_discount_absolute, txn_service_discounted_price, CGST, SGST, other_tax, txn_service_status, business_oulet_id, business_admin_id, master_admin_id) VALUES ($txn_service_id, $txn_service_service_id, $txn_service_expert_id,'$expert_name',$txn_service_txn_id,'$txn_datetime', '$business_outlet_name', $customer_id, $customer_mobile, '$customer_name','$service_name', '$service_type', $txn_service_quantity, $txn_service_discount_percentage,$txn_service_discount_absolute, $txn_service_discounted_price, 0, 0, 0, $txn_service_status, $employee_business_outlet, $employee_business_admin, $business_master_admin_id);";
 
-
+			// echo $query;
+			// echo "<br>";
 			$res=$con->query($query);
 				// if(mysqli_query($con,$query)){
 				// 	echo "record Inserted";

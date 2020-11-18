@@ -1,5 +1,5 @@
 <?php 
-    $con = mysqli_connect("localhost","root","Server@db2019","dev_salon");
+    $con = mysqli_connect("localhost","root","Server@db2019","marksalon");
     // $con = mysqli_connect("localhost","root","","marks_salon_solution");
 
   // Check connection
@@ -57,7 +57,9 @@
 			$business_master_admin_id=$row['business_master_admin_id'];
 			
 			$query="INSERT INTO mss_package_transactions_replica(package_txn_id,package_txn_unique_serial_id,datetime,outlet_name,package_txn_customer_id,customer_number,customer_name,category_type,package_txn_discount,package_txn_value,package_txn_cashier,package_txn_expert,expert_name,CGST,SGST,total_tax,outlet_id,business_admin_id,master_admin_id) VALUES($package_txn_id,'$package_txn_unique_serial_id','$datetime','$business_outlet_name',$customer_id,$customer_mobile,'$customer_name','$packages',$package_txn_discount,$package_txn_value,$package_txn_cashier,$package_txn_expert,$expert_name,0,0,0,$business_outlet_id,$business_admin_id,$business_master_admin_id)";
-			$res=$con->query($query);
+			//$res=$con->query($query);
+			echo $query;
+			echo "<br>";
 			// print_r($res);
 			    
     }

@@ -36,7 +36,7 @@
 												</div>
 											
 												<div class="form-group col-md-4">
-													<label>GST IN</label>
+													<label>GSTIN</label>
 													<input type="text" class="form-control" placeholder="GST IN" name="business_outlet_gst_in" minlength="15" maxlength="15">
 												</div>
 											</div>
@@ -58,7 +58,7 @@
 											<div class="form-row">
 												<div class="form-group col-md-4">
 													<label>Landline</label>
-													<input type="text" class="form-control" placeholder="Landline Number" data-mask="0000000000" name="business_outlet_landline">
+													<input type="text" class="form-control" placeholder="Landline Number"  name="business_outlet_landline" maxlength="15">
 												</div>
 											
 												<div class="form-group col-md-4">
@@ -207,42 +207,42 @@
 														<form id="EditOutlet" method="POST" action="#" enctype="multipart/form-data">
 															<div class="form-row">
 																<div class="form-group col-md-4">
-																	<label>Outlet Name</label>
+																	<label><b>Outlet Name</b></label>
 																	<input type="text" class="form-control" placeholder="Outlet Name" name="business_outlet_name">
 																</div>
 																<div class="form-group col-md-4">
-																	<label>Firm Name</label>
+																	<label><b>Firm Name</b></label>
 																	<input type="text" class="form-control" placeholder="Firm Name" value="<?=$business_admin_details['business_admin_firm_name']?>" name="business_outlet_firm_name">
 																</div>
 															
 																<div class="form-group col-md-4">
-																	<label>GST IN</label>
-																	<input type="text" class="form-control" placeholder="GST IN" name="business_outlet_gst_in" minlength="15" maxlength="15">
+																	<label><b>GSTIN</b></label>
+																	<input type="text" class="form-control" placeholder="GSTIN" name="business_outlet_gst_in" minlength="15" maxlength="15">
 																</div>
 																</div>
 															<div class="form-row">
 																<div class="form-group col-md-4">
-																	<label>Address</label>
+																	<label><b>Address</b></label>
 																	<input type="text" class="form-control" placeholder="Apartment, studio, or floor" name="business_outlet_address">
 																</div>
 															
 																<div class="form-group col-md-4">
-																	<label>Email</label>
+																	<label><b>Email</b></label>
 																	<input type="email" class="form-control" placeholder="Email ID" name="business_outlet_email">
 																</div>
 																<div class="form-group col-md-4">
-																	<label>Mobile</label>
+																	<label><b>Mobile</b></label>
 																	<input type="text" class="form-control" placeholder="Mobile Number" data-mask="0000000000" name="business_outlet_mobile">
 																</div>
 															</div>
 															<div class="form-row">
 															<div class="form-group col-md-4">
-																<label>Landline</label>
-																<input type="text" class="form-control" placeholder="Landline Number" data-mask="0000000000" name="business_outlet_landline">
+																<label><b>Landline</b></label>
+																<input type="text" class="form-control" placeholder="Landline Number" maxlength="15" name="business_outlet_landline">
 															</div>
 				
 																<div class="form-group col-md-4">
-																	<label>State</label>
+																	<label><b>State</b></label>
 														      <select name="business_outlet_state" class="form-control">
 																		<option value="" selected>Select State</option>
 																		<option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
@@ -284,45 +284,45 @@
 																</div>
 																
 																<div class="form-group col-md-4">
-																	<label>City</label>
+																	<label><b>City</b></label>
 																	<input type="text" class="form-control" name="business_outlet_city">
 																</div>
 															</div>
 															<div class="form-row">
 																<div class="form-group col-md-4">
-																	<label>ZipCode</label>
+																	<label><b>ZipCode</b></label>
 																	<input type="number" class="form-control" name="business_outlet_pincode">
 																</div>
 																<div class="form-group col-md-4">
-																	<label class="form-label">Facebook URL</label>
+																	<label class="form-label"><b>Facebook URL</b></label>
 																	<input type="text" class="form-control" name="business_outlet_facebook_url" placeholder="URL">
 																</div>
 																<div class="form-group col-md-4">
-																	<label class="form-label">Instagram URL</label>
+																	<label class="form-label"><b>Instagram URL</b></label>
 																	<input type="text" class="form-control" name="business_outlet_instagram_url" placeholder="URL">
 																</div>
 															</div>
 															<div class="form-row">
 																<div class="form-group col-md-6">
-																	<label>Bill Header Message</label>
+																	<label><b>Bill Header Message</b></label>
 																	<textarea class="form-control" rows="2" placeholder="Bill Header Message" name="business_outlet_bill_header_msg"></textarea>
 																</div>
 																<div class="form-group col-md-6">
-																	<label>Bill Footer Message</label>
+																	<label><b>Bill Footer Message</b></label>
 																	<textarea class="form-control" rows="2" placeholder="Bill footer Message" name="business_outlet_bill_footer_msg"></textarea>
 																</div>
 															</div>
 															<div class="form-row">
 															<div class="form-group col-md-4">
-																<label class="form-label">Latitude</label>
+																<label class="form-label"><b>Latitude</b></label>
 																<input type="text" class="form-control" name="business_outlet_latitude" placeholder="Outlet Latitude">
 															</div>
 															<div class="form-group col-md-4">
-																<label class="form-label">Longitude</label>
+																<label class="form-label"><b>Longitude</b></label>
 																<input type="text" class="form-control" name="business_outlet_longitude" placeholder="Outlet Longitude">
 															</div>
 															<div class="form-group col-md-2">
-																<label class="form-label">Upload Logo</label>
+																<label class="form-label"><b>Upload Logo</b>(100x50)</label>
 																<input type="file" name="business_outlet_logo" >
 															</div>
 															<div class="col-md-2" id="outlet_logo">
@@ -357,7 +357,7 @@
 											<th>Landline</th>
 											<th>Action</th>
 											<th>SMS Status</th>
-											<th>What's App SMS</th>
+											<th>WhatsApp Status</th>
 										</tr>
 									</thead>
 									<tbody>

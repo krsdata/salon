@@ -1,7 +1,7 @@
 <?php
    date_default_timezone_set("Asia/Kolkata"); 
  
-    $con = mysqli_connect("localhost","root","Server@db2019","dev_salon");
+    $con = mysqli_connect("localhost","root","Server@db2019","marksalon");
 
   // Check connection
   if (mysqli_connect_errno())

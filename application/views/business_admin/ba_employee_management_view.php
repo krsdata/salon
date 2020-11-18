@@ -219,10 +219,10 @@
 									<div class="card-header">
 									<div class="row">
 											<div class="col-md-6">
-											<h5 class="card-title">Added Employees</h5>
+											<h5 class="card-title">Employee Details</h5>
 											</div>								
 											<div class="col-md-6">
-											<button class="btn btn-success float-right" data-toggle="modal" data-target="#ModalAddEmployee"><i class="fas fa-fw fa-plus"></i>Add Expert</button>
+											<button class="btn btn-success float-right" data-toggle="modal" data-target="#ModalAddEmployee"><i class="fas fa-fw fa-plus"></i>Add Employee</button>
 											</div>
 										</div>
 										
@@ -323,11 +323,12 @@
 										<table class="table table-hover table-striped datatables-basic" style="width: 100%;">
 											<thead>
 												<tr>
-													<th>Employee Name</th>
-													<th>Type</th>
-													<th>Address</th>
+													<th>Emp Name</th>
 													<th>Mobile</th>
+													<th>Role</th>
+													<th>Address</th>													
 													<th>Joining Date</th>
+													<th>Status</th>
 													<th style="width: 15%;">Actions</th>
 												</tr>
 											</thead>
@@ -337,10 +338,11 @@
 												?>
 												<tr>
 													<td><?=$employee['employee_first_name']?> <?=$employee['employee_last_name']?></td>
-													<td><?=$employee['employee_role']?></td>
-													<td><?=$employee['employee_address']?></td>
 													<td><?=$employee['employee_mobile']?></td>
+													<td><?=$employee['employee_role']?></td>
+													<td><?=$employee['employee_address']?></td>													
 													<td><?=$employee['employee_date_of_joining']?></td>
+													<td><?php if($employee['employee_is_active']==1){echo "Active";}else{echo "Inactive";}?></td>
 													<td class="table-action">
 														<button type="button" class="btn btn-primary employee-edit-btn" employee_id="<?=$employee['employee_id']?>">
 															<i class="align-middle" data-feather="edit-2"></i>
@@ -398,7 +400,8 @@
       $("#load_screen").hide();
     });
 		$(".datatables-basic").DataTable({
-			responsive: true
+			responsive: true,
+			"order": [[ 5, "asc" ]]
 		});
   	$("#AddEmployee").validate({
 	  	errorElement: "div",

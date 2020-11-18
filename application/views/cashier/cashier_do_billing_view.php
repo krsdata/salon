@@ -1384,15 +1384,15 @@
 														<?php																			
 														if ($recommended != 0) {
 															foreach ($recommended as $data) { ?>
-																<div class="col-md-2 col-sm-4">
+																<!-- <div class="col-md-2 col-sm-4"> -->
 																	<a class="ProvideServiceDetails" service-id="<?= $data['service_id'] ?>" service-name="<?= $data['service_name'] ?>" service-price-inr="<?= $data['service_price_inr'] ?>" service-gst-percentage="<?= $data['service_gst_percentage'] ?>" service-est-time="<?= $data['service_est_time'] ?>" title="<?= $data['service_name'].',  '.round($data['service_price_inr']) ?>">
-																		<div class="card customized-category-card border-dark" style="width:100%">
-																			<div class="card-body" style="text-align: center;padding:.5rem!important;background-color:white;  border-radius:5px;">
+																		<!-- <div class="card customized-category-card border-dark" style="width:100%"> -->
+																			<!-- <div class="card-body" style="text-align: center;padding:.5rem!important;background-color:white;  border-radius:5px;"> -->
 																				<p class="card-text" style="color: black;" ><?= $data['service_name'] ?></p>
-																			</div>
-																		</div>
+																			<!-- </div> -->
+																		<!-- </div> -->
 																	</a>
-																</div>
+																<!-- </div> -->
 														<?php
 															}
 														}
