@@ -113,8 +113,8 @@
                                                     <!--<th>Sr No</th>-->
                                                     <th>Expense Id</th>
                                                     <th>Expense Date</th>
-                                                    <th>Expense Category</th>
-                                                    <th>Item Name</th>
+                                                    <th style="width:10%;">Expense Category</th>
+                                                    <th style="width:10%;">Item Name</th>
                                                     <th>Party Name</th>
                                                     <!-- <th>Paid To</th> -->
                                                     <th>Total Amt</th>
@@ -1103,7 +1103,8 @@
             });
 
             $(".datatables-basic").DataTable({
-                responsive: true
+                responsive: true,
+				"order": [[1, "desc" ]]
             });
 
             $("#AddExpenseCategory").validate({

@@ -852,6 +852,7 @@ class Cashier extends CI_Controller {
 				}
 				else{
 					$where = array(
+						'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 						'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 						'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 						'customer_mobile'  => $this->input->post('customer_mobile')
@@ -869,6 +870,7 @@ class Cashier extends CI_Controller {
 							'customer_name' 	=> $this->input->post('customer_name'),
 							'customer_dob'    => $this->input->post('customer_dob'),
 							'customer_mobile' => $this->input->post('customer_mobile'),
+							'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 							'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 							'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 							'customer_doa' => $this->input->post('customer_doa')
@@ -2650,7 +2652,7 @@ class Cashier extends CI_Controller {
 							$this->SendWhatsAppSms($_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 
 						}elseif($sms_status['whats_app_sms_status']==1){
-							print_r($this->SendWhatsAppSms($_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']));
+							$this->SendWhatsAppSms($_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 
 						}
 					//

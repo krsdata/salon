@@ -385,8 +385,8 @@
 													<td><?=$index;?></td>
 													<td><?=$deals['deal_name']?></td>
 													<td><?=$deals['deal_code']?></td>
-													<td><?=$deals['start_date']?></td>
-													<td><?=$deals['end_date']?></td>
+													<td><?=$deals['start_date']." ".$deals['end_date']?></td>
+													<td><?=substr($deals['start_time'],0,5)." ".substr($deals['end_time'],0,5)?></td>
 													<td><?=$deals['total_services']?></td>
 													<td><?=$deals['discount']?> %</td>
 													<td><?=$deals['benifit_type']?></td>

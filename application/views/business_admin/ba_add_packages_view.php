@@ -48,7 +48,7 @@
 						<div class="card">
 							<div class="card-header">
 								<div class="row">
-									<ul class="nav nav-pills" role="tablist" style="font-weight: bold">
+									<ul class="nav nav-pills" role="tablist" style="font-weight: bold;margin-left:20px;">
 										<li class="nav-item">
 												<a class="nav-link active" data-toggle="tab" href="#tab-1">Active Packages</a>
 										</li>
@@ -72,6 +72,7 @@
 													<th>Package Type</th>
 													<th>Creation Date</th>
 													<th>Gross Price</th>
+													<th>GST%</th>
 													<th>GST(Rs.)</th>
 													<th>MRP</th>
 													<th>Validity</th>
@@ -90,9 +91,10 @@
 												<td><?=$package['salon_package_type']?></td>
 												<td><?=$package['salon_package_date']?></td>
 												<td><?=number_format($package['salon_package_price'])?></td>
+												<td><?=$package['service_gst_percentage']?></td>
 												<td><?=$package['service_gst_percentage']*$package['salon_package_price']/100?></td>
 												<td><?=number_format($package['salon_package_price']+($package['service_gst_percentage']*$package['salon_package_price']/100))?></td>
-												<td><?=$package['salon_package_validity']?></td>
+												<td><?=$package['salon_package_validity']?> Months</td>
 												<td class="table-action">
 												<?php
 													if($package['is_active'] == 1){
