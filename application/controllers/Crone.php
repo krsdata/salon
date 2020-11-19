@@ -272,11 +272,11 @@ die;
         }
     }
 
-    function sendMessage($mobile,$message){        
-        $api_key = "4XA1l9jcXkChf9TLKcI9bw";
-        $sender_id = "SLNFST";        
+    function sendMessage($mobile,$message,$sender_id,$api_key){        
+        #$api_key = "4XA1l9jcXkChf9TLKcI9bw";
+        #$sender_id = "SLNFST";        
          $msg = rawurlencode($message); //This for encode your message content
-         $mobile = '7000710898';
+         #$mobile = '7415493261';
          // API
         $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';        
                                     
@@ -286,7 +286,7 @@ die;
         curl_setopt($ch,CURLOPT_POSTFIELDS,"");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
         
-        $data = curl_exec($ch);
+        $data = curl_exec($ch);        
         return json_encode($data);        
     }
 
@@ -296,7 +296,7 @@ die;
         $clientId = "0rfMvmvjSxODwIp";        
         $userId = "9";
          $msg = rawurlencode($message); //This for encode your message content
-         $mobile = '7000710898';
+         #$mobile = '7000710898';
          // API
         $url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":"'.$userId.'","clientId":"'.$clientId.'","authKey":"'.$authKey.'"}';
                                     
@@ -316,6 +316,9 @@ die;
         $this->load->model('CronModel');
         $this->load->model('BusinessAdminModel');
         $outlets = $this->CronModel->getOutLetsAdmin();                    
+        /*echo "<pre>";
+        print_r($outlets);
+        die;*/
         if(empty($outlets))
             return true;
         $date = date('Y-m-d');
@@ -411,7 +414,7 @@ die;
             Sales: Rs.$service_Amt, Collection: Rs.$total_t, Expenses : Rs.$total_e, Due Amt : Rs.$total_p          Visits:".$data['visit'];
 
             #echo $msg."<br><br>";
-            $this->sendMessage($ol['business_admin_mobile'],$msg);     
+            $this->sendMessage($ol['business_admin_mobile'],$msg,$ol['business_outlet_sender_id'],$ol['api_key']);     
             $this->sendWatsupMessage($ol['business_admin_mobile'],$msg);       
         }
         die;
@@ -596,7 +599,7 @@ die;
             Expenses : Rs.$total_e
             Due Amt : Rs.$total_p
             Visits: $visit";
-           //$this->sendMessage($ol['business_admin_mobile'],$msg);
+           //$this->sendMessage($ol['business_admin_mobile'],$msg,$ol['business_outlet_sender_id'],$ol['api_key']);
              echo $msg;
              echo "<br><br>";
             //die;
@@ -668,8 +671,8 @@ die;
                     Generated:Rs.$total_due_amount
                     Received: Rs.$pending_amount_received
                     Due Amt till dt: ".abs($total_due_amount-$pending_amount_received);
-                    //echo $msg;
-            $this->sendMessage($ol['business_admin_mobile'],$msg);
+                    //echo $msg;            
+            $this->sendMessage($ol['business_admin_mobile'],$msg,$ol['business_outlet_sender_id'],$ol['api_key']);
             //die;
             // echo $msg."<br><br>";
             // die;
@@ -699,7 +702,7 @@ echo "</pre>";
                 foreach ($packageExpiry as $key => $p) {
                     $msg = "Dear ".$p['customer_name'].", Your  ".$p['salon_package_name'].", is due for renewal in next $day days.Expiring on ".$p['package_expiry_date'].". Please renew it today, to keep availing the awesome services. Team ".$ol['business_outlet_name']." ".$ol['business_outlet_mobile'].". ".$ol['business_outlet_location'];                    
             echo $msg."<br>";
-                   // $this->sendMessage($p['customer_mobile'],$msg);
+                   // $this->sendMessage($p['customer_mobile'],$msg,$ol['business_outlet_sender_id'],$ol['api_key']);
                 }
             }
         }
@@ -721,7 +724,7 @@ echo "</pre>";
                 $packageExpiry = $packageExpiry['res_arr'];
                 foreach ($packageExpiry as $key => $p) {                   
                     $msg  = "Dear  ".$p['customer_name'].", Utilize ur balance of  ".$p['Wallet Balance(Rs)'].", with  ".$ol['business_outlet_name'].", and experience the fantastic services before it expires. Team  ".$ol['business_outlet_name']."  ".$ol['business_outlet_mobile'].". ".$ol['business_outlet_location'];
-                    $this->sendMessage($p['customer_mobile'],$msg);
+                    $this->sendMessage($p['customer_mobile'],$msg,$ol['business_outlet_sender_id'],$ol['api_key']);
                 }
             }
         }
@@ -743,7 +746,7 @@ echo "</pre>";
                 $packageExpiry = $packageExpiry['res_arr'];
                 foreach ($packageExpiry as $key => $p) {                   
                     $msg  = "Dear  ".$p['customer_name'].", Utilize ur balance of  ".$p['Wallet Balance(Rs)'].", with  ".$ol['business_outlet_name'].", and experience the fantastic services before it expires. Team  ".$ol['business_outlet_name']."  ".$ol['business_outlet_mobile'].". ".$ol['business_outlet_location'];
-                    $this->sendMessage($p['customer_mobile'],$msg);
+                    $this->sendMessage($p['customer_mobile'],$msg,$ol['business_outlet_sender_id'],$ol['api_key']);
                 }
             }
         }
