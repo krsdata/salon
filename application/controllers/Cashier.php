@@ -6540,7 +6540,7 @@ public function AddToCartRedeemPoints(){
 							 $data['individual_customer'] = $data1['res_arr'];
 						}
 
-
+					
 //					$data['experts'] = $this->GetExperts();
 					$where = array(
 						'employee_business_admin' => $data['individual_customer']['customer_business_admin_id'],
@@ -6558,13 +6558,12 @@ public function AddToCartRedeemPoints(){
 						'business_outlet_id'=> $data['individual_customer']['customer_business_outlet_id'],
 					);
 
-					$data1 = $this->CashierModel->DetailsById($where['business_outlet_id'],'mss_business_outlets','business_outlet_id');
+					/*$data1 = $this->CashierModel->DetailsById($where['business_outlet_id'],'mss_business_outlets','business_outlet_id');
 					if($data1['success'] == 'true'){	
 						$data['shop_details'] =  $data1['res_arr'];
-					}
-
-
-
+					}					
+					error_log(print_r($data['shop_details'],1),0);*/
+					
 //					$data['shop_details'] = $this->ShopDetails();
 					//$data['individual_customer'] = $this->GetCustomerBilling($customer_id);
 					
@@ -6586,6 +6585,14 @@ public function AddToCartRedeemPoints(){
 					$outlet_admin_id = $result[0]['outlet_admin_id'];
 
 					
+					$data1 = $this->CashierModel->DetailsById($outlet_admin_id,'mss_business_outlets','business_outlet_id');
+					if($data1['success'] == 'true'){	
+						$data['shop_details'] =  $data1['res_arr'];
+					}					
+					/*error_log($this->db->last_query());
+					error_log(print_r($data['shop_details'],1),0);*/
+
+
 					$sql ="SELECT * FROM `mss_transactions` WHERE `txn_id` = ".$result[0]['transaction_id'];
 
 					$query = $this->db->query($sql);
