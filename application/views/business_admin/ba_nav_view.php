@@ -89,7 +89,7 @@
                 <ul id="customers" class="sidebar-dropdown list-unstyled collapse">
                      <!--<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/CustomerBirthDayAnniver"><i data-feather="clock" style="color:#0070c0;"></i>Bday & Anniversary</a></li> -->
                     <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/TxnHistory"><i data-feather="clock" style="color:#0070c0;"></i>Transaction History</a></li>
-                    <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/Engagement"><i data-feather="book" style="color:#0070c0;"></i>Engagement</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/Engagement"><i data-feather="book" style="color:#0070c0;"></i>Timeline</a></li>
                      <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/Campaigns"><i data-feather="calendar" style="color:blue;"></i>Campaign Manager</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/AutoEngage"><i data-feather="clock" style="color:#0070c0;"></i>Auto Engage</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>BusinessAdmin/Tags"><i data-feather="calendar" style="color:blue;"></i>Tags</a></li>

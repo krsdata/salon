@@ -46,8 +46,8 @@ $this->load->view('business_admin/ba_header_view');
 						<div class="col-md-12">
 							<div class="card">
 								<div class="card-header">
-									<h5 class="card-title">List Of Campaigns Runs</h5>
-									<button style="float:right;margin:10px" id="newcampaign" class="btn btn-success">New Campaign</button>
+									<h5 class="card-title">Marketing Campaign History</h5>
+									<button style="margin:10px" id="newcampaign" class="btn btn-success">New Campaign</button>
 								</div>
 								<div class="card-body">
 									<table class="table table-striped datatables-basic" name="list_campaign">
@@ -255,6 +255,7 @@ $this->load->view('business_admin/ba_header_view');
 			});
 
 			$("form#AddEmployee").submit(function(form) {
+				this.disabled=true;
 				form.preventDefault();
 				// form.preventDefault();
 				// var pdf = new formData();

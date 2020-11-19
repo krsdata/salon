@@ -529,6 +529,7 @@ class CashierModel extends CI_Model {
             5. Last but not least if composition is available then update the stock for the services taken.
         */
 		// $this->PrintArray($_POST);
+		// $this->PrintArray($this->session->userdata());
 		//exit;
 				if($data['cashback'] > 0)
                 {
@@ -560,10 +561,8 @@ class CashierModel extends CI_Model {
 							'business_outlet_id' => $outlet_id,
 							'net_amount' => $data['txn_data']['txn_value']
 						);
-
 					}
-					//
-                    
+					//                    
                     $cashback = $this->CheckRule($data_cashback,'mss_loyalty_rules','business_outlet_id');
 					if($cashback['success'] == 'true')
 					{
@@ -612,7 +611,6 @@ class CashierModel extends CI_Model {
 					$query = "UPDATE mss_business_outlets SET business_outlet_bill_counter = business_outlet_bill_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
 					
 					$this->db->query($query);
-				// 	$this->PrintArray("affected rows ".$this->db->affected_rows());
 					
 				//Update CustomerCoupon table for used coupon
 				$count_discount=0;
@@ -766,7 +764,22 @@ class CashierModel extends CI_Model {
 						}   
 					}      
 				}
-		
+		//insert coupon redemption detalis 
+		if(!empty($this->session->userdata['coupon_details'])){
+			$txn_d = $this->db->select('*')->from('mss_transactions')->where('txn_id',$result_1['res_arr']['insert_id'])->get()->row_array();
+			$redemption_details=array(
+				'deal_id'				=> $this->session->userdata['coupon_details']['deal_id'],
+				'txn_id'  				=> $txn_d['txn_id'],
+				'customer_id'			=> $txn_d['txn_customer_id'],
+				'txn_unique_serial_id'	=> $txn_d['txn_unique_serial_id'],
+				'deal_code'				=> $this->session->userdata['coupon_details']['deal_code'],
+				'total_discount'		=> $this->session->userdata['coupon_details']['discount'],
+				'datetime'				=> date('Y-m-d'),
+				'business_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id']
+			);
+			// $this->PrintArray($txn_d);
+			$deal_txn = $this->Insert($redemption_details,'mss_deal_redemption');
+		}
 		//
         // if($data['txn_settlement']['txn_settlement_payment_mode'] == 'Virtual_Wallet' && $data['txn_settlement']['txn_settlement_way'] == 'Split Payment'){
         //     //Update the customer wallet as well
@@ -1351,6 +1364,7 @@ class CashierModel extends CI_Model {
 
 	  public function GetAllDealInfo($data){
         $sql = "SELECT 
+				mss_deals_discount.deal_id,
 				mss_deals_discount.deal_code,
 				mss_deals_discount.start_date,
 				mss_deals_discount.end_date,
@@ -1381,6 +1395,27 @@ class CashierModel extends CI_Model {
            return $this->ModelHelper(false,true,"No Deal Found!");
         }   
   	}
+
+	  public function GetCustomerDealRedemptionCount($data){
+        $sql = "SELECT 
+					COUNT(mss_deal_redemption.customer_id) AS 'count'
+				FROM
+					mss_deal_redemption
+				WHERE 
+					mss_deal_redemption.customer_id = ".$this->db->escape($data['customer_id'])." AND
+					mss_deal_redemption.deal_code = ".$this->db->escape($data['coupon_code'])." ";
+
+				//execute the query
+				$query = $this->db->query($sql);
+        // $this->PrintArray($query->result_array());
+        if ($query->num_rows() >0){
+           return $this->ModelHelper(true,false,'',$query->result_array());
+        } 
+        else{
+           return $this->ModelHelper(false,true,"No Redemption Found!");
+        }   
+  	}
+
 
 	public function GetCustomerTransactionDiscount($customer_id){
 				$sql = "SELECT 
@@ -3670,6 +3705,7 @@ class CashierModel extends CI_Model {
                     mss_package_transaction_settlements
                 WHERE
                     mss_package_transactions.package_txn_id = mss_transaction_package_details.package_txn_id
+					AND mss_package_transactions.package_txn_status=1
                     AND mss_package_transactions.package_txn_id = mss_package_transaction_settlements.package_txn_id
                     AND mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id
                     AND mss_package_transactions.package_txn_customer_id = mss_customers.customer_id

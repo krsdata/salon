@@ -2511,7 +2511,8 @@ class BusinessAdmin extends CI_Controller {
               $data['pending_payment']=$data['pending_payment']['res_arr'];
             }
             // $this->PrettyPrintArray($_SESSION);
-            // exit;
+						// exit;
+						$data['sidebar_collapsed']="true";
             $this->load->view('business_admin/ba_config_expense_category_view',$data);
           }
         }
@@ -3917,6 +3918,7 @@ public function GetEmployee(){
 			);
 
 			$data = $this->BusinessAdminModel->MultiWhereSelect('mss_employees',$where);
+			// $data = $this->BusinessAdminModel->GetOutletEmployee($where);
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
 			}
@@ -4372,6 +4374,8 @@ public function GetEmployee(){
 					$data['sub_categories'] = $this->GetSubCategories($this->session->userdata['outlets']['current_outlet']); 
 					$data['categories'] = $this->GetCategories($this->session->userdata['outlets']['current_outlet']);	
 					$data['packages'] = $this->ActivePackages($this->session->userdata['outlets']['current_outlet']);
+					$data['deactive_packages'] = $this->BusinessAdminModel->DeActivePackages($this->session->userdata['outlets']['current_outlet']);
+					$data['deactive_packages'] = $data['deactive_packages']['res_arr'];
 				}
 				$this->load->view('business_admin/ba_add_packages_view',$data);
 			}
@@ -5267,30 +5271,60 @@ public function GetEmployee(){
 			if($this->IsLoggedIn('business_admin')){
 				if(isset($_POST) && !empty($_POST)){
 					// $this->PrettyPrintArray($_POST);
-					if(isset($_POST['txn_expert']) && isset($_POST['txn_discount'])){
+					if(isset($_POST['txn_expert']) && isset($_POST['txn_discount']) && isset($_POST['txn_date'])){
 						$data2=array(	
-							'package_txn_id'				=>$_POST['package_txn_id'],
-							'package_txn_expert'		=>$_POST['txn_expert'],
-							'package_txn_discount'	=>$_POST['txn_discount'],
-							'txn_discounted_result'			=>($_POST['old_discount']-$_POST['txn_discount'])
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_expert'		=>	$_POST['txn_expert'],
+							'package_txn_discount'	=>	$_POST['txn_discount'],
+							'datetime'							=>	$_POST['txn_date'],
+							'txn_discounted_result'	=>	($_POST['old_discount']-$_POST['txn_discount'])
 						);
 						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionOne($data2);	
-					}else if(isset($_POST['txn_expert']) && !isset($_POST['txn_discount'])){
+					}else if(isset($_POST['txn_expert']) && isset($_POST['txn_discount']) && !isset($_POST['txn_date'])){
 						
 						$data2=array(	
-							'package_txn_id'				=>$_POST['package_txn_id'],
-							'package_txn_expert'		=>$_POST['txn_expert']
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_expert'		=>	$_POST['txn_expert'],
+							'package_txn_discount'	=>	$_POST['txn_discount'],
+							'txn_discounted_result'	=>	($_POST['old_discount']-$_POST['txn_discount'])
+						);
+						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionTwo($data2);	
+					}else if(isset($_POST['txn_expert']) && isset($_POST['txn_date']) && !isset($_POST['txn_discount'])){
+						
+						$data2=array(	
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_expert'		=>	$_POST['txn_expert'],
+							'datetime'							=>	$_POST['txn_date']
+						);
+						
+						$result2 = $this->BusinessAdminModel->Update($data2,'mss_package_transactions','package_txn_id');	
+					}else if(!isset($_POST['txn_expert']) && isset($_POST['txn_date']) && isset($_POST['txn_discount'])){
+						$data2=array(	
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_discount'	=>	$_POST['txn_discount'],
+							'datetime'							=>	$_POST['txn_date'],
+							'txn_discounted_result'	=>	($_POST['old_discount']-$_POST['txn_discount'])
+						);
+						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionThree($data2);
+					}else if(isset($_POST['txn_expert']) && !isset($_POST['txn_date']) && !isset($_POST['txn_discount'])){
+						$data2=array(	
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_expert'		=>	$_POST['txn_expert']
 						);
 						$result2 = $this->BusinessAdminModel->Update($data2,'mss_package_transactions','package_txn_id');	
-					}else if(!isset($_POST['txn_expert']) && isset($_POST['txn_discount'])){
-						
+					}else if(!isset($_POST['txn_expert']) && !isset($_POST['txn_date']) && isset($_POST['txn_discount'])){
 						$data2=array(	
-							'package_txn_id'				=>$_POST['package_txn_id'],
-							'package_txn_discount'	=>$_POST['txn_discount'],
-							'txn_discounted_result'			=>($_POST['old_discount']-$_POST['txn_discount'])
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_discount'	=>	$_POST['txn_discount'],
+							'txn_discounted_result'	=>	($_POST['old_discount']-$_POST['txn_discount'])
 						);
-						
-						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionThree($data2);	
+						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionFour($data2);	
+					}else if(!isset($_POST['txn_expert']) && isset($_POST['txn_date']) && !isset($_POST['txn_discount'])){
+						$data2=array(	
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'datetime'							=>	$_POST['txn_date']
+						);
+						$result2 = $this->BusinessAdminModel->Update($data2,'mss_package_transactions','package_txn_id');	
 					}else{
 						$this->ReturnJsonArray(false,true,"Package Transaction Not Updated!");
 						die;
@@ -6115,7 +6149,8 @@ public function GetEmployee(){
 	public function DealsDiscount(){
 		if($this->IsLoggedIn('business_admin')){
 			$where=array(
-				'business_admin_id'=> $this->session->userdata['logged_in']['business_admin_id']
+				'business_admin_id'=> $this->session->userdata['logged_in']['business_admin_id'],
+				'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
 			);
 				$data = $this->GetDataForAdmin("Deals & Discount");
 				$data['business_outlet_details'] = $this->GetBusinessOutlets();
@@ -6123,7 +6158,11 @@ public function GetEmployee(){
 				$data['deals']=$data['deals']['res_arr'];
 				$data['tag']=$this->BusinessAdminModel->GetTag($where);
 				$data['tag']=$data['tag']['res_arr'];
-				// $this->PrettyPrintArray($data['upcomingDate']);
+				// $this->PrettyPrintArray($where);
+
+				$data['deal_redeemed']=$this->BusinessAdminModel->GetDealRedemption($where);
+
+				$data['deal_redeemed']=$data['deal_redeemed']['res_arr'];
 				// exit;
 				$this->load->view('business_admin/ba_deals&discount_view',$data);
 		}
@@ -6182,6 +6221,7 @@ public function GetEmployee(){
 						'total_services'			=>$this->input->post('total_service'),
 						'discount'						=>$this->input->post('discount'),
 						'deal_for'						=>$this->input->post('tag_name'),
+						'deal_description'		=>$this->input->post('deal_description'),
 						'deal_business_outlet_id' 	=> $this->session->userdata['outlets']['current_outlet'],
 						'deal_business_admin_id' 	=> $this->session->userdata['logged_in']['business_admin_id']
 					);

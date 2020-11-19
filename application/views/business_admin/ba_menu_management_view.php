@@ -113,10 +113,10 @@
 													<th>Category Type</th>
 													<th>Category</th>
 													<th>SubCategory</th>
-													<th>Price</th>
+													<th>Price(B/Tax)</th>
 													<th>GST%</th>
 													<th>GST(Rs.)</th>
-													<th>Total</th>
+													<th>MRP</th>
 													<th style="width: 14%;">Actions</th>
 												</tr>
 											</thead>

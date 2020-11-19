@@ -486,4 +486,8 @@ padding: 5px 5px !important;
 .fc-scroller{
 	height: 490px !important;
 }
+.form-group.required .control-label:after {
+  content:"*";
+  /* color:red; */
+}
 

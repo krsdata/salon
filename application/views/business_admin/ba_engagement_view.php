@@ -55,18 +55,17 @@
                   <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
-                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$new?>
-                        </h1>
+                        <h3 class="card-title" style="text-align:center;"><?=$new?>
+                        </h3>
                         <h6 class="card-text" style="text-align:center">New Customer</h6>
                       </div>
                     </div>
                   </div>
                   <div class="col-md-3">
-
                     <div class="card" style="width: 10rem">
                       <div class="card-body">
-                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$repeat?>
-                        </h1>
+                        <h3 class="card-title" style="text-align:center;"><?=$repeat?>
+                        </h3>
                         <h6 class="card-text" style="text-align:center">Repeating Customer</h6>
                       </div>
                     </div>
@@ -75,8 +74,8 @@
                   <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
-                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$regular?>
-                        </h1>
+                        <h3 class="card-title" style="text-align:center;"><?=$regular?>
+                        </h3>
                         <h6 class="card-text" style="text-align:center">Regular Customer</h6>
                       </div>
                     </div>
@@ -84,8 +83,8 @@
                   <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
-                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder">
-                          <?=($allcust-($new+$regular+$repeat))?></h1>
+                        <h3 class="card-title" style="text-align:center;">
+                          <?=($allcust-($new+$regular+$repeat))?></h3>
                         <h6 class="card-text" style="text-align:center">Never Visited</h6>
                       </div>
                     </div>
@@ -95,8 +94,8 @@
                   <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
-                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$no_risk?>
-                        </h1>
+                        <h3 class="card-title" style="text-align:center;"><?=$no_risk?>
+                        </h3>
                         <h6 class="card-text" style="text-align:center">No Risk</h6>
                       </div>
                     </div>
@@ -104,8 +103,8 @@
 									<div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
-                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$dormant?>
-                        </h1>
+                        <h3 class="card-title" style="text-align:center;"><?=$dormant?>
+                        </h3>
                         <h6 class="card-text" style="text-align:center">Dormant</h6>
                       </div>
                     </div>
@@ -113,8 +112,8 @@
 									<div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
-                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"><?=$risk?>
-                        </h1>
+                        <h3 class="card-title" style="text-align:center;"><?=$risk?>
+                        </h3>
                         <h6 class="card-text" style="text-align:center">At Risk</h6>
                       </div>
                     </div>
@@ -122,17 +121,17 @@
                   <div class="col-md-3">
                     <div class="card" style="width: 10rem;">
                       <div class="card-body">
-                        <h1 class="card-title" style="text-align:center;font-size:20px;font-weight:bolder"> <?=$lost?>
-                        </h1>
+                        <h3 class="card-title" style="text-align:center;"> <?=$lost?>
+                        </h3>
                         <h6 class="card-text" style="text-align:center">Lost Customer</h6>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="row" style="text-align:center">
-                  <div class="col-lg-12 col-lg-12" style="margin-top:20px">
+                  <div class="col-lg-2 col-lg-2" style="margin-top:20px">
                     <a href="<?= base_url() ?>BusinessAdmin/Customertimeline"
-                      class="btn btn-success btn-lg btn-block">Customer Timeline</a>
+                      class="btn btn-success btn-lg btn-block">Edit Timeline Criteria</a>
                   </div>
                 </div>
                 <div class="row">
@@ -176,7 +175,7 @@
                       class="form-control" style="width:100px">
                   </div>
                 </div>
-                <table class="table table-striped table-hover" style="text-align:center;width: 100%;font-weight:bold"
+                <table class="table table-striped table-hover" style="text-align:center;width: 100%;"
                   id="FillTxnDetails">
 
                   <tbody></tbody>
@@ -236,7 +235,7 @@
             }
           } else {
             var temp_str =
-              "<thead><th>S.No</th><th>Name</th><th>Number</th><th>Visits</th><th>Total Spend</th><th>Average Order Value</th><th>Last Visit</th><th> Store</th><th>Rewards</th><th>Wallet</th><th>Due</th><th>Category</th></thead> ";
+              "<thead><th>S.No</th><th>Customer Name</th><th>Mobile No.</th><th># Visits</th><th>Life Time Value</th><th>Avg.  Bill Val.</th><th>Last Visit dt</th><th> Store</th><th>Rewards Bal.</th><th>Wallet Bal.</th><th>Due Amt.</th><th>Segment</th></thead> ";
             for (var i = 0; i < data.result.length; i++) {
               temp_str += "<tr>";
               temp_str += "<td>" + (i + 1) + "</td>";

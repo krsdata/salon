@@ -271,6 +271,7 @@
 																	<th>Package MRP</th>
 																	<th>Discount</th>
 																	<th>Net Amount</th>
+																	<th>Date</th>
 																	<th>Expert</th>
 																	<th colspan="2">Action</th>
 																</thead>
@@ -782,10 +783,11 @@
 								str_2 += "<td><div class='form-group'><input type='number' class='form-control ' name='txn_discounted_price[]' value="+(Number(data[0].package_txn_value)+(Number(data[0].package_txn_discount)))+" readonly></div></td>";
 								str_2 += "<td><div class='form-group'><input type='number' class='form-control packageDiscount' name='txn_discount_percent' value="+data[0].package_txn_discount+"></div></td>";
 								str_2 += "<td><div class='form-group'><input type='number' class='form-control ' name='txn_discount_percent' value="+data[0].package_txn_value+" readonly></div></td>";
+								str_2 += "<td><div class='form-group'><input type='date' class='form-control packageTxnDate' name='' value="+data[0].date+"></div></td>";
 								str_2 += "<td><div class='form-group'><select class='form-control packageExpert' name='expert'><option value='"+data[0].package_txn_expert+"' selected >"+data[0].expert+"</option><?php foreach($emp as $exp){ echo "<option value=".$exp['employee_id'].">".$exp['employee_first_name']."</option>";}?></select></div></td>";
 								str_2 += "<td><div class='form-group'><input type='hidden'  name='txn_id' value="+data[0].txn_id+"></div></td>";
 								
-								str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-success updatePackageTxn' txn_id='"+data[0].package_txn_id+"'  old_expert='"+data[0].package_txn_expert+"'  old_discount='"+data[0].package_txn_discount+"'>Save</button></div></td>";
+								str_2 += "<td><div class='form-group'><button class='btn btn-sm btn-success updatePackageTxn' txn_id='"+data[0].package_txn_id+"'  old_expert='"+data[0].package_txn_expert+"'  old_discount='"+data[0].package_txn_discount+"' old_txn_date='"+data[0].date+"'>Save</button></div></td>";
 								str_2 += "</tr>";
 							$("#edit_package_bill tbody tr").remove();
 							$("#edit_package_bill tbody").append(str_2);
@@ -858,6 +860,9 @@
 			$(document).on('change','.packageDiscount',function(event){
 				$('.updatePackageTxn').attr('txn_discount',$(this).val());
 			});
+			$(document).on('change','.packageTxnDate',function(event){
+				$('.updatePackageTxn').attr('txn_date',$(this).val());
+			});
 			$(document).on('click',".updatePackageTxn",function(event){
 				event.preventDefault();
 				this.blur();
@@ -866,7 +871,9 @@
 					"txn_expert" 		: $(this).attr('txn_expert'),
 					"old_expert" 		: $(this).attr('old_expert'),
 					"txn_discount"	: $(this).attr('txn_discount'),
-					"old_discount"	: $(this).attr('old_discount')
+					"old_discount"	: $(this).attr('old_discount'),
+					"old_txn_date"	: $(this).attr('old_txn_date'),
+					"txn_date"			: $(this).attr('txn_date')
 				};
 			
 				$.ajax({

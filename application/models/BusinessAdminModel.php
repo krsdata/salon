@@ -731,7 +731,23 @@ class BusinessAdminModel extends CI_Model {
     }
 
     public function GetAllPackages($where){
-        $sql = "SELECT * FROM mss_salon_packages WHERE business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND business_outlet_id = ".$this->db->escape($where['business_outlet_id'])."";
+        $sql = "SELECT * FROM mss_salon_packages 
+		WHERE business_admin_id = ".$this->db->escape($where['business_admin_id'])." AND 
+		business_outlet_id = ".$this->db->escape($where['business_outlet_id'])." AND is_active=1";
+
+        $query = $this->db->query($sql);
+        
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+	public function DeActivePackages($where){
+        $sql = "SELECT * FROM mss_salon_packages 
+		WHERE 
+		business_outlet_id = ".$this->db->escape($where['business_outlet_id'])." AND is_active=0";
 
         $query = $this->db->query($sql);
         
@@ -8096,6 +8112,36 @@ $sql = str_replace(",)",")",$sql);
            return $this->ModelHelper(false,true,"No Data Found!");
         } 
 	}
+
+	//Redeem Deals
+	public function GetDealRedemption($where){
+        $sql = "SELECT 
+		mss_customers.customer_name,
+		mss_customers.customer_mobile,
+		mss_deal_redemption.deal_id,
+		mss_deal_redemption.txn_id,
+		mss_deal_redemption.txn_unique_serial_id,
+		mss_deal_redemption.deal_code,
+		mss_deal_redemption.total_discount,
+		mss_deal_redemption.datetime,
+		mss_transactions.txn_value
+	FROM
+		mss_customers,
+		mss_deal_redemption,
+		mss_transactions
+	WHERE
+		mss_deal_redemption.txn_id = mss_transactions.txn_id AND
+		mss_deal_redemption.customer_id = mss_customers.customer_id AND
+		mss_deal_redemption.business_outlet_id = ".$this->db->escape($where['business_outlet_id'])." ";
+        //execute the query
+        $query = $this->db->query($sql);
+        if($query->num_rows() >0){
+           return $this->ModelHelper(true,false,'',$query->result_array());
+        } 
+        else{
+           return $this->ModelHelper(false,true,"No Data Found!");
+        } 
+	}
 	
 	//04-05-2020
     public function ServicesAll($where){
@@ -10892,6 +10938,25 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 			SET 
 			mss_package_transactions.package_txn_expert= ".$this->db->escape($data['package_txn_expert']).",
 			mss_package_transactions.package_txn_discount= ".$this->db->escape($data['package_txn_discount']).",
+			mss_package_transactions.datetime =  ".$this->db->escape($data['datetime']).",
+			mss_package_transactions.package_txn_value= (mss_package_transactions.package_txn_value+".$this->db->escape($data['txn_discounted_result']).")	
+			WHERE 
+			mss_package_transactions.package_txn_id=".$this->db->escape($data['package_txn_id'])." ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
+		public function UpdatePackageTransactionTwo($data){
+			$sql = "UPDATE 
+			mss_package_transactions
+			SET 
+			mss_package_transactions.package_txn_expert= ".$this->db->escape($data['package_txn_expert']).",
+			mss_package_transactions.package_txn_discount= ".$this->db->escape($data['package_txn_discount']).",
 			mss_package_transactions.package_txn_value= (mss_package_transactions.package_txn_value+".$this->db->escape($data['txn_discounted_result']).")	
 			WHERE 
 			mss_package_transactions.package_txn_id=".$this->db->escape($data['package_txn_id'])." ";
@@ -10908,8 +10973,26 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 			$sql = "UPDATE 
 			mss_package_transactions
 			SET 
-			mss_package_transactions.package_txn_discount=  ".$this->db->escape($data['package_txn_discount']).",
+			mss_package_transactions.package_txn_discount= ".$this->db->escape($data['package_txn_discount']).",
+			mss_package_transactions.datetime =  ".$this->db->escape($data['datetime']).",
 			mss_package_transactions.package_txn_value= (mss_package_transactions.package_txn_value+".$this->db->escape($data['txn_discounted_result']).")	
+			WHERE 
+			mss_package_transactions.package_txn_id=".$this->db->escape($data['package_txn_id'])." ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
+		public function UpdatePackageTransactionFour($data){
+			$sql = "UPDATE 
+			mss_package_transactions
+			SET 
+			mss_package_transactions.package_txn_discount =  ".$this->db->escape($data['package_txn_discount']).",
+			mss_package_transactions.package_txn_value = (mss_package_transactions.package_txn_value+".$this->db->escape($data['txn_discounted_result']).")	
 			WHERE 
 			mss_package_transactions.package_txn_id=".$this->db->escape($data['package_txn_id'])."";
 	
@@ -10922,4 +11005,17 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 			}
 		}
 
+		public function GetOutletEmployee($data){
+			
+			$sql = "SELECT * FROM `mss_employees` 
+			WHERE mss_employees.employee_business_admin=".$this->db->escape($data['employee_business_admin'])."
+			ORDER BY mss_employees.employee_is_active DESC";
+			 $query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'',$query->result_array());
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
 }

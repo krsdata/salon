@@ -852,6 +852,7 @@ class Cashier extends CI_Controller {
 				}
 				else{
 					$where = array(
+						'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 						'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 						'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 						'customer_mobile'  => $this->input->post('customer_mobile')
@@ -869,6 +870,7 @@ class Cashier extends CI_Controller {
 							'customer_name' 	=> $this->input->post('customer_name'),
 							'customer_dob'    => $this->input->post('customer_dob'),
 							'customer_mobile' => $this->input->post('customer_mobile'),
+							'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 							'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 							'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 							'customer_doa' => $this->input->post('customer_doa')
@@ -1163,31 +1165,44 @@ class Cashier extends CI_Controller {
 						foreach($code_info as $info){
 							array_push($service_arr,$info['service_id']);
 						}
-
-						if($code_info[0]['deal_code']==$coupon_code && $total_bill >= $code_info[0]['minimum_amt'] && $total_bill <= $code_info[0]['maximum_amt'] && substr($code_info[0]['start_time'],0,5) < substr(date("H:i:s"),0,5) && substr($code_info[0]['end_time'],0,5) > substr(date("H:i:s"),0,5)){
-							$session_data=array();
-							if(isset($curr_sess_cart_data) || empty($curr_sess_cart_data)){
-								foreach($curr_sess_cart_data as $data){
-									if(in_array($data['service_id'],$service_arr)){
-										$data['service_discount_percentage']=$code_info[0]['discount'];
-										array_push($session_data,$data);
-									}else{
-									  array_push($session_data,$data);
+						//get  No of Redemption
+						$deal_redemption_count= $this->CashierModel->GetCustomerDealRedemptionCount($where);
+						// $this->PrettyPrintArray($deal_redemption_count);
+						if($deal_redemption_count['res_arr'][0]['count'] < $code_info[0]['total_services']){
+							if($code_info[0]['deal_code']==$coupon_code && $total_bill >= $code_info[0]['minimum_amt'] && $total_bill <= $code_info[0]['maximum_amt'] && substr($code_info[0]['start_time'],0,5) < substr(date("H:i:s"),0,5) && substr($code_info[0]['end_time'],0,5) > substr(date("H:i:s"),0,5)){
+								$session_data=array();
+								if(isset($curr_sess_cart_data) || empty($curr_sess_cart_data)){
+									foreach($curr_sess_cart_data as $data){
+										if(in_array($data['service_id'],$service_arr)){
+											$data['service_discount_percentage']=$code_info[0]['discount'];
+											array_push($session_data,$data);
+										}else{
+											array_push($session_data,$data);
+										}
 									}
 								}
+								
+								$coupon=array(
+									'deal_id'		=> $code_info[0]['deal_id'],
+									'deal_code' => $coupon_code,
+									'discount'	=> $code_info[0]['discount']
+								); 
+								$curr_sess_cart_data  = ["".$this->input->post('customer_id')."" => $session_data];
+								$this->session->set_userdata('cart', $curr_sess_cart_data);
+								$this->session->set_userdata('coupon_details', $coupon);
+								// $this->PrettyPrintArray($this->session->userdata());
+								// $this->session->userdata['cart'][''.$customer_id.'']=$session_data;
+								// $this->session->set_userdata('cart', $session_data);
+								// $this->PrettyPrintArray($this->session->userdata['cart'][''.$customer_id.'']);
+								$this->ReturnJsonArray(true,false,"Coupon applied successfully!");
+								die;
+							}else{
+								$this->ReturnJsonArray(false,true,"Invalid Coupon!");
+								die;
 							}
-							// $this->PrettyPrintArray($session_data);
-
-							$curr_sess_cart_data  = ["".$this->input->post('customer_id')."" => $session_data];
-							$this->session->set_userdata('cart', $curr_sess_cart_data);
-							// $this->session->userdata['cart'][''.$customer_id.'']=$session_data;
-							// $this->session->set_userdata('cart', $session_data);
-							// $this->PrettyPrintArray($this->session->userdata['cart'][''.$customer_id.'']);
-							$this->ReturnJsonArray(true,false,"Coupon applied successfully!");
-							die;
 						}else{
-							$this->ReturnJsonArray(false,true,"Invalid Coupon!");
-							die;
+							$this->ReturnJsonArray(false,true,"You Have Redeemed Maximum Count!");
+								die;
 						}
 					}					
 				}
@@ -2613,7 +2628,7 @@ class Cashier extends CI_Controller {
 					$customer_details = $this->GetCustomerBilling($_POST['customer_pending_data']['customer_id']);
 					//4.Send a msg
 					$this->session->set_userdata('bill_url',$bill_url);
-					$sms_status = $this->db->select('business_outlet_sms_status,whats_app_sms_status')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+					$sms_status = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
 						// $this->PrettyPrintArray($sms_status);
 					if($sms_status['business_outlet_sms_status']==1){
 							if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
@@ -2633,10 +2648,11 @@ class Cashier extends CI_Controller {
 							}
 					 	}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
 							$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-							$this->SendWhatsAppSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+
+							$this->SendWhatsAppSms($sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 
 						}elseif($sms_status['whats_app_sms_status']==1){
-							$this->SendWhatsAppSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+							$this->SendWhatsAppSms($sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 
 						}
 					//
@@ -2706,10 +2722,11 @@ class Cashier extends CI_Controller {
 		}				
 	}
 
-	public function SendWhatsAppSms($sender_id,$api_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
+	public function SendWhatsAppSms($user_id,$whatsapp_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
 		if($this->IsLoggedIn('cashier')){
 			$bill_url = $this->session->userdata('bill_url');
 			$loyalty = $this->session->userdata('loyalty_point');
+			$cashback = $this->session->userdata('cashback');
 		error_log("URL ============1 ".$bill_url);
   		//API key & sender ID
   		// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
@@ -2724,6 +2741,12 @@ class Cashier extends CI_Controller {
   			}else{
   				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url ";
   			}  			
+  		}else if(!empty($cashback) && $cashback > 0){
+  			if(!empty($google_url)){
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $cashback cashback,on your bill of Rs.$bill_amt. View $bill_url Review us on Google: $google_url";
+  			}else{
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $cashback cashback,on your bill of Rs.$bill_amt. View $bill_url ";
+  			}  			
   		}else if(!empty($google_url)){
   			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Review us on Google: $google_url";
   		}else{
@@ -2734,7 +2757,7 @@ class Cashier extends CI_Controller {
  			// API 
 			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
 
-			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
+			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"'.$user_id.'","authKey":"'.$whatsapp_key.'"}';
 				log_message('info', $url);
 			
   		$ch = curl_init($url);
