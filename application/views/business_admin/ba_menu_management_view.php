@@ -113,7 +113,7 @@
 													<th>Category Type</th>
 													<th>Category</th>
 													<th>SubCategory</th>
-													<th>Price(Before Tax)</th>
+													<th>Price(B/Tax)</th>
 													<th>GST%</th>
 													<th>GST(Rs.)</th>
 													<th>MRP</th>

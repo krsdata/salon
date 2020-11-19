@@ -10938,6 +10938,25 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 			SET 
 			mss_package_transactions.package_txn_expert= ".$this->db->escape($data['package_txn_expert']).",
 			mss_package_transactions.package_txn_discount= ".$this->db->escape($data['package_txn_discount']).",
+			mss_package_transactions.datetime =  ".$this->db->escape($data['datetime']).",
+			mss_package_transactions.package_txn_value= (mss_package_transactions.package_txn_value+".$this->db->escape($data['txn_discounted_result']).")	
+			WHERE 
+			mss_package_transactions.package_txn_id=".$this->db->escape($data['package_txn_id'])." ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
+		public function UpdatePackageTransactionTwo($data){
+			$sql = "UPDATE 
+			mss_package_transactions
+			SET 
+			mss_package_transactions.package_txn_expert= ".$this->db->escape($data['package_txn_expert']).",
+			mss_package_transactions.package_txn_discount= ".$this->db->escape($data['package_txn_discount']).",
 			mss_package_transactions.package_txn_value= (mss_package_transactions.package_txn_value+".$this->db->escape($data['txn_discounted_result']).")	
 			WHERE 
 			mss_package_transactions.package_txn_id=".$this->db->escape($data['package_txn_id'])." ";
@@ -10954,8 +10973,26 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 			$sql = "UPDATE 
 			mss_package_transactions
 			SET 
-			mss_package_transactions.package_txn_discount=  ".$this->db->escape($data['package_txn_discount']).",
+			mss_package_transactions.package_txn_discount= ".$this->db->escape($data['package_txn_discount']).",
+			mss_package_transactions.datetime =  ".$this->db->escape($data['datetime']).",
 			mss_package_transactions.package_txn_value= (mss_package_transactions.package_txn_value+".$this->db->escape($data['txn_discounted_result']).")	
+			WHERE 
+			mss_package_transactions.package_txn_id=".$this->db->escape($data['package_txn_id'])." ";
+	
+			$query = $this->db->query($sql);
+			if($query){
+				return $this->ModelHelper(true,false,'');
+			}
+			else{
+				return $this->ModelHelper(false,true,"DB error!");   
+			}
+		}
+		public function UpdatePackageTransactionFour($data){
+			$sql = "UPDATE 
+			mss_package_transactions
+			SET 
+			mss_package_transactions.package_txn_discount =  ".$this->db->escape($data['package_txn_discount']).",
+			mss_package_transactions.package_txn_value = (mss_package_transactions.package_txn_value+".$this->db->escape($data['txn_discounted_result']).")	
 			WHERE 
 			mss_package_transactions.package_txn_id=".$this->db->escape($data['package_txn_id'])."";
 	

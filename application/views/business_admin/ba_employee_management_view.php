@@ -325,6 +325,7 @@
 												<tr>
 													<th>Emp Name</th>
 													<th>Mobile</th>
+													<th>Email</th>
 													<th>Role</th>
 													<th>Address</th>													
 													<th>Joining Date</th>
@@ -339,6 +340,7 @@
 												<tr>
 													<td><?=$employee['employee_first_name']?> <?=$employee['employee_last_name']?></td>
 													<td><?=$employee['employee_mobile']?></td>
+													<td><?=$employee['employee_email']?></td>
 													<td><?=$employee['employee_role']?></td>
 													<td><?=$employee['employee_address']?></td>													
 													<td><?=$employee['employee_date_of_joining']?></td>

@@ -2511,7 +2511,8 @@ class BusinessAdmin extends CI_Controller {
               $data['pending_payment']=$data['pending_payment']['res_arr'];
             }
             // $this->PrettyPrintArray($_SESSION);
-            // exit;
+						// exit;
+						$data['sidebar_collapsed']="true";
             $this->load->view('business_admin/ba_config_expense_category_view',$data);
           }
         }
@@ -5270,30 +5271,60 @@ public function GetEmployee(){
 			if($this->IsLoggedIn('business_admin')){
 				if(isset($_POST) && !empty($_POST)){
 					// $this->PrettyPrintArray($_POST);
-					if(isset($_POST['txn_expert']) && isset($_POST['txn_discount'])){
+					if(isset($_POST['txn_expert']) && isset($_POST['txn_discount']) && isset($_POST['txn_date'])){
 						$data2=array(	
-							'package_txn_id'				=>$_POST['package_txn_id'],
-							'package_txn_expert'		=>$_POST['txn_expert'],
-							'package_txn_discount'	=>$_POST['txn_discount'],
-							'txn_discounted_result'			=>($_POST['old_discount']-$_POST['txn_discount'])
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_expert'		=>	$_POST['txn_expert'],
+							'package_txn_discount'	=>	$_POST['txn_discount'],
+							'datetime'							=>	$_POST['txn_date'],
+							'txn_discounted_result'	=>	($_POST['old_discount']-$_POST['txn_discount'])
 						);
 						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionOne($data2);	
-					}else if(isset($_POST['txn_expert']) && !isset($_POST['txn_discount'])){
+					}else if(isset($_POST['txn_expert']) && isset($_POST['txn_discount']) && !isset($_POST['txn_date'])){
 						
 						$data2=array(	
-							'package_txn_id'				=>$_POST['package_txn_id'],
-							'package_txn_expert'		=>$_POST['txn_expert']
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_expert'		=>	$_POST['txn_expert'],
+							'package_txn_discount'	=>	$_POST['txn_discount'],
+							'txn_discounted_result'	=>	($_POST['old_discount']-$_POST['txn_discount'])
+						);
+						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionTwo($data2);	
+					}else if(isset($_POST['txn_expert']) && isset($_POST['txn_date']) && !isset($_POST['txn_discount'])){
+						
+						$data2=array(	
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_expert'		=>	$_POST['txn_expert'],
+							'datetime'							=>	$_POST['txn_date']
+						);
+						
+						$result2 = $this->BusinessAdminModel->Update($data2,'mss_package_transactions','package_txn_id');	
+					}else if(!isset($_POST['txn_expert']) && isset($_POST['txn_date']) && isset($_POST['txn_discount'])){
+						$data2=array(	
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_discount'	=>	$_POST['txn_discount'],
+							'datetime'							=>	$_POST['txn_date'],
+							'txn_discounted_result'	=>	($_POST['old_discount']-$_POST['txn_discount'])
+						);
+						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionThree($data2);
+					}else if(isset($_POST['txn_expert']) && !isset($_POST['txn_date']) && !isset($_POST['txn_discount'])){
+						$data2=array(	
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_expert'		=>	$_POST['txn_expert']
 						);
 						$result2 = $this->BusinessAdminModel->Update($data2,'mss_package_transactions','package_txn_id');	
-					}else if(!isset($_POST['txn_expert']) && isset($_POST['txn_discount'])){
-						
+					}else if(!isset($_POST['txn_expert']) && !isset($_POST['txn_date']) && isset($_POST['txn_discount'])){
 						$data2=array(	
-							'package_txn_id'				=>$_POST['package_txn_id'],
-							'package_txn_discount'	=>$_POST['txn_discount'],
-							'txn_discounted_result'			=>($_POST['old_discount']-$_POST['txn_discount'])
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'package_txn_discount'	=>	$_POST['txn_discount'],
+							'txn_discounted_result'	=>	($_POST['old_discount']-$_POST['txn_discount'])
 						);
-						
-						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionThree($data2);	
+						$result2 = $this->BusinessAdminModel->UpdatePackageTransactionFour($data2);	
+					}else if(!isset($_POST['txn_expert']) && isset($_POST['txn_date']) && !isset($_POST['txn_discount'])){
+						$data2=array(	
+							'package_txn_id'				=>	$_POST['package_txn_id'],
+							'datetime'							=>	$_POST['txn_date']
+						);
+						$result2 = $this->BusinessAdminModel->Update($data2,'mss_package_transactions','package_txn_id');	
 					}else{
 						$this->ReturnJsonArray(false,true,"Package Transaction Not Updated!");
 						die;

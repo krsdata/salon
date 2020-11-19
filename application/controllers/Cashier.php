@@ -852,6 +852,7 @@ class Cashier extends CI_Controller {
 				}
 				else{
 					$where = array(
+						'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 						'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 						'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 						'customer_mobile'  => $this->input->post('customer_mobile')
@@ -869,6 +870,7 @@ class Cashier extends CI_Controller {
 							'customer_name' 	=> $this->input->post('customer_name'),
 							'customer_dob'    => $this->input->post('customer_dob'),
 							'customer_mobile' => $this->input->post('customer_mobile'),
+							'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 							'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 							'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 							'customer_doa' => $this->input->post('customer_doa')
@@ -2647,10 +2649,10 @@ class Cashier extends CI_Controller {
 					 	}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
 							$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 
-							$this->SendWhatsAppSms($_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+							$this->SendWhatsAppSms($sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 
 						}elseif($sms_status['whats_app_sms_status']==1){
-							print_r($this->SendWhatsAppSms($_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']));
+							$this->SendWhatsAppSms($sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
 
 						}
 					//
@@ -2720,7 +2722,7 @@ class Cashier extends CI_Controller {
 		}				
 	}
 
-	public function SendWhatsAppSms($mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
+	public function SendWhatsAppSms($user_id,$whatsapp_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
 		if($this->IsLoggedIn('cashier')){
 			$bill_url = $this->session->userdata('bill_url');
 			$loyalty = $this->session->userdata('loyalty_point');
@@ -2755,7 +2757,7 @@ class Cashier extends CI_Controller {
  			// API 
 			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
 
-			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
+			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"'.$user_id.'","authKey":"'.$whatsapp_key.'"}';
 				log_message('info', $url);
 			
   		$ch = curl_init($url);
