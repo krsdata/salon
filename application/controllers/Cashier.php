@@ -2630,31 +2630,30 @@ class Cashier extends CI_Controller {
 					$this->session->set_userdata('bill_url',$bill_url);
 					$sms_status = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
 						// $this->PrettyPrintArray($sms_status);
-					if($sms_status['business_outlet_sms_status']==1){
-							if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
-								if($_POST['txn_data']['txn_value']==0){
-								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-								}else{
-								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-								}
-							}
-							//
-							if($_POST['send_sms'] === 'true' && $_POST['cashback']==0){
-								if($_POST['txn_data']['txn_value']==0){
-								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-								}else{		
-								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-								}
-							}
-					 	}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
+					if($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
+						if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
+							if($_POST['txn_data']['txn_value']==0){
+							$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+							}else{
 							$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-
-							$this->SendWhatsAppSms($sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-
-						}elseif($sms_status['whats_app_sms_status']==1){
-							$this->SendWhatsAppSms($sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-
+							}
 						}
+						//
+						if($_POST['send_sms'] === 'true' && $_POST['cashback']==0){
+							if($_POST['txn_data']['txn_value']==0){
+							$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+							}else{		
+							$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+							}
+						}
+					}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
+						$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+
+						$this->SendWhatsAppSms($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+
+					}elseif($sms_status['business_outlet_sms_status']==0 && $sms_status['whats_app_sms_status']==1 ){
+						$this->SendWhatsAppSms($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+					}
 					//
         
 					$this->ReturnJsonArray(true,false,"Transaction is successful!");
@@ -2722,7 +2721,7 @@ class Cashier extends CI_Controller {
 		}				
 	}
 
-	public function SendWhatsAppSms($user_id,$whatsapp_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
+	public function SendWhatsAppSms($client_id,$user_id,$whatsapp_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
 		if($this->IsLoggedIn('cashier')){
 			$bill_url = $this->session->userdata('bill_url');
 			$loyalty = $this->session->userdata('loyalty_point');
@@ -2757,7 +2756,7 @@ class Cashier extends CI_Controller {
  			// API 
 			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
 
-			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"'.$user_id.'","authKey":"'.$whatsapp_key.'"}';
+			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":'.$client_id.',"clientId":"'.$user_id.'","authKey":"'.$whatsapp_key.'"}';
 				log_message('info', $url);
 			
   		$ch = curl_init($url);
@@ -3987,7 +3986,8 @@ class Cashier extends CI_Controller {
 								
 								//send sms
 								// $this->SendPackageSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity']);
-
+								$sms_status = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+							if($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
 								if(isset($_POST['cart_data']['donar_name']) && isset($_POST['cart_data']['donar_mob'])){
 										$this->SendPackageDonarSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$_POST['cart_data']['donar_name'],$_POST['cart_data']['package_final_value'],$data['business_outlet_name'],$data['business_outlet_address'],$_POST['cart_data']['donar_mob'],$data['business_outlet_google_my_business_url']);
 										$this->SendPackageRecipentSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$_POST['cart_data']['donar_name'],$_POST['cart_data']['package_final_value'],$data['business_outlet_name'],$data['business_outlet_address'],$data['business_outlet_mobile'],$data['business_outlet_google_my_business_url']);
@@ -3995,7 +3995,16 @@ class Cashier extends CI_Controller {
 								else{
 										$this->SendPackageSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$data['business_outlet_google_my_business_url']);
 								}   
-								
+							}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
+								$this->SendPackageSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$data['business_outlet_google_my_business_url']);
+
+								$this->SendPackageSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$data['business_outlet_google_my_business_url']);
+
+							}elseif($sms_status['business_outlet_sms_status']==0 && $sms_status['whats_app_sms_status']==1){
+								$this->SendPackageSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$data['business_outlet_google_my_business_url']);
+							}else{
+
+							}	
 								//1.Unset the payment session
 								if(isset($this->session->userdata['package_payment'])){
 										$this->session->unset_userdata('payment');
@@ -4035,6 +4044,34 @@ class Cashier extends CI_Controller {
 			 
 			 // API 
 			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+										
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch,CURLOPT_POST,1);
+			curl_setopt($ch,CURLOPT_POSTFIELDS,"");
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
+			
+			$data = curl_exec($ch);
+			return json_encode($data);
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/");
+		}		
+	}	
+
+	public function SendPackageSmsOnWhatsapp($client_id,$user_id,$whatsapp_key,$mobile,$package_name,$customer_name,$package_validity,$google_url){
+		if($this->IsLoggedIn('cashier')){
+		
+			//API key & sender ID
+			// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
+			// $apisender = "BILLIT";
+			$msg = "Dear ".$customer_name.", Thanks for Visiting. You've bought ".$package_name." Package Valid for  ".$package_validity." months. Look forward to serve you again! Review us on ".$google_url." to serve you better.";
+			 $msg = rawurlencode($msg);   //This for encode your message content                 		
+			 
+			 // API 
+			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+
+			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":'.$client_id.',"clientId":"'.$user_id.'","authKey":"'.$whatsapp_key.'"}';
 										
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -4354,13 +4391,19 @@ class Cashier extends CI_Controller {
 								$result = $this->CashierModel->AddAppointmentModel($data,$services,$this->input->post('expert_id'));
 						
 								if($result['success'] == 'true'){
-									
+									$sms_status = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+									if($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
 								    $this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-									
+									}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
+										$this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
+										$this->SendAppointmentSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
+									}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
+										$this->SendAppointmentSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
+									}else{
 										$this->ReturnJsonArray(true,false,"Appointment added successfully!");
 										die;
 									}
-									elseif($result['error'] == 'true'){
+								}elseif($result['error'] == 'true'){
 										$this->ReturnJsonArray(false,true,$result['message']);
 										die;
 									}
@@ -4583,6 +4626,31 @@ class Cashier extends CI_Controller {
 			 // API 
 			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
 										
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch,CURLOPT_POST,1);
+			curl_setopt($ch,CURLOPT_POSTFIELDS,"");
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
+			
+			$data = curl_exec($ch);
+			return json_encode($data);
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/");
+		}		
+	}
+	public function SendAppointmentSmsOnWhatsapp($client_id,$user_id,$whatsapp_key,$mobile,$customer_name,$outlet,$date,$time){
+		if($this->IsLoggedIn('cashier')){
+			//API key & sender ID
+			// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
+			// $apisender = "BILLIT";
+			$msg = "Dear ".$customer_name.", you have made an appointment @".$outlet." on ".$date." at ".$time." hrs. Looking forward to offer our best services to you.";
+			 $msg = rawurlencode($msg);   //This for encode your message content                 		
+			 
+			 // API 
+			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
+			
+			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":'.$client_id.',"clientId":"'.$user_id.'","authKey":"'.$whatsapp_key.'"}';
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 			curl_setopt($ch,CURLOPT_POST,1);

@@ -9736,7 +9736,10 @@ public function InsertSalary(){
                 $data['lost']=count($data['lost']['res_arr']);
             }else{
                 $data['lost']=0;
-            }
+						}
+						//Birthday Customer$b
+						$birthday=$this->BusinessAdminModel->GetBirthday();
+
             $this->load->view('business_admin/ba_campaign_manager',$data);
         }
         else{
