@@ -4336,8 +4336,7 @@ class Cashier extends CI_Controller {
 				$this->form_validation->set_rules('customer_appointment_date', 'Appointment Date', 'trim');
 				$this->form_validation->set_rules('appointment_start_time', 'Appointment Start Time', 'required|trim');
 				$this->form_validation->set_rules('appointment_end_time', 'Appointment End Time', 'required|trim');
-				$this->form_validation->set_rules('expert_id', 'Expert Name', 'required');
-				
+				$this->form_validation->set_rules('expert_id', 'Expert Name', 'required');				
 				if ($this->form_validation->run() == FALSE) 
 				{
 					$data = array(
@@ -4350,7 +4349,6 @@ class Cashier extends CI_Controller {
 					die;
 				}
 				else{
-
 					$services = $this->input->post('service_id');
 					if(!empty($services)){						
 						//1. check whether customer exists by mobile
@@ -4362,6 +4360,7 @@ class Cashier extends CI_Controller {
 						);
 					
 						$customerExists = $this->CashierModel->CheckCustomerExists($where);
+						
 						if($customerExists['success'] == 'true' && $customerExists['error'] == 'false' ){
 							//
 							$data = array(
@@ -4392,17 +4391,19 @@ class Cashier extends CI_Controller {
 						
 								if($result['success'] == 'true'){
 									$sms_status = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+									
 									if($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
 								    $this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-									}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
+									}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
 										$this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
 										$this->SendAppointmentSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-									}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
+									}elseif($sms_status['business_outlet_sms_status']==0 && $sms_status['whats_app_sms_status']==1){
 										$this->SendAppointmentSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
 									}else{
-										$this->ReturnJsonArray(true,false,"Appointment added successfully!");
-										die;
+										
 									}
+									$this->ReturnJsonArray(true,false,"Appointment added successfully!");
+										die;
 								}elseif($result['error'] == 'true'){
 										$this->ReturnJsonArray(false,true,$result['message']);
 										die;
@@ -4460,8 +4461,19 @@ class Cashier extends CI_Controller {
 							
 									if($result['success'] == 'true'){
 									
-									$this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-								    
+									// $this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
+								  $sms_status = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+									
+									if($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
+								    $this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
+									}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
+										$this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
+										$this->SendAppointmentSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
+									}elseif($sms_status['business_outlet_sms_status']==0 && $sms_status['whats_app_sms_status']==1){
+										$this->SendAppointmentSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
+									}else{
+										
+									}
 										
 										$this->ReturnJsonArray(true,false,"Appointment added successfully!");
 										die;

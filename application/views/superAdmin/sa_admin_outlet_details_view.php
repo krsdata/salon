@@ -217,17 +217,21 @@ $this->load->view('superAdmin/sa_header_view');
                                   </div>
 																</div>
 																<div class="form-row">
-                                  <div class="form-group col-md-4">
+                                  <div class="form-group col-md-3">
                                     <label class="font-weight-bold">Whatsapp Number</label>
                                     <input type="text" class="form-control" name="business_whatsapp_number" />
                                   </div>
-                                  <div class="form-group col-md-4">
+                                  <div class="form-group col-md-3">
                                     <label class="font-weight-bold">Whatsapp Userid</label>
                                     <input type="text" class="form-control" name="whatsapp_userid" placeholder="Whatsapp Userid">
                                   </div>
-                                  <div class="form-group col-md-4">
+                                  <div class="form-group col-md-3">
                                     <label class="font-weight-bold">Whatsapp Key</label>
                                      <input type="text" class="form-control" name="whatsapp_key" /> 
+																	</div>
+																	<div class="form-group col-md-3">
+                                    <label class="font-weight-bold">Client Id</label>
+                                     <input type="text" class="form-control" name="client_id" /> 
                                   </div>
                                 </div>
                                 <div class="form-row ">
@@ -498,17 +502,21 @@ $this->load->view('superAdmin/sa_header_view');
             </div>
 					</div>
 					<div class="form-row">
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
               <label class="font-weight-bold">Whatsapp Number</label>
               <input type="text" class="form-control" name="business_whatsapp_number" placeholder="Business WhatsApp Number">
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
               <label class="font-weight-bold">User Id</label>
               <input type="text" class="form-control" name="whatsapp_userid" placeholder="WhatsApp Userid">
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
               <label class="font-weight-bold">Whatsapp Key</label>
               <input type="text" class="form-control" name="whatsapp_key" placeholder="WhatsApp Key" />
+						</div>
+						<div class="form-group col-md-3">
+              <label class="font-weight-bold">Client Id</label>
+              <input type="text" class="form-control" name="client_id" placeholder="Client Id" />
             </div>
           </div>
           <div class="form-row ">
@@ -1223,6 +1231,7 @@ $this->load->view('superAdmin/sa_footer_view');
 				$("#EditOutlet input[name=business_whatsapp_number]").attr('value', data.business_whatsapp_number);
 				$("#EditOutlet input[name=whatsapp_userid]").attr('value', data.whatsapp_userid);
 				$("#EditOutlet input[name=whatsapp_key]").attr('value', data.whatsapp_key);
+				$("#EditOutlet input[name=client_id]").attr('value', data.client_id);
         $("#EditOutlet input[name=business_outlet_latitude]").attr('value', data.business_outlet_latitude);
         $("#EditOutlet input[name=business_outlet_longitude]").attr('value', data.business_outlet_longitude);
         $("#EditOutlet input[name=business_outlet_id]").attr('value', data.business_outlet_id);
