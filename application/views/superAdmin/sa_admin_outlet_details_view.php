@@ -109,42 +109,41 @@ $this->load->view('superAdmin/sa_header_view');
                               <form id="EditOutlet" method="POST" action="#">
                                 <div class="form-row">
                                   <div class="form-group col-md-4">
-                                    <label>Outlet Name</label>
+                                    <label class="font-weight-bold">Outlet Name</label>
                                     <input type="text" class="form-control" placeholder="Outlet Name" name="business_outlet_name">
                                   </div>
                                   <div class="form-group col-md-4">
-                                    <label>Expiry Date</label>
+                                    <label class="font-weight-bold">Expiry Date</label>
                                     <input type="date" class="form-control" name="business_outlet_expiry_date" id="business_outlet_expiry_date" required>
                                   </div>
                                   <div class="form-group col-md-4">
-                                    <label>GST IN</label>
-                                    <input type="text" class="form-control" placeholder="GST IN" name="business_outlet_gst_in" minlength="15" maxlength="15">
+                                    <label class="font-weight-bold">GSTIN</label>
+                                    <input type="text" class="form-control" placeholder="GSTIN" name="business_outlet_gst_in" minlength="15" maxlength="15">
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col-md-4">
-                                    <label>Address</label>
+                                    <label class="font-weight-bold">Address</label>
                                     <input type="text" class="form-control" placeholder="Apartment, studio, or floor" name="business_outlet_address">
                                   </div>
 
                                   <div class="form-group col-md-4">
-                                    <label>Email</label>
+                                    <label class="font-weight-bold">Email</label>
                                     <input type="email" class="form-control" placeholder="Email ID" name="business_outlet_email">
                                   </div>
                                   <div class="form-group col-md-4">
-                                    <label>Mobile</label>
+                                    <label class="font-weight-bold">Mobile</label>
                                     <input type="text" class="form-control" placeholder="Mobile Number" data-mask="0000000000" name="business_outlet_mobile">
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col-md-4">
-                                    <label>Landline</label>
+                                    <label class="font-weight-bold">Landline</label>
                                     <input type="text" class="form-control" placeholder="Landline Number" data-mask="0000000000" name="business_outlet_landline">
                                   </div>
 
                                   <div class="form-group col-md-4">
-
-                                    <label>State</label>
+                                    <label class="font-weight-bold">State</label>
                                     <select name="business_outlet_state" class="form-control">
                                       <option value="" selected>Select State</option>
                                       <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
@@ -185,59 +184,73 @@ $this->load->view('superAdmin/sa_header_view');
                                     </select>
                                   </div>
                                   <div class="form-group col-md-4">
-                                    <label>City</label>
+                                    <label class="font-weight-bold">City</label>
                                     <input type="text" class="form-control" name="business_outlet_city" placeholder="City">
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col-md-4">
-                                    <label>ZipCode</label>
+                                    <label class="font-weight-bold">ZipCode</label>
                                     <input type="number" pattern="[0-9]+" maxlength="6" min="000000" max="999999" class="form-control" name="business_outlet_pincode" placeholder="Zip">
                                   </div>
                                   <div class="form-group col-md-4">
-                                    <label class="form-label">Facebook URL</label>
+                                    <label class="font-weight-bold">Facebook URL</label>
                                     <input type="text" class="form-control" name="business_outlet_facebook_url" placeholder="Facebook URL">
                                   </div>
                                   <div class="form-group col-md-4">
-                                    <label class="form-label">Instagram URL</label>
+                                    <label class="font-weight-bold">Instagram URL</label>
                                     <input type="text" class="form-control" name="business_outlet_instagram_url" placeholder=" Instagram URL">
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col-md-4">
-                                    <label>SMS Sender Id</label>
+                                    <label class="font-weight-bold">SMS Sender Id</label>
                                     <input type="text" class="form-control" name="business_outlet_sender_id" />
                                   </div>
                                   <div class="form-group col-md-4">
-                                    <label class="form-label">Google My Business</label>
+                                    <label class="font-weight-bold">Google My Business</label>
                                     <input type="text" class="form-control" name="business_outlet_google_my_business_url" placeholder="Google My Business URL">
                                   </div>
                                   <div class="form-group col-md-4">
-                                    <label class="form-label">API Key</label>
+                                    <label class="font-weight-bold">API Key</label>
                                      <input type="text" class="form-control" name="api_key" id="api_key" /> 
+                                  </div>
+																</div>
+																<div class="form-row">
+                                  <div class="form-group col-md-4">
+                                    <label class="font-weight-bold">Whatsapp Number</label>
+                                    <input type="text" class="form-control" name="business_whatsapp_number" />
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                    <label class="font-weight-bold">Whatsapp Userid</label>
+                                    <input type="text" class="form-control" name="whatsapp_userid" placeholder="Whatsapp Userid">
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                    <label class="font-weight-bold">Whatsapp Key</label>
+                                     <input type="text" class="form-control" name="whatsapp_key" /> 
                                   </div>
                                 </div>
                                 <div class="form-row ">
                                   <div class="form-group col-md-6">
-                                    <label>Bill Header Message</label>
+                                    <label class="font-weight-bold">Bill Header Message</label>
                                     <textarea class="form-control" rows="2" placeholder="Bill Header Message" name="business_outlet_bill_header_msg"></textarea>
                                   </div>
                                   <div class="form-group col-md-6">
-                                    <label>Bill Footer Message</label>
+                                    <label class="font-weight-bold">Bill Footer Message</label>
                                     <textarea class="form-control" rows="2" placeholder="Bill footer Message" name="business_outlet_bill_footer_msg"></textarea>
                                   </div>
                                 </div>
                                 <div class="form-row ">
                                   <div class="form-group col-md-4">
-                                    <label class="form-label">Latitude</label>
+                                    <label class="font-weight-bold">Latitude</label>
                                     <input type="text" class="form-control" name="business_outlet_latitude" placeholder="Outlet Latitude">
                                   </div>
                                   <div class="form-group col-md-4">
-                                    <label class="form-label">Longitude</label>
+                                    <label class="font-weight-bold">Longitude</label>
                                     <input type="text" class="form-control" name="business_outlet_longitude" placeholder="Outlet Longitude">
                                   </div>
                                   <div class="form-group col-md-4">
-                                    <label class="form-label">Outlet Location</label>
+                                    <label class="font-weight-bold">Outlet Location</label>
                                     <input type="text" class="form-control" name="business_outlet_location" placeholder="Outlet Location" required>
                                   </div>
                                 </div>
@@ -376,43 +389,42 @@ $this->load->view('superAdmin/sa_header_view');
         <form id="AddOutlet" method="POST" action="#">
           <div class="form-row">
             <div class="form-group col-md-4">
-              <label>Outlet Name</label>
+              <label class="font-weight-bold">Outlet Name</label>
               <input type="text" class="form-control" placeholder="Outlet Name" name="business_outlet_name">
             </div>
             <div class="form-group col-md-4">
-              <label>Expiry Date</label>
+              <label class="font-weight-bold">Expiry Date</label>
               <input type="date" class="form-control" name="business_outlet_expiry_date">
             </div>
 
             <div class="form-group col-md-4">
-              <label>GST IN</label>
-              <input type="text" class="form-control" placeholder="GST IN" name="business_outlet_gst_in" minlength="15" maxlength="15">
+              <label class="font-weight-bold">GSTIN</label>
+              <input type="text" class="form-control" placeholder="GSTIN" name="business_outlet_gst_in" minlength="15" maxlength="15">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-4">
-              <label>Address</label>
+              <label class="font-weight-bold">Address</label>
               <input type="text" class="form-control" placeholder="Apartment, studio, or floor" name="business_outlet_address">
             </div>
 
             <div class="form-group col-md-4">
-              <label>Email</label>
+              <label class="font-weight-bold">Email</label>
               <input type="email" class="form-control" placeholder="Email ID" name="business_outlet_email">
             </div>
             <div class="form-group col-md-4">
-              <label>Mobile</label>
+              <label class="font-weight-bold">Mobile</label>
               <input type="text" class="form-control" placeholder="Mobile Number" data-mask="0000000000" name="business_outlet_mobile">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-4">
-              <label>Landline</label>
-              <input type="text" class="form-control" placeholder="Landline Number" data-mask="0000000000" name="business_outlet_landline">
+              <label class="font-weight-bold">Landline</label>
+              <input type="text" class="form-control" placeholder="Landline Number" maxlength="15" name="business_outlet_landline">
             </div>
 
             <div class="form-group col-md-4">
-
-              <label>State</label>
+              <label class="font-weight-bold">State</label>
               <select name="business_outlet_state" class="form-control">
                 <option value="" selected>Select State</option>
                 <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
@@ -453,59 +465,73 @@ $this->load->view('superAdmin/sa_header_view');
               </select>
             </div>
             <div class="form-group col-md-4">
-              <label>City</label>
+              <label class="font-weight-bold">City</label>
               <input type="text" class="form-control" name="business_outlet_city" placeholder="City">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-4">
-              <label>ZipCode</label>
+              <label class="font-weight-bold">ZipCode</label>
               <input type="number" pattern="[0-9]+" maxlength="6" min="000000" max="999999" class="form-control" name="business_outlet_pincode" placeholder="Zip">
             </div>
             <div class="form-group col-md-4">
-              <label class="form-label">Facebook URL</label>
+              <label class="font-weight-bold">Facebook URL</label>
               <input type="text" class="form-control" name="business_outlet_facebook_url" placeholder="Facebook URL">
             </div>
             <div class="form-group col-md-4">
-              <label class="form-label">Instagram URL</label>
-              <input type="text" class="form-control" name="business_outlet_instagram_url" placeholder=" Instagram URL">
+              <label class="font-weight-bold">Instagram URL</label>
+              <input type="text" class="form-control" name="business_outlet_instagram_url" placeholder="Instagram URL">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-4">
-              <label>SMS Sender Id</label>
+              <label class="font-weight-bold">SMS Sender Id</label>
               <input type="text" class="form-control" name="business_outlet_sender_id" placeholder="Sender Id">
             </div>
             <div class="form-group col-md-4">
-              <label class="form-label">Google My Business</label>
+              <label class="font-weight-bold">Google My Business</label>
               <input type="text" class="form-control" name="business_outlet_google_my_business_url" placeholder="Google My Business URL">
             </div>
             <div class="form-group col-md-4">
-              <label class="form-label">API Key</label>
+              <label class="font-weight-bold">API Key</label>
               <input type="text" class="form-control" name="api_key" id="api_key" placeholder="API Key" />
+            </div>
+					</div>
+					<div class="form-row">
+            <div class="form-group col-md-4">
+              <label class="font-weight-bold">Whatsapp Number</label>
+              <input type="text" class="form-control" name="business_whatsapp_number" placeholder="Business WhatsApp Number">
+            </div>
+            <div class="form-group col-md-4">
+              <label class="font-weight-bold">User Id</label>
+              <input type="text" class="form-control" name="whatsapp_userid" placeholder="WhatsApp Userid">
+            </div>
+            <div class="form-group col-md-4">
+              <label class="font-weight-bold">Whatsapp Key</label>
+              <input type="text" class="form-control" name="whatsapp_key" placeholder="WhatsApp Key" />
             </div>
           </div>
           <div class="form-row ">
             <div class="form-group col-md-6">
-              <label>Bill Header Message</label>
+              <label class="font-weight-bold">Bill Header Message</label>
               <textarea class="form-control" rows="2" placeholder="Bill Header Message" name="business_outlet_bill_header_msg"></textarea>
             </div>
             <div class="form-group col-md-6">
-              <label>Bill Footer Message</label>
+              <label class="font-weight-bold">Bill Footer Message</label>
               <textarea class="form-control" rows="2" placeholder="Bill footer Message" name="business_outlet_bill_footer_msg"></textarea>
             </div>
           </div>
           <div class="form-row ">
             <div class="form-group col-md-4">
-              <label class="form-label">Latitude</label>
+              <label class="font-weight-bold">Latitude</label>
               <input type="text" class="form-control" name="business_outlet_latitude" placeholder="Outlet Latitude">
             </div>
             <div class="form-group col-md-4">
-              <label class="form-label">Longitude</label>
+              <label class="font-weight-bold">Longitude</label>
               <input type="text" class="form-control" name="business_outlet_longitude" placeholder="Outlet Longitude">
             </div>
             <div class="form-group col-md-4">
-              <label class="form-label">Outlet Location</label>
+              <label class="font-weight-bold">Outlet Location</label>
               <input type="text" class="form-control" name="business_outlet_location" placeholder="Outlet Location" required>
             </div>
           </div>
@@ -839,7 +865,7 @@ $this->load->view('superAdmin/sa_footer_view');
           minlength: 10
         },
         "business_outlet_landline": {
-          maxlength: 10
+          maxlength: 15
         },
         "business_outlet_gst_in": {
           maxlength: 15,
@@ -920,7 +946,7 @@ $this->load->view('superAdmin/sa_footer_view');
           maxlength: 10
         },
         "business_outlet_landline": {
-          maxlength: 10
+          maxlength: 15
         },
         "business_outlet_gst_in": {
           maxlength: 15,
@@ -1194,6 +1220,9 @@ $this->load->view('superAdmin/sa_footer_view');
         $("#EditOutlet input[name=business_outlet_sender_id]").attr('value', data.business_outlet_sender_id);
         $("#EditOutlet input[name=business_outlet_google_my_business_url]").attr('value', data.business_outlet_google_my_business_url);
         $("#EditOutlet input[name=api_key]").attr('value', data.api_key);
+				$("#EditOutlet input[name=business_whatsapp_number]").attr('value', data.business_whatsapp_number);
+				$("#EditOutlet input[name=whatsapp_userid]").attr('value', data.whatsapp_userid);
+				$("#EditOutlet input[name=whatsapp_key]").attr('value', data.whatsapp_key);
         $("#EditOutlet input[name=business_outlet_latitude]").attr('value', data.business_outlet_latitude);
         $("#EditOutlet input[name=business_outlet_longitude]").attr('value', data.business_outlet_longitude);
         $("#EditOutlet input[name=business_outlet_id]").attr('value', data.business_outlet_id);

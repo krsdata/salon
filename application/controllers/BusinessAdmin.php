@@ -6178,7 +6178,6 @@ public function GetEmployee(){
 				$this->form_validation->set_rules('tag_name', 'Tag Name', 'trim|required');
 				$this->form_validation->set_rules('deal_name', 'Deal NAme', 'trim|required');
 				$this->form_validation->set_rules('deal_code' ,'Deal Code', 'trim|required');
-				$this->form_validation->set_rules('deal_price', 'Deal Price', 'trim|required');
 				$this->form_validation->set_rules('daterange', 'Date Range', 'trim|required');
 				$this->form_validation->set_rules('start_time', 'Satrt Time', 'trim|required');
 				$this->form_validation->set_rules('end_time', 'End Time', 'trim|required');
@@ -6206,7 +6205,7 @@ public function GetEmployee(){
 						'tag_id' 						=> $this->input->post('tag_name'),
 						'deal_name' 					=> $this->input->post('deal_name'),
 						'deal_code'						=>strtoupper($this->input->post('deal_code')),
-						'deal_price'					=>$this->input->post('deal_price'),
+						'deal_price'					=>0,
 						'start_date' 					=> substr($this->input->post('daterange'),0,10),
 						'end_date' 						=> substr($this->input->post('daterange'),13,23),
 						'start_time' 					=> $this->input->post('start_time'),
@@ -9737,7 +9736,10 @@ public function InsertSalary(){
                 $data['lost']=count($data['lost']['res_arr']);
             }else{
                 $data['lost']=0;
-            }
+						}
+						//Birthday Customer$b
+						$birthday=$this->BusinessAdminModel->GetBirthday();
+
             $this->load->view('business_admin/ba_campaign_manager',$data);
         }
         else{

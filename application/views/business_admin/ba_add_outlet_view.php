@@ -322,7 +322,7 @@
 																<input type="text" class="form-control" name="business_outlet_longitude" placeholder="Outlet Longitude">
 															</div>
 															<div class="form-group col-md-2">
-																<label class="form-label"><b>Upload Logo</b>(100x50)</label>
+																<label class="form-label" style="color: blue;"><b>Upload Logo</b><i>(100x50)px</i></label>
 																<input type="file" name="business_outlet_logo" >
 															</div>
 															<div class="col-md-2" id="outlet_logo">
