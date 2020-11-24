@@ -1023,7 +1023,7 @@ class BusinessAdminModel extends CI_Model {
 					 mss_transaction_services.txn_add_on_amount AS 'Add on Amt',
 					 (ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))+ mss_transaction_services.txn_add_on_amount) AS 'MRP_New',
                      mss_transaction_services.txn_service_quantity AS 'Quantity',
-                     (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
+                     (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)+mss_transaction_services.txn_add_on_amount)*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
                      mss_employees.employee_first_name As 'Expert Name',
                      mss_transaction_services.txn_service_discounted_price AS 'Billing Amount'
                      -- mss_transactions.txn_value AS 'Net Bill Amt'
