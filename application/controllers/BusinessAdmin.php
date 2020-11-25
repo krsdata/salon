@@ -9738,7 +9738,7 @@ public function InsertSalary(){
                 $data['lost']=0;
 						}
 						//Birthday Customer$b
-						$birthday=$this->BusinessAdminModel->GetBirthday();
+						//$birthday=$this->BusinessAdminModel->GetBirthday();
 
             $this->load->view('business_admin/ba_campaign_manager',$data);
         }
