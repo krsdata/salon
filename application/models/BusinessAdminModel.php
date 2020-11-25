@@ -1023,7 +1023,7 @@ class BusinessAdminModel extends CI_Model {
 					 mss_transaction_services.txn_add_on_amount AS 'Add on Amt',
 					 (ROUND(mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))+ mss_transaction_services.txn_add_on_amount) AS 'MRP_New',
                      mss_transaction_services.txn_service_quantity AS 'Quantity',
-                     (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100))*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
+                     (((mss_services.service_price_inr+(mss_services.service_price_inr*mss_services.service_gst_percentage/100)+mss_transaction_services.txn_add_on_amount)*mss_transaction_services.txn_service_discount_percentage/100)*mss_transaction_services.txn_service_quantity+mss_transaction_services.txn_service_discount_absolute) AS 'Discount',
                      mss_employees.employee_first_name As 'Expert Name',
                      mss_transaction_services.txn_service_discounted_price AS 'Billing Amount'
                      -- mss_transactions.txn_value AS 'Net Bill Amt'
@@ -4008,6 +4008,7 @@ class BusinessAdminModel extends CI_Model {
 				mss_transactions.txn_value=(mss_transactions.txn_value- ".$this->db->escape($data['txn_service_discounted_price'])."),
 				mss_transaction_settlements.txn_settlement_reversed=".$this->db->escape($data['txn_service_discounted_price'])."
 				WHERE mss_transaction_services.txn_service_service_id=".$this->db->escape($data['txn_service_service_id'])." AND
+				mss_transaction_services.txn_service_txn_id = ".$this->db->escape($data['txn_id'])." AND
 				mss_transactions.txn_id=".$this->db->escape($data['txn_id'])." AND 
 				mss_transaction_settlements.txn_settlement_txn_id=".$this->db->escape($data['txn_id'])." ";	
 			$query = $this->db->query($sql);
@@ -11028,19 +11029,19 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 			SUM(mss_transactions.txn_value) AS 'LTV',
 			MAX(mss_transactions.txn_datetime) AS 'last_visit',
 			mss_transactions.txn_value AS 'last_bill'
-		FROM
-			mss_customers,
-			mss_transactions
-		WHERE
-			mss_customers.customer_id = mss_transactions.txn_customer_id AND
-			mss_customers.customer_business_outlet_id=1 AND
-			   Extract(MONTH FROM mss_customers.customer_dob)= Extract(MONTH FROM date(now()))";
-			 $query = $this->db->query($sql);
-			if($query){
-				return $this->ModelHelper(true,false,'',$query->result_array());
-			}
-			else{
-				return $this->ModelHelper(false,true,"DB error!");   
-			}
+			FROM
+				mss_customers,
+				mss_transactions
+			WHERE
+				mss_customers.customer_id = mss_transactions.txn_customer_id AND
+				mss_customers.customer_business_outlet_id=1 AND
+				Extract(MONTH FROM mss_customers.customer_dob)= Extract(MONTH FROM date(now()))";
+				$query = $this->db->query($sql);
+				if($query){
+					return $this->ModelHelper(true,false,'',$query->result_array());
+				}
+				else{
+					return $this->ModelHelper(false,true,"DB error!");   
+				}
 		}
 }
