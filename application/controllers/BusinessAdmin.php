@@ -9031,6 +9031,11 @@ public function InsertSalary(){
 				}
 				// $this->PrettyPrintArray($data['services']);
 				// exit;    
+				$data['birthday']=$this->BusinessAdminModel->GetBirthday($where);
+				$data['birthday']=$data['birthday']['res_arr'];
+				$data['anni']=$this->BusinessAdminModel->GetAnniversary($where);
+				$data['anni']=$data['anni']['res_arr'];
+						// $this->PrettyPrintArray($birthday);
 				
  			}   
 			$this->load->view('business_admin/ba_transaction_history',$data);
@@ -9738,8 +9743,7 @@ public function InsertSalary(){
                 $data['lost']=0;
 						}
 						//Birthday Customer$b
-						// $birthday=$this->BusinessAdminModel->GetBirthday();
-
+						
             $this->load->view('business_admin/ba_campaign_manager',$data);
         }
         else{
