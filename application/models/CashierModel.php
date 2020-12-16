@@ -357,8 +357,8 @@ class CashierModel extends CI_Model {
 
     public function CheckOTCStockExists($where){
         $this->db->select('*');
-        $this->db->from('mss_inventory');
-        $this->db->where('service_id',$where['service_id']);
+        $this->db->from('inventory_stock');
+        $this->db->where('stock_service_id',$where['service_id']);
         
         $query = $this->db->get();
 
@@ -866,14 +866,16 @@ class CashierModel extends CI_Model {
                 }
             }
         }
-       elseif ($service_details['service_type'] == 'otc') {
+        elseif ($service_details['service_type'] == 'otc') {
             $where = array('service_id' => $service_id);
 			$OTCexists = $this->CheckOTCStockExists($where);
+			// $this->PrintArray($OTCexists);
             if($OTCexists['success'] == 'true'){
                 //Subtract the consumption quantity from stock
                 $temp = array(
                     'otc_service_id' => $service_id,
-                    'consumption_quantity' =>(int)$quantity
+					'consumption_quantity' =>(int)$quantity,
+					'stock_in_unit'	=> (int)$quantity * $service_details['qty_per_item']
                 );
                 $this->UpdateStockFromOTC($temp);
             }else{                
@@ -886,7 +888,8 @@ class CashierModel extends CI_Model {
 				$this->Insert($temp,'inventory_stock');
 				$temp1 = array(
                     'otc_service_id' => $service_id,
-                    'consumption_quantity' =>(int)$quantity
+					'consumption_quantity' =>(int)$quantity,
+					'stock_in_unit'	=> (int)$quantity * $service_details['qty_per_item']
                 );
                 $this->UpdateStockFromOTC($temp1);
             }
@@ -962,7 +965,8 @@ class CashierModel extends CI_Model {
     }
 
     private function UpdateStockFromOTC($data){
-		$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity']." WHERE stock_service_id=".$data['otc_service_id']." ";
+		$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity'].",
+		stock_in_unit=stock_in_unit- ".$data['stock_in_unit']." WHERE stock_service_id=".$data['otc_service_id']." ";
         $this->db->query($query1); 
     }
 
@@ -1374,6 +1378,7 @@ class CashierModel extends CI_Model {
 				mss_deals_discount.maximum_amt,
 				mss_deals_discount.discount,
 				mss_deals_discount.deal_for,
+				mss_deals_discount.total_services,
 				mss_deals_data.service_id,
 				mss_deals_data.service_count
 			FROM
@@ -1451,7 +1456,7 @@ class CashierModel extends CI_Model {
             $result = array();
             $result = $query->row_array();
 
-            $sql = "SELECT  mss_transactions.txn_value,mss_transactions.txn_discount,date(mss_transactions.txn_datetime) AS BillDate FROM mss_customers,mss_transactions WHERE mss_customers.customer_id = mss_transactions.txn_customer_id AND mss_customers.customer_id = ".$this->db->escape($customer_id)." AND mss_transactions.txn_status=1 ORDER BY mss_transactions.txn_datetime DESC LIMIT 4";            
+            $sql = "SELECT  mss_transactions.txn_value,mss_transactions.txn_discount,mss_transactions.txn_unique_serial_id,date(mss_transactions.txn_datetime) AS BillDate FROM mss_customers,mss_transactions WHERE mss_customers.customer_id = mss_transactions.txn_customer_id AND mss_customers.customer_id = ".$this->db->escape($customer_id)." AND mss_transactions.txn_status=1 ORDER BY mss_transactions.txn_datetime DESC LIMIT 5";            
             
 			$query = $this->db->query($sql);
             if($query){                
@@ -3547,7 +3552,7 @@ class CashierModel extends CI_Model {
         $this->db->where('stock_service_id',$where['stock_service_id']);
         $this->db->where('stock_outlet_id',$where['stock_outlet_id']);
         $query = $this->db->get();
-
+		// $this->PrintArray($query);
         if($query->num_rows() === 0){
             return $this->ModelHelper(false,true);
         }

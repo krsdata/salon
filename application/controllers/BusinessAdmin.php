@@ -12830,8 +12830,10 @@ public function daybook(){
 						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
 						'updated_on'	=>date('Y-m-d')
 					);
+					// $this->PrettyPrintArray($data3);
 
 						$stock_exist= $this->CashierModel->CheckStockExist($where);
+						// $this->PrettyPrintArray($stock_exist);
 						if($stock_exist['success']=='true'){
 							$update_stock=$this->CashierModel->UpdateInventoryStockForAdmin($data3);
 						}else{
