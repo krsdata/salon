@@ -11028,15 +11028,39 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 			mss_customers.customer_title,
 			mss_customers.customer_dob,
 			SUM(mss_transactions.txn_value) AS 'LTV',
-			MAX(mss_transactions.txn_datetime) AS 'last_visit',
+			MAX(date(mss_transactions.txn_datetime)) AS 'last_visit',
 			mss_transactions.txn_value AS 'last_bill'
 			FROM
 				mss_customers,
 				mss_transactions
 			WHERE
 				mss_customers.customer_id = mss_transactions.txn_customer_id AND
-				mss_customers.customer_business_outlet_id=1 AND
-				Extract(MONTH FROM mss_customers.customer_dob)= Extract(MONTH FROM date(now()))";
+				mss_customers.customer_business_outlet_id=".$this->db->escape($data['business_outlet_id'])." AND
+				Extract(MONTH FROM mss_customers.customer_dob)= Extract(MONTH FROM date(now())) GROUP BY mss_customers.customer_id";
+				$query = $this->db->query($sql);
+				if($query){
+					return $this->ModelHelper(true,false,'',$query->result_array());
+				}
+				else{
+					return $this->ModelHelper(false,true,"DB error!");   
+				}
+		}
+		public function GetAnniversary($data){			
+			$sql = "SELECT 
+			mss_customers.customer_name,
+			mss_customers.customer_mobile,
+			mss_customers.customer_title,
+			mss_customers.customer_doa,
+			SUM(mss_transactions.txn_value) AS 'LTV',
+			MAX(date(mss_transactions.txn_datetime)) AS 'last_visit',
+			mss_transactions.txn_value AS 'last_bill'
+			FROM
+				mss_customers,
+				mss_transactions
+			WHERE
+				mss_customers.customer_id = mss_transactions.txn_customer_id AND
+				mss_customers.customer_business_outlet_id=".$this->db->escape($data['business_outlet_id'])." AND
+				Extract(MONTH FROM mss_customers.customer_dob)= Extract(MONTH FROM date(now())) GROUP BY mss_customers.customer_id";
 				$query = $this->db->query($sql);
 				if($query){
 					return $this->ModelHelper(true,false,'',$query->result_array());

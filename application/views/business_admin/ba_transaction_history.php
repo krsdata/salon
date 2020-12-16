@@ -24,7 +24,6 @@
                     </div>
                     <?php
 						}
-
 						if(!isset($selected_outlet)){
 					?>
                     <div class="col-md-12">
@@ -375,18 +374,28 @@
 										<table class="table table-hover table-striped datatables-basic" id="bday"
 											style="width: 100%;">
 											<thead>
-
+												<th>Sr. No.</th>
+												<th>Customer Name</th>
+												<th>Customer Mobile</th>
+												<th>Title</th>
+												<th>B`day</th>
+												<th>Life Time Value</th>
+												<th>Last Visit</th>
+												<th>Last Bill</th>
 											</thead>
 											<tbody>
-
+												<?php $count=1; foreach($birthday as $birthday){?>
 												<tr>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
+													<td><?php echo $count;?>
+													<td><?=$birthday['customer_name']?></td>
+													<td><?=$birthday['customer_mobile']?></td>
+													<td><?=$birthday['customer_title']?></td>
+													<td><?=$birthday['customer_dob']?></td>
+													<td><?=$birthday['LTV']?></td>
+													<td><?=$birthday['last_visit']?></td>
+													<td><?=$birthday['last_bill']?></td>
 												</tr>
+												<?php $count++; } ?>
 											</tbody>
 										</table>
 									</div>
@@ -430,12 +439,28 @@
 										<table class="table table-hover table-striped datatables-basic" id="anniversary"
 										style="width: 100%;">
 										<thead>
-
+											<th>Sr. No.</th>
+											<th>Customer Name</th>
+											<th>Customer Mobile</th>
+											<th>Title</th>
+											<th>Anniversary</th>
+											<th>Life Time Value</th>
+											<th>Last Visit</th>
+											<th>Last Bill</th>
 										</thead>
 										<tbody>
-											<tr>
-											
-											</tr>
+											<?php $sr=1; foreach($anni as $anni){?>
+												<tr>
+													<td><?php echo $sr;?>
+													<td><?=$anni['customer_name']?></td>
+													<td><?=$anni['customer_mobile']?></td>
+													<td><?=$anni['customer_title']?></td>
+													<td><?=$anni['customer_doa']?></td>
+													<td><?=$anni['LTV']?></td>
+													<td><?=$anni['last_visit']?></td>
+													<td><?=$anni['last_bill']?></td>
+												</tr>
+											<?php $sr++; }?>
 										</tbody>
 									</table>
 									</div>
