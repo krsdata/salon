@@ -179,7 +179,7 @@
 													<form id="verify_password" method="GET" action="#" enctype="multipart/form-data">
 													<div class="form-row">
 														<div class="form-group col-md-12">
-															<input type="password" name="admin_password" class="form-control" placeholder="Enter Password">
+															<input type="password" name="admin_password" class="form-control" placeholder="Enter Password" id="verify_pass_input">
 															<input type="hidden" name="txn_id">
 															<input type="hidden" name="txn_type">
 														</div>														
@@ -234,7 +234,14 @@
 																</tbody>		
 															</table>												
 														</div>
-														<button type="button" id="close_edit_btn" class="btn btn-primary float-right" data-dismiss="modal">Close</button>
+														<div class="row">
+															<div class="col-md-8">
+																<p style="color:red">Please<strong> SAVE EVERY LINE ITEM</strong> after any edit, To avoid any report related issues.</p>
+															</div>
+															<div class="col-md-4">
+															<button type="button" id="close_edit_btn" class="btn btn-primary float-right" data-dismiss="modal">Close</button>
+															</div>
+														</div>
 													</form>
 													<!-- <div class="alert alert-dismissible feedback1" style="margin:0px;" role="alert">
 														<button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -1050,4 +1057,14 @@
 
 	});
 </script>
- 
+<script>
+	var input = document.getElementById("verify_pass_input");
+	input.addEventListener("keypress", function(event) {
+		if (event.keyCode === 13) {
+		event.preventDefault();
+		// this.form.submit();
+		// alert("Hi");
+		document.getElementById("verify_btn").click();
+		}
+	});
+</script>
