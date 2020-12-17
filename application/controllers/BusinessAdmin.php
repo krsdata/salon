@@ -9031,6 +9031,11 @@ public function InsertSalary(){
 				}
 				// $this->PrettyPrintArray($data['services']);
 				// exit;    
+				$data['birthday']=$this->BusinessAdminModel->GetBirthday($where);
+				$data['birthday']=$data['birthday']['res_arr'];
+				$data['anni']=$this->BusinessAdminModel->GetAnniversary($where);
+				$data['anni']=$data['anni']['res_arr'];
+						// $this->PrettyPrintArray($birthday);
 				
  			}   
 			$this->load->view('business_admin/ba_transaction_history',$data);
@@ -9738,8 +9743,7 @@ public function InsertSalary(){
                 $data['lost']=0;
 						}
 						//Birthday Customer$b
-						// $birthday=$this->BusinessAdminModel->GetBirthday();
-
+						
             $this->load->view('business_admin/ba_campaign_manager',$data);
         }
         else{
@@ -12830,8 +12834,10 @@ public function daybook(){
 						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
 						'updated_on'	=>date('Y-m-d')
 					);
+					// $this->PrettyPrintArray($data3);
 
 						$stock_exist= $this->CashierModel->CheckStockExist($where);
+						// $this->PrettyPrintArray($stock_exist);
 						if($stock_exist['success']=='true'){
 							$update_stock=$this->CashierModel->UpdateInventoryStockForAdmin($data3);
 						}else{

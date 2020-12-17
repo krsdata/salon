@@ -235,7 +235,7 @@
             }
           } else {
             var temp_str =
-              "<thead><th>S.No</th><th>Customer Name</th><th>Mobile No.</th><th># Visits</th><th>Life Time Value</th><th>Avg.  Bill Val.</th><th>Last Visit dt</th><th> Store</th><th>Rewards Bal.</th><th>Wallet Bal.</th><th>Due Amt.</th><th>Segment</th></thead> ";
+              "<thead><th>S.No</th><th>Customer Name</th><th>Mobile No.</th><th># Visits</th><th>Life Time Value</th><th>Avg.  Bill Val.</th><th>Last Visit dt</th><th>Rewards Bal.</th><th>Wallet Bal.</th><th>Due Amt.</th><th>Segment</th></thead> ";
             for (var i = 0; i < data.result.length; i++) {
               temp_str += "<tr>";
               temp_str += "<td>" + (i + 1) + "</td>";
@@ -245,7 +245,7 @@
 							temp_str += "<td>" + data.result[i].Total_Spend + "</td>";
 							temp_str += "<td>" + data.result[i].aov + "</td>";              
               temp_str += "<td>" + data.result[i].Last_Visit_Date + "</td>";
-							temp_str += "<td>" + data.result[i].last_visited_store + "</td>";
+							// temp_str += "<td>" + data.result[i].last_visited_store + "</td>";
 							temp_str += "<td>" + data.result[i].rewards + "</td>";
 							temp_str += "<td>" + data.result[i].vw_amount + "</td>";
 							temp_str += "<td>" + data.result[i].due_amount + "</td>";

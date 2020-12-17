@@ -1112,7 +1112,7 @@ class Cashier extends CI_Controller {
 				$this->form_validation->set_rules('coupon_code', 'Coupon Code', 'trim|required|max_length[8]');
 				$this->form_validation->set_rules('customer_id', 'Customer Id', 'trim|required');
 				$this->form_validation->set_rules('total_bill', 'Total Bill', 'trim|required');
-				if ($this->form_validation->run() == FALSE) 
+				if($this->form_validation->run() == FALSE) 
 				{
 					$data = array(
 									'success' => 'false',
@@ -1167,7 +1167,7 @@ class Cashier extends CI_Controller {
 						}
 						//get  No of Redemption
 						$deal_redemption_count= $this->CashierModel->GetCustomerDealRedemptionCount($where);
-						// $this->PrettyPrintArray($deal_redemption_count);
+						
 						if($deal_redemption_count['res_arr'][0]['count'] < $code_info[0]['total_services']){
 							if($code_info[0]['deal_code']==$coupon_code && $total_bill >= $code_info[0]['minimum_amt'] && $total_bill <= $code_info[0]['maximum_amt'] && substr($code_info[0]['start_time'],0,5) < substr(date("H:i:s"),0,5) && substr($code_info[0]['end_time'],0,5) > substr(date("H:i:s"),0,5)){
 								$session_data=array();
