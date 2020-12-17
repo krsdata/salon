@@ -728,7 +728,8 @@ class Cashier extends CI_Controller {
 								'customer_name' 	=> $this->input->post('customer_name'),
 								'customer_dob'    => $this->input->post('customer_dob'),
 								'customer_doa' 		=> $this->input->post('customer_doa'),
-								'customer_mobile' => $this->input->post('customer_mobile')
+								'customer_mobile' => $this->input->post('customer_mobile'),
+								'customer_media_path' => $this->input->post('customer_preference')
 							);
 
 							$result = $this->CashierModel->Update($data,'mss_customers','customer_id');
@@ -765,7 +766,8 @@ class Cashier extends CI_Controller {
 							'customer_title' 	=> $this->input->post('customer_title'),
 							'customer_name' 	=> $this->input->post('customer_name'),
 							'customer_dob'    => date('Y-m-d',strtotime($this->input->post('customer_dob'))),
-							'customer_doa' 		=> date('Y-m-d',strtotime($this->input->post('customer_doa')))
+							'customer_doa' 		=> date('Y-m-d',strtotime($this->input->post('customer_doa'))),
+							'customer_media_path' => $this->input->post('customer_preference')
 						);
 					// $this->PrettyPrintArray($data);
 
@@ -2736,15 +2738,18 @@ class Cashier extends CI_Controller {
   		//$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again!Review us on ".$google_url." to serve you better and Please find the invoice on ".$bill_url;
   		if(!empty($loyalty) && $loyalty > 0){
   			if(!empty($google_url)){
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url Review us on Google: $google_url";
+					// $msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url Review us on Google: $google_url";
+					$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name." Click Below link to download your bill of Rs.".$bill_amt.",".$bill_url." Review us on Google: ". $google_url;
   			}else{
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url ";
+  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name." Click Below link to download your bill of Rs.".$bill_amt.",".$bill_url;
   			}  			
   		}else if(!empty($cashback) && $cashback > 0){
   			if(!empty($google_url)){
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $cashback cashback,on your bill of Rs.$bill_amt. View $bill_url Review us on Google: $google_url";
+					// $msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $cashback cashback,on your bill of Rs.$bill_amt. View $bill_url Review us on Google: $google_url";
+					$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name." Click Below link to download your bill of Rs.".$bill_amt.",".$bill_url." Review us on Google: ". $google_url;
   			}else{
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $cashback cashback,on your bill of Rs.$bill_amt. View $bill_url ";
+					// $msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $cashback cashback,on your bill of Rs.$bill_amt. View $bill_url ";
+					$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name." Click Below link to download your bill of Rs.".$bill_amt.",".$bill_url;
   			}  			
   		}else if(!empty($google_url)){
   			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Review us on Google: $google_url";
