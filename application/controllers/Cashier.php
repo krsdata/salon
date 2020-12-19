@@ -2821,8 +2821,127 @@ class Cashier extends CI_Controller {
 		}				
 	}
 
+    public function PrintBill(){
+		$this->load->helper('pdfhelper');//loading pdf helper
+		if($this->IsLoggedIn('cashier')){	
+			$customer_id = $this->uri->segment(3);
+			if(isset($customer_id)){
+				//Check whether customer belongs to the logged cashier's shop and business admin
+				$where = array(
+					'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+					'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+					'master_admin_id'=> $this->session->userdata['logged_in']['master_admin_id'],
+					'customer_id'       => $customer_id
+				);
 
-	public function PrintBill(){
+				$check = $this->CashierModel->VerifyCustomer($where);				
+				if($check['success'] == 'true'){	
+					$data['title'] = "Invoice";
+					$data['experts'] = $this->GetExperts();
+					$data['shop_details'] = $this->ShopDetails();
+					$data['individual_customer'] = $this->GetCustomerBilling($customer_id);
+				
+					//for Bill No
+					$outlet_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+
+					$data['bill_no']=strval("A".strval(100+$this->session->userdata['logged_in']['business_admin_id']) . "O" . strval( $this->session->userdata['logged_in']['business_outlet_id']) . "-" . strval($outlet_counter['business_outlet_bill_counter']));
+										
+					if(isset($this->session->userdata['cart'][$customer_id])){
+						$data['cart'] = $this->session->userdata['cart'][$customer_id];
+					}
+
+					if(isset($this->session->userdata['payment'])){
+						$data['payment'] = $this->session->userdata['payment'][$customer_id];
+					}
+
+					$outlet_admin_id = $this->session->userdata['logged_in']['business_outlet_id'];
+					//print_r($result[0]['outlet_admin_id']);die;
+					// print_r($data['cart']);
+					$sql ="SELECT config_key,config_value from mss_config where (config_key='salon_logo' OR `config_key`='salon_bill_print_size') and outlet_admin_id = $outlet_admin_id";
+					//$sql ="SELECT config_key,config_value from mss_config where (config_key='salon_logo' OR `config_key`='salon_bill_print_size') and outlet_admin_id = 60";
+
+					$query = $this->db->query($sql);
+					$result = $query->result_array();
+					$print_size   = '';	/* Default Size */		
+					if(empty($result)){
+						$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
+
+						$query = $this->db->query($sql);
+						$result = $query->result_array();
+						$data['logo'] = $result[0]['config_value'];	
+							
+					}else{
+						foreach($result as $key=>$configValue){
+						  if($configValue['config_key']=='salon_logo'){	
+							 $data['logo'] = $configValue['config_value'];	
+						  }elseif($configValue['config_key']=='salon_bill_print_size'){
+							 $print_size = $configValue['config_value'];	 
+						  }
+						}
+					}
+					
+					$serviceId = array();
+					$cart 	   = array();
+					/* findout the Membership Details */
+					if(!empty($data) && isset($data['cart'])){
+						foreach($data['cart'] as $cart){
+							$serviceId[] = $cart['service_id'];
+						}
+					}
+					/* Get Data from service  */
+				    /*
+					if(!empty($serviceId)){	
+						$serviceDetails = $this->CashierModel->GetServiceDetails(implode(',',$serviceId));
+						$membershipDetails = $this->getMemberShipDetailsForGivenService($serviceDetails,$serviceId,$where);
+				        if(!empty($membershipDetails)){
+							foreach($membershipDetails as $value){
+								$data['membershipDetails'][$value['service_id']] = $value;
+							}
+						}
+					} */
+					$print_size = '';
+					if($print_size=='a4_size_with_gst'){
+						$this->load->view('cashier/cashier_print_bill_a4',$data);
+					}elseif($print_size=='thermal_size_with_gst'){
+						$this->load->view('cashier/cashier_print_bill_thermal',$data);
+					}elseif($print_size=='a4_size_without_gst'){
+						$this->load->view('cashier/cashier_print_bill_a4_without_tax',$data);
+					}elseif($print_size=='thermal_size_without_gst'){
+						$this->load->view('cashier/cashier_print_bill_thermal_without_tax',$data);
+					}else{
+						$this->load->view('cashier/cashier_print_bill',$data);
+					}
+					
+					/*if($print_size=='a4_size'){
+						$this->load->view('cashier/cashier_print_bill_a4_without_tax',$data);
+					}else{
+						$this->load->view('cashier/cashier_print_bill_thermal_without_tax',$data);
+					}*/		
+					//$this->PrettyPrintArray($data);				
+					
+				}
+				elseif ($check['error'] == 'true'){
+					$data = array(
+						'heading' => "Illegal Access!",
+						'message' => $check['message']
+					);
+					$this->load->view('errors/html/error_general',$data);	
+				}
+			}
+			else{
+				$data = array(
+					'heading' => "Illegal Access!",
+					'message' => "Customer details/ID missing. Please do not change url!"
+				);
+				$this->load->view('errors/html/error_general',$data);
+			}	
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/");
+		}	
+	}
+	
+	public function PrintBill_old(){
 		$this->load->helper('pdfhelper');//loading pdf helper
 		if($this->IsLoggedIn('cashier')){	
 			$customer_id = $this->uri->segment(3);
@@ -4968,8 +5087,7 @@ class Cashier extends CI_Controller {
 
 	//Video
 	public function Video(){
-		if($this->IsLoggedIn('cashier')){
-			
+		if($this->IsLoggedIn('cashier')){			
 			$data = $this->GetDataForCashier("Video");			
 			$data['experts'] = $this->GetExperts();	
 			$data['sidebar_collapsed'] = "true";
