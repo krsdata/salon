@@ -29,6 +29,23 @@ class MasterAdmin extends CI_Controller {
         // }
         return $data;
     }
+	
+	private function GetMasterOutlets(){
+		if($this->IsLoggedIn('master_admin')){
+			$where = array(
+				'master_id' 						=> $this->session->userdata['logged_in']['master_admin_id'],
+				'business_outlet_status'			=>1
+			);
+			$data = $this->MasterAdminModel->getOutletIds($where);
+			if($data['success'] == 'true' ){	
+				return $data['res_arr'];
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}	
+	}
+	
     //constructor of the Alumni Controller
     public function __construct(){
        parent::__construct();
@@ -2478,5 +2495,49 @@ class MasterAdmin extends CI_Controller {
 		else{
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		}	
+	}
+	
+	public function BillSettings(){
+		if($this->IsLoggedIn('master_admin')){
+		   if(isset($_POST) && !empty($_POST)){
+                $this->form_validation->set_rules('print_size', 'Bill Print Size', 'trim|required');
+                $this->form_validation->set_rules('outlet_valid_for[]', 'Outlet', 'trim|required');
+                if ($this->form_validation->run() == FALSE){
+                    $data = array(
+                                    'success' => 'false',
+                                    'error'   => 'true',
+                                    'message' =>  validation_errors()
+                                 );
+                    header("Content-type: application/json");
+                    print(json_encode($data, JSON_PRETTY_PRINT));
+                    die;
+                }else{
+					
+                    $print_size         =  $this->input->post('print_size');
+					$outlet_valid_for   =  $this->input->post('outlet_valid_for');
+						foreach($outlet_valid_for as $outlet_id){
+							$data = array(
+								 "config_value"     => $print_size,
+								 'master_id' 		=> $this->session->userdata['logged_in']['master_admin_id'],
+								 'config_key' 	    => 'salon_bill_print_size',
+								 "outlet_admin_id"  =>  $outlet_id
+							);
+								
+							$result = $this->MasterAdminModel->UpdateBillSettings($data);
+						}    
+					//if($result['success'] == 'true'){
+						$this->ReturnJsonArray(true,false,"Bill Settings has been updated successfully!");
+						die;
+					//}
+					
+			   }   
+          }else{	
+			$data = array();
+			$data['business_outlet_details']  = $this->GetMasterOutlets();
+			$this->load->view('master_admin/ma_bill_settings_view',$data);
+		  }
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		}
 	}
 }

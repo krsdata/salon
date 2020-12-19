@@ -32,6 +32,7 @@
 			</li>
 			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/ReportsManagement"><i data-feather="book" style="color:#009925;"></i>Reports</a></li>
 			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/Inventory"><i data-feather="book" style="color:#009925;"></i>Inventory</a></li>
+			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/BillSettings"><i data-feather="grid" style="color:#3369e8;"></i>Bill Settings</a></li>
 			<!--  -->
 			<!-- <?php
 				endif;
