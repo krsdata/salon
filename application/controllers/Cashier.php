@@ -482,20 +482,103 @@ class Cashier extends CI_Controller {
 		}
 	}
 	
-	public function GetSearchServiceData(){
-		if($this->IsLoggedIn('cashier')){
-			if(isset($_GET) && !empty($_GET)){
-				$data = $this->CashierModel->SearchServices($_GET['query'],$this->session->userdata['logged_in']['business_admin_id'],$this->session->userdata['logged_in']['business_outlet_id']);
 
-				if($data['success'] == 'true'){	
-					$this->ReturnJsonArray(true,false,$data['res_arr']);
-					die;
+	
+	public function GetSearchServiceData(){
+		
+		if($this->IsLoggedIn('cashier')){
+			$searchRecords = array();
+			$serviceIds = array();
+			if(isset($_GET) && !empty($_GET)){
+				
+				$data = $this->CashierModel->SearchServices($_GET['query'],$this->session->userdata['logged_in']['business_admin_id'],$this->session->userdata['logged_in']['business_outlet_id'],$this->session->userdata['logged_in']['master_admin_id']);
+				if(isset($data['res_arr']) && !empty($data['res_arr'])){
+					foreach($data['res_arr'] as $serviceDetails){
+						$serviceIds[] = $serviceDetails['service_id'];
+					}
 				}
+				
+			   $searchRecords = $this->getMemberShipDetailsForGivenService($data,$serviceIds,$_GET);  
+			   
+			   if($data['success'] == 'true'){	
+				$this->ReturnJsonArray(true,false,$searchRecords);
+				die;
+			  }
 			}
-		}
-		else{
+		}else{
 			$this->LogoutUrl(base_url()."Cashier/");
 		}
+	}
+	
+    public function getMemberShipDetailsForGivenService($data,$serviceIds,$get){
+		
+		$searchRecords = array();
+		/* Get Packages Details (get Search Package Data for same as services) */
+			  if(!empty($serviceIds)){						
+				$where = array('master_id'=>$this->session->userdata['logged_in']['master_admin_id'],
+							   'business_admin_id'=>$this->session->userdata['logged_in']['business_admin_id'],
+							   'outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id'],
+							   'service_ids'=>implode(',',$serviceIds),
+							   'customer_id'=>((isset($get['customer_id'])) ? $get['customer_id']:0));
+		
+				
+				$packageData = $this->CashierModel->GetPackageDetailsForCustomer($where);
+				
+				$packageResult = array();$packageIds = array();
+				if(isset($packageData['res_arr']) && !empty($packageData['res_arr'])){
+				  foreach($packageData['res_arr'] as $package){
+					$package['search_package_service'] = '(Membership - Rs '.$package['salon_package_upfront_amt'].','.$package['discount_percentage'].'%,'.'[#balance],#'.$package['salon_package_name'].")";   
+					//$package['package_name'] = $package['salon_package_name'];
+					$packageResult[$package['service_id']] = $package;
+					if(!in_array($package['salon_package_id'],$packageIds)){
+						$packageIds[] = $package['salon_package_id']; 
+					}
+				  }
+				}
+				
+				/* GET Customer Balance based on package Id */
+				$customerBalanceData = $this->CashierModel->GetCustomerBalance($where['customer_id'],$packageIds);
+				
+				if(!empty($data['res_arr'])){
+					foreach($data['res_arr'] as $key=>$serviceRecords){
+					  if(isset($packageResult[$serviceRecords['service_id']]) && !empty($packageResult[$serviceRecords['service_id']])){	
+						  $serviceRecords['show_service_type'] = $packageResult[$serviceRecords['service_id']]['package_type_nomenclature'];
+						  $serviceRecords['service_label']     = $serviceRecords['service_name'];
+						  $serviceRecords['service_name'] 	   = $serviceRecords['service_name'].','.$packageResult[$serviceRecords['service_id']]['search_package_service'];
+						  $serviceRecords['salon_package_id']    = $packageResult[$serviceRecords['service_id']]['salon_package_id'];
+						  $serviceRecords['package_name'] 	     = $packageResult[$serviceRecords['service_id']]['salon_package_name'];
+						  $serviceRecords['discount_percentage'] = $packageResult[$serviceRecords['service_id']]['discount_percentage'];
+						  $balance = 0;
+						 
+						  if(!empty($customerBalanceData['res_arr'])){
+							  foreach($customerBalanceData['res_arr'] as $customerPackageBalance){
+								  if($customerPackageBalance['service_id']==$serviceRecords['service_id']){
+									  $balance = $customerPackageBalance['service_count']; 
+								  }
+							  }
+						  }
+						  
+						  $serviceRecords['service_name'] = str_replace("[#balance]",'[#'.$balance.']',$serviceRecords['service_name']);
+						  $serviceRecords['service_package_info'] = str_replace("[#balance]",'[#'.$balance.']',$serviceRecords['service_name']);
+						  $serviceRecords['service_name'] = $serviceRecords['service_label'];
+						  $serviceRecords['balance'] 	  = 0;
+						  $serviceRecords['balance'] 	  = $balance;
+						 
+						 
+						  $searchRecords[] = $serviceRecords;
+						  
+					  }else{
+						  $serviceRecords['show_service_type'] = 'normal';
+						  $serviceRecords['service_package_info'] = $serviceRecords['service_name'];
+						  $searchRecords[] = $serviceRecords;
+					  }
+					}
+				}
+				
+			  }
+			  
+			 
+	    return $searchRecords; 
 	}
 	
 	public function GetCustomer(){
@@ -624,8 +707,8 @@ class Cashier extends CI_Controller {
 				}
 				else{
 					$where = array(
-						'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-						'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
+						//'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+						//'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 						'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 						'customer_mobile'  => $this->input->post('customer_mobile')
 					);
@@ -643,7 +726,7 @@ class Cashier extends CI_Controller {
 							'customer_dob'    => $this->input->post('customer_dob'),
 							'customer_mobile' => $this->input->post('customer_mobile'),
 							'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-							'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
+							'customer_business_outlet_id' => 0,
 							'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 							'customer_doa' => $this->input->post('customer_doa')
 						);
@@ -651,9 +734,9 @@ class Cashier extends CI_Controller {
 						$result = $this->CashierModel->Insert($data,'mss_customers');
 							
 						if($result['success'] == 'true'){
-							
 							//After Adding customer we have to add it to session varible
 							$sess_data = $this->GetCustomerBilling($result['res_arr']['insert_id']);
+							
 							$curr_sess_cust_data = array();
 							if(!isset($this->session->userdata['POS'])){
 								array_push($curr_sess_cust_data, $sess_data);
@@ -666,6 +749,7 @@ class Cashier extends CI_Controller {
 								$this->session->set_userdata('POS', $curr_sess_cust_data);
 
 							}
+							
 							////////////////////////////////////////////////////////////
 
 							$this->ReturnJsonArray(true,false,$result['res_arr']);
@@ -728,8 +812,7 @@ class Cashier extends CI_Controller {
 								'customer_name' 	=> $this->input->post('customer_name'),
 								'customer_dob'    => $this->input->post('customer_dob'),
 								'customer_doa' 		=> $this->input->post('customer_doa'),
-								'customer_mobile' => $this->input->post('customer_mobile'),
-								'customer_media_path' => $this->input->post('customer_preference')
+								'customer_mobile' => $this->input->post('customer_mobile')
 							);
 
 							$result = $this->CashierModel->Update($data,'mss_customers','customer_id');
@@ -766,8 +849,7 @@ class Cashier extends CI_Controller {
 							'customer_title' 	=> $this->input->post('customer_title'),
 							'customer_name' 	=> $this->input->post('customer_name'),
 							'customer_dob'    => date('Y-m-d',strtotime($this->input->post('customer_dob'))),
-							'customer_doa' 		=> date('Y-m-d',strtotime($this->input->post('customer_doa'))),
-							'customer_media_path' => $this->input->post('customer_preference')
+							'customer_doa' 		=> date('Y-m-d',strtotime($this->input->post('customer_doa')))
 						);
 					// $this->PrettyPrintArray($data);
 
@@ -854,7 +936,6 @@ class Cashier extends CI_Controller {
 				}
 				else{
 					$where = array(
-						'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 						'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 						'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 						'customer_mobile'  => $this->input->post('customer_mobile')
@@ -872,7 +953,6 @@ class Cashier extends CI_Controller {
 							'customer_name' 	=> $this->input->post('customer_name'),
 							'customer_dob'    => $this->input->post('customer_dob'),
 							'customer_mobile' => $this->input->post('customer_mobile'),
-							'customer_master_admin_id' => $this->session->userdata['logged_in']['master_admin_id'],
 							'customer_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
 							'customer_business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 							'customer_doa' => $this->input->post('customer_doa')
@@ -947,15 +1027,16 @@ class Cashier extends CI_Controller {
 
 	//Very Important function
 	public function PerformBilling(){
+		
 		if($this->IsLoggedIn('cashier')){	
 			$customer_id = $this->uri->segment(3);
 			
 			if(isset($customer_id)){
 				//Check whether customer belongs to the logged cashier's shop and business admin
 				$where = array(
-					'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-					'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
-					'master_admin_id'=> $this->session->userdata['logged_in']['master_admin_id'],
+					//'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+					//'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+					'master_admin_id'	  => $this->session->userdata['logged_in']['master_admin_id'],
 					'customer_id'       => $customer_id
 				);
 
@@ -977,17 +1058,20 @@ class Cashier extends CI_Controller {
 					//
 
 					$data = $this->GetDataForCashier("Final Billing");
-					
+					$data['customer_id']  = $customer_id;
 					$data['individual_customer'] = $this->GetCustomerBilling($customer_id);
 					
-					$data['categories']  = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Service');
+					//$data['categories']  = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Service');
 					// $data['categories_products'] = $this->GetCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Products');
+					$data['categories'] = $this->GetAssignCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Service');
 
 					
 					$data['experts'] = $this->GetExperts();
 
 					$data['active_packages_categories'] = $this->PurchasedPackages($customer_id);
-					$data['categories_products']=$this->CashierModel->OtcCategory($this->session->userdata['logged_in']['business_outlet_id']);
+				
+					//$data['categories_products']=$this->CashierModel->OtcCategory($this->session->userdata['logged_in']['business_outlet_id']);
+					$data['categories_products']= $this->GetAssignCategoriesByType($this->session->userdata['logged_in']['business_outlet_id'],'Products');
 					$data['categories_products']=$data['categories_products']['res_arr'];
 
 					// $this->PrettyPrintArray($data['categories_products']);
@@ -1081,7 +1165,7 @@ class Cashier extends CI_Controller {
 						}
 					}
 				
-          // $this->PrettyPrintArray($data);
+           //$this->PrettyPrintArray($data);
 					$this->load->view('cashier/cashier_do_billing_view',$data);
 				}
 				elseif ($check['error'] == 'true'){
@@ -1114,7 +1198,7 @@ class Cashier extends CI_Controller {
 				$this->form_validation->set_rules('coupon_code', 'Coupon Code', 'trim|required|max_length[8]');
 				$this->form_validation->set_rules('customer_id', 'Customer Id', 'trim|required');
 				$this->form_validation->set_rules('total_bill', 'Total Bill', 'trim|required');
-				if($this->form_validation->run() == FALSE) 
+				if ($this->form_validation->run() == FALSE) 
 				{
 					$data = array(
 									'success' => 'false',
@@ -1128,83 +1212,53 @@ class Cashier extends CI_Controller {
 				else{	
 					$customer_id = $this->input->post('customer_id');
 					$total_bill= $this->input->post('total_bill'); 
-					$coupon_code= strtoupper($this->input->post('coupon_code'));
+					$coupon_code= $this->input->post('coupon_code');
 					$curr_sess_cart_data = $this->session->userdata['cart'][''.$customer_id.''];
 					$where=array(
 						'customer_id'=>$this->input->post('customer_id'),
-						'coupon_code'=> strtoupper($this->input->post('coupon_code')),
-						'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id'],
-						'business_admin_id'	=>$this->session->userdata['logged_in']['business_admin_id']
-					);
-					$where2=array(
-						'coupon_code'=> strtoupper($this->input->post('coupon_code')),
+						'coupon_code'=>$this->input->post('coupon_code'),
 						'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id'],
 						'business_admin_id'	=>$this->session->userdata['logged_in']['business_admin_id']
 					);
 					$code_info=$this->CashierModel->GetDealInfo($where);
-					if($code_info['success'] == 'false'){
-						$code_info_for_all=$this->CashierModel->GetAllDealInfo($where2);
-					}
-					// print_r($code_info_for_all);
-					//  $this->PrettyPrintArray($code_info_for_all);
-					if($code_info['success'] == 'false' && $code_info_for_all['success'] == 'false')
+				// 	$this->PrettyPrintArray($code_info);
+					if($code_info['success'] == 'false')
 					{
 						$this->ReturnJsonArray(false,true,"No coupon found!");
 						die;
-						
+						// $code_info=['res_arr'=>''];
+						// $code_info=$code_info['res_arr'];
 					}else{
 						$code_info=$code_info['res_arr'];
-						if(empty($code_info) || $code_info==null || $code_info==""){
-							if($code_info_for_all['res_arr'][0]['deal_for']=="All"){
-								$code_info = $code_info_for_all['res_arr'];	
-							}else{
-							$this->ReturnJsonArray(false,true,"Coupon is Not valid for This Customer.");
-							die;
-							}
-						}
-						// $this->PrettyPrintArray($code_info);
 						$service_arr=array();
 						foreach($code_info as $info){
 							array_push($service_arr,$info['service_id']);
 						}
-						//get  No of Redemption
-						$deal_redemption_count= $this->CashierModel->GetCustomerDealRedemptionCount($where);
-						
-						if($deal_redemption_count['res_arr'][0]['count'] < $code_info[0]['total_services']){
-							if($code_info[0]['deal_code']==$coupon_code && $total_bill >= $code_info[0]['minimum_amt'] && $total_bill <= $code_info[0]['maximum_amt'] && substr($code_info[0]['start_time'],0,5) < substr(date("H:i:s"),0,5) && substr($code_info[0]['end_time'],0,5) > substr(date("H:i:s"),0,5)){
-								$session_data=array();
-								if(isset($curr_sess_cart_data) || empty($curr_sess_cart_data)){
-									foreach($curr_sess_cart_data as $data){
-										if(in_array($data['service_id'],$service_arr)){
-											$data['service_discount_percentage']=$code_info[0]['discount'];
-											array_push($session_data,$data);
-										}else{
-											array_push($session_data,$data);
-										}
+
+						// $this->PrettyPrintArray($service_arr);
+						if($code_info[0]['deal_code']==$coupon_code && $total_bill > $code_info[0]['minimum_amt'] && $total_bill < $code_info[0]['maximum_amt'] && substr($code_info[0]['start_time'],0,5) < substr(date("H:i:s"),0,5) && substr($code_info[0]['end_time'],0,5) > substr(date("H:i:s"),0,5)){
+							$session_data=array();
+							if(isset($curr_sess_cart_data) || empty($curr_sess_cart_data)){
+								foreach($curr_sess_cart_data as $data){
+									if(in_array($data['service_id'],$service_arr)){
+										$data['service_discount_percentage']=$code_info[0]['discount'];
+										array_push($session_data,$data);
+									}else{
+										// $data['service_discount_percentage']=$code_info[0]['discount'];
+									  array_push($session_data,$data);
 									}
 								}
-								
-								$coupon=array(
-									'deal_id'		=> $code_info[0]['deal_id'],
-									'deal_code' => $coupon_code,
-									'discount'	=> $code_info[0]['discount']
-								); 
-								$curr_sess_cart_data  = ["".$this->input->post('customer_id')."" => $session_data];
-								$this->session->set_userdata('cart', $curr_sess_cart_data);
-								$this->session->set_userdata('coupon_details', $coupon);
-								// $this->PrettyPrintArray($this->session->userdata());
-								// $this->session->userdata['cart'][''.$customer_id.'']=$session_data;
-								// $this->session->set_userdata('cart', $session_data);
-								// $this->PrettyPrintArray($this->session->userdata['cart'][''.$customer_id.'']);
-								$this->ReturnJsonArray(true,false,"Coupon applied successfully!");
-								die;
-							}else{
-								$this->ReturnJsonArray(false,true,"Invalid Coupon!");
-								die;
 							}
+							$curr_sess_cart_data  = ["".$this->input->post('customer_id')."" => $session_data];
+							$this->session->set_userdata('cart', $curr_sess_cart_data);
+							// $this->session->userdata['cart'][''.$customer_id.'']=$session_data;
+							// $this->session->set_userdata('cart', $session_data);
+							// $this->PrettyPrintArray($this->session->userdata['cart'][''.$customer_id.'']);
+							$this->ReturnJsonArray(true,false,"Coupon applied successfully!");
+							die;
 						}else{
-							$this->ReturnJsonArray(false,true,"You Have Redeemed Maximum Count!");
-								die;
+							$this->ReturnJsonArray(false,true,"Invalid Coupon!");
+							die;
 						}
 					}					
 				}
@@ -1240,7 +1294,7 @@ class Cashier extends CI_Controller {
 				'category_business_outlet_id'=> $outlet_id
 			);
 
-			$data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+			$data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
 			}
@@ -1289,6 +1343,7 @@ class Cashier extends CI_Controller {
 	}
     
     //get category by  category type
+	/* Get all categories which is created by admin or master admin */
 	private function GetCategoriesByType($outlet_id,$type){
 		if($this->IsLoggedIn('cashier')){
 			$where = array(
@@ -1297,8 +1352,47 @@ class Cashier extends CI_Controller {
 				'category_is_active'         => TRUE,
 				'category_business_outlet_id'=> $outlet_id
 			);
+			$data = $this->BusinessAdminModel->GetMasterCategories($where);
+			
+			if($data['success'] == 'true'){	
+				return $data['res_arr'];
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/");
+		}		
+	}
 	
-			$data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+	private function GetAssignCategoriesByType($outlet_id,$type){
+		if($this->IsLoggedIn('cashier')){
+			$where = array(
+				'category_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+				'category_type' => $type,
+				'is_active'         => TRUE,
+				'category_business_outlet_id'=> $outlet_id
+			);
+			$data = $this->BusinessAdminModel->GetAllAssignMasterCategories($where);
+			$categories = array();
+			if(!empty($data['res_arr']) && $data['success']=='true'){
+				return $data['res_arr'];
+			}
+			
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/");
+		}
+	}
+	
+	private function GetCategoriesByType_old($outlet_id,$type){
+		if($this->IsLoggedIn('cashier')){
+			$where = array(
+				'category_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+				'category_type' => $type,
+				'category_is_active'         => TRUE,
+				'category_business_outlet_id'=> $outlet_id
+			);
+	
+			$data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
 			}
@@ -1311,25 +1405,36 @@ class Cashier extends CI_Controller {
     
 	public function GetSubCategoriesByCatId(){
 		if($this->IsLoggedIn('cashier')){
-			if(isset($_GET) && !empty($_GET)){
-				$where = array(
-					'sub_category_category_id' => $_GET['category_id'],
-					'sub_category_is_active'   => TRUE
-				);
-				
-				$data = $this->BusinessAdminModel->MultiWhereSelect('mss_sub_categories',$where);
-				header("Content-type: application/json");
-				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
-				die;
+			$where = array(
+				'category_business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+				'is_active'         => TRUE,
+				'category_business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+				'sub_category_category_id' => $_GET['category_id']
+			);
+			$data = $this->BusinessAdminModel->GetAllAssignMasterCategories($where);
+			if(!empty($data['res_arr'])){
+				$inArray = array();
+				$subCategory = array();
+				foreach($data['res_arr'] as $key=>$value){
+					if(!in_array($value['sub_category_id'],$inArray)){
+						$inArray[] = $value['sub_category_id'];
+						$subCategory[] = $value;
+					}
+				}
 			}
+			header("Content-type: application/json");
+			print(json_encode($subCategory, JSON_PRETTY_PRINT));
+			die;
+			
 		}
 		else{
 			$this->LogoutUrl(base_url()."Cashier/");
 		}
+		
 	}
 
 	public function GetServicesBySubCatId(){
-		if($this->IsLoggedIn('cashier')){
+	    if($this->IsLoggedIn('cashier')){
 			if(isset($_GET) && !empty($_GET)){
 				$where = array(
 					'service_sub_category_id'  => $_GET['sub_category_id'],
@@ -1337,7 +1442,6 @@ class Cashier extends CI_Controller {
 				);
 				
 				$data = $this->BusinessAdminModel->MultiWhereSelect('mss_services',$where);
-		
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
 				die;
@@ -1415,12 +1519,12 @@ class Cashier extends CI_Controller {
 				
 				$where = array(
 					'customer_id' => $_GET['customer_id'],
-					'sub_category_id' => $_GET['sub_category_id']
+					'sub_category_id' => $_GET['sub_category_id'],
+					'outlet_id' => $this->session->userdata['logged_in']['business_outlet_id']
 				);
 				
 				$data = $this->CashierModel->GetPurchasedPackagesServices($where);
-				// print_r($data);
-				// exit;
+				//$this->PrettyPrintArray($data);
 				header("Content-type: application/json");
 				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
 				die;
@@ -1497,21 +1601,23 @@ class Cashier extends CI_Controller {
 		 				$this->session->unset_userdata('payment');
 		 			}
 					
+					/* get customer package profile id */
+					
 					$data = array(
-										'customer_id'								 => $this->input->post('customer_id'),
-										'service_id'  							 => $this->input->post('service_id'),
-										'service_name'							 => $this->input->post('service_name'),
-										'service_total_value'				 => $this->input->post('service_total_value'),
-										'service_quantity'					 => $this->input->post('service_quantity'),
+										'customer_id'				 => $this->input->post('customer_id'),
+										'service_id'  				=> $this->input->post('service_id'),
+										'service_name'				 => $this->input->post('service_name'),
+										'service_total_value'		 => $this->input->post('service_total_value'),
+										'service_quantity'			=> $this->input->post('service_quantity'),
 										'service_discount_percentage'=> $this->input->post('service_discount_percentage'),
 										'service_discount_absolute'  => $this->input->post('service_discount_absolute'),
 										'service_expert_id'          => $this->input->post('service_expert_id'),
 										'service_price_inr'          => $this->input->post('service_price_inr'),
-										'service_add_on_price'			=> 0,
+										'service_add_on_price'		 => 0,
 										'service_gst_percentage'     => $this->input->post('service_gst_percentage'),
-										'service_est_time'  => $this->input->post('service_est_time'),
+										'service_est_time'  		 => $this->input->post('service_est_time'),
 										'customer_package_profile_id' => -999, //Short code for no package redemption
-										'coupon_id'									=>$this->input->post('coupon_id')
+										'coupon_id'					=>$this->input->post('coupon_id')
 									);
 
 								
@@ -1538,6 +1644,7 @@ class Cashier extends CI_Controller {
 							$this->session->set_userdata('cart', $curr_sess_cart_data);
 						}
 					}
+					//$this->PrettyPrintArray($_SESSION['cart']);
 					/********************************************************************/
 					$this->ReturnJsonArray(true,false,"Your Cart updated successfully!");
 					die;
@@ -2085,6 +2192,7 @@ class Cashier extends CI_Controller {
 	}
 
 	public function SplitPaymentInfo(){
+		
 		if($this->IsLoggedIn('cashier')){
 			if(isset($_POST) && !empty($_POST)){				
 				$this->form_validation->set_rules('total_final_bill', 'Final Bill', 'trim|required');
@@ -2343,12 +2451,9 @@ class Cashier extends CI_Controller {
           
             $data['last_txn']= $this->CashierModel->LastFiftyTransaction();
 						$data['last_txn']=$data['last_txn']['res_arr'];
+						// $this->PrettyPrintArray($data['last_txn']);
             $data['service']= $this->CashierModel->ServiceWiseSale($where);
-						$data['service']= $data['service']['res_arr'];
-						$data['service_sales']= $this->CashierModel->TodaysServiceWiseSale($where);
-						$data['service_sales']= $data['service_sales']['res_arr'];
-						
-						// $this->PrettyPrintArray($data['service_sales']);
+            $data['service']= $data['service']['res_arr'];
             $data['expert']= $this->CashierModel->ExpertWiseSale($where);
             $data['expert']= $data['expert']['res_arr'];
             $data['package_expert']=$this->CashierModel->ExpertWisePackageSale($where);
@@ -2506,10 +2611,13 @@ class Cashier extends CI_Controller {
 	)
   */
 	
-	public function DoTransaction(){		
+	public function DoTransaction(){	
+        
 		if($this->IsLoggedIn('cashier')){			
 			if(isset($_POST) && !empty($_POST)){
-				$customer_id = $_POST['txn_data']['txn_customer_id'];							
+				
+				$customer_id = $_POST['txn_data']['txn_customer_id'];
+				
 				$count=1;
 				foreach($_POST['cart_data'] as $key => $value)
 				{
@@ -2526,12 +2634,11 @@ class Cashier extends CI_Controller {
 					
 					$cart_data['transaction_id'] = $result['res_arr']['res_arr']['insert_id'];
 					$cart_data['outlet_admin_id'] = $business_admin_id;					
-					$cart_data['transaction_time'] = $transcation_detail['res_arr'][0]['txn_datetime'];
+					$cart_data['transaction_time'] = (!empty($transcation_detail['res_arr'][0]['txn_datetime'])) ? $transcation_detail['res_arr'][0]['txn_datetime'] : date("Y-m-d H:i:s");
 					$cart_data['cart_data'] = json_encode($_POST['cart_data']);
 					$cart_detail = $this->CashierModel->Insert($cart_data,'mss_transaction_cart');
 					if($cart_detail['success'] == 'true'){
 						$this->session->set_userdata('loyalty_point',$transcation_detail['res_arr'][0]['txn_loyalty_points']);
-						$this->session->set_userdata('cashback',$transcation_detail['res_arr'][0]['txn_loyalty_cashback']);
 						$detail_id = $cart_detail['res_arr']['insert_id'];
 						$bill_url = base_url()."Cashier/generateBill/$customer_id/".base64_encode($detail_id);
 						$bill_url = str_replace("https", "http", $bill_url);
@@ -2630,32 +2737,25 @@ class Cashier extends CI_Controller {
 					$customer_details = $this->GetCustomerBilling($_POST['customer_pending_data']['customer_id']);
 					//4.Send a msg
 					$this->session->set_userdata('bill_url',$bill_url);
-					$sms_status = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
-						// $this->PrettyPrintArray($sms_status);
-					if($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
-						if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
-							if($_POST['txn_data']['txn_value']==0){
-							$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-							}else{
-							$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+					$sms_status = $this->db->select('business_outlet_sms_status')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
+						
+					if($sms_status['business_outlet_sms_status']==1){
+							if($_POST['send_sms'] === 'true' && $_POST['cashback']>0){
+								if($_POST['txn_data']['txn_value']==0){
+								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}else{		
+								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}
 							}
-						}
-						//
-						if($_POST['send_sms'] === 'true' && $_POST['cashback']==0){
-							if($_POST['txn_data']['txn_value']==0){
-							$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-							}else{		
-							$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+							//
+							if($_POST['send_sms'] === 'true' && $_POST['cashback']==0){
+								if($_POST['txn_data']['txn_value']==0){
+								$this->SendPackageTransactionSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data'][0]['salon_package_name'],$count,$customer_details['customer_name'],$_POST['cart_data'][0]['service_count'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
+								}else{		
+								$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url']);
+								}
 							}
-						}
-					}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
-						$this->SendSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-
-						$this->SendWhatsAppSms($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-
-					}elseif($sms_status['business_outlet_sms_status']==0 && $sms_status['whats_app_sms_status']==1 ){
-						$this->SendWhatsAppSms($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['txn_data']['txn_value'],$outlet_details['business_outlet_name'],$customer_details['customer_name'],$outlet_details['business_outlet_google_my_business_url'],$customer_details['customer_rewards']);
-					}
+					 	}
 					//
         
 					$this->ReturnJsonArray(true,false,"Transaction is successful!");
@@ -2671,30 +2771,23 @@ class Cashier extends CI_Controller {
 			$this->LogoutUrl(base_url()."Cashier/");
 		}
 	}
-	public function SendSms($sender_id,$api_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty="",$cashback=""){
+	public function SendSms($sender_id,$api_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
 		if($this->IsLoggedIn('cashier')){
 			$bill_url = $this->session->userdata('bill_url');
 			$loyalty = $this->session->userdata('loyalty_point');
-			$cashback = $this->session->userdata('cashback');
 		error_log("URL ============1 ".$bill_url);
   		//API key & sender ID
   		// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
 			// $apisender = "BILLIT";
 			// $apikey="32kO6tWy5UuN16e3fOQpPg";
 			// $apisender="DSASSH";
-			// $this->PrettyPrintArray($bill_url);
+			
   		//$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again!Review us on ".$google_url." to serve you better and Please find the invoice on ".$bill_url;
   		if(!empty($loyalty) && $loyalty > 0){
   			if(!empty($google_url)){
   				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url Review us on Google: $google_url";
   			}else{
   				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url ";
-  			}  			
-			}else if(!empty($cashback) && $cashback > 0){
-  			if(!empty($google_url)){
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $cashback cashback,on your bill of Rs.$bill_amt. View $bill_url Review us on Google: $google_url";
-  			}else{
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $cashback cashback,on your bill of Rs.$bill_amt. View $bill_url ";
   			}  			
   		}else if(!empty($google_url)){
   			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Review us on Google: $google_url";
@@ -2705,65 +2798,8 @@ class Cashier extends CI_Controller {
  			
  			// API 
 			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
-
-			// $url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":9,"clientId":"0rfMvmvjSxODwIp","authKey":"JH3E76DHNYeIcwD"}';
-				log_message('info', $url);
-			
-  		$ch = curl_init($url);
-  		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-  		curl_setopt($ch,CURLOPT_POST,1);
-  		curl_setopt($ch,CURLOPT_POSTFIELDS,"");
-  		curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
-  		
-  		$data = curl_exec($ch);
-  		return json_encode($data);
-		}
-		else{
-			$this->LogoutUrl(base_url()."Cashier/");
-		}				
-	}
-
-	public function SendWhatsAppSms($client_id,$user_id,$whatsapp_key,$mobile,$bill_amt,$outlet_name,$customer_name,$google_url,$loyalty=""){
-		if($this->IsLoggedIn('cashier')){
-			$bill_url = $this->session->userdata('bill_url');
-			$loyalty = $this->session->userdata('loyalty_point');
-			$cashback = $this->session->userdata('cashback');
-		error_log("URL ============1 ".$bill_url);
-  		//API key & sender ID
-  		// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
-			// $apisender = "BILLIT";
-			// $apikey="32kO6tWy5UuN16e3fOQpPg";
-			// $apisender="DSASSH";
-			// $this->PrettyPrintArray($loyalty);
-  		//$msg = "Dear ".$customer_name.", Thanks for Visiting ".$outlet_name."! You have been billed for Rs.".$bill_amt.". Look forward to serving you again!Review us on ".$google_url." to serve you better and Please find the invoice on ".$bill_url;
-  		if(!empty($loyalty) && $loyalty > 0){
-  			if(!empty($google_url)){
-					// $msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $loyalty rewards,on your bill of Rs.$bill_amt. View $bill_url Review us on Google: $google_url";
-					$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name." Click Below link to download your bill of Rs.".$bill_amt.",".$bill_url." Review us on Google: ". $google_url;
-  			}else{
-  				$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name." Click Below link to download your bill of Rs.".$bill_amt.",".$bill_url;
-  			}  			
-  		}else if(!empty($cashback) && $cashback > 0){
-  			if(!empty($google_url)){
-					// $msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $cashback cashback,on your bill of Rs.$bill_amt. View $bill_url Review us on Google: $google_url";
-					$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name." Click Below link to download your bill of Rs.".$bill_amt.",".$bill_url." Review us on Google: ". $google_url;
-  			}else{
-					// $msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name."! You have earned $cashback cashback,on your bill of Rs.$bill_amt. View $bill_url ";
-					$msg = "Dear ".$customer_name.", Thanks for visiting ".$outlet_name." Click Below link to download your bill of Rs.".$bill_amt.",".$bill_url;
-  			}  			
-  		}else if(!empty($google_url)){
-  			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Review us on Google: $google_url";
-  		}else{
-  			$msg = "Dear $customer_name, Thanks for visiting $outlet_name. View your bill of $bill_amt, $bill_url Look forward to serve you again.";
-  		}  		
-   		$msg = rawurlencode($msg);   //This for encode your message content                 		
- 			
- 			// API 
-			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
-
-			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":'.$client_id.',"clientId":"'.$user_id.'","authKey":"'.$whatsapp_key.'"}';
-				log_message('info', $url);
-			
+            log_message('info', $url);
+        
   		$ch = curl_init($url);
   		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
   		curl_setopt($ch,CURLOPT_POST,1);
@@ -2821,15 +2857,16 @@ class Cashier extends CI_Controller {
 		}				
 	}
 
-    public function PrintBill(){
-		$this->load->helper('pdfhelper');//loading pdf helper
+	public function PrintBill(){
+	  
+	 $this->load->helper('pdfhelper');//loading pdf helper
 		if($this->IsLoggedIn('cashier')){	
 			$customer_id = $this->uri->segment(3);
 			if(isset($customer_id)){
 				//Check whether customer belongs to the logged cashier's shop and business admin
 				$where = array(
-					'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-					'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+					//'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+					//'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
 					'master_admin_id'=> $this->session->userdata['logged_in']['master_admin_id'],
 					'customer_id'       => $customer_id
 				);
@@ -2889,8 +2926,7 @@ class Cashier extends CI_Controller {
 						}
 					}
 					/* Get Data from service  */
-				    /*
-					if(!empty($serviceId)){	
+				    if(!empty($serviceId)){	
 						$serviceDetails = $this->CashierModel->GetServiceDetails(implode(',',$serviceId));
 						$membershipDetails = $this->getMemberShipDetailsForGivenService($serviceDetails,$serviceId,$where);
 				        if(!empty($membershipDetails)){
@@ -2898,8 +2934,8 @@ class Cashier extends CI_Controller {
 								$data['membershipDetails'][$value['service_id']] = $value;
 							}
 						}
-					} */
-					$print_size = '';
+					}
+					//$print_size = '';
 					if($print_size=='a4_size_with_gst'){
 						$this->load->view('cashier/cashier_print_bill_a4',$data);
 					}elseif($print_size=='thermal_size_with_gst'){
@@ -2939,6 +2975,7 @@ class Cashier extends CI_Controller {
 		else{
 			$this->LogoutUrl(base_url()."Cashier/");
 		}	
+	  
 	}
 	
 	public function PrintBill_old(){
@@ -2948,8 +2985,8 @@ class Cashier extends CI_Controller {
 			if(isset($customer_id)){
 				//Check whether customer belongs to the logged cashier's shop and business admin
 				$where = array(
-					'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-					'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+					//'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+					//'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
 					'master_admin_id'=> $this->session->userdata['logged_in']['master_admin_id'],
 					'customer_id'       => $customer_id
 				);
@@ -3019,8 +3056,8 @@ class Cashier extends CI_Controller {
 				if(isset($customer_id)){
 						//Check whether customer belongs to the logged cashier's shop and business admin
 						$where = array(
-								'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-								'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+								//'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+								//'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
 								'master_admin_id'=> $this->session->userdata['logged_in']['master_admin_id'],
 								'customer_id'       => $customer_id
 						);
@@ -3032,7 +3069,16 @@ class Cashier extends CI_Controller {
 								$data['individual_customer'] = $this->GetCustomerBilling($customer_id);
 								if(isset($this->session->userdata['package_cart'])){
 										$data['package_cart'] = $this->session->userdata['package_cart'];
+										
+										/* Get Info from Package Table  */
+										$packageId = isset($data['package_cart']['salon_package_id']) ? $data['package_cart']['salon_package_id'] : 0;
+										$packageDetails = $this->CashierModel->DetailsById($packageId,'mss_salon_packages','	salon_package_id');
+										if(isset($packageDetails['res_arr']) && !empty($packageDetails['res_arr'])){
+											$data['package_cart']['service_gst_percentage'] = $packageDetails['res_arr']['service_gst_percentage'];
+											$data['package_cart']['salon_package_validity'] = $packageDetails['res_arr']['salon_package_validity'];
+										}
 								}
+								
 								if(isset($this->session->userdata['package_payment'])){
 										$data['package_payment'] = $this->session->userdata['package_payment'][$customer_id];
 								}
@@ -3040,23 +3086,47 @@ class Cashier extends CI_Controller {
 								$outlet_admin_id = $this->session->userdata['logged_in']['business_outlet_id'];
 								//print_r($result[0]['outlet_admin_id']);die;
 								// print_r($data['cart']);
-								$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";
+								$sql ="SELECT config_key,config_value from mss_config where (config_key='salon_logo' OR `config_key`='salon_bill_print_size') and outlet_admin_id = $outlet_admin_id";
+								//$sql ="SELECT config_key,config_value from mss_config where (config_key='salon_logo' OR `config_key`='salon_bill_print_size') and outlet_admin_id = 60";
 
 								$query = $this->db->query($sql);
 								$result = $query->result_array();
+								$print_size   = '';	/* Default Size */		
 								if(empty($result)){
 									$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
 
 									$query = $this->db->query($sql);
 									$result = $query->result_array();
+									$data['logo'] = $result[0]['config_value'];	
+										
+								}else{
+									foreach($result as $key=>$configValue){
+									  if($configValue['config_key']=='salon_logo'){	
+										 $data['logo'] = $configValue['config_value'];	
+									  }elseif($configValue['config_key']=='salon_bill_print_size'){
+										 $print_size = $configValue['config_value'];	 
+									  }
+									}
 								}
-								$data['logo'] = $result[0]['config_value'];
+								$print_size='a4_size_with_gst';
+								
+								if($print_size=='a4_size_with_gst'){
+									$this->load->view('cashier/cashier_package_print_bill_a4',$data);
+								}elseif($print_size=='thermal_size_with_gst'){
+									$this->load->view('cashier/cashier_package_print_bill_thermal',$data);
+								}elseif($print_size=='a4_size_without_gst'){
+									$this->load->view('cashier/cashier_package_print_bill_a4_without_tax',$data);
+								}elseif($print_size=='thermal_size_without_gst'){
+									$this->load->view('cashier/cashier_package_print_bill_thermal_without_tax',$data);
+								}else{
+									$this->load->view('cashier/cashier_package_print_bill',$data);
+								}
 								// $this->PrettyPrintArray($data['shop_details']);
 								// die;
 								// echo "<pre>";
 								// print_r($data);
 								// die;
-								$this->load->view('cashier/cashier_package_print_bill',$data);
+								//$this->load->view('cashier/cashier_package_print_bill',$data);
 						}
 						elseif ($check['error'] == 'true'){
 								$data = array(
@@ -3084,8 +3154,8 @@ class Cashier extends CI_Controller {
 			if(isset($customer_id)){
 				//Check whether customer belongs to the logged cashier's shop and business admin
 				$where = array(
-					'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
-					'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
+					//'business_admin_id' => $this->session->userdata['logged_in']['business_admin_id'],
+					//'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id'],
 					'master_admin_id'=> $this->session->userdata['logged_in']['master_admin_id'],
 					'customer_id'       => $customer_id
 				);
@@ -3562,20 +3632,12 @@ class Cashier extends CI_Controller {
                 $datam=array(
                     'outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
                 );
-                // $da=$this->BusinessAdminModel->SelectMaxIdExpense($datam);
+                $da=$this->BusinessAdminModel->SelectMaxIdExpense($datam);
                 // $this->PrettyPrintArray($da);
-                // $da=$da['res_arr'][0]['id'];
-								// $expense_id= "E1010Y".$this->session->userdata['logged_in']['business_outlet_id'].($da+1);
-								
-								//Unique serial id
-									$outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
-									$admin_id= $this->session->userdata['logged_in']['business_admin_id'];
-									$expense_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();			
-          				$expense_unique_serial_id = strval("EA".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($expense_counter['business_outlet_expense_counter']));
-									// $emp=$this->BusinessAdminModel->DetailsById($_POST['source_name'],'mss_vendors','vendor_id');
-
+                $da=$da['res_arr'][0]['id'];
+                $expense_id= "E1010Y".$this->session->userdata['logged_in']['business_outlet_id'].($da+1);
                     $data = array(
-                        'expense_unique_serial_id'=>$expense_unique_serial_id, 
+                        'expense_unique_serial_id'=>$expense_id, 
                         'expense_date'      => $this->input->post('entry_date'),
                         'expense_type_id'   => $this->input->post('expense_type_id'),
                         'item_name'         => $this->input->post('item_name'),
@@ -3620,12 +3682,9 @@ class Cashier extends CI_Controller {
                     if($_POST['expense_status'] != 'Unpaid'){
                         $result = $this->BusinessAdminModel->Insert($data,'mss_expenses');
                         }
-                        if($_POST['expense_status'] != 'Paid'){
+                        if($_POST['expense_status'] != 'paid'){
                             $result = $this->BusinessAdminModel->Insert($data1,'mss_expenses_unpaid');
-												}
-												
-												$query = "UPDATE mss_business_outlets SET business_outlet_expense_counter = business_outlet_expense_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
-												$this->db->query($query);
+                        }
                         if($result['success'] == 'true'){
                             $this->ReturnJsonArray(true,false,"Expense added successfully!");
                             die;
@@ -3785,11 +3844,13 @@ class Cashier extends CI_Controller {
         if($this->IsLoggedIn('cashier')){       
                 $data = $this->GetDataForCashier("Buy Packages");           
                 $data['salon_packages'] = $this->AdminActivePackages();
-                $data['sidebar_collapsed'] = "true";      
+               
+				$data['sidebar_collapsed'] = "true";      
                 $customer_id = $this->uri->segment(3);
                 if($customer_id != ''){
                     $sess_data = $this->GetCustomerBilling($customer_id);
-                    if(!isset($this->session->userdata['Package_Customer'])){
+					
+					if(!isset($this->session->userdata['Package_Customer'])){
                         $this->session->set_userdata('Package_Customer', $sess_data);
                     }
                     else{
@@ -3799,11 +3860,12 @@ class Cashier extends CI_Controller {
                 }
                 // $this->PrettyPrintArray($customer_id);      
                 if(isset($this->session->userdata['Package_Customer']) || isset($customer_id)){
-                        $data['Package_Customer'] = $this->session->userdata['Package_Customer'];
-                        if(isset($this->session->userdata['package_payment'])){
-                                $data['package_payment'] = $this->session->userdata['package_payment'][''.$this->session->userdata['Package_Customer']['customer_id'].''];
-                        }
+					$data['Package_Customer'] = $this->session->userdata['Package_Customer'];
+					if(isset($this->session->userdata['package_payment'])){
+							$data['package_payment'] = $this->session->userdata['package_payment'][''.$this->session->userdata['Package_Customer']['customer_id'].''];
+					}
                 }
+				
                 if(isset($this->session->userdata['package_cart'])){
                         $data['package_cart'] = $this->session->userdata['package_cart'];
                 }
@@ -3867,12 +3929,12 @@ class Cashier extends CI_Controller {
 		if($this->IsLoggedIn('cashier')){
 			
 			$where = array(
-				'business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
+				//'business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
 				'business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 				'is_active' => TRUE
 			);
 
-			$data = $this->CashierModel->MultiWhereSelect('mss_salon_packages',$where);
+			$data = $this->CashierModel->GetTotalPackagesByOutletId($where);
 			
 			if($data['success'] == 'true'){	
 				return $data['res_arr'];
@@ -3905,12 +3967,13 @@ class Cashier extends CI_Controller {
 			}
 		 //
 		 $where = array(
-			'business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
+			//'business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
 			'business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
 			'is_active' => TRUE
 		);
 			$data = $this->GetDataForCashier("Active Package");	
-			$data['activePackages']=$this->CashierModel->ActivePackage($where['business_admin_id'],$where['business_outlet_id']);
+		   
+			$data['activePackages']=$this->CashierModel->ActivePackage($where['business_outlet_id']);
 			$data['activePackages']=$data['activePackages']['res_arr'];
 		
 			$data['sidebar_collapsed'] = "true";
@@ -3942,11 +4005,32 @@ class Cashier extends CI_Controller {
 			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
-
+	
+	public function PackageDetail(){
+		
+		if($this->IsLoggedIn('cashier')){
+			$packageId = $this->uri->segment(3);
+			if(isset($packageId) && !empty($packageId)){
+				$data = $this->CashierModel->GetPackageDetails($packageId,$this->session->userdata['logged_in']['business_outlet_id']);
+				if(isset($data['res_arr']) && !empty($data['res_arr'])){
+					$this->load->view('cashier/cashier_packages_details_view',$data);	
+				}else{
+					redirect(base_url().'Cashier/ActivePackages','refresh');
+				}
+			}else{
+				redirect(base_url().'Cashier/ActivePackages','refresh');
+			}
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/");
+		}		
+	}
 	public function GetPackage(){
 		if($this->IsLoggedIn('cashier')){
 			if(isset($_GET) && !empty($_GET)){
-				$data = $this->CashierModel->GetPackageDetails($_GET['salon_package_id']);
+				
+				$data = $this->CashierModel->GetPackageDetails($_GET['salon_package_id'],$this->session->userdata['logged_in']['business_outlet_id']);
+				
 				if($data['success'] == 'true'){	
 					header("Content-type: application/json");
 					print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
@@ -4110,8 +4194,7 @@ class Cashier extends CI_Controller {
 								
 								//send sms
 								// $this->SendPackageSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity']);
-								$sms_status = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
-							if($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
+
 								if(isset($_POST['cart_data']['donar_name']) && isset($_POST['cart_data']['donar_mob'])){
 										$this->SendPackageDonarSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$_POST['cart_data']['donar_name'],$_POST['cart_data']['package_final_value'],$data['business_outlet_name'],$data['business_outlet_address'],$_POST['cart_data']['donar_mob'],$data['business_outlet_google_my_business_url']);
 										$this->SendPackageRecipentSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$_POST['cart_data']['donar_name'],$_POST['cart_data']['package_final_value'],$data['business_outlet_name'],$data['business_outlet_address'],$data['business_outlet_mobile'],$data['business_outlet_google_my_business_url']);
@@ -4119,16 +4202,7 @@ class Cashier extends CI_Controller {
 								else{
 										$this->SendPackageSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$data['business_outlet_google_my_business_url']);
 								}   
-							}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
-								$this->SendPackageSms($_POST['txn_data']['sender_id'],$_POST['txn_data']['api_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$data['business_outlet_google_my_business_url']);
-
-								$this->SendPackageSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$data['business_outlet_google_my_business_url']);
-
-							}elseif($sms_status['business_outlet_sms_status']==0 && $sms_status['whats_app_sms_status']==1){
-								$this->SendPackageSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$_POST['customer_pending_data']['customer_mobile'],$_POST['cart_data']['package_name'],$_POST['cart_data']['customer_name'],$_POST['cart_data']['package_validity'],$data['business_outlet_google_my_business_url']);
-							}else{
-
-							}	
+								
 								//1.Unset the payment session
 								if(isset($this->session->userdata['package_payment'])){
 										$this->session->unset_userdata('payment');
@@ -4168,34 +4242,6 @@ class Cashier extends CI_Controller {
 			 
 			 // API 
 			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
-										
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch,CURLOPT_POST,1);
-			curl_setopt($ch,CURLOPT_POSTFIELDS,"");
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
-			
-			$data = curl_exec($ch);
-			return json_encode($data);
-		}
-		else{
-			$this->LogoutUrl(base_url()."Cashier/");
-		}		
-	}	
-
-	public function SendPackageSmsOnWhatsapp($client_id,$user_id,$whatsapp_key,$mobile,$package_name,$customer_name,$package_validity,$google_url){
-		if($this->IsLoggedIn('cashier')){
-		
-			//API key & sender ID
-			// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
-			// $apisender = "BILLIT";
-			$msg = "Dear ".$customer_name.", Thanks for Visiting. You've bought ".$package_name." Package Valid for  ".$package_validity." months. Look forward to serve you again! Review us on ".$google_url." to serve you better.";
-			 $msg = rawurlencode($msg);   //This for encode your message content                 		
-			 
-			 // API 
-			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
-
-			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":'.$client_id.',"clientId":"'.$user_id.'","authKey":"'.$whatsapp_key.'"}';
 										
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -4460,7 +4506,8 @@ class Cashier extends CI_Controller {
 				$this->form_validation->set_rules('customer_appointment_date', 'Appointment Date', 'trim');
 				$this->form_validation->set_rules('appointment_start_time', 'Appointment Start Time', 'required|trim');
 				$this->form_validation->set_rules('appointment_end_time', 'Appointment End Time', 'required|trim');
-				$this->form_validation->set_rules('expert_id', 'Expert Name', 'required');				
+				$this->form_validation->set_rules('expert_id', 'Expert Name', 'required');
+				
 				if ($this->form_validation->run() == FALSE) 
 				{
 					$data = array(
@@ -4473,6 +4520,7 @@ class Cashier extends CI_Controller {
 					die;
 				}
 				else{
+
 					$services = $this->input->post('service_id');
 					if(!empty($services)){						
 						//1. check whether customer exists by mobile
@@ -4484,7 +4532,6 @@ class Cashier extends CI_Controller {
 						);
 					
 						$customerExists = $this->CashierModel->CheckCustomerExists($where);
-						
 						if($customerExists['success'] == 'true' && $customerExists['error'] == 'false' ){
 							//
 							$data = array(
@@ -4514,21 +4561,13 @@ class Cashier extends CI_Controller {
 								$result = $this->CashierModel->AddAppointmentModel($data,$services,$this->input->post('expert_id'));
 						
 								if($result['success'] == 'true'){
-									$sms_status = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
 									
-									if($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
 								    $this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-									}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
-										$this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-										$this->SendAppointmentSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-									}elseif($sms_status['business_outlet_sms_status']==0 && $sms_status['whats_app_sms_status']==1){
-										$this->SendAppointmentSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-									}else{
-										
-									}
-									$this->ReturnJsonArray(true,false,"Appointment added successfully!");
+									
+										$this->ReturnJsonArray(true,false,"Appointment added successfully!");
 										die;
-								}elseif($result['error'] == 'true'){
+									}
+									elseif($result['error'] == 'true'){
 										$this->ReturnJsonArray(false,true,$result['message']);
 										die;
 									}
@@ -4585,19 +4624,8 @@ class Cashier extends CI_Controller {
 							
 									if($result['success'] == 'true'){
 									
-									// $this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-								  $sms_status = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$this->session->userdata['logged_in']['business_outlet_id'])->get()->row_array();
-									
-									if($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==0){
-								    $this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-									}elseif($sms_status['business_outlet_sms_status']==1 && $sms_status['whats_app_sms_status']==1){
-										$this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-										$this->SendAppointmentSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-									}elseif($sms_status['business_outlet_sms_status']==0 && $sms_status['whats_app_sms_status']==1){
-										$this->SendAppointmentSmsOnWhatsapp($sms_status['client_id'],$sms_status['whatsapp_userid'],$sms_status['whatsapp_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
-									}else{
-										
-									}
+									$this->SendAppointmentSms($_POST['sender_id'],$_POST['api_key'],$customer_details['customer_mobile'],$customer_details['customer_name'],$_POST['business_outlet_name'],$data['appointment_date'],$data['appointment_start_time']);
+								    
 										
 										$this->ReturnJsonArray(true,false,"Appointment added successfully!");
 										die;
@@ -4762,31 +4790,6 @@ class Cashier extends CI_Controller {
 			 // API 
 			$url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
 										
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch,CURLOPT_POST,1);
-			curl_setopt($ch,CURLOPT_POSTFIELDS,"");
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER,2);
-			
-			$data = curl_exec($ch);
-			return json_encode($data);
-		}
-		else{
-			$this->LogoutUrl(base_url()."Cashier/");
-		}		
-	}
-	public function SendAppointmentSmsOnWhatsapp($client_id,$user_id,$whatsapp_key,$mobile,$customer_name,$outlet,$date,$time){
-		if($this->IsLoggedIn('cashier')){
-			//API key & sender ID
-			// $apikey = "ll2C18W9s0qtY7jIac5UUQ";
-			// $apisender = "BILLIT";
-			$msg = "Dear ".$customer_name.", you have made an appointment @".$outlet." on ".$date." at ".$time." hrs. Looking forward to offer our best services to you.";
-			 $msg = rawurlencode($msg);   //This for encode your message content                 		
-			 
-			 // API 
-			// $url = 'https://www.smsgatewayhub.com/api/mt/SendSMS?APIKey='.$api_key.'&senderid='.$sender_id.'&channel=2&DCS=0&flashsms=0&number='.$mobile.'&text='.$msg.'&route=1';
-			
-			$url = 'http://api.mobileadz.in/api/message/send?data={"textMessage":"'.$msg.'","toAddress":"'.$mobile.'","userId":'.$client_id.',"clientId":"'.$user_id.'","authKey":"'.$whatsapp_key.'"}';
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 			curl_setopt($ch,CURLOPT_POST,1);
@@ -5087,7 +5090,8 @@ class Cashier extends CI_Controller {
 
 	//Video
 	public function Video(){
-		if($this->IsLoggedIn('cashier')){			
+		if($this->IsLoggedIn('cashier')){
+			
 			$data = $this->GetDataForCashier("Video");			
 			$data['experts'] = $this->GetExperts();	
 			$data['sidebar_collapsed'] = "true";
@@ -6427,7 +6431,7 @@ public function AddToCartRedeemPoints(){
                 'category_business_outlet_id'=> $outlet_id,
                 'category_type' => 'Products'
             );
-            $data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+            $data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
             if($data['success'] == 'true'){ 
                 return $data['res_arr'];
             }
@@ -6451,7 +6455,7 @@ public function AddToCartRedeemPoints(){
                 'category_type' => 'Products'
             );
             // $this->PrettyPrintArray($where);
-            $data = $this->BusinessAdminModel->MultiWhereSelect('mss_categories',$where);
+            $data = $this->BusinessAdminModel->MultiWhereSelect('master_categories',$where);
             // $this->PrettyPrintArray($data);
             if($data['success'] == 'true'){
                 header("Content-type: application/json");
@@ -7120,12 +7124,12 @@ public function AddToCartRedeemPoints(){
             }else{
                 $date = date('Y-m-d');    
                 $one_day_before = date('Y-m-d',strtotime("-1 days"));
-            }           
+            }
+           
             $result = $this->BusinessAdminModel->GetExpenseRecord($date);
         }            
         if($result['success']){
-						$transaction = $result['res_arr']['transaction'];
-						// $this->PrettyPrintArray($transaction);
+            $transaction = $result['res_arr']['transaction'];
             $expenses = $result['res_arr']['expenses'];
             $pending_amount = $result['res_arr']['pending_amount'];
             $temp = [];
@@ -7212,28 +7216,90 @@ public function AddToCartRedeemPoints(){
                 }
                 $key_info['keys'][3] = $temp;
 
-
-                $p_mode = [];
-                foreach ($key_info as $key => $k) {
-                    foreach ($k as $key => $keys) {
-                        if(!in_array($keys, $p_mode)){
-                            $p_mode[] = $keys;
-                        }
-                    }                                    
-                }
-
         }
         
-        $p_mode = array_filter($p_mode);        
+        $result = $this->BusinessAdminModel->GetPaymentMode();
+        if($result['success']){
+        	$mode = $result['res_arr'];
+        	
+        	foreach ($mode as $key => $value) {
+                if(!empty($value['txn_settlement_payment_mode'])){                        
+                    if(in_array(strtolower($value['txn_settlement_payment_mode']), $temp)){
+                        $transaction_data[strtolower($value['txn_settlement_payment_mode'])] += $value['total_price'];
+                    }else{
+                        $result = json_decode($value['txn_settlement_payment_mode']);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $json_data[] = json_decode($value['txn_settlement_payment_mode'],true);
+                        }else{
+                            $transaction_data[strtolower($value['txn_settlement_payment_mode'])] = $value['total_price'];
+                            $temp[] = strtolower($value['txn_settlement_payment_mode']);
+                        }                            
+                    }
+                }                        
+            }                
+            if(!empty($json_data)){                    
+                foreach ($json_data as $key => $j) {
+                    foreach ($j as $key => $t) {
+                      if(in_array(strtolower($t['payment_type']), $temp)){
+                        $transaction_data[strtolower($t['payment_type'])] += $t['amount_received'];
+                        }else{
+                            $transaction_data[strtolower($t['payment_type'])] = $t['amount_received'];
+                            $temp[] = strtolower($t['payment_type']);
+                        }  
+                    }                       
+                }
+            }
+        }
+        $data['payment_type_arr'] = $temp;       
+        $result = $this->BusinessAdminModel->getOpeningRecord($date,1);        
+
+        $cashin = [];
+        $cashout = [];
+        $temp1 = [];
+        $temp2 = [];
+        if($result['success']){
+        	$cashinout = $result['res_arr']['opening_balance'];
+
+        	foreach ($cashinout as $key => $value) {
+        		if($value['amount_data'] == 'CashIn'){
+	        		if(in_array(strtolower($value['payment_mode']), $temp1)){
+		                $cashin[strtolower($value['payment_mode'])] += $value['amount'];
+		                }else{
+		                    $cashin[strtolower($value['payment_mode'])] = $value['amount'];
+		                    $temp1[] = strtolower($value['payment_mode']);
+		                }  
+	                }elseif($value['amount_data'] == 'CashOut'){
+	                	if(in_array(strtolower($value['payment_mode']), $temp2)){
+	                	$cashout[strtolower($value['payment_mode'])] += $value['amount'];
+		                }else{
+		                    $cashout[strtolower($value['payment_mode'])] = $value['amount'];
+		                    $temp2[] = strtolower($value['payment_mode']);
+		                }
+	                }        		
+        	}        	
+        }        
+        $key_info['keys'][4] = $temp1;
+        $key_info['keys'][5] = $temp2;
+        $p_mode = [];
+        foreach ($key_info as $key => $k) {
+            foreach ($k as $key => $keys) {
+                if(!in_array($keys, $p_mode)){
+                    $p_mode[] = $keys;
+                }
+            }                                    
+        }
+         $p_mode = array_filter($p_mode);        
         $p_mode = call_user_func_array('array_merge', $p_mode);
         $p_mode = array_unique($p_mode);
-        $p_mode = array_values($p_mode);        
+        $p_mode = array_values($p_mode);              
         $data['p_mode'] = $p_mode;
         $data['opening_balance_data'] = $opening_balance_data;
         $data['pending_amount_data'] = $pending_amount_data;
         $data['expenses_data'] = $expenses_data;
         $data['transaction_data'] = $transaction_data;
         $data['date'] = $date;
+        $data['cashin'] = $cashin;
+        $data['cashout'] = $cashout;	        
         $this->load->view('cashier/cashier_book_view',$data);
     }
 
@@ -7335,7 +7401,7 @@ public function AddToCartRedeemPoints(){
                     }                                    
                 }
 
-				}
+        }
         
         $p_mode = array_filter($p_mode);        
         $p_mode = call_user_func_array('array_merge', $p_mode);
@@ -7419,23 +7485,18 @@ public function AddToCartRedeemPoints(){
 								$insert_stock=$this->CashierModel->Insert($data4,'inventory_stock');
 							}
 
-							//making entry in expense table
-								$outlet_id = $this->session->userdata['logged_in']['business_outlet_id'];
-									$admin_id= $this->session->userdata['logged_in']['business_admin_id'];
-									$expense_counter = $this->db->select('*')->from('mss_business_outlets')->where('business_outlet_id',$outlet_id)->get()->row_array();			
-          				$expense_unique_serial_id = strval("EA".strval(100+$admin_id) . "O" . strval($outlet_id) . "-" . strval($expense_counter['business_outlet_expense_counter']));
-									$emp=$this->BusinessAdminModel->DetailsById($_POST['source_name'],'mss_vendors','vendor_id');
-									$data5=array(
-								'expense_unique_serial_id'	=>	$expense_unique_serial_id,
+							//making entry i expense table
+							$data5=array(
+								'expense_unique_serial_id'	=>	'E1010Y',
 								'expense_date'							=>	date('Y-m-d'),
-								'expense_type_id'						=>	'1',
+								'expense_type_id'						=>	'10000',
 								'item_name'									=>	'Inventory',
 								'employee_name'							=>	$this->session->userdata['logged_in']['employee_name'],
 								'total_amount'							=>	$this->input->post('invoice_amount'),
 								'amount'										=>	$this->input->post('amount_paid'),
 								'payment_type'							=>	$this->input->post('source_type'),
-								'payment_to'								=>	$this->input->post('source_name'),
-								'payment_to_name'						=>	$emp['res_arr']['vendor_name'],
+								'payment_to'								=>	$this->input->post('source_type'),
+								'payment_to_name'						=>	$this->input->post('source_name'),
 								'invoice_number'						=>	$this->input->post('invoice_number'),
 								'remarks'										=>	$this->input->post('note'),
 								'payment_mode'							=>	$this->input->post('payment_mode'),
@@ -7446,30 +7507,6 @@ public function AddToCartRedeemPoints(){
 
 							$insert_expense=$this->CashierModel->Insert($data5,'mss_expenses');
 
-							//Add Expense Unpaid E
-							if($_POST['invoice_amount'] > $_POST['amount_paid']){
-								$data1 = array(
-									'expense_date'      => date('Y-m-d'),
-									'expense_type_id'   => 1,
-									'item_name'         => 'Inventory',
-									'total_amount'      =>$this->input->post('invoice_amount'),
-									'amount'            => $this->input->post('amount_paid'),
-									'remarks'           => $this->input->post('note'),
-									'payment_type'      => $this->input->post('source_type'),
-									'payment_to'        => $this->input->post('source_name'),
-									'payment_to_name'   => $emp['res_arr']['vendor_name'],
-									'payment_mode'      => $this->input->post('payment_mode'),
-									'pending_amount'    => ($this->input->post('invoice_amount')- $this->input->post('amount_paid')),
-									'expense_status'    => $this->input->post('payment_status'),
-									'employee_name'     => $this->session->userdata['logged_in']['employee_name'],
-									'invoice_number'    => $this->input->post('invoice_number'),
-									'bussiness_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
-								);				
-									$result = $this->BusinessAdminModel->Insert($data1,'mss_expenses_unpaid');
-							}
-
-							$query = "UPDATE mss_business_outlets SET business_outlet_expense_counter = business_outlet_expense_counter + 1 WHERE business_outlet_id = ".$outlet_id."";
-							$this->db->query($query);
 						}
 						$this->db->trans_complete();
 						if ($this->db->trans_status() === FALSE){
@@ -7747,57 +7784,32 @@ public function AddToCartRedeemPoints(){
 		}
 	}
 
-
-	public function GetServiceWiseTransactions(){
-		if($this->IsLoggedIn('cashier')){		
-			$where=array(
-				'to_date'	=>  $_GET['to_date'],
-				'from_date'	=> $_GET['from_date'],
-				'business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id']
-			);
-			$data=$this->CashierModel->ServiceWiseSaleBetween($where);
-			// $this->PrettyPrintArray($data);	
-
+	public function AddCashIn(){
+		if($this->IsLoggedIn('cashier')){
+			$post['amount'] = $_POST['cash_in'];
+			$post['opening_date'] = date('Y-m-d');
+			$post['amount_data'] = 'CashIn';
+			$post['payment_mode'] = 'Cash';
+			$post['business_outlet_id'] = $this->session->userdata['logged_in']['business_outlet_id'];
+			$data=$this->CashierModel->Insert($post,'mss_opening_balance');
 			$this->ReturnJsonArray(true,false,$data['res_arr']);
 			die;
 		}
 	}
-
-	public function GetComposition(){
-		if($this->IsLoggedIn('cashier')){		
-			if(isset($_GET) && !empty($_GET)){
-				$where = array(
-					'txn_id'         => $_GET['txn_id']
-				);
-				$data = $this->CashierModel->ViewComposition($where);
-				header("Content-type: application/json");
-				print(json_encode($data['res_arr'], JSON_PRETTY_PRINT));
-				die;
-			}
-		}
-	}
-
-	public function UpdateConsumption(){
-		if($this->IsLoggedIn('cashier')){		
-			if(isset($_POST) && !empty($_POST)){
-				$data=array(
-					'txn_id'			=> $_POST['txn_id'],
-					'service_id'	=> $_POST['service_id'],
-					'extra_use'		=> $_POST['extra_use'],
-					'wastage'			=> $_POST['wastage']
-				);
-				$res=$this->CashierModel->UpdateConsumption($data);
-				if($res['success']=='true'){
-					$this->ReturnJsonArray(true,false,'Consumption Updated');
-					die;
-				}else{
-					$this->ReturnJsonArray(false,true,'Error');
-					die;
-				}
-			}else{
-				$this->ReturnJsonArray(false,true,'Wrong Method');
+	
+	public function AddCashOut(){
+		if($this->IsLoggedIn('cashier')){
+			$post['amount'] = $_POST['cash_out'];
+			$post['opening_date'] = date('Y-m-d');
+			$post['amount_data'] = 'CashOut';
+			$post['payment_mode'] = $_POST['paymod_mode'];
+			$post['business_outlet_id'] = $this->session->userdata['logged_in']['business_outlet_id'];
+			$data=$this->CashierModel->Insert($post,'mss_opening_balance');
+			$this->ReturnJsonArray(true,false,$data['res_arr']);
 			die;
-			}
 		}
 	}
+    
+	
+
 }
