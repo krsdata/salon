@@ -53,7 +53,7 @@ class MYPDF extends TCPDF {
 	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 	//$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 	
-	$pdf->SetAutoPageBreak(FALSE,PDF_MARGIN_BOTTOM);
+	$pdf->SetAutoPageBreak(TRUE,PDF_MARGIN_BOTTOM);
 	
 	$pdf->SetFont('helvetica', '', 6.5);
 	$pdf->setFontSubsetting(false);
@@ -382,7 +382,7 @@ if(!isset($cart) || empty($cart)){
 <!--
 <tr>
 <td  style="font-size:10px"><center>B/Tax</center></td>
-<td  style="font-size:10px"><center><?php echo $final_mrp_b_tax; ?></center></td>
+<td  style="font-size:10px"><center><?php //echo $final_mrp_b_tax; ?></center></td>
 </tr>
 -->
 <tr>

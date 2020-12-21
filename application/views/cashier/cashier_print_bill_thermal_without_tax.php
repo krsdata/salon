@@ -49,11 +49,11 @@ class MYPDF extends TCPDF {
 	$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
 	$pdf->SetDefaultMonospacedFont('helvetica');
 	//$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-	//$pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-20, PDF_MARGIN_RIGHT-10);
+	$pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-15, PDF_MARGIN_RIGHT-10);
 	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-	$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+	//$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 	
-	$pdf->SetAutoPageBreak(FALSE,PDF_MARGIN_BOTTOM);
+	$pdf->SetAutoPageBreak(TRUE,PDF_MARGIN_BOTTOM);
 	
 	$pdf->SetFont('helvetica', '', 6.5);
 	$pdf->setFontSubsetting(false);
@@ -98,14 +98,14 @@ table.bordered , table.bordered td, table.bordered th {
 <body onload="window.print();">
 <div class="ex1" >
 	<center><img src="<?php echo SALON_LOGO_IMG; ?>" style="width:50px;height:50px;text-align:center;"></center>
-	<div style="font-size:10px">
+	<div style="font-size:8px">
 	  <table  border="0"  width="100%" class="invoice" ><tr><td>
 		<b><?php echo $shop_details['business_outlet_name']; ?> <br>
 		<?php echo $shop_details['business_outlet_address']; ?> <?php echo $shop_details['business_outlet_mobile']; ?></b>
 		</td></tr>
 		</table>
 	</div>
-	<div style="width:100px;font-size:10px;">
+	<div style="width:100px;font-size:8px;">
 	  <table  border="0"  width="100%" class="invoice" ><tr>
 	     <td>
 			<b>Billed To</b><br>
@@ -115,7 +115,7 @@ table.bordered , table.bordered td, table.bordered th {
 		</table>
 	</div>
 
-<div style="width:100%;font-size:10px;">
+<div style="width:100%;font-size:8px;">
 <table  border="0"  width="100%" class="invoice"  >
 	<tr>
 	 <td>
