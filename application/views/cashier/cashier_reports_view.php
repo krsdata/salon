@@ -21,7 +21,7 @@
 									<div class="form-group col-md-2">
 										<select class="form-control" id="groupName" name="group_name">
 											<option selected>Report Group</option>
-												<option value="Sales">Sales</option>
+												<!-- <option value="Sales">Sales</option> -->
 												<option value="Inventory">Inventory</option>
 												<option value="Employee">Employee</option>
 											</select>
