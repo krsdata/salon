@@ -113,7 +113,6 @@
 															<li><a href="#arrows-primary-step-2" class="sw-btn-next">Transactional Details<br/></a></li>
 															<li><a href="#arrows-primary-step-3" class="sw-btn-next">Preference Details<br/></a></li>
 														</ul>
-
 														<div>
 															<div id="arrows-primary-step-1" class="">
 																<div class="form-row">
@@ -202,7 +201,7 @@
 						                    <div class="form-group">
 						                    	<div class="card">
 																		<div class="card-header">
-																			<h5 class="card-title">Last 4 Transactions</h5>
+																			<h5 class="card-title">Last 5 Transactions</h5>
 																		</div>
 																		<div class="card-body" id="TransactionalBills">
 																			<div class="row">
@@ -222,18 +221,9 @@
 																				</div>
 																			</div>
 																			
-																		</div>
-																		
-																	</div>
-																	<div class="row">
-																		<div class="col-md-9"></div>
-																		<div class="col-md-3 mt-2">
-																			<button type="submit" class="btn btn-primary">Submit</button>
-																		</div>
-																	</div>
-																	
-						                    </div>
-																
+																		</div>																		
+																	</div>																	
+						                    </div>																
 															</div>
 															<div id="arrows-primary-step-3">
 																<div class="form-row">
@@ -241,6 +231,12 @@
 																		<input class="form-control" name="customer_preference" placeholder="Enter Customer Preference">
 																	</div>
 																</div>
+																<div class="row">
+																		<div class="col-md-9"></div>
+																		<div class="col-md-3 mt-2">
+																			<button type="submit" class="btn btn-primary">Submit</button>
+																		</div>
+																	</div>
 															</div>
 														</div>
 													</div>	
@@ -312,7 +308,35 @@
 								</div>
 							</div>
 						</div>
-
+						<div class="modal" id="BillModal" tabindex="-1" role="dialog" aria-hidden="true">	
+							<div class="modal-dialog modal-dialog-centered modal-md" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title text-white">Bill Details</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">
+									<table id="show_Bill" style="width:100%;text-align:center">
+										<thead>
+											<tr>
+												<th>Service</th>
+												<th>Price</th>
+												<th>Discount %</th>
+												<th>Discount abs</th>
+												<th>Quantity</th>
+												<th>Expert</th>
+											</tr>
+										</thead>
+										<tbody id="tabid">
+											
+										</tbody>
+									</table>
+									</div>
+								</div>
+							</div>
+						</div>
 						<!--MODAL AREA END-->
 					</div>
 				</div>
@@ -458,7 +482,7 @@
 
 					for(var i = 0;i<data.transactions.length;i++){
 						temp_str += "<tr>";
-						temp_str += 	"<td>"+data.transactions[i].txn_unique_serial_id+"</td>";
+						temp_str += 	"<td class='serial_id' txn_id='"+data.transactions[i].txn_id+"' style='color:blue;'>"+data.transactions[i].txn_unique_serial_id+"</td>";
 						temp_str += 	"<td>"+data.transactions[i].BillDate+"</td>";
 						temp_str += 	"<td>"+data.transactions[i].txn_value+"</td>";
 						temp_str += 	"<td>"+data.transactions[i].txn_discount+"</td>";
@@ -475,7 +499,39 @@
 	        console.log(errorThrown.toString());
 	   		});
     });
+		//display txn deails
+		$(document).on('click',".serial_id",function(event){
+    	event.preventDefault();
+    	$(this).blur();
+			// alert($(this).attr('txn_id'));
+    	var parameters = { 
+				txn_id : $(this).attr('txn_id'),
+				type : 'Service'
+				};
+    	$.getJSON("<?=base_url()?>Cashier/GetBilledServices", parameters)
+					.done(function(data, textStatus, jqXHR) { 
+						if(data[0].service=='service'){
+							var str_2 = "";	
+							for(var i=0;i<data.length;i++){						
+								str_2 += "<tr>";
+								str_2 += "<td>"+data[i].service_name+"</td>";
+								str_2 += "<td>"+data[i].txn_service_discounted_price+"</td>";
+								str_2 += "<td>"+data[i].disc1+"</td>";
+								str_2 += "<td>"+data[i].disc2+"</td>";
+								str_2 += "<td>"+data[i].txn_service_quantity+"</td>";
+								str_2 += "<td>"+data[i].employee_first_name+"</td>";
+								str_2 += "</tr>";
+							}				
+							$("#tabid").html(str_2);
+							$("#BillModal").modal('show');
+						}
+	    	})
+	    	.fail(function(jqXHR, textStatus, errorThrown) {
+	        console.log(errorThrown.toString());
+	   		});
+    });
 
+		//
     $("#ClearPendingAmountForm input[name=amount_paid_now]").on('input',function(){
     	var billable_amt = $("#ClearPendingAmountForm input[name=due_amount]").val();
     	if(billable_amt - $(this).val() >= 0){
