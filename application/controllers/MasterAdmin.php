@@ -2540,4 +2540,22 @@ class MasterAdmin extends CI_Controller {
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		}
 	}
+
+	public function GetBillSettings(){
+		if($this->IsLoggedIn('master_admin')){
+			$where = array(
+							'config_key'       => 'salon_bill_print_size',
+							'config_value'     => $this->input->post('print_size'),
+							'master_id' 	   => $this->session->userdata['logged_in']['master_admin_id']
+						);
+			$record = $this->MasterAdminModel->MultiWhereSelect('mss_config',$where);
+		
+			header("Content-type: application/json");
+			print(json_encode($record['res_arr'], JSON_PRETTY_PRINT));
+			die;
+						
+		}else{
+			$this->LogoutUrl(base_url()."MasterAdmin");
+		} 
+	}
 }
