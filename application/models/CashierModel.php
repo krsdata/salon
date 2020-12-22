@@ -1456,7 +1456,7 @@ class CashierModel extends CI_Model {
             $result = array();
             $result = $query->row_array();
 
-            $sql = "SELECT  mss_transactions.txn_value,mss_transactions.txn_discount,mss_transactions.txn_unique_serial_id,date(mss_transactions.txn_datetime) AS BillDate FROM mss_customers,mss_transactions WHERE mss_customers.customer_id = mss_transactions.txn_customer_id AND mss_customers.customer_id = ".$this->db->escape($customer_id)." AND mss_transactions.txn_status=1 ORDER BY mss_transactions.txn_datetime DESC LIMIT 5";            
+            $sql = "SELECT  mss_transactions.txn_id,mss_transactions.txn_value,mss_transactions.txn_discount,mss_transactions.txn_unique_serial_id,date(mss_transactions.txn_datetime) AS BillDate FROM mss_customers,mss_transactions WHERE mss_customers.customer_id = mss_transactions.txn_customer_id AND mss_customers.customer_id = ".$this->db->escape($customer_id)." AND mss_transactions.txn_status=1 ORDER BY mss_transactions.txn_datetime DESC LIMIT 5";            
             
 			$query = $this->db->query($sql);
             if($query){                

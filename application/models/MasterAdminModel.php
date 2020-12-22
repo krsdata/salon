@@ -5006,4 +5006,47 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
+  
+  public function UpdateBillSettings($data){
+	$this->db->select('*');
+    $this->db->from('mss_config');
+    $this->db->where('config_key','salon_bill_print_size');
+    $this->db->where('outlet_admin_id',$data['outlet_admin_id']);
+   
+    $query = $this->db->get();
+
+    if($query->num_rows() >0 ) {
+      // UPDATE
+	  $sql = "UPDATE `mss_config` SET `config_value`='".$data['config_value']."' WHERE `outlet_admin_id` ='".$data['outlet_admin_id']."' AND `config_key`='".$data['config_key']."'";
+	  $query = $this->db->query($sql);
+
+	  if ($this->db->affected_rows() > 0) {
+	     return $this->ModelHelper(true, false);
+	  } else {
+	     return $this->ModelHelper(false, true, "No row updated!");
+	  }
+	  
+    } else {
+      // INSERT
+	   $data = $this->db->insert('mss_config', $data);
+
+		if ($data) {
+		   $data = array('insert_id' => $this->db->insert_id());
+		  return $this->ModelHelper(true, false, '', $data);
+		} else {
+		  return $this->ModelHelper(false, true, "Check your inserted query!", $data);
+		}
+    }  
+  }
+  
+  public function getOutletIds($data){ 
+       $query = "SELECT * FROM `mss_business_outlets` WHERE business_outlet_business_admin IN (SELECT `business_admin_id` FROM `mss_business_admin` WHERE `business_master_admin_id`='".$data['master_id']."') AND business_outlet_status='1' ORDER BY `business_outlet_name` ASC";
+	   $sql  = $this->db->query($query);
+		if ($sql->num_rows() > 0) {
+		  return $this->ModelHelper(true, false, '', $sql->result_array());
+		} else {
+		  return $this->ModelHelper(false, true, 'DB Error');
+		}	
+  }
+  
 }
