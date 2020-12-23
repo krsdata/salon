@@ -6,15 +6,15 @@
 	define('SALON_LOGO_IMG',base_url('public/images/').$logo);
 	// Extend the TCPDF class to create custom Header and Footer
 class MYPDF extends TCPDF {
-	    
+	   
 	//Page header
 	public function Header() {		
-		/*
+	 /* 	
         //echo SALON_LOGO_IMG;die;
 		$image_file = SALON_LOGO_IMG;//K_PATH_IMAGES.'logo_example.jpg';
 		$ext = pathinfo(SALON_LOGO_IMG, PATHINFO_EXTENSION);
         $this->Image($image_file, 24, 10, 25, 10, strtoupper($ext), '', 'T', false, 300, '', false, false, 0, false, false, false);
-        
+       
 		$this->SetLineStyle(array('width' => 0.85 / $this->k, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => $headerdata['line_color']));
 		$this->SetY((32.835 / $this->k) + max($imgy, $this->y));
 			if ($this->rtl) {
@@ -49,11 +49,11 @@ class MYPDF extends TCPDF {
 	$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
 	$pdf->SetDefaultMonospacedFont('helvetica');
 	//$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-	$pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-20, PDF_MARGIN_RIGHT-10);
-	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+	$pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-18, PDF_MARGIN_RIGHT-10);
+	// $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 	//$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 	
-	//$pdf->SetAutoPageBreak(true,10.0);
+	$pdf->SetAutoPageBreak(true,10.0);
 	
 	$pdf->SetFont('helvetica', '', 6.5);
 	$pdf->setFontSubsetting(false);
@@ -69,7 +69,6 @@ class MYPDF extends TCPDF {
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <title>Invoice</title>
  <style>
-	
 body{
     font-size: 9px;
 	line-height:12px;
@@ -93,9 +92,10 @@ table.bordered , table.bordered td, table.bordered th {
 </style>
 </head>
 <body onload="window.print();">
-<div class="ex1" >
+ 
+<div class="ex1 print" >
 	<center><img src="<?php echo SALON_LOGO_IMG; ?>" style="width:50px;height:50px;text-align:center;"></center>
-	<div style="font-size:10px">
+	<div style="font-size:8px">
 	  <table  border="0"  width="100%" class="invoice" ><tr><td>
 		<b><?php echo $shop_details['business_outlet_name']; ?> <br>
 		<?php echo $shop_details['business_outlet_address']; ?> <?php echo $shop_details['business_outlet_mobile']; ?><br>
@@ -104,7 +104,7 @@ table.bordered , table.bordered td, table.bordered th {
 		</table>
 	</div>
 
-	<div style="width:100px;font-size:10px;">
+	<div style="width:100px;font-size:8px;">
 	  <table  border="0"  width="100%" class="invoice" ><tr>
 	     <td>
 			<b>Billed To</b><br>
@@ -115,18 +115,18 @@ table.bordered , table.bordered td, table.bordered th {
 		</table>
 	</div>
 
-<div style="width:100%;font-size:10px;">
+<div style="width:100%;font-size:8px;">
 <table  border="0"  width="100%" class="invoice"  >
 	<tr>
 	 <td>
 	   <b>Invoice No   : <?php echo $bill_no; ?></b><br>
 	   <b>Invoice Date : <?php echo date("d-m-Y"); ?></b><br>
 	   <b>Invoice Type : Retail</b>
-	   
 	 </td>
 	</tr>
 </table>
 </div>
+<br>
 <?php
 if(!isset($cart) || empty($cart)){
 ?>					
@@ -382,7 +382,7 @@ if(!isset($cart) || empty($cart)){
 <!--
 <tr>
 <td  style="font-size:10px"><center>B/Tax</center></td>
-<td  style="font-size:10px"><center><?php echo $final_mrp_b_tax; ?></center></td>
+<td  style="font-size:10px"><center><?php // echo $final_mrp_b_tax; ?></center></td>
 </tr>
 -->
 <tr>
@@ -488,6 +488,8 @@ if(!isset($cart) || empty($cart)){
 </div>
 
 </div>
+<div class="print"></div>
+
 </body>
 </html>
 <?php
