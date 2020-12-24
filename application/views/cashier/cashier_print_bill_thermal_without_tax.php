@@ -50,7 +50,7 @@ class MYPDF extends TCPDF {
 	$pdf->SetDefaultMonospacedFont('helvetica');
 	//$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 	$pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-15, PDF_MARGIN_RIGHT-10);
-	// $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+	//$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 	//$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 	
 	$pdf->SetAutoPageBreak(TRUE,PDF_MARGIN_BOTTOM);
@@ -253,54 +253,67 @@ if(!isset($cart) || empty($cart)){
 		$total_discount+=$discount;
 ?>	
 						<tr>
-						<td style="font-size:10px;" bgcolor="#ccddff">
+						<td style="font-size:8px;" bgcolor="#ccddff">
 						<?=$item['service_name']?>
 						</td>
-						<td style="font-size:10px;" bgcolor="#ccddff"><?=round($mrp)?></td>
-						<td style="font-size:10px;" bgcolor="#ccddff">
+						<td style="font-size:8px;" bgcolor="#ccddff"><?=round($mrp)?></td>
+						<td style="font-size:8px;" bgcolor="#ccddff">
 						<?=$item['service_quantity']?>
 						</td>
-						<td style="font-size:10px;" bgcolor="#ccddff"><?=round($mrp*$item['service_quantity'])?></td>
-						<td style="font-size:10px;" bgcolor="#ccddff"></td>
+						<td style="font-size:8px;" bgcolor="#ccddff"><?=round($mrp*$item['service_quantity'])?></td>
+						<td style="font-size:8px;" bgcolor="#ccddff"></td>
 						</tr>
                    <?php if($item['service_discount_percentage']>0){ ?>
 						<tr>
-							<td style="font-size:10px;" bgcolor="#ffe6e6">
+							<td style="font-size:8px;" bgcolor="#ffe6e6">
 							<b>Discount&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $item['service_discount_percentage']; ?>%</b> 
 							</td>
-							<td style="font-size:10px;" bgcolor="#ffe6e6"></td>
-							<td style="font-size:10px;" bgcolor="#ffe6e6"></td>
-							<td style="font-size:10px;" bgcolor="#ffe6e6">
+							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6">
 							 <?php echo round($discount); ?>
 							</td>
-							<td style="font-size:10px;" bgcolor="#ffe6e6"></td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
 						</tr>
 						
+				   <?php }else{ ?>
+					   <tr>
+							<td style="font-size:8px;" bgcolor="#ffe6e6">
+							<b>Discount</b> 
+							</td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6">
+							 <?php echo round($discount); ?>
+							</td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
+						</tr>
+					   
 				   <?php } ?>
 				       
 						<?php if($balance>0){ 
 						?>
 						<tr>
-							<td style="font-size:10px;" bgcolor="#ffe6e6">
+							<td style="font-size:8px;" bgcolor="#ffe6e6">
 							<b>Membership Discount [<?php echo $membershipDetails[$item['service_id']]['package_name']; ?>]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $memberDiscount; ?>%</b>
 							</td>
-							<td style="font-size:10px;" bgcolor="#ffe6e6"></td>
-							<td style="font-size:10px;" bgcolor="#ffe6e6"></td>
-							<td style="font-size:10px;" bgcolor="#ffe6e6"><?php echo $memberDiscountAmt; ?></td>
-						    <td style="font-size:10px;" bgcolor="#ffe6e6"></td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6"><?php echo $memberDiscountAmt; ?></td>
+						    <td style="font-size:8px;" bgcolor="#ffe6e6"></td>
 						</tr>
 						<?php 
 						
 						} ?>
 						
 						<tr>
-						<td  style="font-size:10px" bgcolor="#cceeff">
+						<td  style="font-size:8px" bgcolor="#cceeff">
 						<b>Net Amt</b>
 						</td>
-						<td style="font-size:10px;" bgcolor="#cceeff"></td>
-						<td style="font-size:10px;" bgcolor="#cceeff"></td>
-						<td  style="font-size:10px" bgcolor="#cceeff"></td>
-						<td  style="font-size:10px" bgcolor="#cceeff"><b><?=round($total_value)?></b></td>
+						<td style="font-size:8px;" bgcolor="#cceeff"></td>
+						<td style="font-size:8px;" bgcolor="#cceeff"></td>
+						<td  style="font-size:8px" bgcolor="#cceeff"></td>
+						<td  style="font-size:8px" bgcolor="#cceeff"><b><?=round($total_value)?></b></td>
 						</tr>
 						
 						<tr >
