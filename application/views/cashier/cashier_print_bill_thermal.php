@@ -50,7 +50,7 @@ class MYPDF extends TCPDF {
 	$pdf->SetDefaultMonospacedFont('helvetica');
 	//$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 	$pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-18, PDF_MARGIN_RIGHT-10);
-	// $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 	//$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 	
 	$pdf->SetAutoPageBreak(true,10.0);
@@ -265,7 +265,7 @@ if(!isset($cart) || empty($cart)){
 						</tr>
                    <?php if($item['service_discount_percentage']>0){ ?>
 						<tr>
-							<td style="font-size:10px;" bgcolor="#ffe6e6">
+							<td style="font-size:8px;" bgcolor="#ffe6e6">
 							<b>Discount&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $item['service_discount_percentage']; ?>%</b> 
 							</td>
 							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
@@ -276,6 +276,18 @@ if(!isset($cart) || empty($cart)){
 							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
 						</tr>
 						
+				   <?php }else{?>
+						<tr>
+							<td style="font-size:8px;" bgcolor="#ffe6e6">
+							<b>Discount</b> 
+							</td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6">
+							 <?php echo round($discount); ?>
+							</td>
+							<td style="font-size:8px;" bgcolor="#ffe6e6"></td>
+						</tr>
 				   <?php } ?>
 				   <?php if($balance>0){ 
 						?>
