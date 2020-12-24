@@ -50,7 +50,7 @@ class MYPDF extends TCPDF {
 	$pdf->SetDefaultMonospacedFont('helvetica');
 	//$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 	$pdf->SetMargins(PDF_MARGIN_LEFT-10, PDF_MARGIN_TOP-18, PDF_MARGIN_RIGHT-10);
-	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+	//$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 	//$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 	
 	$pdf->SetAutoPageBreak(TRUE,PDF_MARGIN_BOTTOM);
