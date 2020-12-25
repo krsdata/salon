@@ -403,39 +403,7 @@
 									</div>
 									<div class="tab-pane" id="tab-3" role="tabpanel">
 										<div class="card">
-											<div class="card-header">
-												<!-- <form action="#" class="form-inlne" method="POST">
-													<div class="form-row">
-														<div class="form-group col-md-2">
-															<input type="date" class="form-control" name="invoice_number" value="<?=date('Y-m-d');?>">
-														</div>										
-														<div class="form-group col-md-2">
-															<select name="" class="form-control" required>
-															<option selected="selected" disabled>Select type</option>
-																<option value="">Warehouse</option>
-																<option value="">Branch</option>
-															</select>
-														</div>
-														<div class="form-group col-md-3">
-															<select name="" class="form-control" required>
-																<option value="">Warehouse</option>
-																<option value="">Branch</option>
-															</select>
-														</div>
-														<div class="form-group col-md-3">
-															<select name="" class="form-control" required>
-																<option selected="selected" disabled>Stock Category</option>
-																<option value="">All</option>
-																<option value="">Regular</option>
-																<option value="">Slow moving</option>
-																<option value="">Dead</option>
-															</select>
-														</div>
-														<div class="form-group col-md-2">
-															<button type="submit" value="" class="btn btn-primary ">Submit</button>
-														</div>
-													</div>
-												</form> -->
+											<div class="card-header">												
 												<div class="row">
 													<div class="col-md-10">
 														<h3>Available Stock</h3>
@@ -456,20 +424,22 @@
 														<th>Total Stock</th>
 														<th>Stock in Unit</th>
 														<th>Last Updated</th>
+														<th>Expiry Date</th>
 														<th>Location</th>
 													</thead>
 													<tbody>
 														<?php $count=1; foreach($stock as $stock){ ?>
 															<tr>
-														<td><?=$count?></td>
-														<td><?=$stock['service_name'];?></td>
-														<td><?=$stock['inventory_type'];?></td>
-														<td><?=$stock['barcode'];?></td>
-														<td><?=$stock['qty_per_item'].' '.$stock['service_unit'] ; ?></td>
-														<td><?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?></td>
-														<td><?php if(empty($stock['stock_in_unit']) || $stock['stock_in_unit']==""){echo "0"." ".$stock['service_unit'];}else{echo $stock['stock_in_unit']." ".$stock['service_unit'];} ?></td>
-														<td><?=$stock['updated_on'];?></td>
-														<td><?=$stock['business_outlet_name'];?></td>
+														<td style="width:5%;"><?=$count?></td>
+														<td style="width:15%;"><?=$stock['service_name'];?></td>
+														<td style="width:8%;"><?=$stock['inventory_type'];?></td>
+														<td style="width:8%;"><?=$stock['barcode'];?></td>
+														<td style="width:8%;"><?=$stock['qty_per_item'].' '.$stock['service_unit'] ; ?></td>
+														<td style="width:8%;"><?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?></td>
+														<td style="width:8%;"><?php if(empty($stock['stock_in_unit']) || $stock['stock_in_unit']==""){echo "0"." ".$stock['service_unit'];}else{echo $stock['stock_in_unit']." ".$stock['service_unit'];} ?></td>
+														<td style="width:8%;"><?=$stock['updated_on'];?></td>
+														<td style="width:8%;color:red;"><?=$stock['expiry_date'];?></td>
+														<td style="width:8%;"><?=$stock['business_outlet_name'];?></td>
 														</tr>
 														<?php $count++; }?>
 													</tbody>

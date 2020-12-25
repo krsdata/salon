@@ -7395,6 +7395,7 @@ public function AddToCartRedeemPoints(){
 
 							$where=array(
 								'stock_service_id' => $_POST['product_id'][$key],
+								'expiry_date' => $_POST['product_exp_date'][$key],
 								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id']
 							);
 							$data4=array(
@@ -7402,11 +7403,12 @@ public function AddToCartRedeemPoints(){
 								'total_stock'=> $_POST['product_qty'][$key],
 								'stock_in_unit'=>($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
-								'updated_on'	=>date('Y-m-d')
+								'updated_on'	=>date('Y-m-d'),
+								'expiry_date'=> $_POST['product_exp_date'][$key]
 							);
-					
-							$stock_exist= $this->CashierModel->CheckStockExist($where);
-							if($stock_exist['success']=='true'){
+							$stock_exist_with_same_expiry = $this->CashierModel->CheckStockExistWithSameExpiry($where);
+							// $stock_exist= $this->CashierModel->CheckStockExist($where);
+							if($stock_exist_with_same_expiry['success']=='true'){
 								$update_stock=$this->CashierModel->UpdateInventoryStock($data4);
 							}else{
 								$insert_stock=$this->CashierModel->Insert($data4,'inventory_stock');
