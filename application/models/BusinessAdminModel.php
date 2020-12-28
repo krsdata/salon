@@ -4942,10 +4942,29 @@ public function commission_details()
 // Get Salary Till Date 
 
   public function GetSalaryTillDate($data){
-        $sql="SELECT employee_id,employee_first_name,employee_last_name,employee_gross_salary,employee_basic_salary,employee_pf,employee_gratuity,employee_others,(mss_employees.employee_gross_salary)/30 as Salary,employee_pt,employee_income_tax from mss_employees
-        where employee_business_outlet=".$this->session->userdata['outlets']['current_outlet']."
-        AND employee_business_admin=".$this->session->userdata['logged_in']['business_admin_id']."
-        AND employee_is_active=1";
+        $sql="SELECT 
+			mss_employees.employee_id,
+			employee_first_name,
+			employee_last_name,
+			employee_gross_salary,
+			employee_basic_salary,
+			employee_pf,
+			employee_gratuity,
+			employee_others,
+			(mss_employees.employee_gross_salary)/30 as Salary,
+			employee_pt,
+			employee_income_tax,
+			count(mss_employees.employee_id) AS 'attendance'
+		from 
+			mss_employees,
+			mss_emss_attendance
+        where 
+			mss_employees.employee_id=  mss_emss_attendance.employee_id AND
+			mss_emss_attendance.attendance_date between  DATE_FORMAT(NOW() ,'%Y-%m-01') AND NOW() AND
+			employee_business_outlet=".$this->session->userdata['outlets']['current_outlet']." AND 
+			employee_business_admin=".$this->session->userdata['logged_in']['business_admin_id']." AND
+			employee_is_active=1
+			GROUP BY mss_employees.employee_id";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -5227,14 +5246,19 @@ public function GetAttendanceAll($data){
     }    // Calculayte Half Day for Load Attendance
      public function GetHalfDayAttendanceLoad($data)
     {
-        $sql="SELECT mss_emss_attendance.employee_id,mss_employees.employee_first_name,mss_employees.employee_last_name,count(mss_emss_attendance.attendance_id) as 'Half_Day' FROM mss_emss_attendance,mss_employees
-        where mss_emss_attendance.working_hours < ((mss_employees.working_hours*10)*0.5)
-        AND mss_employees.employee_is_active=1
-        AND mss_employees.employee_id=mss_emss_attendance.employee_id
-        AND mss_emss_attendance.employee_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-         AND mss_emss_attendance.attendance_date BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-
-        1 DAY) AND CURRENT_DATE-1
-        group BY mss_emss_attendance.employee_id";
+        $sql="SELECT 
+					mss_emss_attendance.employee_id, 
+					COUNT(mss_emss_attendance.attendance_id) AS 'Half_Day'
+				FROM 
+					mss_emss_attendance,
+					mss_employees
+					WHERE
+					mss_employees.employee_id = mss_emss_attendance.employee_id AND
+					mss_emss_attendance.employee_outlet_id=".$this->session->userdata['outlets']['current_outlet']." AND
+					mss_emss_attendance.working_hours < ((mss_employees.working_hours*60)/2) AND 
+					mss_emss_attendance.attendance_date between  DATE_FORMAT(NOW() ,'%Y-%m-01') AND NOW()
+					GROUP BY
+					mss_emss_attendance.employee_id ";
 
         $query = $this->db->query($sql);
         
@@ -10142,10 +10166,9 @@ $sql = str_replace(",)",")",$sql);
 				mss_employees.employee_first_name,
 				mss_employees.employee_id,
 				mss_emss_attendance.attendance_date,
-				mss_emss_attendance.in_time,
-				mss_emss_attendance.out_time,
-				(mss_emss_attendance.out_time - mss_emss_attendance.in_time) AS 'Working Time',
-				mss_emss_attendance.working_hours
+				SUBSTR(mss_emss_attendance.in_time,1,5) AS 'In Time',
+				SUBSTR(mss_emss_attendance.out_time,1,5) AS 'Out Time',
+				(mss_emss_attendance.working_hours)/60 AS 'hour'
 			FROM
 				mss_employees,
 				mss_emss_attendance
@@ -10698,7 +10721,7 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 
     public function GetTrigger(){
         $sql = "SELECT * FROM `V_SMS_TRIGGER` where created_by ='".$this->session->userdata['logged_in']['business_admin_id']."'";
-         $query = $this->db->query($sql);
+        $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
         }
