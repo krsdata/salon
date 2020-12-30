@@ -93,8 +93,7 @@
 													<div class="card-header">
 													<form class="form-inline" method="post" action="#" id="FifteenSort">
 														<div class="form-group col-md-2">
-															<select class="form-control" name="state" onchange="getcity(this.value)">
-                                                                <option>             </option>
+															<select class="form-control" name="state[]" multiple="multiple" id="fifteen_sort_state"  onchange="getcity(this.value)">
                                                                 <?php
                                                                   foreach($outlet_state as $state=>$value)
                                                                   {
@@ -102,17 +101,18 @@
                                                                     <option value="<?=$value['business_outlet_state']?>"><?=$value['business_outlet_state']?></option>
                                                                     <?php
                                                                   }
+																  
                                                                 ?>
+															
 															</select>
 														</div>
 														<div class="form-group col-md-2">
-															<select class="form-control" name="city" onchange="getoutlet(this.value)">
-																<option>             </option>
+															<select class="form-control" name="city[]" multiple="multiple" id="fifteen_sort_city" onchange="getoutlet(this.value)">
+																<!--<option>             </option>-->
 															</select>
 														</div>
 															<div  class="form-group col-md-2">
-																<select class="form-control" name="outlet">
-																	<option>              </option>
+																<select class="form-control" name="outlet[]" multiple="multiple" id="fifteen_sort_outlet">
 																</select>
 															</div>
 															<button class="btn btn-primary sortby_outlet">
@@ -218,8 +218,8 @@
 																			<form class="form-inline" method="post" action="#" id="SortDaily">
 												<!-- <h5>8-Feb-2020</h5> -->
 													<div class="form-group col-md-2">
-														<select class="form-control" name="state" onchange="DailyGetCity(this.value)" style="overflow: hidden;">
-                              <option>             </option>
+														<select class="form-control" name="state[]" multiple="multiple" id="sort_daily_state" onchange="DailyGetCity(this.value)" style="overflow: hidden;">
+                             
                               <?php
                                   foreach($outlet_state as $state=>$value)
                                   {
@@ -231,13 +231,13 @@
 														</select>
 													</div>
 													<div class="form-group col-md-2">
-														<select class="form-control" name="city" onchange="DailyGetOutlet(this.value)" style="overflow: hidden;">
-															<option>             </option>
+														<select class="form-control" name="city[]" multiple="multiple" id="sort_daily_city" onchange="DailyGetOutlet(this.value)" style="overflow: hidden;">
+															
 														</select>
 													</div>
 													<div class="form-group col-md-2">
-														<select class="form-control" name="outlet" style="overflow: hidden;">
-															<option>              </option>
+														<select class="form-control" name="outlet[]" multiple="multiple" id="sort_daily_outlet" style="overflow: hidden;">
+															
 														</select>
 													</div>
 												<button class="btn btn-primary">
@@ -442,9 +442,9 @@
 											<div class="col-md-12">
 											<div class="card">
 												<div class="card-header">
-												<form class="form-inline" method="post" action="#" id="HistoricTrends">
+												<form class="form-inline" method="post" action="#" id="HistoricTrends" novalidate="novalidate">
 													<div class="form-group col-md-2">
-                          <select class="form-control" onchange="HistoricGetCity(this.value)" name="state" style="overflow: hidden;">
+													<select class="form-control" onchange="HistoricGetCity(this.value,'HistoricTrends')" formId="HistoricTrends" name="state" style="overflow: hidden;">
                                               <option style="overflow: hidden;">             </option>
                                               <?php
                                                 foreach($outlet_state as $state=>$value)
@@ -457,12 +457,12 @@
 																						</select>
 													</div>
 													<div class="form-group col-md-2">
-                          <select class="form-control" name="city" onchange="HistoricGetOutlet(this.value)" style="overflow: hidden;">
+													<select class="form-control" name="city" onchange="HistoricGetOutlet(this.value,'HistoricTrends')" formId="HistoricTrends" style="overflow: hidden;">
 															<option>             </option>
 														</select>
 													</div>
 													<div  class="form-group col-md-2">
-													<select class="form-control" name="outlet" style="overflow: hidden;">
+													<select class="form-control" name="outlet" formId="HistoricTrends" style="overflow: hidden;">
 															<option>              </option>
 														</select>
 													</div>
@@ -475,15 +475,16 @@
 													<div class="card-body">
 														<h6>Last 6 Months Trends</h6>
 													<div class="col-md-12">
-														<table class="table table-striped datatables-basic" style="width: 100%;">
+														<table class="table table-striped datatables-basic" id="LastSixMonthsTrends" style="width: 100%;">
 															<thead>
 																<tr>
 																	<th>#</td>
 																	<th>Total Sales</th>
-																	<th>Service Sale</th>
-																	<th>Package Sale</th>
-																	<th>Product Sale</th>
-																	<th>#Bill</th>
+																	<th>Service Revenue</th>
+																	<th>Product Revenue</th>
+																	<th>Package Revenue</th>
+																	<th>#Visits</th>
+																	
 																	<!--<th>Unique User</th>-->
 																	<!--<th>New Users</th>-->
 																	<!--<th>Old Users</th>-->
@@ -494,15 +495,21 @@
                                   $count = 0;
                                   if($six_months_service!='')
                                   {
+									$totalSales=$totalService=$totalProduct=$totalPackage=$totalVisit=0;   
                                     foreach($six_months_service as $service=>$value)
                                     {
-                                      ?>
+									  $totalSales+=$value['total_service']+$six_months_product[$count]['total_service']+$six_months_package[$count]['package_sales'];	
+                                      $totalService+=$value['total_service'];
+									  $totalProduct+=$six_months_product[$count]['total_service'];
+									  $totalPackage+=$six_months_package[$count]['package_sales'];
+									  $totalVisit+=$six_months_package[$count]['package_count']+$value['service_count'];
+									  ?>
                                       <tr>
     																	<td><?=$value['date']?></td>
     																	<td><?=$value['total_service']+$six_months_product[$count]['total_service']+$six_months_package[$count]['package_sales']?></td>
     																	<td><?=$value['total_service']?></td>
-    																	<td><?=$six_months_package[$count]['package_sales']?></td>
     																	<td><?=$six_months_product[$count]['total_service']?></td>
+																		<td><?=$six_months_package[$count]['package_sales']?></td>
     																	<td><?=$six_months_package[$count]['package_count']+$value['service_count']?></td>
     																	<!--<td>krjhtkjreht</td>-->
     																	<!--<td>krjhtkjreht</td>-->
@@ -510,8 +517,17 @@
                                     </tr>
                                     <?php
                                       $count++;
-                                    }
-                                  }
+                                    } ?>
+									<tr>
+									 <td>Total</td>
+									 <td><?=$totalSales?></td>
+									 <td><?=$totalService?></td>
+									 <td><?=$totalProduct?></td>
+									 <td><?=$totalPackage?></td>
+									 <td><?=$totalVisit?></td>
+									 
+									</tr>
+                                  <?php }
                                   else
                                   {
                                     ?>
@@ -610,27 +626,35 @@
 											<div class="row">
 												<div class="col-md-12">
 												<div class="card-header">
-													<form class="form-inline" method="post" action="#">
-														<div class="form-group col-md-2">
-															<select class="form-control">
-																<option>             </option>
-															</select>
-														</div>
-														<div class="form-group col-md-2">
-															<select class="form-control">
-																<option>             </option>
-															</select>
-														</div>
-														<div class="form-group col-md-2">
-															<select class="form-control">
-																<option>              </option>
-															</select>
+												 <form class="form-inline" method="post" action="#" id="HistoricTrendsGraph" novalidate="novalidate">
+													<div class="form-group col-md-2">
+														<select class="form-control" onchange="HistoricGetCity(this.value,'HistoricTrendsGraph')" formId="HistoricTrendsGraph" name="state" style="overflow: hidden;">
+														  <option style="overflow: hidden;">             </option>
+														  <?php
+															foreach($outlet_state as $state=>$value)
+															{
+															  ?>
+															  <option value="<?=$value['business_outlet_state']?>" style="overflow: hidden;"><?=$value['business_outlet_state']?></option>
+															  <?php
+															}
+														  ?>
+													</select>
+													</div>
+													<div class="form-group col-md-2">
+													<select class="form-control" name="city" onchange="HistoricGetOutlet(this.value,'HistoricTrendsGraph')" formId="HistoricTrendsGraph" style="overflow: hidden;">
+														<option>             </option>
+													</select>
+													</div>
+													<div  class="form-group col-md-2">
+													<select class="form-control" name="outlet"  style="overflow: hidden;">
+															<option>              </option>
+													</select>
 													</div>
 														<button class="btn btn-primary">
 															<i class="fa fa-paper-plane ::before"></i>
 															Submit 
 														</button>
-													</form>
+												</form>
 													</div>
 												</div>
 											</div><br> <!--menu area tab3-->
@@ -909,25 +933,68 @@
 				</main>
 	</div>
 </div>
+
 <?php
 	$this->load->view('master_admin/ma_footer_view');
 ?>
 
+<link href="<?=base_url()?>public/app_stack/css/multiselect/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<?=base_url()?>public/app_stack/js/multiselect/bootstrap.min.js"></script>
+<link href="<?=base_url()?>public/app_stack/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+<script src="<?=base_url()?>public/app_stack/js/multiselect/bootstrap-multiselect.js" type="text/javascript"></script>
+<script src="<?=base_url()?>public/app_stack/js/multiselect/bootstrap-datepicker.js" type="text/javascript"></script>
+<link href="<?=base_url()?>public/app_stack/css/multiselect/bootstrap-datepicker.css" rel="stylesheet" type="text/css" />
+
 <script>
-		$(function() {
+var	multiSelectParamsData = { maxHeight:150,numberDisplayed: 1,nSelectedText: 'selected' ,includeSelectAllOption: true ,buttonWidth: 100};
+$(document).ready(function(){
+	 $('#fifteen_sort_state').multiselect(multiSelectParamsData);
+	 $('#fifteen_sort_city').multiselect(multiSelectParamsData);
+	 $('#fifteen_sort_outlet').multiselect(multiSelectParamsData);
+	 
+	 $('#sort_daily_state').multiselect(multiSelectParamsData);
+	 $('#sort_daily_city').multiselect(multiSelectParamsData);
+	 $('#sort_daily_outlet').multiselect(multiSelectParamsData);
+});	
+$(function() {
       // Line chart
+	  
       var data_labels  =  <?php echo json_encode($labels);?>;
       var data_sales   =  <?php echo json_encode($data_sales);?>;
+      var data_service =  <?php echo json_encode($data_service);?>;
+      var data_prod   =  <?php echo json_encode($data_prod);?>;
+      var data_pack   =  <?php echo json_encode($data_pack);?>;
 			new Chart(document.getElementById("chartjs-dashboard-line"), {
 				type: "line",
 				data: {
 					labels: data_labels,
 					datasets: [{
-						label: "Sales (Rs.)",
+						label: "Total Sales (Rs.)",
 						fill: true,
 						backgroundColor: "transparent",
 						borderColor: window.theme.primary,
 						data: data_sales
+					}, {
+						label: "Service Revenue",
+						fill: true,
+						backgroundColor: "transparent",
+						borderColor: window.theme.tertiary,
+						borderDash: [4, 4],
+						data: data_service
+					}, {
+						label: "Product Revenue",
+						fill: true,
+						backgroundColor: "transparent",
+						borderColor: window.theme.tertiary,
+						borderDash: [4, 4],
+						data: data_prod
+					}, {
+						label: "Package Revenue",
+						fill: true,
+						backgroundColor: "transparent",
+						borderColor: window.theme.tertiary,
+						borderDash: [4, 4],
+						data: data_pack
 					}]
 				},
 				options: {
@@ -1175,25 +1242,45 @@
 
 <script>
 	$(function() {
+	  var six_months_data_labels  =  <?php echo json_encode($six_month_labels);?>;
+      var six_months_data_sales   =  <?php echo json_encode($six_month_data_sales);?>;
+      var six_months_data_service =  <?php echo json_encode($six_month_data_service);?>;
+      var six_months_data_prod   =  <?php echo json_encode($six_month_data_prod);?>;
+      var six_months_data_pack   =  <?php echo json_encode($six_month_data_pack);?>;
+		
 		// Bar chart
 		new Chart(document.getElementById("chartjs-dashboard-bar-devices"), {
 			type: "bar",
 			data: {
-				labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+				labels: six_months_data_labels,
 				datasets: [{
-					label: "Mobile",
+					label: "Total Sales",
 					backgroundColor: window.theme.primary,
 					borderColor: window.theme.primary,
 					hoverBackgroundColor: window.theme.primary,
 					hoverBorderColor: window.theme.primary,
-					data: [54, 67, 41, 55, 62, 45, 55, 73, 60, 76, 48, 79]
+					data: six_months_data_sales
 				}, {
-					label: "Desktop",
-					backgroundColor: "#E8EAED",
-					borderColor: "#E8EAED",
+					label: "Service Revenue",
+					backgroundColor: "#33FF3E",
+					borderColor: "#33FF3E",
 					hoverBackgroundColor: "#E8EAED",
 					hoverBorderColor: "#E8EAED",
-					data: [69, 66, 24, 48, 52, 51, 44, 53, 62, 79, 51, 68]
+					data: six_months_data_service
+				}, {
+					label: "Product Revenue",
+					backgroundColor: "#7533FF",
+					borderColor: "#7533FF",
+					hoverBackgroundColor: "#E8EAED",
+					hoverBorderColor: "#E8EAED",
+					data: six_months_data_prod
+				}, {
+					label: "Package Revenue",
+					backgroundColor: "#FF7D33",
+					borderColor: "#FF7D33",
+					hoverBackgroundColor: "#E8EAED",
+					hoverBorderColor: "#E8EAED",
+					data: six_months_data_pack
 				}]
 			},
 			options: {
@@ -1613,17 +1700,21 @@
 	});
 </script> -->
 <script>
-  function getcity(state)
+  function getcity()
   {
+	  var state = $("#fifteen_sort_state").val();
+	  console.log($("#fifteen_sort_state").val());
     var parameters = { state : state};
-    $.getJSON("<?=base_url()?>MasterAdmin/GetCityStateWise",parameters)
+    $.getJSON("<?=base_url()?>MasterReport/GetCityStateWise",parameters)
     .done(function(data,textStatus,jqXHR){
-      var options = "<option value='' selected></option>";
+      var options = "";
       for(var i=0;i<data.length;i++)
       {
         options += "<option value="+data[i].business_outlet_city+">"+data[i].business_outlet_city+"</option>";
       }
-      $("#FifteenSort select[name=city]").html("").html(options);
+	  console.log(options);
+       $("#FifteenSort select[name='city[]']").html("").html(options);
+	   $('#fifteen_sort_city').multiselect('destroy').multiselect(multiSelectParamsData);
     })
     .fail(function(jqXHR,textStatus,errorThrown){
       console.log(errorThrown.toString());
@@ -1631,15 +1722,17 @@
   }
   function getoutlet(city)
   {
+	var city = $("#fifteen_sort_city").val();  
     var parameters = {city : city};
-    $.getJSON("<?=base_url()?>MasterAdmin/GetOutlet",parameters)
+    $.getJSON("<?=base_url()?>MasterReport/GetOutlet",parameters)
     .done(function(data,textStatus,jqXHR){
-      var options = "<option value='' selected></option>";
+      var options = "";
       for(var i=0;i<data.length;i++)
       {
         options += "<option value="+data[i].business_outlet_id+">"+data[i].business_outlet_name+"</option>";
       }
-      $("#FifteenSort select[name=outlet]").html("").html(options);
+      $("#FifteenSort select[name='outlet[]']").html("").html(options);
+	  $('#fifteen_sort_outlet').multiselect('destroy').multiselect(multiSelectParamsData);
     })
     .fail(function(jqXHR,texStatus,errorThrown){
       console.log(errorThrown.toString());
@@ -1648,7 +1741,7 @@
   function SalesGetCity(state)
   {
     var parameters = { state : state};
-    $.getJSON("<?=base_url()?>MasterAdmin/GetCityStateWise",parameters)
+    $.getJSON("<?=base_url()?>MasterReport/GetCityStateWise",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
@@ -1664,7 +1757,7 @@
   function SalesGetOutlet(city)
   {
     var parameters = {city : city};
-    $.getJSON("<?=base_url()?>MasterAdmin/GetOutlet",parameters)
+    $.getJSON("<?=base_url()?>MasterReport/GetOutlet",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
@@ -1679,15 +1772,17 @@
   }
   function DailyGetCity(state)
   {
+	var state = $("#sort_daily_state").val();  
     var parameters = { state : state};
-    $.getJSON("<?=base_url()?>MasterAdmin/GetCityStateWise",parameters)
+    $.getJSON("<?=base_url()?>MasterReport/GetCityStateWise",parameters)
     .done(function(data,textStatus,jqXHR){
-      var options = "<option value='' selected></option>";
+      var options = "";
       for(var i=0;i<data.length;i++)
       {
         options += "<option value="+data[i].business_outlet_city+">"+data[i].business_outlet_city+"</option>";
       }
-      $("#SortDaily select[name=city]").html("").html(options);
+      $("#SortDaily select[name='city[]']").html("").html(options);
+	  $('#sort_daily_city').multiselect('destroy').multiselect(multiSelectParamsData);
     })
     .fail(function(jqXHR,textStatus,errorThrown){
       console.log(errorThrown.toString());
@@ -1695,47 +1790,50 @@
   }
   function DailyGetOutlet(city)
   {
+    var city = $("#sort_daily_city").val();  
+	var parameters = {city : city};
+    $.getJSON("<?=base_url()?>MasterReport/GetOutlet",parameters)
+    .done(function(data,textStatus,jqXHR){
+      var options = "";
+      for(var i=0;i<data.length;i++)
+      {
+        options += "<option value="+data[i].business_outlet_id+">"+data[i].business_outlet_name+"</option>";
+      }
+      $("#SortDaily select[name='outlet[]']").html("").html(options);
+	  $('#sort_daily_outlet').multiselect('destroy').multiselect(multiSelectParamsData);
+    })
+    .fail(function(jqXHR,texStatus,errorThrown){
+      console.log(errorThrown.toString());
+    })
+  }
+  function HistoricGetOutlet(city,formId)
+  {
     var parameters = {city : city};
-    $.getJSON("<?=base_url()?>MasterAdmin/GetOutlet",parameters)
+    $.getJSON("<?=base_url()?>MasterReport/GetOutlet",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
       {
         options += "<option value="+data[i].business_outlet_id+">"+data[i].business_outlet_name+"</option>";
       }
-      $("#SortDaily select[name=outlet]").html("").html(options);
+      $("#"+formId+" select[name=outlet]").html("").html(options);
     })
     .fail(function(jqXHR,texStatus,errorThrown){
       console.log(errorThrown.toString());
     })
   }
-  function HistoricGetOutlet(city)
+  function HistoricGetCity(state,formId)
   {
-    var parameters = {city : city};
-    $.getJSON("<?=base_url()?>MasterAdmin/GetOutlet",parameters)
-    .done(function(data,textStatus,jqXHR){
-      var options = "<option value='' selected></option>";
-      for(var i=0;i<data.length;i++)
-      {
-        options += "<option value="+data[i].business_outlet_id+">"+data[i].business_outlet_name+"</option>";
-      }
-      $("#HistoricTrends select[name=outlet]").html("").html(options);
-    })
-    .fail(function(jqXHR,texStatus,errorThrown){
-      console.log(errorThrown.toString());
-    })
-  }
-  function HistoricGetCity(state)
-  {
+	console.log(formId,"#"+formId+ "select[name=city]");  
     var parameters = { state : state};
-    $.getJSON("<?=base_url()?>MasterAdmin/GetCityStateWise",parameters)
+    $.getJSON("<?=base_url()?>MasterReport/GetCityStateWise",parameters)
     .done(function(data,textStatus,jqXHR){
       var options = "<option value='' selected></option>";
       for(var i=0;i<data.length;i++)
       {
         options += "<option value="+data[i].business_outlet_city+">"+data[i].business_outlet_city+"</option>";
       }
-      $("#HistoricTrends select[name=city]").html("").html(options);
+      $("#"+formId+" select[name=city]").html("").html(options);
     })
     .fail(function(jqXHR,textStatus,errorThrown){
       console.log(errorThrown.toString());
@@ -1748,7 +1846,7 @@
     submitHandler:function(form){
       var formData = $("#FifteenSort").serialize();
       $.ajax({
-        url:"<?=base_url()?>MasterAdmin/GetFifteenSalesBy",
+        url:"<?=base_url()?>MasterReport/GetFifteenSalesBy",
         data : formData,
         type : "POST",
         // crossDomain : true,
@@ -1807,6 +1905,162 @@
     },
   });
 </script>
+
+
+<script>
+  $("#HistoricTrendsGraph").validate({
+	  submitHandler:function(form){
+		  var formData = $("#HistoricTrendsGraph").serialize();
+		  $.ajax({
+			    url:"<?=base_url()?>MasterReport/GetSixMonthSalesBy",
+				data : formData,
+				type : "POST",
+				// crossDomain : true,
+				cache : false,
+				// dataType : "json",
+				success : function(data)
+				{
+				  // alert("Hii");
+				  if(data.success == 'true')
+				  {
+					  
+					  // Bar chart
+					new Chart(document.getElementById("chartjs-dashboard-bar-devices"), {
+						type: "bar",
+						data: {
+							labels: data.six_month_labels,
+							datasets: [{
+								label: "Total Sales",
+								backgroundColor: window.theme.primary,
+								borderColor: window.theme.primary,
+								hoverBackgroundColor: window.theme.primary,
+								hoverBorderColor: window.theme.primary,
+								data: data.six_month_data_sales
+							}, {
+								label: "Service Revenue",
+								backgroundColor: "#33FF3E",
+								borderColor: "#33FF3E",
+								hoverBackgroundColor: "#E8EAED",
+								hoverBorderColor: "#E8EAED",
+								data: data.six_month_data_service
+							}, {
+								label: "Product Revenue",
+								backgroundColor: "#7533FF",
+								borderColor: "#7533FF",
+								hoverBackgroundColor: "#E8EAED",
+								hoverBorderColor: "#E8EAED",
+								data: data.six_month_data_prod
+							}, {
+								label: "Package Revenue",
+								backgroundColor: "#FF7D33",
+								borderColor: "#FF7D33",
+								hoverBackgroundColor: "#E8EAED",
+								hoverBorderColor: "#E8EAED",
+								data: data.six_month_data_pack
+							}]
+						},
+						options: {
+							maintainAspectRatio: false,
+							legend: {
+								display: false
+							},
+							scales: {
+								yAxes: [{
+									gridLines: {
+										display: false
+									},
+									stacked: false,
+									ticks: {
+										stepSize: 10
+									}
+								}],
+								xAxes: [{
+									barPercentage: .75,
+									categoryPercentage: .5,
+									stacked: false,
+									gridLines: {
+										color: "transparent"
+									}
+								}]
+							}
+						}
+					});
+					  
+				  }
+				},
+				error:function(data)
+				{
+				  
+				}
+		  });
+	  },
+  }); 
+  
+  $("#HistoricTrends").validate({
+    errorElement : "div",
+    submitHandler:function(form){
+      var formData = $("#HistoricTrends").serialize();
+      $.ajax({
+        url:"<?=base_url()?>MasterReport/GetSixMonthSalesBy",
+        data : formData,
+        type : "POST",
+        // crossDomain : true,
+        cache : false,
+        // dataType : "json",
+        success : function(data)
+        {
+          // alert("Hii");
+          if(data.success == 'true')
+          {
+            var tableSixMonths = '<thead><tr><th>#</th><th>Total Sales</th><th>Service Revenue</th><th>Product Revenue</th><th>Package Revenue</th><th>#Visits</th></tr></thead><tbody>';
+        	 totalsales = totalservice = totalpack = totalprod = totalbill = 0;
+        //    alert(data.labels.length);
+            for(i=0;i<data.six_month_labels.length;i++)
+            {
+				// alert(data.data_sales[i]);
+              tableSixMonths+="<tr>";
+              tableSixMonths+="<td>"+data.six_month_labels[i]+"</td>";
+              tableSixMonths+="<td>"+data.six_month_data_sales[i]+"</td>";
+              tableSixMonths+="<td>"+data.six_month_data_service[i]+"</td>";
+              tableSixMonths+="<td>"+data.six_month_data_prod[i]+"</td>";
+			  tableSixMonths+="<td>"+data.six_month_data_pack[i]+"</td>";
+              tableSixMonths+="<td>"+data.six_month_bill_count[i]+"</td>";
+              tableSixMonths+="</tr>";
+              totalsales = parseInt(totalsales)+parseInt(data.six_month_data_sales[i]);
+              totalservice = parseInt(totalservice)+parseInt(data.six_month_data_service[i]);
+              totalprod = parseInt(totalprod)+parseInt(data.six_month_data_prod[i]);
+              totalpack = parseInt(totalpack)+parseInt(data.six_month_data_pack[i]);
+              totalbill = parseInt(totalbill)+parseInt(data.six_month_bill_count[i]);
+
+            }
+			tableSixMonths+="<tr><td>Total</td><td>"+totalsales+"</td><td>"+totalservice+"</td><td>"+totalprod+"</td><td>"+totalpack+"</td><td>"+totalbill+"</td></tr>";
+			tableSixMonths+="</tbody>";
+            
+            toastr["success"](data.message,"", {
+                      positionClass: "toast-top-right",
+                      progressBar: "toastr-progress-bar",
+                      newestOnTop: "toastr-newest-on-top",
+                      rtl: $("body").attr("dir") === "rtl" || $("html").attr("dir") === "rtl",
+                      timeOut: 1000,
+                      
+                    });
+					
+                    $('#LastSixMonthsTrends').html("").html(tableSixMonths);
+          }
+          else if (data.success == 'false')
+          {
+            
+          }
+        },
+        error:function(data)
+        {
+          
+        }
+      });
+    },
+  }); 
+</script>
+
 <script>
   $().validate({
     errorElement : "div",
@@ -1818,7 +2072,7 @@
     submitHandler:function(form){
       var formData = $().serialize();
       $.ajax({
-        url:"<?=base_url()?>MasterAdmin/GetFifteenSalesByOutletId/",
+        url:"<?=base_url()?>MasterReport/GetFifteenSalesByOutletId/",
         data : formData,
         type : "POST",
         // crossDomain : true,
@@ -1849,7 +2103,7 @@
     submitHandler:function(form){
       var formData = $('#SortDaily').serialize();
       $.ajax({
-        url:"<?=base_url()?>MasterAdmin/GetDailyTrendsByOutlet",
+        url:"<?=base_url()?>MasterReport/GetDailyTrendsByOutlet",
         data : formData,
         type : "POST",
         // crossDomain : true,

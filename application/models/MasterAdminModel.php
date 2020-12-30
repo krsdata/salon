@@ -2101,7 +2101,7 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error!');
     }
   }
-  public function AverageCurrentMonthSales($data)
+  public function AverageCurrentMonthSales_remove($data)
   {
     $query = "SELECT ROUND((sum(services)+sum(products)+sum(packages))/(DAYOFMONTH(CURRENT_DATE)),2) AS 'avg_sales'
         FROM
@@ -2185,7 +2185,93 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error!');
     }
   }
-  public function AveragePreviousMonthSales($data)
+  
+  public function AverageCurrentMonthSales($data)
+  {
+    $query = "SELECT ROUND((sum(services)+sum(products)+sum(packages))/(DAYOFMONTH(CURRENT_DATE)),2) AS 'avg_sales'
+        FROM
+        (SELECT
+            SUM(mss_transactions.txn_value) AS 'services'
+            FROM
+                    mss_transactions,
+                    mss_transaction_services,
+                    mss_employees,
+                    mss_customers,
+                    master_categories,
+                    mss_sub_categories,
+                    mss_services,
+                    mss_business_outlets,
+                    mss_business_admin,
+                    mss_transaction_settlements
+            WHERE
+                    mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+                    AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+                    AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+                    AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+                    AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_type = 'Service'
+                    AND mss_transactions.txn_cashier = mss_employees.employee_id
+                    AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+                    AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
+                    AND mss_business_admin.business_master_admin_id =" . $this->db->escape($data) . "
+                    AND date(mss_transactions.txn_datetime) >= DATE_FORMAT(CURRENT_DATE,'%Y-%m-01'))services,
+         (SELECT
+            SUM(mss_transactions.txn_value) AS 'products'
+            FROM
+                    mss_transactions,
+                    mss_transaction_services,
+                    mss_employees,
+                    mss_customers,
+                    master_categories,
+                    mss_sub_categories,
+                    mss_services,
+                    mss_business_outlets,
+                    mss_business_admin,
+                    mss_transaction_settlements
+            WHERE
+                    mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+                    AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+                    AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+                    AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+                    AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+                    AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+                    AND master_categories.category_type = 'Products'
+                    AND mss_transactions.txn_cashier = mss_employees.employee_id
+                    AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+                    AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
+                    AND mss_business_admin.business_master_admin_id =" . $this->db->escape($data) . "
+                    AND date(mss_transactions.txn_datetime) >= DATE_FORMAT(CURRENT_DATE,'%Y-%m-01'))products,
+             (SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
+            mss_business_outlets.business_outlet_id as 'outlet_id'
+            FROM
+            mss_package_transactions,
+            mss_package_transaction_settlements,
+            mss_employees,
+            mss_business_outlets,
+            mss_business_admin
+            WHERE
+            mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id
+            AND
+            mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_admin.business_admin_id = mss_employees.employee_business_admin
+            AND
+            mss_business_admin.business_master_admin_id=" . $this->db->escape($data) . "
+            AND
+            mss_package_transactions.datetime >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH))packages";
+
+    $sql = $this->db->query($query);
+    if ($sql->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $sql->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error!');
+    }
+  }
+  
+  public function AveragePreviousMonthSales_remove($data)
   {
     $query = "SELECT ROUND((sum(services)+sum(products)+sum(packages))/(DAYOFMONTH(LAST_DAY((CURRENT_DATE)-INTERVAL 1 MONTH))),2) AS 'avg_sales'
         FROM 
@@ -2262,6 +2348,86 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
+  
+   public function AveragePreviousMonthSales($data)
+  {
+    $query = "SELECT ROUND((sum(services)+sum(products)+sum(packages))/(DAYOFMONTH(LAST_DAY((CURRENT_DATE)-INTERVAL 1 MONTH))),2) AS 'avg_sales'
+        FROM 
+        (SELECT SUM(mss_transactions.txn_value) AS 'services' 
+         FROM 
+         mss_transactions, 
+         mss_transaction_services, 
+         mss_employees, 
+         mss_customers, 
+         master_categories, 
+         mss_sub_categories, 
+         mss_services, 
+         mss_business_outlets, 
+         mss_business_admin, 
+         mss_transaction_settlements 
+         WHERE mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+         AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id 
+         AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id 
+         AND mss_transaction_services.txn_service_service_id = mss_services.service_id 
+         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+         AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+         AND master_categories.category_type = 'Service' 
+         AND mss_transactions.txn_cashier = mss_employees.employee_id
+         AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id 
+         AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
+         AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data) . "
+         AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01')AND DATE_SUB(LAST_DAY(CURRENT_DATE),INTERVAL DAY(LAST_DAY(CURRENT_DATE))-1 DAY)-INTERVAL 1 DAY)
+         services, 
+         (SELECT SUM(mss_transactions.txn_value) AS 'products' 
+         FROM 
+         mss_transactions, 
+         mss_transaction_services, 
+         mss_employees, 
+         mss_customers, 
+         master_categories, 
+         mss_sub_categories, 
+         mss_services, 
+         mss_business_outlets, 
+         mss_business_admin, 
+         mss_transaction_settlements 
+         WHERE mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+         AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id 
+         AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id 
+         AND mss_transaction_services.txn_service_service_id = mss_services.service_id 
+         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id 
+         AND mss_sub_categories.sub_category_category_id = master_categories.category_id 
+         AND master_categories.category_type = 'Products' 
+         AND mss_transactions.txn_cashier = mss_employees.employee_id
+         AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id 
+         AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id 
+         AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data) . " 
+         AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND date_sub(last_day(CURRENT_DATE),INTERVAL DAY(last_day(CURRENT_DATE))-1 DAY)-INTERVAL 1 DAY)
+         products, 
+         (SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages'
+          FROM 
+          mss_package_transactions, 
+          mss_package_transaction_settlements, 
+          mss_customers,
+		  mss_employees,		  
+          mss_business_outlets, 
+          mss_business_admin 
+          WHERE 
+          mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id 
+          AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id 
+          AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id 
+          AND mss_business_admin.business_admin_id = mss_employees.employee_business_admin 
+          AND mss_business_admin.business_master_admin_id=" . $this->db->escape($data) . " 
+          AND mss_package_transactions.datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND date_sub(last_day(CURRENT_DATE),INTERVAL DAY(last_day(CURRENT_DATE))-1 DAY)-INTERVAL 1 DAY)
+          packages";
+
+    $sql = $this->db->query($query);
+    if ($sql->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $sql->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
   public function LastFifteenDaySalesByType($data)
   {
     $query="SELECT sum(mss_transaction_services.txn_service_discounted_price) as total_sales ,
@@ -2691,7 +2857,7 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetCurrentBillCount($data){
+  public function GetCurrentBillCount_remove($data){
     $sql = "SELECT (sum(sales_bill)+sum(package_count)) AS total_bill
         FROM
         (SELECT 
@@ -2733,7 +2899,49 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetPrevTillBillCount($data){
+  public function GetCurrentBillCount($data){
+    $sql = "SELECT (sum(sales_bill)+sum(package_count)) AS total_bill
+        FROM
+        (SELECT 
+        count(mss_transactions.txn_value) AS sales_bill
+        FROM
+        mss_transactions,
+        mss_transaction_settlements,
+        mss_employees,
+        mss_business_admin,
+        mss_business_outlets
+        WHERE
+        mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
+        AND
+        mss_transactions.txn_cashier = mss_employees.employee_id
+        AND date(mss_transactions.txn_datetime) >= DATE_FORMAT(now(),'%Y-%m-01')
+        AND mss_transactions.txn_status=1
+        AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id 
+        AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+        AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data) . ")sales_bill,
+        (SELECT 
+        count(mss_package_transaction_settlements.package_transaction_settlement_id) AS package_count
+        FROM
+        mss_package_transactions,
+        mss_package_transaction_settlements,
+        mss_employees,
+        mss_business_outlets,
+        mss_business_admin
+        WHERE
+        mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
+        mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+        AND date(mss_package_transactions.datetime) >= DATE_FORMAT(now(),'%Y-%m-01')
+        AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+        AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+        AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data) . ")package_bill";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetPrevTillBillCount_remove($data){
     $sql = "SELECT (sum(sales_bill)+sum(package_count)) AS total_bill
               FROM
               (SELECT 
@@ -2775,7 +2983,49 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetPrevBillCount($data){
+  public function GetPrevTillBillCount($data){
+    $sql = "SELECT (sum(sales_bill)+sum(package_count)) AS total_bill
+              FROM
+              (SELECT 
+              count(mss_transactions.txn_value) AS sales_bill
+              FROM
+              mss_transactions,
+              mss_transaction_settlements,
+              mss_employees,
+              mss_business_admin,
+              mss_business_outlets
+              WHERE
+              mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
+              AND
+              mss_transactions.txn_cashier = mss_employees.employee_id
+              AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(now()-INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)
+              AND mss_transactions.txn_status=1
+              AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id 
+              AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+              AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data) . ")sales_bill,
+              (SELECT 
+              count(mss_package_transaction_settlements.package_transaction_settlement_id) AS package_count
+              FROM
+              mss_package_transactions,
+              mss_package_transaction_settlements,
+              mss_employees,
+              mss_business_outlets,
+              mss_business_admin
+              WHERE
+              mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
+              mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+              AND date(mss_package_transactions.datetime) BETWEEN DATE_FORMAT(now()-INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)
+              AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+              AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+              AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data) . ")package_bill";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetPrevBillCount_remove($data){
     $sql = "SELECT (sum(sales_bill)+sum(package_count)) AS total_bill
             FROM
             (SELECT 
@@ -2817,7 +3067,49 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetPreviousPackTillDate($data){
+   public function GetPrevBillCount($data){
+    $sql = "SELECT (sum(sales_bill)+sum(package_count)) AS total_bill
+            FROM
+            (SELECT 
+            count(mss_transactions.txn_value) AS sales_bill
+            FROM
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_employees,
+            mss_business_admin,
+            mss_business_outlets
+            WHERE
+            mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE_SUB(LAST_DAY(CURDATE()),INTERVAL DAY(LAST_DAY(CURDATE()))- 1 DAY)- INTERVAL 1 DAY
+            AND mss_transactions.txn_status=1
+            AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id 
+            AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data) . ")sales_bill,
+            (SELECT 
+            count(mss_package_transaction_settlements.package_transaction_settlement_id) AS package_count
+            FROM
+            mss_package_transactions,
+            mss_package_transaction_settlements,
+            mss_employees,
+            mss_business_outlets,
+            mss_business_admin
+            WHERE
+            mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
+            mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+            AND date(mss_package_transactions.datetime) BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE_SUB(LAST_DAY(CURDATE()),INTERVAL DAY(LAST_DAY(CURDATE()))- 1 DAY)- INTERVAL 1 DAY
+            AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+            AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data) . ")package_bill";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetPreviousPackTillDate_remove($data){
     $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages'
                 FROM
                 mss_package_transactions,
@@ -2844,7 +3136,36 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetPreviousPackSales($data){
+  
+  public function GetPreviousPackTillDate($data){
+    $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages'
+                FROM
+                mss_package_transactions,
+                mss_package_transaction_settlements,
+                mss_employees,
+                mss_business_outlets,
+                mss_business_admin
+                    WHERE
+                mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id
+                AND
+                mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                AND
+                mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND
+                mss_business_admin.business_admin_id = mss_employees.employee_business_admin
+                AND
+                mss_business_admin.business_master_admin_id=" . $this->db->escape($data) . "
+                AND
+                mss_package_transactions.datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function GetPreviousPackSales_remove($data){
     $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages'
                 FROM
                     mss_package_transactions,
@@ -2871,7 +3192,36 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function CurrentMonthPackSales($data){
+  
+  public function GetPreviousPackSales($data){
+    $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages'
+                FROM
+                    mss_package_transactions,
+                    mss_package_transaction_settlements,
+                    mss_employees,
+                    mss_business_outlets,
+                    mss_business_admin
+                WHERE
+                    mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id
+                AND
+                    mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                AND
+                    mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND
+                    mss_business_admin.business_admin_id = mss_employees.employee_business_admin
+                AND
+                    mss_business_admin.business_master_admin_id=" . $this->db->escape($data) . "
+                AND
+                    mss_package_transactions.datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE_SUB(LAST_DAY(CURDATE()),INTERVAL DAY(LAST_DAY(CURDATE()))- 1 DAY)- INTERVAL 1 DAY";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function CurrentMonthPackSales_remove($data){
     $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
         mss_business_outlets.business_outlet_id as 'outlet_id'
         FROM
@@ -2899,6 +3249,36 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
+  
+  public function CurrentMonthPackSales($data){
+    $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
+        mss_business_outlets.business_outlet_id as 'outlet_id'
+        FROM
+        mss_package_transactions,
+        mss_package_transaction_settlements,
+        mss_employees,
+        mss_business_outlets,
+        mss_business_admin
+            WHERE
+        mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id
+        AND
+        mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+        AND
+        mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+        AND
+        mss_business_admin.business_admin_id = mss_employees.employee_business_admin
+        AND
+        mss_business_admin.business_master_admin_id=" . $this->db->escape($data) . "
+        AND
+        mss_package_transactions.datetime >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH)";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
   public function CurrentMonthServiceSales($data){
     $sql = "SELECT sum(mss_transactions.txn_value)as 'sales',
         mss_business_outlets.business_outlet_id as 'outlet_id'
@@ -2927,7 +3307,7 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetCurrentMonthSalesByType($data, $madmin_id){
+  public function GetCurrentMonthSalesByType_remove($data, $madmin_id){
     $sql ="SELECT sum(mss_transactions.txn_value) AS 'total_sales' FROM
             mss_services,
             mss_business_outlets,
@@ -2987,7 +3367,69 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function PreviousMonthTillSalesByType($data, $maadmin_id){
+  
+  public function GetCurrentMonthSalesByType($data, $madmin_id){
+    $sql ="SELECT sum(mss_transactions.txn_value) AS 'total_sales' FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data)."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = ".$this->db->escape($madmin_id)."
+            AND
+            mss_transactions.txn_datetime >= DATE_FORMAT(CURRENT_DATE,'%Y-%m-01')";
+    // $sql = "SELECT
+    //     SUM(mss_transactions.txn_value) AS 'total_sales'
+    //     FROM
+    //             mss_transactions,
+    //             mss_transaction_services,
+    //             mss_employees,
+    //             mss_customers,
+    //             master_categories,
+    //             mss_sub_categories,
+    //             mss_services,
+    //             mss_business_outlets,
+    //             mss_business_admin,
+    //             mss_transaction_settlements
+    //     WHERE
+    //             mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+    //             AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = " . $this->db->escape($data) . "
+    //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
+    //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+    //             AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
+    //             AND mss_business_admin.business_master_admin_id =" . $this->db->escape($madmin_id) . "
+    //             AND date(mss_transactions.txn_datetime) >= DATE_FORMAT(CURRENT_DATE,'%Y-%m-01')";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function PreviousMonthTillSalesByType_remove($data, $maadmin_id){
     $sql= "SELECT sum(mss_transactions.txn_value)AS 'total_sales' FROM
             mss_services,
             mss_business_outlets,
@@ -3047,7 +3489,69 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function PreviousMonthSalesByType($data, $ma_admin_id){
+  
+   public function PreviousMonthTillSalesByType($data, $maadmin_id){
+    $sql= "SELECT sum(mss_transactions.txn_value)AS 'total_sales' FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data)."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = ". $this->db->escape($maadmin_id) ."
+            AND
+            mss_transactions.txn_datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)";
+    // $sql = "SELECT
+        // SUM(mss_transactions.txn_value) AS 'total_sales'
+        // FROM
+        //         mss_transactions,
+        //         mss_transaction_services,
+        //         mss_employees,
+        //         mss_customers,
+        //         master_categories,
+        //         mss_sub_categories,
+        //         mss_services,
+        //         mss_business_outlets,
+        //         mss_business_admin,
+        //         mss_transaction_settlements
+        // WHERE
+        //         mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+        //         AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+        //         AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+        //         AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+        //         AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+        //         AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+        //         AND master_categories.category_type = " . $this->db->escape($data) . "
+        //         AND mss_transactions.txn_customer_id = mss_customers.customer_id
+        //         AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+        //         AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
+        //         AND mss_business_admin.business_master_admin_id =" . $this->db->escape($maadmin_id) . "
+        //         AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function PreviousMonthSalesByType_remove($data, $ma_admin_id){
     $sql ="SELECT sum(mss_transactions.txn_value) AS 'total_sales' FROM
             mss_services,
             mss_business_outlets,
@@ -3107,7 +3611,69 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function LastSixMonthServiceByType($data, $ma_admin_id){
+  
+   public function PreviousMonthSalesByType($data, $ma_admin_id){
+    $sql ="SELECT sum(mss_transactions.txn_value) AS 'total_sales' FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data)."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id =".$this->db->escape($ma_admin_id)."
+            AND
+            mss_transactions.txn_datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND date_sub(last_day(CURRENT_DATE),INTERVAL DAY(last_day(CURRENT_DATE))-1 DAY)-INTERVAL 1 DAY"; 
+    // $sql = "SELECT
+    //     SUM(mss_transactions.txn_value) AS 'total_sales'
+    //     FROM
+    //             mss_transactions,
+    //             mss_transaction_services,
+    //             mss_employees,
+    //             mss_customers,
+    //             master_categories,
+    //             mss_sub_categories,
+    //             mss_services,
+    //             mss_business_outlets,
+    //             mss_business_admin,
+    //             mss_transaction_settlements
+    //     WHERE
+    //             mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+    //             AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = " . $this->db->escape($data) . "
+    //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
+    //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+    //             AND mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id
+    //             AND mss_business_admin.business_master_admin_id =" . $this->db->escape($ma_admin_id) . "
+    //             AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND date_sub(last_day(CURRENT_DATE),INTERVAL DAY(last_day(CURRENT_DATE))-1 DAY)-INTERVAL 1 DAY";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function LastSixMonthServiceByType_remove($data, $ma_admin_id){
     $sql ="SELECT sum(mss_transaction_services.txn_service_discounted_price)as total_service,
 		        count(mss_transactions.txn_id) as service_count,
             DATE_FORMAT(mss_transactions.txn_datetime,'%M-%y') as 'date'
@@ -3189,7 +3755,91 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function LastSixMonthPackage($data){
+  
+   public function LastSixMonthServiceByType($data, $ma_admin_id){
+    $sql ="SELECT sum(mss_transaction_services.txn_service_discounted_price)as total_service,
+		        count(mss_transactions.txn_id) as service_count,
+            DATE_FORMAT(mss_transactions.txn_datetime,'%M-%y') as 'date'
+            FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data)."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = ".$this->db->escape($ma_admin_id)."
+            AND
+            mss_transactions.txn_datetime BETWEEN  DATE_SUB(DATE_SUB(LAST_DAY(now()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY),INTERVAL 6 MONTH) 
+              AND
+               DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+            GROUP BY 
+               month(mss_transactions.txn_datetime)
+             ORDER BY
+               year(mss_transactions.txn_datetime)DESC,month(mss_transactions.txn_datetime)DESC
+             LIMIT 6";
+    // $sql = "SELECT 
+		// sum(mss_transaction_settlements.txn_settlement_amount_received) as total_service,
+		// count(mss_transactions.txn_id) as service_count,
+    //     DATE_FORMAT(mss_transactions.txn_datetime,'%M-%y') as 'date'
+		// FROM
+		// mss_transactions,
+    //          mss_transaction_services,
+    //          mss_employees,
+    //          mss_customers,
+    //          master_categories,
+    //          mss_sub_categories,
+    //          mss_services,
+    //          mss_business_outlets,
+    //          mss_business_admin,
+    //          mss_transaction_settlements
+		// WHERE
+		// mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
+		// AND
+		// mss_transactions.txn_customer_id = mss_customers.customer_id
+		// AND date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(CURDATE(),INTERVAL 6 MONTH)
+    //         AND
+    //        		DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+		// AND mss_transactions.txn_status=1
+		// AND mss_customers.customer_business_admin_id = mss_business_admin.business_admin_id
+		// AND mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
+    //     AND mss_business_admin.business_master_admin_id = " . $this->db->escape($ma_admin_id) . "
+    //     AND mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+    //     AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //     AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //     AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //     AND master_categories.category_type = " . $this->db->escape($data) . "
+    //    	GROUP BY 
+    //     	month(mss_transactions.txn_datetime)
+    //     ORDER BY
+    //     	year(mss_transactions.txn_datetime)DESC,month(mss_transactions.txn_datetime)DESC
+    //     LIMIT 6";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function LastSixMonthPackage_remove($data){
     $sql = "SELECT 
         SUM(mss_package_transaction_settlements.amount_received) AS package_sales,
         count(mss_package_transactions.package_txn_id) as 'package_count',
@@ -3219,6 +3869,37 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
+  public function LastSixMonthPackage($data){
+    $sql = "SELECT 
+        SUM(mss_package_transaction_settlements.amount_received) AS package_sales,
+        count(mss_package_transactions.package_txn_id) as 'package_count',
+        DATE_FORMAT(mss_package_transactions.datetime,'%M-%y') as 'date'
+      FROM
+        mss_package_transactions,
+        mss_package_transaction_settlements,
+        mss_employees,
+        mss_business_outlets,
+        mss_business_admin
+        WHERE
+                  mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
+                  mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                  AND date(mss_package_transactions.datetime) BETWEEN  DATE_SUB(DATE_SUB(LAST_DAY(now()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY),INTERVAL 6 MONTH)  AND DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+                  AND mss_employees.employee_business_admin  = mss_business_admin.business_admin_id
+                  AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                  AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data) . "
+            GROUP BY 
+                month(mss_package_transactions.datetime)
+            ORDER BY
+                year(mss_package_transactions.datetime)DESC,month(mss_package_transactions.datetime)DESC
+                LIMIT 6";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
   public function GetStateByMasterAdmin($data){
     $sql = "SELECT distinct(business_outlet_state) 
         from 
@@ -3237,7 +3918,7 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetCityByState($data){
+  public function GetCityByState_remove($data){
     $sql = "SELECT DISTINCT(business_outlet_city) 
         from 
         mss_business_outlets ,
@@ -3257,7 +3938,38 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetOutletByCity($data){
+   public function GetCityByState($data){
+    $sql = "SELECT DISTINCT(business_outlet_city) 
+        from 
+        mss_business_outlets ,
+        mss_business_admin
+        WHERE
+        mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+        AND
+        mss_business_admin.business_master_admin_id = " . $this->db->escape($data['business_master_admin_id']) . "
+        AND
+        mss_business_outlets.business_outlet_status = 1";
+   
+    if(isset($data['state']) && is_array($data['state'])){
+     $state = 	'';
+     foreach($data['state'] as $val){
+		 $state .= "'".$val."',";
+	 }
+     $state = rtrim($state,',');	
+    
+     $sql .=  " AND mss_business_outlets.business_outlet_state IN (" .$state. ");";
+	}else{
+	  $sql .= " AND mss_business_outlets.business_outlet_state = " . $this->db->escape($data['state']) . ";";	
+	}
+   
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetOutletByCity_remove($data){
     $sql = "SELECT business_outlet_name,business_outlet_id
             from 
             mss_business_outlets ,
@@ -3271,6 +3983,37 @@ private function GetPackageReport($data)
             AND
             mss_business_outlets.business_outlet_city = " . $this->db->escape($data['city']) . ";";
     $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetOutletByCity($data){
+    $sql = "SELECT business_outlet_name,business_outlet_id
+            from 
+            mss_business_outlets ,
+            mss_business_admin
+            WHERE
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = " . $this->db->escape($data['business_master_admin_id']) . "
+            AND
+            mss_business_outlets.business_outlet_status = 1";
+            
+    if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');	
+    
+     $sql .=  "  AND mss_business_outlets.business_outlet_city IN (" .$city. ");";
+	}else{
+	  $sql .= "  AND mss_business_outlets.business_outlet_city = " . $this->db->escape($data['city']) . ";";
+	}
+	
+	$query = $this->db->query($sql);
     if ($query->num_rows() > 0) {
       return $this->ModelHelper(true, false, '', $query->result_array());
     } else {
@@ -3457,7 +4200,7 @@ private function GetPackageReport($data)
 //       return $this->ModelHelper(false, true, 'DB Error');
 //     }
 //   }
-  public function GetOutletTodaySalesByType($data){
+  public function GetOutletTodaySalesByType_remove($data){
     $sql ="SELECT SUM(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
            count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_today_count'
            FROM
@@ -3520,7 +4263,72 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetOutletTodayPackSales($data){
+  
+  public function GetOutletTodaySalesByType($data){
+    $sql ="SELECT SUM(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
+           count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_today_count'
+           FROM
+            mss_services,
+            mss_business_outlets,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_id IN (".$data['outlet_id'].")
+			 AND
+            mss_business_outlets.master_id = ".$this->db->escape($data['master_admin_id'])."
+            AND
+            mss_transactions.txn_datetime >= CURRENT_DATE";
+			
+    // $sql = "SELECT
+    //     SUM(mss_transactions.txn_value) AS 'total_sales',
+    //     sum(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_today_count'
+    //     FROM
+    //             mss_transactions,
+    //             mss_transaction_services,
+    //             mss_employees,
+    //             mss_customers,
+    //             master_categories,
+    //             mss_sub_categories,
+    //             mss_services,
+    //             mss_business_outlets,
+    //             mss_business_admin,
+    //             mss_transaction_settlements
+    //     WHERE
+    //             mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+    //             AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = ".$this->db->escape($data['type'])."
+    //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
+    //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+    //             AND mss_employees.employee_business_outlet= ".$this->db->escape($data['outlet_id'])."
+    //             AND mss_business_admin.business_master_admin_id =".$this->db->escape($data['master_admin_id'])."
+    //             AND date(mss_transactions.txn_datetime) = CURRENT_DATE";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function GetOutletTodayPackSales_remove($data){
     $sql = "SELECT 
         SUM(mss_package_transaction_settlements.amount_received) AS package_sales,
         count(mss_package_transactions.package_txn_id) as 'pack_today_count'
@@ -3538,6 +4346,33 @@ private function GetPackageReport($data)
         AND mss_customers.customer_business_outlet_id = " . $this->db->escape($data['outlet_id']) . "
         AND mss_customers.customer_business_admin_id = mss_business_admin.business_admin_id";
     $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetOutletTodayPackSales($data){
+    $sql = "SELECT 
+        SUM(mss_package_transaction_settlements.amount_received) AS package_sales,
+        count(mss_package_transactions.package_txn_id) as 'pack_today_count'
+        FROM
+        mss_package_transactions,
+        mss_package_transaction_settlements,
+        mss_employees,
+        mss_business_outlets,
+        mss_business_admin
+        WHERE
+        mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id 
+        AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+        AND date(mss_package_transactions.datetime) = date(now())
+        AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+        AND mss_employees.employee_business_outlet IN (" .$data['outlet_id'] . ")
+        AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+		AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data['master_admin_id']) . "
+		";
+   
+	$query = $this->db->query($sql);
     if ($query->num_rows() > 0) {
       return $this->ModelHelper(true, false, '', $query->result_array());
     } else {
@@ -3719,7 +4554,7 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetOutletPreviousPackTillDate($data){
+  public function GetOutletPreviousPackTillDate_remove($data){
     $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
                count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count_till'
                 FROM
@@ -3747,7 +4582,39 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetOutletPreviousPackSales($data){
+  
+  public function GetOutletPreviousPackTillDate($data){
+    $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
+               count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count_till'
+                FROM
+                mss_package_transactions,
+                mss_package_transaction_settlements,
+                mss_employees,
+                mss_business_outlets,
+                mss_business_admin
+                    WHERE
+                mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id
+                AND
+                mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                AND
+                mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND
+                mss_business_outlets.business_outlet_id IN (" . $data['outlet_id'] . ")
+				AND
+                mss_business_outlets.master_id = " . $this->db->escape($data['master_admin_id']) . "
+                AND
+                mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
+                AND
+                mss_package_transactions.datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function GetOutletPreviousPackSales_remove($data){
     $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
                 count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count'
                 FROM
@@ -3775,7 +4642,37 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function CurrentOutletMonthPackSales($data){
+  public function GetOutletPreviousPackSales($data){
+    $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
+                count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count'
+                FROM
+                    mss_package_transactions,
+                    mss_package_transaction_settlements,
+                    mss_employees,
+                    mss_business_outlets,
+                    mss_business_admin
+                WHERE
+                    mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id
+                AND
+                    mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                AND
+                    mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND
+                    mss_business_outlets.business_outlet_id IN (" . $data['outlet_id'] . ")
+				AND
+                    mss_business_outlets.master_id = " . $this->db->escape($data['master_admin_id']) . "	
+                AND
+                    mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
+                AND
+                    mss_package_transactions.datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE_SUB(LAST_DAY(CURDATE()),INTERVAL DAY(LAST_DAY(CURDATE()))- 1 DAY)- INTERVAL 1 DAY";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function CurrentOutletMonthPackSales_remove($data){
     $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
         count(mss_package_transaction_settlements.package_txn_id) as 'pack_current_count'
         FROM
@@ -3803,7 +4700,39 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetOutletCurrentMonthSalesByType($data){
+  
+  public function CurrentOutletMonthPackSales($data){
+    $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
+        count(mss_package_transaction_settlements.package_txn_id) as 'pack_current_count'
+        FROM
+        mss_package_transactions,
+        mss_package_transaction_settlements,
+        mss_employees,
+        mss_business_outlets,
+        mss_business_admin
+            WHERE
+        mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id
+        AND
+        mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+        AND
+        mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+        AND
+        mss_business_outlets.business_outlet_id IN (" . $data['outlet_id'] . ")
+		AND
+        mss_business_outlets.master_id = " . $this->db->escape($data['master_admin_id']) . "
+        AND
+        mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
+        AND
+        mss_package_transactions.datetime >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH)";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function GetOutletCurrentMonthSalesByType_remove($data){
     $sql = "SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
     count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_current_count'
     FROM
@@ -3866,7 +4795,72 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function OutletPreviousMonthTillSalesByType($data){
+  
+  public function GetOutletCurrentMonthSalesByType($data){
+    $sql = "SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
+    count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_current_count'
+    FROM
+    mss_services,
+    mss_business_outlets,
+    mss_transactions,
+    mss_transaction_settlements,
+    mss_transaction_services,
+    mss_employees
+    WHERE
+    mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+    AND
+    mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+    AND
+    mss_transaction_services.txn_service_service_id = mss_services.service_id
+    AND
+    mss_services.service_type = ".$this->db->escape($data['type'])."
+    AND
+    mss_transactions.txn_cashier = mss_employees.employee_id
+    AND
+    mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+    AND
+    mss_business_outlets.business_outlet_id IN (".$data['outlet_id'].")
+	AND
+    mss_business_outlets.master_id = ".$this->db->escape($data['master_admin_id'])."
+    AND
+    mss_transactions.txn_datetime >= DATE_FORMAT(CURRENT_DATE,'%Y-%m-01')";
+	
+    // $sql = "SELECT
+    //     SUM(mss_transactions.txn_value) AS 'total_sales',
+    //     count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_current_count'
+    //     FROM
+    //             mss_transactions,
+    //             mss_transaction_services,
+    //             mss_employees,
+    //             mss_customers,
+    //             master_categories,
+    //             mss_sub_categories,
+    //             mss_services,
+    //             mss_business_outlets,
+    //             mss_business_admin,
+    //             mss_transaction_settlements
+    //     WHERE
+    //             mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+    //             AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = ".$this->db->escape($data['type'])."
+    //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
+    //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+    //             AND mss_employees.employee_business_outlet= ".$this->db->escape($data['outlet_id'])."
+    //             AND mss_business_admin.business_master_admin_id = ".$this->db->escape($data['master_admin_id']). "
+    //             AND date(mss_transactions.txn_datetime) >= DATE_FORMAT(CURRENT_DATE,'%Y-%m-01')";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function OutletPreviousMonthTillSalesByType_remove($data){
     $sql="SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
           count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count_till'
           FROM
@@ -3929,7 +4923,72 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function OutletPreviousMonthSalesByType($data){
+  
+  public function OutletPreviousMonthTillSalesByType($data){
+    $sql="SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
+          count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count_till'
+          FROM
+          mss_services,
+          mss_business_outlets,
+          mss_transactions,
+          mss_transaction_settlements,
+          mss_transaction_services,
+          mss_employees
+          WHERE
+          mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+          AND
+          mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+          AND
+          mss_transaction_services.txn_service_service_id = mss_services.service_id
+          AND
+          mss_services.service_type = ".$this->db->escape($data['type'])."
+          AND
+          mss_transactions.txn_cashier = mss_employees.employee_id
+          AND
+          mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+          AND
+          mss_business_outlets.business_outlet_id IN (".$data['outlet_id'].")
+		   AND
+          mss_business_outlets.master_id = ".$this->db->escape($data['master_admin_id'])."
+          
+          AND
+          mss_transactions.txn_datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)";
+    // $sql = "SELECT
+    //     SUM(mss_transactions.txn_value) AS 'total_sales',
+    //     count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count_till'
+    //     FROM
+    //             mss_transactions,
+    //             mss_transaction_services,
+    //             mss_employees,
+    //             mss_customers,
+    //             master_categories,
+    //             mss_sub_categories,
+    //             mss_services,
+    //             mss_business_outlets,
+    //             mss_business_admin,
+    //             mss_transaction_settlements
+    //     WHERE
+    //             mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+    //             AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = ".$this->db->escape($data['type'])."
+    //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
+    //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+    //             AND mss_employees.employee_business_outlet= ".$this->db->escape($data['outlet_id'])."
+    //             AND mss_business_admin.business_master_admin_id =".$this->db->escape($data['master_admin_id'])."
+    //             AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function OutletPreviousMonthSalesByType_remove($data){
     $sql ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
             count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count'
             FROM
@@ -3992,7 +5051,70 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetBusinessDetails($data)
+  public function OutletPreviousMonthSalesByType($data){
+    $sql ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
+            count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count'
+            FROM
+            mss_services,
+            mss_business_outlets,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_id IN (".$data['outlet_id'].")
+            AND
+            mss_business_outlets.master_id = ".$this->db->escape($data['master_admin_id'])."
+            AND
+            mss_transactions.txn_datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND date_sub(last_day(CURRENT_DATE),INTERVAL DAY(last_day(CURRENT_DATE))-1 DAY)-INTERVAL 1 DAY";
+         
+	// $sql = "SELECT
+    //     SUM(mss_transactions.txn_value) AS 'total_sales',
+    //     count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count'
+    //     FROM
+    //             mss_transactions,
+    //             mss_transaction_services,
+    //             mss_employees,
+    //             mss_customers,
+    //             master_categories,
+    //             mss_sub_categories,
+    //             mss_services,
+    //             mss_business_outlets,
+    //             mss_business_admin,
+    //             mss_transaction_settlements
+    //     WHERE
+    //             mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+    //             AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //             AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //             AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //             AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //             AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //             AND master_categories.category_type = ".$this->db->escape($data['type'])."
+    //             AND mss_transactions.txn_customer_id = mss_customers.customer_id
+    //             AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+    //             AND mss_employees.employee_business_outlet= ".$this->db->escape($data['outlet_id'])."
+    //             AND mss_business_admin.business_master_admin_id =".$this->db->escape($data['master_admin_id'])."
+    //             AND date(mss_transactions.txn_datetime) BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND date_sub(last_day(CURRENT_DATE),INTERVAL DAY(last_day(CURRENT_DATE))-1 DAY)-INTERVAL 1 DAY";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetBusinessDetails_remove($data)
   {
     $sql = "SELECT
            mss_business_admin.business_admin_id,mss_business_admin.business_admin_first_name,mss_business_outlets.business_outlet_id,mss_business_outlets.business_outlet_name
@@ -4012,6 +5134,31 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
+  
+  public function GetBusinessDetails($data)
+  {
+    $sql = "SELECT
+           mss_business_admin.business_admin_id,mss_business_admin.business_admin_first_name,mss_business_outlets.business_outlet_id,mss_business_outlets.business_outlet_name
+          FROM
+             mss_business_outlets,
+             mss_business_admin
+          WHERE
+             mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+          AND
+             mss_business_admin.business_master_admin_id = ".$this->db->escape($data)."
+		  AND
+             mss_business_outlets.master_id = ".$this->db->escape($data)."	 
+          AND
+             mss_business_outlets.business_outlet_status = 1";
+    $query = $this->db->query($sql);
+	
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
   public function FetchCategories($data)
   {
     
@@ -4078,7 +5225,7 @@ private function GetPackageReport($data)
       }
   }
    //22-04-2020
-  public function GetCityTodaySalesByType($data){
+  public function GetCityTodaySalesByType_remove($data){
     $sql = "SELECT SUM(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
             count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_today_count'
             FROM
@@ -4119,7 +5266,59 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetCityCurrentMonthSalesByType($data){
+  
+  public function GetCityTodaySalesByType($data){
+	   if(isset($data['city']) && is_array($data['city'])){
+		 $city = 	'';
+		 foreach($data['city'] as $val){
+			 $city .= "'".$val."',";
+		 }
+		 $city = rtrim($city,',');
+		}else{
+		 $city = $this->db->escape($data['city']);	
+	   }
+    $sql = "SELECT SUM(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
+            count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_today_count'
+            FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees,
+            mss_master_admin
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_city IN (".$city.")
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+            AND
+            mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+            AND
+            mss_transactions.txn_datetime >= CURRENT_DATE";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function GetCityCurrentMonthSalesByType_remove($data){
     $sql = "SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
             count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_current_count'
             FROM
@@ -4160,7 +5359,57 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function CityPreviousMonthTillSalesByType($data){
+  public function GetCityCurrentMonthSalesByType($data){
+	if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');
+	}else{
+	 $city = $this->db->escape($data['city']);	
+	}  
+    $sql = "SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
+            count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_current_count'
+            FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees,
+            mss_master_admin
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_city IN (".$city.")
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+            AND
+            mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+            AND
+            mss_transactions.txn_datetime >= DATE_FORMAT(CURRENT_DATE,'%Y-%m-01')";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function CityPreviousMonthTillSalesByType_remove($data){
     $sql="SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
           count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count_till'
           FROM
@@ -4201,7 +5450,57 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function CityPreviousMonthSalesByType($data){
+  public function CityPreviousMonthTillSalesByType($data){
+	if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');
+	}else{
+	 $city = $this->db->escape($data['city']);	
+	}
+    $sql="SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
+          count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count_till'
+          FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees,
+            mss_master_admin
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_city IN (".$city.")
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+            AND
+            mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+            AND
+            mss_transactions.txn_datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)";
+        $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function CityPreviousMonthSalesByType_remove($data){
     $sql ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
             count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count'
             FROM
@@ -4242,7 +5541,57 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetCityTodayPackSales($data){
+  public function CityPreviousMonthSalesByType($data){
+	if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');
+	}else{
+	 $city = $this->db->escape($data['city']);	
+	}  
+    $sql ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
+            count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count'
+            FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees,
+            mss_master_admin
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_city IN (".$city.")
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+            AND
+            mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+            AND
+            mss_transactions.txn_datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND date_sub(last_day(CURRENT_DATE),INTERVAL DAY(last_day(CURRENT_DATE))-1 DAY)-INTERVAL 1 DAY";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetCityTodayPackSales_remove($data){
     $sql = "SELECT 
     SUM(mss_package_transaction_settlements.amount_received) AS package_sales,
     count(mss_package_transactions.package_txn_id) as 'pack_today_count'
@@ -4269,7 +5618,43 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetCityPreviousPackTillDate($data){
+   public function GetCityTodayPackSales($data){
+	 if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');
+	}else{
+	 $city = $this->db->escape($data['city']);	
+	}    
+    $sql = "SELECT 
+    SUM(mss_package_transaction_settlements.amount_received) AS package_sales,
+    count(mss_package_transactions.package_txn_id) as 'pack_today_count'
+    FROM
+    mss_package_transactions,
+    mss_package_transaction_settlements,
+    mss_employees,
+    mss_business_outlets,
+    mss_business_admin,
+    mss_master_admin
+    WHERE
+    mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id 
+    AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+    AND date(mss_package_transactions.datetime) = date(now())
+    AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+    AND mss_business_outlets.business_outlet_city IN (".$city.")
+    AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+    AND mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+    AND mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id']);
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetCityPreviousPackTillDate_remove($data){
     $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
                count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count_till'
                FROM
@@ -4296,7 +5681,43 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetCityPreviousPackSales($data){
+  public function GetCityPreviousPackTillDate($data){
+	if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');
+	}else{
+	 $city = $this->db->escape($data['city']);	
+	}    
+    $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
+               count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count_till'
+               FROM
+                mss_package_transactions,
+                mss_package_transaction_settlements,
+                mss_employees,
+                mss_business_outlets,
+                mss_business_admin,
+                mss_master_admin
+                WHERE
+                mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id 
+                AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND mss_business_outlets.business_outlet_city IN ( ".$city.")
+                AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+                AND mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+                AND mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+                AND
+                mss_package_transactions.datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetCityPreviousPackSales_remove($data){
     $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
                 count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count'
                 FROM
@@ -4324,7 +5745,44 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function CurrentCityMonthPackSales($data){
+   public function GetCityPreviousPackSales($data){
+	 if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');
+	}else{
+	 $city = $this->db->escape($data['city']);	
+	}    
+    $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
+                count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count'
+                FROM
+                mss_package_transactions,
+                mss_package_transaction_settlements,
+                mss_employees,
+                mss_business_outlets,
+                mss_business_admin,
+                mss_master_admin
+                WHERE
+                mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id 
+                AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                AND date(mss_package_transactions.datetime) = date(now())
+                AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND mss_business_outlets.business_outlet_city IN  (".$city.")
+                AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+                AND mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+                AND mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+                AND
+                    mss_package_transactions.datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE_SUB(LAST_DAY(CURDATE()),INTERVAL DAY(LAST_DAY(CURDATE()))- 1 DAY)- INTERVAL 1 DAY";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function CurrentCityMonthPackSales_remove($data){
     $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
         count(mss_package_transaction_settlements.package_txn_id) as 'pack_current_count'
         FROM
@@ -4352,7 +5810,44 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetStateTodaySalesByType($data){
+  public function CurrentCityMonthPackSales($data){
+	 if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');
+	}else{
+	 $city = $this->db->escape($data['city']);	
+	}    
+    $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
+        count(mss_package_transaction_settlements.package_txn_id) as 'pack_current_count'
+        FROM
+        mss_package_transactions,
+        mss_package_transaction_settlements,
+        mss_employees,
+        mss_business_outlets,
+        mss_business_admin,
+        mss_master_admin
+        WHERE
+        mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id 
+        AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+        AND date(mss_package_transactions.datetime) = date(now())
+        AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+        AND mss_business_outlets.business_outlet_city IN (".$city.")
+        AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+        AND mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+        AND mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+        AND
+        mss_package_transactions.datetime >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH)";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetStateTodaySalesByType_remove($data){
     $sql = "SELECT SUM(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
             count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_today_count'
             FROM
@@ -4393,7 +5888,58 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetStateCurrentMonthSalesByType($data){
+  public function GetStateTodaySalesByType($data){
+	if(isset($data['state']) && is_array($data['state'])){
+     $state = 	'';
+     foreach($data['state'] as $val){
+		$state .= "'".$val."',";
+	 }
+     $state = rtrim($state,',');
+	}else{
+	 $state = $this->db->escape($data['state']);	
+	}    
+	
+    $sql = "SELECT SUM(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
+            count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_today_count'
+            FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees,
+            mss_master_admin
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_state IN (".$state.")
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+            AND
+            mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+            AND
+            mss_transactions.txn_datetime >= CURRENT_DATE";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetStateCurrentMonthSalesByType_remove($data){
     $sql = "SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
             count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_current_count'
             FROM
@@ -4434,7 +5980,58 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function StatePreviousMonthTillSalesByType($data){
+  public function GetStateCurrentMonthSalesByType($data){
+	if(isset($data['state']) && is_array($data['state'])){
+     $state = 	'';
+     foreach($data['state'] as $val){
+		$state .= "'".$val."',";
+	 }
+     $state = rtrim($state,',');
+	}else{
+	 $state = $this->db->escape($data['state']);	
+	}    
+	
+    $sql = "SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
+            count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_current_count'
+            FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees,
+            mss_master_admin
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_state IN (".$state.")
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+            AND
+            mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+            AND
+            mss_transactions.txn_datetime >= DATE_FORMAT(CURRENT_DATE,'%Y-%m-01')";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function StatePreviousMonthTillSalesByType_remove($data){
     $sql="SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
           count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count_till'
           FROM
@@ -4475,7 +6072,57 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function StatePreviousMonthSalesByType($data){
+   public function StatePreviousMonthTillSalesByType($data){
+	if(isset($data['state']) && is_array($data['state'])){
+     $state = 	'';
+     foreach($data['state'] as $val){
+		$state .= "'".$val."',";
+	 }
+     $state = rtrim($state,',');
+	}else{
+	 $state = $this->db->escape($data['state']);	
+	}      
+    $sql="SELECT IFNULL(sum(mss_transaction_services.txn_service_discounted_price),0) AS 'total_sales',
+          count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count_till'
+          FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees,
+            mss_master_admin
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_state IN (".$state.")
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+            AND
+            mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+            AND
+            mss_transactions.txn_datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)";
+        $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function StatePreviousMonthSalesByType_remove($data){
     $sql ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
             count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count'
             FROM
@@ -4516,7 +6163,57 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetStateTodayPackSales($data){
+  public function StatePreviousMonthSalesByType($data){
+	if(isset($data['state']) && is_array($data['state'])){
+     $state = 	'';
+     foreach($data['state'] as $val){
+		$state .= "'".$val."',";
+	 }
+     $state = rtrim($state,',');
+	}else{
+	 $state = $this->db->escape($data['state']);	
+	}    
+    $sql ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
+            count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_prev_count'
+            FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees,
+            mss_master_admin
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_state IN (".$state.")
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+            AND
+            mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+            AND
+            mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+            AND
+            mss_transactions.txn_datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND date_sub(last_day(CURRENT_DATE),INTERVAL DAY(last_day(CURRENT_DATE))-1 DAY)-INTERVAL 1 DAY";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetStateTodayPackSales_remove($data){
     $sql = "SELECT 
     SUM(mss_package_transaction_settlements.amount_received) AS package_sales,
     count(mss_package_transactions.package_txn_id) as 'pack_today_count'
@@ -4543,7 +6240,43 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetStatePreviousPackTillDate($data){
+  public function GetStateTodayPackSales($data){
+	 if(isset($data['state']) && is_array($data['state'])){
+     $state = 	'';
+     foreach($data['state'] as $val){
+		$state .= "'".$val."',";
+	 }
+     $state = rtrim($state,',');
+	}else{
+	 $state = $this->db->escape($data['state']);	
+	}    
+    $sql = "SELECT 
+    SUM(mss_package_transaction_settlements.amount_received) AS package_sales,
+    count(mss_package_transactions.package_txn_id) as 'pack_today_count'
+    FROM
+    mss_package_transactions,
+    mss_package_transaction_settlements,
+    mss_employees,
+    mss_business_outlets,
+    mss_business_admin,
+    mss_master_admin
+    WHERE
+    mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id 
+    AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+    AND date(mss_package_transactions.datetime) = date(now())
+    AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+    AND mss_business_outlets.business_outlet_state IN (".$state.")
+    AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+    AND mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+    AND mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id']);
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetStatePreviousPackTillDate_remove($data){
     $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
                count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count_till'
                FROM
@@ -4570,7 +6303,43 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function GetStatePreviousPackSales($data){
+  public function GetStatePreviousPackTillDate($data){
+	  if(isset($data['state']) && is_array($data['state'])){
+		 $state = 	'';
+		 foreach($data['state'] as $val){
+			$state .= "'".$val."',";
+		 }
+		 $state = rtrim($state,',');
+		}else{
+		 $state = $this->db->escape($data['state']);	
+		}
+    $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
+               count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count_till'
+               FROM
+                mss_package_transactions,
+                mss_package_transaction_settlements,
+                mss_employees,
+                mss_business_outlets,
+                mss_business_admin,
+                mss_master_admin
+                WHERE
+                mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id 
+                AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND mss_business_outlets.business_outlet_state IN (".$state.")
+                AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+                AND mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+                AND mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+                AND
+                mss_package_transactions.datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE(now()-INTERVAL 1 MONTH)";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function GetStatePreviousPackSales_remove($data){
     $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
                 count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count'
                 FROM
@@ -4598,7 +6367,44 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function CurrentStateMonthPackSales($data){
+  public function GetStatePreviousPackSales($data){
+	if(isset($data['state']) && is_array($data['state'])){
+     $state = 	'';
+     foreach($data['state'] as $val){
+		$state .= "'".$val."',";
+	 }
+     $state = rtrim($state,',');
+	}else{
+	 $state = $this->db->escape($data['state']);	
+	}      
+    $sql = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
+                count(mss_package_transaction_settlements.package_txn_id) as 'pack_prev_count'
+                FROM
+                mss_package_transactions,
+                mss_package_transaction_settlements,
+                mss_employees,
+                mss_business_outlets,
+                mss_business_admin,
+                mss_master_admin
+                WHERE
+                mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id 
+                AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                AND date(mss_package_transactions.datetime) = date(now())
+                AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND mss_business_outlets.business_outlet_state IN (".$state.")
+                AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+                AND mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+                AND mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+                AND
+                    mss_package_transactions.datetime BETWEEN DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH,'%Y-%m-01') AND DATE_SUB(LAST_DAY(CURDATE()),INTERVAL DAY(LAST_DAY(CURDATE()))- 1 DAY)- INTERVAL 1 DAY";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function CurrentStateMonthPackSales_remove($data){
     $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
         count(mss_package_transaction_settlements.package_txn_id) as 'pack_current_count'
         FROM
@@ -4626,7 +6432,44 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function OutletLastFifteenDaySalesByType($data){
+  public function CurrentStateMonthPackSales($data){
+	    if(isset($data['state']) && is_array($data['state'])){
+		 $state = 	'';
+		 foreach($data['state'] as $val){
+			$state .= "'".$val."',";
+		 }
+		 $state = rtrim($state,',');
+		}else{
+		 $state = $this->db->escape($data['state']);	
+		}    
+    $sql = "SELECT IFNULL(sum(mss_package_transaction_settlements.amount_received),0) as 'packages',
+        count(mss_package_transaction_settlements.package_txn_id) as 'pack_current_count'
+        FROM
+        mss_package_transactions,
+        mss_package_transaction_settlements,
+        mss_employees,
+        mss_business_outlets,
+        mss_business_admin,
+        mss_master_admin
+        WHERE
+        mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id 
+        AND mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+        AND date(mss_package_transactions.datetime) = date(now())
+        AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+        AND mss_business_outlets.business_outlet_state IN (".$state.")
+        AND mss_employees.employee_business_admin = mss_business_admin.business_admin_id
+        AND mss_business_admin.business_master_admin_id = mss_master_admin.master_admin_id
+        AND mss_master_admin.master_admin_id = ".$this->db->escape($data['master_admin_id'])."
+        AND
+        mss_package_transactions.datetime >= date_add(date_add(LAST_DAY(CURRENT_DATE),interval 1 DAY),interval -1 MONTH)";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function OutletLastFifteenDaySalesByType_remove($data){
     $service ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
                 date_format(mss_transactions.txn_datetime,'%Y-%m-%d') as 'bill_date',
                 count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_count'
@@ -4701,7 +6544,86 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function CityLastFifteenDaySalesByType($data){
+  
+  public function OutletLastFifteenDaySalesByType($data){
+    $service ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
+                date_format(mss_transactions.txn_datetime,'%Y-%m-%d') as 'bill_date',
+                count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_count'
+                FROM
+                mss_services,
+                mss_business_outlets,
+                mss_business_admin,
+                mss_transactions,
+                mss_transaction_settlements,
+                mss_transaction_services,
+                mss_employees
+                WHERE
+                mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+                AND
+                mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+                AND
+                mss_transaction_services.txn_service_service_id = mss_services.service_id
+                AND
+                mss_services.service_type = ".$this->db->escape($data['type'])."
+                AND
+                mss_transactions.txn_cashier = mss_employees.employee_id
+                AND
+                mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND
+                mss_business_outlets.business_outlet_id IN (".$data['outlet_id'].")
+                AND
+                mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+                AND
+                mss_business_admin.business_master_admin_id =".$this->db->escape($data['master_admin_id'])."
+                AND
+                mss_transactions.txn_datetime >= date_sub(current_date,interval 15 day)
+              GROUP BY
+                    date(mss_transactions.txn_datetime)
+              ORDER BY
+                    date(mss_transactions.txn_datetime)";
+					
+					
+    // $service = "SELECT
+    //         SUM(mss_transactions.txn_value) AS 'service_sales',
+    //         date_format(mss_transactions.txn_datetime,'%Y-%m-%d') as 'service_date'
+    //         FROM
+    //                 mss_transactions,
+    //                 mss_transaction_services,
+    //                 mss_employees,
+    //                 mss_customers,
+    //                 master_categories,
+    //                 mss_sub_categories,
+    //                 mss_services,
+    //                 mss_business_outlets,
+    //                 mss_business_admin,
+    //                 mss_transaction_settlements
+    //         WHERE
+    //            mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+    //            AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //            AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //            AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //            AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //            AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //            AND master_categories.category_type = 'Service'
+    //            AND mss_transactions.txn_customer_id = mss_customers.customer_id
+    //            AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+    //            AND mss_employees.employee_business_outlet= ".$this->db->escape($data['outlet_id'])."
+    //            AND mss_business_admin.business_master_admin_id =".$this->db->escape($data['master_admin_id'])."
+    //            AND date(mss_transactions.txn_datetime) >= date_sub(current_date,interval 15 day)
+    //            GROUP BY
+    //                 date(mss_transactions.txn_datetime)
+    //            ORDER BY
+    //                 date(mss_transactions.txn_datetime)
+    //             LIMIT 15";
+    $sql_service = $this->db->query($service);
+    if ($sql_service->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $sql_service->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function CityLastFifteenDaySalesByType_remove($data){
     $product ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
                 date_format(mss_transactions.txn_datetime,'%Y-%m-%d') as 'bill_date',
                 count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_count'
@@ -4776,7 +6698,97 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function StateLastFifteenDaySalesByType($data){
+  
+  public function CityLastFifteenDaySalesByType($data){
+    //$data['city']
+	
+	if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');
+	}else{
+	 $city = $this->db->escape($data['city']);	
+	}
+	$product ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
+                date_format(mss_transactions.txn_datetime,'%Y-%m-%d') as 'bill_date',
+                count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_count'
+                FROM
+                mss_services,
+                mss_business_outlets,
+                mss_business_admin,
+                mss_transactions,
+                mss_transaction_settlements,
+                mss_transaction_services,
+                mss_employees
+                WHERE
+                mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+                AND
+                mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+                AND
+                mss_transaction_services.txn_service_service_id = mss_services.service_id
+                AND
+                mss_services.service_type = ".$this->db->escape($data['type'])."
+                AND
+                mss_transactions.txn_cashier = mss_employees.employee_id
+                AND
+                mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND
+                mss_business_outlets.business_outlet_city IN ( ".$city.")
+                AND
+                mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+                AND
+                mss_business_admin.business_master_admin_id =".$this->db->escape($data['master_admin_id'])."
+                AND
+                mss_transactions.txn_datetime >= date_sub(current_date,interval 15 day)
+              GROUP BY
+                    date(mss_transactions.txn_datetime)
+              ORDER BY
+                    date(mss_transactions.txn_datetime)";
+					
+			
+    // $product = "SELECT
+    //     SUM(mss_transactions.txn_value) AS 'product_sales',
+    //     date_format(mss_transactions.txn_datetime,'%Y-%m-%d') as 'product_date'
+    //     FROM
+    //             mss_transactions,
+    //             mss_transaction_services,
+    //             mss_employees,
+    //             mss_customers,
+    //             master_categories,
+    //             mss_sub_categories,
+    //             mss_services,
+    //             mss_business_outlets,
+    //             mss_business_admin,
+    //             mss_transaction_settlements
+    //     WHERE
+    //        mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+    //        AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //        AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //        AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //        AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //        AND master_categories.category_type = 'Products'
+    //        AND mss_transactions.txn_customer_id = mss_customers.customer_id
+    //        AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+    //        AND mss_employees.employee_business_outlet= " . $this->db->escape($data['outlet_id']) . "
+    //        AND mss_business_admin.business_master_admin_id =" . $this->db->escape($data['master_admin_id']) . "
+    //        AND date(mss_transactions.txn_datetime) >= date_sub(current_date,interval 15 day)
+    //        GROUP BY
+    //             date(mss_transactions.txn_datetime)
+    //        ORDER BY
+    //             date(mss_transactions.txn_datetime)
+    //         LIMIT 15";
+    $sql_products = $this->db->query($product);
+    if ($sql_products->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $sql_products->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function StateLastFifteenDaySalesByType_remove($data){
     $product ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
                 date_format(mss_transactions.txn_datetime,'%Y-%m-%d') as 'bill_date',
                 count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_count'
@@ -4851,7 +6863,93 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function LastFifteenDayPackSalesByOutlet($data){
+  
+  public function StateLastFifteenDaySalesByType($data){
+	if(isset($data['state']) && is_array($data['state'])){
+     $state = 	'';
+     foreach($data['state'] as $val){
+		 $state .= "'".$val."',";
+	 }
+     $state = rtrim($state,',');
+	}else{
+	 $state = $this->db->escape($data['state']);	
+	}    
+    $product ="SELECT sum(mss_transaction_services.txn_service_discounted_price) AS 'total_sales',
+                date_format(mss_transactions.txn_datetime,'%Y-%m-%d') as 'bill_date',
+                count(mss_transaction_settlements.txn_settlement_txn_id) as 'bill_count'
+                FROM
+                mss_services,
+                mss_business_outlets,
+                mss_business_admin,
+                mss_transactions,
+                mss_transaction_settlements,
+                mss_transaction_services,
+                mss_employees
+                WHERE
+                mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+                AND
+                mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+                AND
+                mss_transaction_services.txn_service_service_id = mss_services.service_id
+                AND
+                mss_services.service_type = ".$this->db->escape($data['type'])."
+                AND
+                mss_transactions.txn_cashier = mss_employees.employee_id
+                AND
+                mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND
+                mss_business_outlets.business_outlet_state = (".$state.")
+                AND
+                mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+                AND
+                mss_business_admin.business_master_admin_id =".$this->db->escape($data['master_admin_id'])."
+                AND
+                mss_transactions.txn_datetime >= date_sub(current_date,interval 15 day)
+              GROUP BY
+                    date(mss_transactions.txn_datetime)
+              ORDER BY
+                    date(mss_transactions.txn_datetime)";
+    // $product = "SELECT
+    //     SUM(mss_transactions.txn_value) AS 'product_sales',
+    //     date_format(mss_transactions.txn_datetime,'%Y-%m-%d') as 'product_date'
+    //     FROM
+    //             mss_transactions,
+    //             mss_transaction_services,
+    //             mss_employees,
+    //             mss_customers,
+    //             master_categories,
+    //             mss_sub_categories,
+    //             mss_services,
+    //             mss_business_outlets,
+    //             mss_business_admin,
+    //             mss_transaction_settlements
+    //     WHERE
+    //        mss_transaction_services.txn_service_txn_id =mss_transactions.txn_id 
+    //        AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //        AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //        AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //        AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //        AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //        AND master_categories.category_type = 'Products'
+    //        AND mss_transactions.txn_customer_id = mss_customers.customer_id
+    //        AND mss_employees.employee_business_admin=mss_business_admin.business_admin_id
+    //        AND mss_employees.employee_business_outlet= " . $this->db->escape($data['outlet_id']) . "
+    //        AND mss_business_admin.business_master_admin_id =" . $this->db->escape($data['master_admin_id']) . "
+    //        AND date(mss_transactions.txn_datetime) >= date_sub(current_date,interval 15 day)
+    //        GROUP BY
+    //             date(mss_transactions.txn_datetime)
+    //        ORDER BY
+    //             date(mss_transactions.txn_datetime)
+    //         LIMIT 15";
+    $sql_products = $this->db->query($product);
+    if ($sql_products->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $sql_products->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function LastFifteenDayPackSalesByOutlet_remove($data){
     $package = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
                     date_format(mss_package_transactions.datetime,'%Y-%m-%d') as 'pack_date',
                     count(mss_package_transaction_settlements.package_transaction_settlement_id) AS 'package_count'
@@ -4887,7 +6985,45 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function LastFifteenDayPackSalesByCity($data){
+  
+  public function LastFifteenDayPackSalesByOutlet($data){
+    $package = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
+                    date_format(mss_package_transactions.datetime,'%Y-%m-%d') as 'pack_date',
+                    count(mss_package_transaction_settlements.package_transaction_settlement_id) AS 'package_count'
+                FROM
+                    mss_package_transactions,
+                    mss_package_transaction_settlements,
+                    mss_employees,
+                    mss_business_outlets,
+                    mss_business_admin
+                WHERE
+                    mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id
+                AND
+                    mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                AND
+                    mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+                AND
+                    mss_business_outlets.business_outlet_id IN( " . $data['outlet_id'] . ")
+                AND
+                    mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
+                AND
+                    mss_business_admin.business_master_admin_id=" . $this->db->escape($data['master_admin_id']) . "
+                AND
+                    mss_package_transactions.datetime >= date_sub(current_date,interval 15 day)
+                GROUP BY 
+                    date(mss_package_transactions.datetime)
+                ORDER BY
+                    date(mss_package_transactions.datetime)
+                LIMIT 15";
+    $sql_package = $this->db->query($package);
+    if ($sql_package->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $sql_package->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function LastFifteenDayPackSalesByCity_remove($data){
     $package = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
                     date_format(mss_package_transactions.datetime,'%Y-%m-%d') as 'pack_date',
                     count(mss_package_transaction_settlements.package_transaction_settlement_id) AS 'package_count'
@@ -4923,7 +7059,54 @@ private function GetPackageReport($data)
       return $this->ModelHelper(false, true, 'DB Error');
     }
   }
-  public function LastFifteenDayPackSalesByState($data){
+  
+  public function LastFifteenDayPackSalesByCity($data){
+	if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');
+	}else{
+	 $city = $this->db->escape($data['city']);	
+	}  
+    $package = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
+                    date_format(mss_package_transactions.datetime,'%Y-%m-%d') as 'pack_date',
+                    count(mss_package_transaction_settlements.package_transaction_settlement_id) AS 'package_count'
+                    FROM
+                        mss_package_transactions,
+                        mss_package_transaction_settlements,
+                        mss_employees,
+                        mss_business_outlets,
+                        mss_business_admin
+                    WHERE
+                        mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id
+                    AND
+                        mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                    AND
+                        mss_employees.employee_business_outlet  = mss_business_outlets.business_outlet_id
+                    AND
+                    mss_business_outlets.business_outlet_city IN (" . $city . ")
+                    AND
+                        mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
+                    AND
+                        mss_business_admin.business_master_admin_id=" . $this->db->escape($data['master_admin_id']) . "
+                    AND
+                        mss_package_transactions.datetime >= date_sub(current_date,interval 15 day)
+                    GROUP BY 
+                        date(mss_package_transactions.datetime)
+                    ORDER BY
+                        date(mss_package_transactions.datetime)
+                    LIMIT 15";
+    $sql_package = $this->db->query($package);
+    if ($sql_package->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $sql_package->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function LastFifteenDayPackSalesByState_remove($data){
     $package = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
                     date_format(mss_package_transactions.datetime,'%Y-%m-%d') as 'pack_date',
                     count(mss_package_transaction_settlements.package_transaction_settlement_id) AS 'package_count'
@@ -4941,6 +7124,51 @@ private function GetPackageReport($data)
                         mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
                     AND
                         mss_business_outlets.business_outlet_state = ".$this->db->escape($data['state'])."
+                    AND
+                        mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
+                    AND
+                        mss_business_admin.business_master_admin_id=" . $this->db->escape($data['master_admin_id']) . "
+                    AND
+                        mss_package_transactions.datetime >= date_sub(current_date,interval 15 day)
+                    GROUP BY 
+                        date(mss_package_transactions.datetime)
+                    ORDER BY
+                        date(mss_package_transactions.datetime)
+                    LIMIT 15";
+    $sql_package = $this->db->query($package);
+    if ($sql_package->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $sql_package->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  public function LastFifteenDayPackSalesByState($data){
+	if(isset($data['state']) && is_array($data['state'])){
+     $state = 	'';
+     foreach($data['state'] as $val){
+		 $state .= "'".$val."',";
+	 }
+     $state = rtrim($state,',');
+	}else{
+	 $state = $this->db->escape($data['state']);	
+	}    
+    $package = "SELECT sum(mss_package_transaction_settlements.amount_received) as 'packages',
+                    date_format(mss_package_transactions.datetime,'%Y-%m-%d') as 'pack_date',
+                    count(mss_package_transaction_settlements.package_transaction_settlement_id) AS 'package_count'
+                    FROM
+                        mss_package_transactions,
+                        mss_package_transaction_settlements,
+                        mss_employees,
+                        mss_business_outlets,
+                        mss_business_admin
+                    WHERE
+                        mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id
+                    AND
+                        mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                    AND
+                        mss_employees.employee_business_outlet  = mss_business_outlets.business_outlet_id
+                    AND
+                        mss_business_outlets.business_outlet_state = (".$state.")
                     AND
                         mss_business_admin.business_admin_id = mss_business_outlets.business_outlet_business_admin
                     AND
@@ -5047,6 +7275,405 @@ private function GetPackageReport($data)
 		} else {
 		  return $this->ModelHelper(false, true, 'DB Error');
 		}	
+  }
+  
+  public function GetOutletIdFromCategoryForService(){
+		$sql = "SELECT A.`category_business_outlet_id`,A.`category_name`,B.`sub_category_name`,B.`sub_category_id`,C.`service_name`,C.`service_id`,C.`service_sub_category_id` FROM `master_categories` as A,`mss_sub_categories` as B,`mss_services` as C WHERE A.`category_id` = B.`sub_category_category_id` AND C.`service_sub_category_id` = B.`sub_category_id`";
+		$query = $this->db->query($sql);
+        
+		if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());
+		}
+		else{
+			return $this->ModelHelper(false,true,"DB error!");   
+		} 
+  }
+  
+  public function LastSixMonthTypeSalesByOutlet($data, $ma_admin_id){
+    $sql ="SELECT sum(mss_transaction_services.txn_service_discounted_price)as total_service,
+		        count(mss_transactions.txn_id) as service_count,
+            DATE_FORMAT(mss_transactions.txn_datetime,'%M-%y') as 'date'
+            FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+			AND
+            mss_business_outlets.business_outlet_id IN (".$data['outlet_id'].")
+            AND
+            mss_business_admin.business_master_admin_id = ".$this->db->escape($ma_admin_id)."
+            AND
+            mss_transactions.txn_datetime BETWEEN  DATE_SUB(DATE_SUB(LAST_DAY(now()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY),INTERVAL 6 MONTH) 
+              AND
+               DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+            GROUP BY 
+               month(mss_transactions.txn_datetime)
+             ORDER BY
+               year(mss_transactions.txn_datetime)DESC,month(mss_transactions.txn_datetime)DESC
+             LIMIT 6";
+    // $sql = "SELECT 
+		// sum(mss_transaction_settlements.txn_settlement_amount_received) as total_service,
+		// count(mss_transactions.txn_id) as service_count,
+    //     DATE_FORMAT(mss_transactions.txn_datetime,'%M-%y') as 'date'
+		// FROM
+		// mss_transactions,
+    //          mss_transaction_services,
+    //          mss_employees,
+    //          mss_customers,
+    //          master_categories,
+    //          mss_sub_categories,
+    //          mss_services,
+    //          mss_business_outlets,
+    //          mss_business_admin,
+    //          mss_transaction_settlements
+		// WHERE
+		// mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
+		// AND
+		// mss_transactions.txn_customer_id = mss_customers.customer_id
+		// AND date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(CURDATE(),INTERVAL 6 MONTH)
+    //         AND
+    //        		DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+		// AND mss_transactions.txn_status=1
+		// AND mss_customers.customer_business_admin_id = mss_business_admin.business_admin_id
+		// AND mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
+    //     AND mss_business_admin.business_master_admin_id = " . $this->db->escape($ma_admin_id) . "
+    //     AND mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+    //     AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //     AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //     AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //     AND master_categories.category_type = " . $this->db->escape($data) . "
+    //    	GROUP BY 
+    //     	month(mss_transactions.txn_datetime)
+    //     ORDER BY
+    //     	year(mss_transactions.txn_datetime)DESC,month(mss_transactions.txn_datetime)DESC
+    //     LIMIT 6";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function LastSixMonthPackSalesByOutlet($data){
+     $sql = "SELECT 
+        SUM(mss_package_transaction_settlements.amount_received) AS package_sales,
+        count(mss_package_transactions.package_txn_id) as 'package_count',
+        DATE_FORMAT(mss_package_transactions.datetime,'%M-%y') as 'date'
+      FROM
+        mss_package_transactions,
+        mss_package_transaction_settlements,
+        mss_employees,
+        mss_business_outlets,
+        mss_business_admin
+        WHERE
+                  mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
+                  mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                  AND date(mss_package_transactions.datetime) BETWEEN  DATE_SUB(DATE_SUB(LAST_DAY(now()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY),INTERVAL 6 MONTH)  AND DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+                  AND mss_employees.employee_business_admin  = mss_business_admin.business_admin_id
+                  AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+				  AND mss_business_outlets.business_outlet_id IN (".$data['outlet_id'].") 
+                  AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data['master_admin_id']) . "
+            GROUP BY 
+                month(mss_package_transactions.datetime)
+            ORDER BY
+                year(mss_package_transactions.datetime)DESC,month(mss_package_transactions.datetime)DESC
+                LIMIT 6";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function LastSixMonthTypeSalesByCity($data, $ma_admin_id){
+	if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');
+	}else{
+	 $city = $this->db->escape($data['city']);	
+	}
+    $sql ="SELECT sum(mss_transaction_services.txn_service_discounted_price)as total_service,
+		        count(mss_transactions.txn_id) as service_count,
+            DATE_FORMAT(mss_transactions.txn_datetime,'%M-%y') as 'date'
+            FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+			AND
+            mss_business_outlets.business_outlet_city IN (".$city.")
+            AND
+            mss_business_admin.business_master_admin_id = ".$this->db->escape($ma_admin_id)."
+            AND
+            mss_transactions.txn_datetime BETWEEN  DATE_SUB(DATE_SUB(LAST_DAY(now()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY),INTERVAL 6 MONTH) 
+              AND
+               DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+            GROUP BY 
+               month(mss_transactions.txn_datetime)
+             ORDER BY
+               year(mss_transactions.txn_datetime)DESC,month(mss_transactions.txn_datetime)DESC
+             LIMIT 6";
+    // $sql = "SELECT 
+		// sum(mss_transaction_settlements.txn_settlement_amount_received) as total_service,
+		// count(mss_transactions.txn_id) as service_count,
+    //     DATE_FORMAT(mss_transactions.txn_datetime,'%M-%y') as 'date'
+		// FROM
+		// mss_transactions,
+    //          mss_transaction_services,
+    //          mss_employees,
+    //          mss_customers,
+    //          master_categories,
+    //          mss_sub_categories,
+    //          mss_services,
+    //          mss_business_outlets,
+    //          mss_business_admin,
+    //          mss_transaction_settlements
+		// WHERE
+		// mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
+		// AND
+		// mss_transactions.txn_customer_id = mss_customers.customer_id
+		// AND date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(CURDATE(),INTERVAL 6 MONTH)
+    //         AND
+    //        		DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+		// AND mss_transactions.txn_status=1
+		// AND mss_customers.customer_business_admin_id = mss_business_admin.business_admin_id
+		// AND mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
+    //     AND mss_business_admin.business_master_admin_id = " . $this->db->escape($ma_admin_id) . "
+    //     AND mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+    //     AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //     AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //     AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //     AND master_categories.category_type = " . $this->db->escape($data) . "
+    //    	GROUP BY 
+    //     	month(mss_transactions.txn_datetime)
+    //     ORDER BY
+    //     	year(mss_transactions.txn_datetime)DESC,month(mss_transactions.txn_datetime)DESC
+    //     LIMIT 6";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function GetSixMonthPackSalesByCity($data){
+	 if(isset($data['city']) && is_array($data['city'])){
+     $city = 	'';
+     foreach($data['city'] as $val){
+		 $city .= "'".$val."',";
+	 }
+     $city = rtrim($city,',');
+	}else{
+	 $city = $this->db->escape($data['city']);	
+	}  
+     $sql = "SELECT 
+        SUM(mss_package_transaction_settlements.amount_received) AS package_sales,
+        count(mss_package_transactions.package_txn_id) as 'package_count',
+        DATE_FORMAT(mss_package_transactions.datetime,'%M-%y') as 'date'
+      FROM
+        mss_package_transactions,
+        mss_package_transaction_settlements,
+        mss_employees,
+        mss_business_outlets,
+        mss_business_admin
+        WHERE
+                  mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
+                  mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                  AND date(mss_package_transactions.datetime) BETWEEN  DATE_SUB(DATE_SUB(LAST_DAY(now()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY),INTERVAL 6 MONTH)  AND DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+                  AND mss_employees.employee_business_admin  = mss_business_admin.business_admin_id
+                  AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+				  AND mss_business_outlets.business_outlet_city IN (" . $city . ") 
+                  AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data['master_admin_id']) . "
+            GROUP BY 
+                month(mss_package_transactions.datetime)
+            ORDER BY
+                year(mss_package_transactions.datetime)DESC,month(mss_package_transactions.datetime)DESC
+                LIMIT 6";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+  public function LastSixMonthTypeSalesByState($data, $ma_admin_id){
+	if(isset($data['state']) && is_array($data['state'])){
+     $state = 	'';
+     foreach($data['state'] as $val){
+		$state .= "'".$val."',";
+	 }
+     $state = rtrim($state,',');
+	}else{
+	 $state = $this->db->escape($data['state']);	
+	}      
+    $sql ="SELECT sum(mss_transaction_services.txn_service_discounted_price)as total_service,
+		        count(mss_transactions.txn_id) as service_count,
+            DATE_FORMAT(mss_transactions.txn_datetime,'%M-%y') as 'date'
+            FROM
+            mss_services,
+            mss_business_outlets,
+            mss_business_admin,
+            mss_transactions,
+            mss_transaction_settlements,
+            mss_transaction_services,
+            mss_employees
+            WHERE
+            mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+            AND
+            mss_transactions.txn_id = mss_transaction_settlements.txn_settlement_txn_id
+            AND
+            mss_transaction_services.txn_service_service_id = mss_services.service_id
+            AND
+            mss_services.service_type = ".$this->db->escape($data['type'])."
+            AND
+            mss_transactions.txn_cashier = mss_employees.employee_id
+            AND
+            mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+            AND
+            mss_business_outlets.business_outlet_business_admin = mss_business_admin.business_admin_id
+			AND
+            mss_business_outlets.business_outlet_state IN (".$state.")
+            AND
+            mss_business_admin.business_master_admin_id = ".$this->db->escape($ma_admin_id)."
+            AND
+            mss_transactions.txn_datetime BETWEEN  DATE_SUB(DATE_SUB(LAST_DAY(now()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY),INTERVAL 6 MONTH) 
+              AND
+               DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+            GROUP BY 
+               month(mss_transactions.txn_datetime)
+             ORDER BY
+               year(mss_transactions.txn_datetime)DESC,month(mss_transactions.txn_datetime)DESC
+             LIMIT 6";
+    // $sql = "SELECT 
+		// sum(mss_transaction_settlements.txn_settlement_amount_received) as total_service,
+		// count(mss_transactions.txn_id) as service_count,
+    //     DATE_FORMAT(mss_transactions.txn_datetime,'%M-%y') as 'date'
+		// FROM
+		// mss_transactions,
+    //          mss_transaction_services,
+    //          mss_employees,
+    //          mss_customers,
+    //          master_categories,
+    //          mss_sub_categories,
+    //          mss_services,
+    //          mss_business_outlets,
+    //          mss_business_admin,
+    //          mss_transaction_settlements
+		// WHERE
+		// mss_transactions.txn_id=mss_transaction_settlements.txn_settlement_txn_id
+		// AND
+		// mss_transactions.txn_customer_id = mss_customers.customer_id
+		// AND date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(CURDATE(),INTERVAL 6 MONTH)
+    //         AND
+    //        		DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+		// AND mss_transactions.txn_status=1
+		// AND mss_customers.customer_business_admin_id = mss_business_admin.business_admin_id
+		// AND mss_customers.customer_business_outlet_id = mss_business_outlets.business_outlet_id
+    //     AND mss_business_admin.business_master_admin_id = " . $this->db->escape($ma_admin_id) . "
+    //     AND mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
+    //     AND mss_transaction_settlements.txn_settlement_txn_id = mss_transactions.txn_id
+    //     AND mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
+    //     AND mss_transaction_services.txn_service_service_id = mss_services.service_id
+    //     AND mss_services.service_sub_category_id = mss_sub_categories.sub_category_id
+    //     AND mss_sub_categories.sub_category_category_id = master_categories.category_id
+    //     AND master_categories.category_type = " . $this->db->escape($data) . "
+    //    	GROUP BY 
+    //     	month(mss_transactions.txn_datetime)
+    //     ORDER BY
+    //     	year(mss_transactions.txn_datetime)DESC,month(mss_transactions.txn_datetime)DESC
+    //     LIMIT 6";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
+  }
+  
+   public function GetSixMonthPackSalesByState($data){
+	 if(isset($data['state']) && is_array($data['state'])){
+     $state = 	'';
+     foreach($data['state'] as $val){
+		$state .= "'".$val."',";
+	 }
+     $state = rtrim($state,',');
+	}else{
+	 $state = $this->db->escape($data['state']);	
+	} 
+     $sql = "SELECT 
+        SUM(mss_package_transaction_settlements.amount_received) AS package_sales,
+        count(mss_package_transactions.package_txn_id) as 'package_count',
+        DATE_FORMAT(mss_package_transactions.datetime,'%M-%y') as 'date'
+      FROM
+        mss_package_transactions,
+        mss_package_transaction_settlements,
+        mss_employees,
+        mss_business_outlets,
+        mss_business_admin
+        WHERE
+                  mss_package_transactions.package_txn_id=mss_package_transaction_settlements.package_txn_id AND
+                  mss_package_transactions.package_txn_cashier = mss_employees.employee_id
+                  AND date(mss_package_transactions.datetime) BETWEEN  DATE_SUB(DATE_SUB(LAST_DAY(now()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY),INTERVAL 6 MONTH)  AND DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) -INTERVAL 1 DAY
+                  AND mss_employees.employee_business_admin  = mss_business_admin.business_admin_id
+                  AND mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
+				  AND mss_business_outlets.business_outlet_state IN (" . $state . ")				  
+                  AND mss_business_admin.business_master_admin_id = " . $this->db->escape($data['master_admin_id']) . "
+            GROUP BY 
+                month(mss_package_transactions.datetime)
+            ORDER BY
+                year(mss_package_transactions.datetime)DESC,month(mss_package_transactions.datetime)DESC
+                LIMIT 6";
+    $query = $this->db->query($sql);
+    if ($query->num_rows() > 0) {
+      return $this->ModelHelper(true, false, '', $query->result_array());
+    } else {
+      return $this->ModelHelper(false, true, 'DB Error');
+    }
   }
   
 }

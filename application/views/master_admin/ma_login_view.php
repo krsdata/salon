@@ -97,7 +97,7 @@
 		        }   
 		    },
 		    submitHandler: function(form) {
-		    	var url_dash = "<?=base_url()?>MasterAdmin/Dashboard";
+		    	var url_dash = "<?=base_url()?>MasterReport/Dashboard";
 				var formData = $("#MasterAdminLogin").serialize(); 
 				$.ajax({
 			        url: "<?=base_url()?>MasterAdmin/Login",
