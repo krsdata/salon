@@ -52,30 +52,18 @@
 										<li class="nav-item">
 											<a class="nav-link active" data-toggle="tab" href="#tab-1">Add Stock</a>
 										</li>
-										<!-- <li class="nav-item">
-											<a class="nav-link" data-toggle="tab" href="#tab-2">Stock Transfer</a>
-										</li> -->
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-3">Stock Level</a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link" data-toggle="tab" href="#tab-8">Stock Level(<small>Item Wise</small>)</a>
-										</li>
+										</li>					
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-4">Incoming Stock</a>
 										</li>
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-5">Outgoing Stock</a>
 										</li>
-										<!-- <li class="nav-item">
-											<a class="nav-link" data-toggle="tab" href="#tab-6">Inventory Health</a>
-										</li> -->
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-7">Invoice Tracker</a>
 										</li>
-										<!-- <li class="nav-item">
-											<a class="nav-link" data-toggle="tab" href="#tab-8">Pending Payments</a>
-										</li> -->
 									</ul>
 								</div>
 								<div class="card-body">
@@ -449,104 +437,121 @@
 											</div>
 										</div>
 										<div class="tab-pane" id="tab-3" role="tabpanel">
-											<div class="card">
-												<div class="card-header">													
-													<div class="row">
-														<div class="col-md-10">
-															<h3>Available Stock</h3>
-														</div>
-														<div class="col-md-2">
-														<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
+											<!-- nested tab -->
+											<div class="col-md-12">
+												<div class="card">
+													<div class="card-header" style="margin-left:10px;">
+														<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight: bolder">
+															<li class="nav-item">
+																<a class="nav-link active" data-toggle="tab" href="#tab1-1">Stock(<small>Itemwise</small>)</a>
+															</li>
+															<li class="nav-item">
+																<a class="nav-link" data-toggle="tab" href="#tab1-2">Stock</a>
+															</li>
+														</ul>
+													</div>
+													<div class="card-body">
+														<div class="tab-content">
+															<div class="tab-pane show active" id="tab1-1" role="tabpanel">
+																<div class="card">
+																	<div class="card-header">													
+																		<div class="row">
+																			<div class="col-md-10">
+																				<h3>Total Stock</h3>
+																			</div>
+																			<div class="col-md-2">
+																			<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="card-body">
+																		<table class="table table-hover datatables-basic" style="width: 100%;" id="availableStock">
+																			<thead>
+																				<th>Sr. No.</th>
+																				<th>Product Name</th>
+																				<th>Type</th>
+																				<th>Barcode</th>
+																				<th>SKU size</th>
+																				<th>Total Stock</th>
+																				<th>Stock in Unit</th>
+																				<th>Last Updated</th>
+																				<th>Location</th>
+																			</thead>
+																			<tbody>
+																				<?php $count=1; foreach($itemwise_stock as $stock){ ?>
+																					<tr>
+																						<td style="width:5%;"><?=$count?></td>
+																						<td style="width:15%;"><?=$stock['service_name'];?></td>
+																						<td style="width:8%;"><?=$stock['inventory_type'];?></td>
+																						<td style="width:8%;"><?=$stock['barcode'];?></td>
+																						<td style="width:8%;"><?=$stock['qty_per_item'].' '.$stock['service_unit'];?></td>
+																						<td style="width:8%;"><?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?></td>
+																						<td style="width:8%;"><?php if(empty($stock['stock_in_unit']) || $stock['stock_in_unit']==""){echo "0"." ".$stock['service_unit'];}else{echo $stock['stock_in_unit']." ".$stock['service_unit'];} ?></td>
+																						<td style="width:8%;"><?=$stock['updated_on'];?></td>
+																						<td style="width:8%;"><?=$stock['business_outlet_name'];?></td>
+																					</tr>
+																				<?php $count++; }?>
+																			</tbody>
+																		</table>
+																	</div>
+																</div>
+															</div>
+															<div class="tab-pane" id="tab1-2" role="tabpanel">
+																<div class="card">
+																	<div class="card-header">													
+																		<div class="row">
+																			<div class="col-md-10">
+																				<h3>Available Stock</h3>
+																			</div>
+																			<div class="col-md-2">
+																			<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="card-body">
+																		<table class="table table-hover datatables-basic" style="width: 100%;" id="availableStock">
+																			<thead>
+																				<th>Sr. No.</th>
+																				<th>Product Name</th>
+																				<th>Type</th>
+																				<th>Barcode</th>
+																				<th>SKU size</th>
+																				<th>Total Stock</th>
+																				<th>Stock in Unit</th>
+																				<th>Last Updated</th>
+																				<th>Expiry Date</th>
+																				<th>Location</th>
+																				<th>Action</th>
+																			</thead>
+																			<tbody>
+																				<?php $count=1; foreach($total_stock as $stock){ ?>
+																					<tr>
+																						<td style="width:5%;"><?=$count?></td>
+																						<td style="width:15%;"><?=$stock['service_name'];?></td>
+																						<td style="width:8%;"><?=$stock['inventory_type'];?></td>
+																						<td style="width:8%;"><?=$stock['barcode'];?></td>
+																						<td style="width:8%;"><?=$stock['qty_per_item'].' '.$stock['service_unit'];?></td>
+																						<td style="width:8%;"><?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?></td>
+																						<td style="width:8%;"><?php if(empty($stock['stock_in_unit']) || $stock['stock_in_unit']==""){echo "0"." ".$stock['service_unit'];}else{echo $stock['stock_in_unit']." ".$stock['service_unit'];} ?></td>
+																						<td style="width:8%;"><?=$stock['updated_on'];?></td>
+																						<td style="width:8%;color:red;"><?=$stock['expiry_date'];?></td>
+																						<td style="width:8%;"><?=$stock['business_outlet_name'];?></td>
+																						<td style="width:8%;">
+																							<button class="btn btn-primary EditInventory" data-toggle="modal" id="" data-target="#ModalEditInventory" service_id="<?=$stock['service_id'];?>" product_qty="<?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?>"><i class="fa fa-pen"></i></button>
+																						</td>
+																					</tr>
+																				<?php $count++; }?>
+																			</tbody>
+																		</table>
+																	</div>
+																</div>
+															</div>
 														</div>
 													</div>
 												</div>
-												<div class="card-body">
-													<table class="table table-hover datatables-basic" style="width: 100%;" id="availableStock">
-														<thead>
-															<th>Sr. No.</th>
-															<th>Product Name</th>
-															<th>Type</th>
-															<th>Barcode</th>
-															<th>SKU size</th>
-															<th>Total Stock</th>
-															<th>Stock in Unit</th>
-															<th>Last Updated</th>
-															<th>Expiry Date</th>
-															<th>Location</th>
-															<th>Action</th>
-														</thead>
-														<tbody>
-															<?php $count=1; foreach($stock as $stock){ ?>
-																<tr>
-																	<td style="width:5%;"><?=$count?></td>
-																	<td style="width:15%;"><?=$stock['service_name'];?></td>
-																	<td style="width:8%;"><?=$stock['inventory_type'];?></td>
-																	<td style="width:8%;"><?=$stock['barcode'];?></td>
-																	<td style="width:8%;"><?=$stock['qty_per_item'].' '.$stock['service_unit'];?></td>
-																	<td style="width:8%;"><?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?></td>
-																	<td style="width:8%;"><?php if(empty($stock['stock_in_unit']) || $stock['stock_in_unit']==""){echo "0"." ".$stock['service_unit'];}else{echo $stock['stock_in_unit']." ".$stock['service_unit'];} ?></td>
-																	<td style="width:8%;"><?=$stock['updated_on'];?></td>
-																	<td style="width:8%;color:red;"><?=$stock['expiry_date'];?></td>
-																	<td style="width:8%;"><?=$stock['business_outlet_name'];?></td>
-																	<td style="width:8%;">
-																		<button class="btn btn-primary EditInventory" data-toggle="modal" id="" data-target="#ModalEditInventory" service_id="<?=$stock['service_id'];?>" product_qty="<?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?>"><i class="fa fa-pen"></i></button>
-																	</td>
-																</tr>
-															<?php $count++; }?>
-														</tbody>
-													</table>
-												</div>
 											</div>
-										</div>
-										<div class="tab-pane" id="tab-8" role="tabpanel">
-											<div class="card">
-												<div class="card-header">													
-													<div class="row">
-														<div class="col-md-10">
-															<h3>Total Stock</h3>
-														</div>
-														<div class="col-md-2">
-														<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
-														</div>
-													</div>
-												</div>
-												<div class="card-body">
-													<table class="table table-hover datatables-basic" style="width: 100%;" id="availableStock">
-														<thead>
-															<th>Sr. No.</th>
-															<th>Product Name</th>
-															<th>Type</th>
-															<th>Barcode</th>
-															<th>SKU size</th>
-															<th>Total Stock</th>
-															<th>Stock in Unit</th>
-															<th>Last Updated</th>
-															<!-- <th>Expiry Date</th> -->
-															<th>Location</th>
-															<!-- <th>Action</th> -->
-														</thead>
-														<tbody>
-															<?php $count=1; foreach($itemwise_stock as $stock){ ?>
-																<tr>
-																	<td style="width:5%;"><?=$count?></td>
-																	<td style="width:15%;"><?=$stock['service_name'];?></td>
-																	<td style="width:8%;"><?=$stock['inventory_type'];?></td>
-																	<td style="width:8%;"><?=$stock['barcode'];?></td>
-																	<td style="width:8%;"><?=$stock['qty_per_item'].' '.$stock['service_unit'];?></td>
-																	<td style="width:8%;"><?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?></td>
-																	<td style="width:8%;"><?php if(empty($stock['stock_in_unit']) || $stock['stock_in_unit']==""){echo "0"." ".$stock['service_unit'];}else{echo $stock['stock_in_unit']." ".$stock['service_unit'];} ?></td>
-																	<td style="width:8%;"><?=$stock['updated_on'];?></td>
-																	<td style="width:8%;"><?=$stock['business_outlet_name'];?></td>
-																	<!-- <td style="width:8%;">
-																		<button class="btn btn-primary EditInventory" data-toggle="modal" id="" data-target="#ModalEditInventory" service_id="<?=$stock['service_id'];?>" product_qty="<?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?>"><i class="fa fa-pen"></i></button>
-																	</td> -->
-																</tr>
-															<?php $count++; }?>
-														</tbody>
-													</table>
-												</div>
-											</div>
-										</div>
+											<!-- end -->										
+										</div>										
 										<div class="tab-pane" id="tab-4" role="tabpanel">
 											<div class="row">
 												<div class="col-md-12">
