@@ -11358,8 +11358,8 @@ public function InsertSalary(){
 													$data['vendors']=$data['vendors']['res_arr'];
 							}
 
-							$data['stock']=$this->CashierModel->AvailableStock($where);
-							$data['stock']=	$data['stock']['res_arr'];
+							$data['total_stock']=$this->CashierModel->AvailableStock($where);
+							$data['total_stock']=	$data['total_stock']['res_arr'];
 
 							$data['itemwise_stock']=$this->CashierModel->AvailableStockItemWise($where);
 							$data['itemwise_stock']=	$data['itemwise_stock']['res_arr'];
