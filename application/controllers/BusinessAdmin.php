@@ -13087,6 +13087,86 @@ public function daybook(){
 					$this->LogoutUrl(base_url()."BusinessAdmin/");
 			}
 		}
+		public function GetInventoryData(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_GET) && !empty($_GET)){
+					if($_GET['exp_date']=='less_than_three'){
+						$where=array(
+							'from_date'	=> date('Y-m-d'),
+							'to_date'		=> date('Y-m-d', strtotime(date('Y-m-d')."+3 months")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else if($_GET['exp_date']=='three_to_six'){
+						$where=array(
+							'from_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."+3 months")),
+							'to_date'		=> date('Y-m-d', strtotime(date('Y-m-d')."+6 months")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else if($_GET['exp_date']=='more_than_six'){
+						$where=array(
+							'from_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."+6 months")),
+							'to_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."+10 years")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else{
+						$this->ReturnJsonArray(false,true,'Invalid Date');
+						die;
+					}
+					
+					// $this->PrettyPrintArray($where);
+						$data=$this->CashierModel->GetInventoryExpiredBetween($where);						
+						$this->ReturnJsonArray(true,false,$data['res_arr']);
+						die;
+				}else{
+					$this->ReturnJsonArray(false,true,"Wrong Method!");
+					die;
+				}						
+			}
+			else{
+					$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}
+		}
+
+		public function GetInventoryStatus(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_GET) && !empty($_GET)){
+					
+					if($_GET['status']=='regular'){
+						$where=array(
+							'from_date'	=> date('Y-m-d'),
+							'to_date'		=> date('Y-m-d', strtotime(date('Y-m-d')."-3 months")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else if($_GET['status']=='slow'){
+						$where=array(
+							'from_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."-3 months")),
+							'to_date'		=> date('Y-m-d', strtotime(date('Y-m-d')."-6 months")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else if($_GET['status']=='dead'){
+						$where=array(
+							'from_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."-6 months")),
+							'to_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."-10 years")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else{
+						$this->ReturnJsonArray(false,true,'Invalid status');
+						die;
+					}
+					
+					// $this->PrettyPrintArray($where);
+						$data=$this->CashierModel->GetInventoryEntryBetween($where);						
+						$this->ReturnJsonArray(true,false,$data['res_arr']);
+						die;
+				}else{
+					$this->ReturnJsonArray(false,true,"Wrong Method!");
+					die;
+				}						
+			}
+			else{
+					$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}
+		}
 
 }
 

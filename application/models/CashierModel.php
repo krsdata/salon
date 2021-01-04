@@ -4005,4 +4005,73 @@ class CashierModel extends CI_Model {
 					}
 				}	
 
+
+	public function GetInventoryExpiredBetween($data){
+		$sql="Select X.service_id,
+			Y.stock_service_id,
+			X.service_name, 
+			X.inventory_type,
+			X.service_unit,
+			X.barcode,X.qty_per_item,
+			Y.total_stock, Y.stock_in_unit,Y.updated_on,Y.expiry_date,X.business_outlet_name From 
+			(
+			SELECT mss_services.*,
+			mss_business_outlets.business_outlet_name FROM mss_services,
+			mss_sub_categories,mss_categories, mss_business_outlets WHERE
+			mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
+			mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
+			mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id AND
+			mss_categories.category_business_outlet_id =".$this->db->escape($data['business_outlet_id'])." AND
+			mss_services.inventory_type_id > 0 AND
+			mss_services.service_is_active = 1
+			)
+			AS  X
+			left outer JOIN
+			( 
+			Select inventory_stock.* From inventory_stock, mss_business_outlets WHERE
+			inventory_stock.stock_outlet_id= mss_business_outlets.business_outlet_id AND 
+			mss_business_outlets.business_outlet_id=".$this->db->escape($data['business_outlet_id']).") AS Y
+			ON X.service_id = Y.stock_service_id
+			WHERE Y.expiry_date BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
+			GROUP BY X.service_id, Y.stock_service_id,X.service_name,Y.expiry_date";
+		$query = $this->db->query($sql);
+
+		if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+		}   
+		else{
+			return $this->ModelHelper(false,true,"Product not Available in stock.");
+		} 
+	}
+
+	public function GetInventoryEntryBetween($data){
+		$sql="SELECT
+			inventory.inventory_id,
+			inventory.invoice_number,
+			inventory.invoice_date,
+			inventory_data.*,
+			mss_vendors.vendor_name
+		FROM
+			inventory,
+			mss_vendors,
+			inventory_data
+		WHERE
+			inventory.inventory_id = inventory_data.inventory_id AND
+			inventory.source_name = mss_vendors.vendor_id AND
+			inventory.invoice_date BETWEEN ".$this->db->escape($data['to_date'])." AND 
+			".$this->db->escape($data['from_date'])." AND
+			inventory.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])."
+		GROUP BY
+			inventory_data.inventory_data_id ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not available in stock.");
+        } 
+	}
+
+			
 }
