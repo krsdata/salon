@@ -418,9 +418,19 @@
 															<div class="card">
 																<div class="card-header">												
 																	<div class="row">
-																		<div class="col-md-10">
+																		<div class="col-md-2">
 																			<h3>Available Stock</h3>
 																		</div>
+																		<div class="col-md-8">
+																				<form class="form-inline" >
+																					<select class="form-control" id="exp_date">
+																						<option value="" >Select Time</option>
+																						<option value="less_than_three">Expiring in 3 Months</option>
+																						<option value="three_to_six">Expiring in 3-6 Months</option>
+																						<option value="more_than_six">Expiring in >6 Months</option>
+																					</select>
+																				</form>
+																			</div>
 																		<div class="col-md-2">
 																		<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-download"></i> Download</button>
 																		</div>
@@ -681,6 +691,41 @@
 		$(".datatables-basic").DataTable({
 			responsive: true
 		});
+
+		//Fetch data according to Exp Date
+		$(document).on('change',"#exp_date",function(event){
+    	event.preventDefault();
+      this.blur();
+			// alert($(this).val());
+	      var parameters = {
+	        exp_date :  $(this).val()
+	      };
+				$.getJSON("<?=base_url()?>Cashier/GetInventoryData", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					if(data.success == 'true'){
+						var str_2 = "";
+						// alert(data.service.res_arr.length);
+						for(var i=0;i< data.message.length;i++){
+							str_2+="<tr>";
+							str_2 += "<td>" + parseInt(i+1) + "</td>";
+							str_2 += "<td>" + data.message[i].service_name + "</td>";
+							str_2 += "<td>" + data.message[i].inventory_type+"</td>";
+							str_2 += "<td>" + data.message[i].barcode + "</td>";
+							str_2 += "<td>" + data.message[i].qty_per_item + "</td>";	
+							str_2 += "<td>" + data.message[i].total_stock + "</td>";
+							str_2 += "<td>" + data.message[i].stock_in_unit + "</td>";
+							str_2 += "<td>" + data.message[i].updated_on + "</td>";
+							str_2 += "<td>" + data.message[i].business_outlet_name+ "</td>";
+							str_2+="</tr>";
+						}
+						$("#availableStock tbody tr").remove();
+						$("#availableStock tbody").append(str_2);
+					}
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+			});
+  	});
 
 		$("#AddProduct select[name=source_type]").on('change',function(e){
   		var parameters = {
@@ -1689,17 +1734,17 @@
 	}
 </script>
 <script>
-$(document).ready(function() {
-    if (location.hash) {
-        $("a[href='" + location.hash + "']").tab("show");
-    }
-    $(document.body).on("click", "a[data-toggle='tab']", function(event) {
-        location.hash = this.getAttribute("href");
-    });
-});
-$(window).on("popstate", function() {
-    var anchor = location.hash || $("a[data-toggle='tab']").first().attr("href");
-    $("a[href='" + anchor + "']").tab("show");
-});
+	$(document).ready(function() {
+			if (location.hash) {
+					$("a[href='" + location.hash + "']").tab("show");
+			}
+			$(document.body).on("click", "a[data-toggle='tab']", function(event) {
+					location.hash = this.getAttribute("href");
+			});
+	});
+	$(window).on("popstate", function() {
+			var anchor = location.hash || $("a[data-toggle='tab']").first().attr("href");
+			$("a[href='" + anchor + "']").tab("show");
+	});
 </script>
 

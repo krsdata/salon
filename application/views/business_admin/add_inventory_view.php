@@ -456,8 +456,18 @@
 																<div class="card">
 																	<div class="card-header">													
 																		<div class="row">
-																			<div class="col-md-10">
+																			<div class="col-md-2">
 																				<h3>Total Stock</h3>
+																			</div>
+																			<div class="col-md-8">
+																				<form class="form-inline" >
+																					<select class="form-control" id="exp_date">
+																						<option value="" >Select Time</option>
+																						<option value="less_than_three">Expiring in 3 Months</option>
+																						<option value="three_to_six">Expiring in 3-6 Months</option>
+																						<option value="more_than_six">Expiring in >6 Months</option>
+																					</select>
+																				</form>
 																			</div>
 																			<div class="col-md-2">
 																			<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
@@ -611,16 +621,30 @@
 														<div class="card-header">
 															<div class="row">
 																	<div class="col-md-2">
-																	<h5 class="card-title">Inventory Details</h5>
+																		<h5 class="card-title">Inventory Details</h5>
 																	</div>
-																	<form class="form-inline" style="width:60%;" method="POST" action="#" id="txn200">
-																		<div class="form-group col-md-3">
+																	<div class="col-md-6">
+																	<form class="form-inline" style="width:100%;" method="POST" action="#" id="txn200">
+																		<div class="form-group col-md-6">
 																			<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
 																		</div>
-																		<div class="form-group col-md-2">
+																		<div class="form-group col-md-4">
 																			<input type="submit" class="btn btn-primary" id="get_txn"  value="Submit" />
 																		</div>
 																	</form>
+																	</div>
+																	<div class="col-md-2">
+																	<form class="form-inline" style="width:100%;">
+																		<div class="form-group col-md-3">
+																		<select id="inventory_status" name="status" class="form-control">
+																			<option value="">Select Status</option>
+																			<option value="regular">Regular Stock</option>																
+																			<option value="slow">Slow Moving</option>
+																			<option value="dead">Dead Stock</option>
+																		</select>
+																		</div>
+																	</form>
+																	</div>
 																	<div class="col-md-2">
 																	<button class="btn btn-primary" onclick="exportTableToExcel('inv_table','Inventory')"><i class="fa fa-download"></i> Download</button>
 																	</div>
@@ -1116,7 +1140,7 @@
 ?>
 <script type="text/javascript">
 
-function calPendAmt() {
+			function calPendAmt() {
             var t1 = parseInt(document.getElementById("reamt").value);
             var t2 = parseInt(document.getElementById("pendamtValue").value);
             
@@ -2160,60 +2184,37 @@ function calPendAmt() {
 </script>
 <script type="text/javascript">
 	$(document).ready(function(){
-		$("#status").on('change',function(e){
-			// alert($(this).val());
-			if($(this).val() == 'Regular'){
-				// alert("hoo");
-				window.location.reload();
-			}
+		$("#inventory_status").on('change',function(e){
 			var parameters = {
 				'status' :  $(this).val()
 			};
-			$.getJSON("<?=base_url()?>BusinessAdmin/InventoryStatus", parameters)
+			$.getJSON("<?=base_url()?>BusinessAdmin/GetInventoryStatus", parameters)
 			.done(function(data, textStatus, jqXHR) {
-				// alert(data.stock);
-				if((data.stock == 'Slow')){
-					$('#labeltotal').text("Rs "+data.total);
-					var temp_str="<thead><th>Bucket</th><th>Item Name</th><th>Sub Category</th><th>Category</th><th>SKU SIZE</th><th>Current Stock</th><th>Stock In Slow Stock Stage</th><th>Entry Date</th><th>No of Days since entry Date</th><th>Total Revenue Stuck</th></thead> ";
-					for(var i = 0;i < data.stockdetails.length;i++){
-				
+				var temp_str="";
+					for(var i = 0;i < data.message.length;i++){				
 					temp_str += "<tr>";
-								temp_str += "<td> Slow Stock  </td>";
-								temp_str += "<td>" + data.stockdetails[i].service_name + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].sub_category_name + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].category_name+"</td>";
-								temp_str += "<td>" + data.stockdetails[i].sku_size + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].sku_count+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].deadstock+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].entrydate+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].days+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].Total+ "</td>";
+								temp_str += "<td>"+(i+1)+" </td>";
+								temp_str += "<td>" + data.message[i].invoice_number + "</td>";
+								temp_str += "<td>" + data.message[i].invoice_date + "</td>";
+								temp_str += "<td>" + data.message[i].product_name+"</td>";
+								temp_str += "<td>" + data.message[i].product_type + "</td>";
+								temp_str += "<td>" + data.message[i].product_barcode+ "</td>";
+								temp_str += "<td>" + data.message[i].sku_size+ "</td>";
+								temp_str += "<td>" + data.message[i].product_qty+ "</td>";
+								temp_str += "<td>" + data.message[i].product_mrp+ "</td>";
+								temp_str += "<td>" + data.message[i].vendor_name+ "</td>";
 								temp_str += "</tr>";
 					}
-					$("#details").html("").html(temp_str);
-				}else if(data.stock == 'Dead'){
-					// document.getElementById("labeltotal").text=data.total;
-					$('#labeltotal').text("Rs "+data.total);
-					var temp_str="<thead><th>Bucket</th><th>Item Name</th><th>Sub Category</th><th>Category</th><th>SKU SIZE</th><th>Current Stock</th><th>Stock In Dead Stock Stage</th><th>Entry Date</th><th>No of Days since entry Date</th><th>Total Revenue Stuck</th></thead> ";
-					for(var i = 0;i < data.stockdetails.length;i++){
-				
-					temp_str += "<tr>";
-								temp_str += "<td> Dead Stock  </td>";
-								temp_str += "<td>" + data.stockdetails[i].service_name + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].sub_category_name + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].category_name+"</td>";
-								temp_str += "<td>" + data.stockdetails[i].sku_size + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].sku_count+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].deadstock+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].entrydate+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].days+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].Total+ "</td>";
-								temp_str += "</tr>";
+					$("#inv_table tbody tr").remove();
+					$("#inv_table tbody").append(temp_str);
+					if($("#inventory_status").val()=='regular'){
+						$("#inv_table tbody tr").css('color','blue');
+					}else if($("#inventory_status").val()=='slow'){
+						$("#inv_table tbody tr").css('color','orange');
+					}else{
+						$("#inv_table tbody tr").css('color','red');
 					}
-					$("#details").html("").html(temp_str);
-				}else{
-					window.location.reload();
-				}
+				
 			})
 			.fail(function(jqXHR, textStatus, errorThrown) {
 			console.log(errorThrown.toString());
@@ -2276,6 +2277,40 @@ function calPendAmt() {
 						}
 						$("#inv_table tbody tr").remove();
 						$("#inv_table tbody").append(str_2);
+					}
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+			});
+  	});
+		//Fetch data according to Exp Date
+		$(document).on('change',"#exp_date",function(event){
+    	event.preventDefault();
+      this.blur();
+			// alert($(this).val());
+	      var parameters = {
+	        exp_date :  $(this).val()
+	      };
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetInventoryData", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					if(data.success == 'true'){
+						var str_2 = "";
+						// alert(data.service.res_arr.length);
+						for(var i=0;i< data.message.length;i++){
+							str_2+="<tr>";
+							str_2 += "<td>" + parseInt(i+1) + "</td>";
+							str_2 += "<td>" + data.message[i].service_name + "</td>";
+							str_2 += "<td>" + data.message[i].inventory_type+"</td>";
+							str_2 += "<td>" + data.message[i].barcode + "</td>";
+							str_2 += "<td>" + data.message[i].qty_per_item + "</td>";	
+							str_2 += "<td>" + data.message[i].total_stock + "</td>";
+							str_2 += "<td>" + data.message[i].stock_in_unit + "</td>";
+							str_2 += "<td>" + data.message[i].updated_on + "</td>";
+							str_2 += "<td>" + data.message[i].business_outlet_name+ "</td>";
+							str_2+="</tr>";
+						}
+						$("#availableStock tbody tr").remove();
+						$("#availableStock tbody").append(str_2);
 					}
 				})
 				.fail(function(jqXHR, textStatus, errorThrown) {
