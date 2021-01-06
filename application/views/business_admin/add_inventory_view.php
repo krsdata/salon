@@ -462,7 +462,7 @@
 																			<div class="col-md-8">
 																				<form class="form-inline" >
 																					<select class="form-control" id="exp_date">
-																						<option value="" >Select Time</option>
+																						<option value="" selected="selected" disabled>Select Expiry Range</option>
 																						<option value="less_than_three">Expiring in 3 Months</option>
 																						<option value="three_to_six">Expiring in 3-6 Months</option>
 																						<option value="more_than_six">Expiring in >6 Months</option>
@@ -483,7 +483,7 @@
 																				<th>Barcode</th>
 																				<th>SKU size</th>
 																				<th>Total Stock</th>
-																				<th>Stock in Unit</th>
+																				<th>Stock in Volume</th>
 																				<th>Last Updated</th>
 																				<th>Location</th>
 																			</thead>
@@ -527,7 +527,7 @@
 																				<th>Barcode</th>
 																				<th>SKU size</th>
 																				<th>Total Stock</th>
-																				<th>Stock in Unit</th>
+																				<th>Stock in Volume</th>
 																				<th>Last Updated</th>
 																				<th>Expiry Date</th>
 																				<th>Location</th>
@@ -580,7 +580,7 @@
 																	<th>SKU size</th>
 																	<th>Product Qty</th>
 																	<th>MRP</th>
-																	<th>Entry Date</th>
+																	<th>Invoice Date</th>
 																	<th>Source Name</th>
 																	<th>Destination Name</th>
 																	<th>Actions</th>
@@ -623,27 +623,29 @@
 																	<div class="col-md-2">
 																		<h5 class="card-title">Inventory Details</h5>
 																	</div>
-																	<div class="col-md-6">
-																	<form class="form-inline" style="width:100%;" method="POST" action="#" id="txn200">
-																		<div class="form-group col-md-6">
-																			<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
-																		</div>
-																		<div class="form-group col-md-4">
-																			<input type="submit" class="btn btn-primary" id="get_txn"  value="Submit" />
-																		</div>
-																	</form>
+																	<div class="col-md-5">
+																		<form class="form-inline" style="width:100%;" method="POST" action="#" id="txn200">
+																			<label>Select Invoice Range</label>
+																			<div class="form-group col-md-6">
+																				<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
+																			</div>
+																			<div class="form-group col-md-2">
+																				<input type="submit" class="btn btn-primary" id="get_txn"  value="Submit" />
+																			</div>
+																		</form>
 																	</div>
-																	<div class="col-md-2">
-																	<form class="form-inline" style="width:100%;">
-																		<div class="form-group col-md-3">
-																		<select id="inventory_status" name="status" class="form-control">
-																			<option value="">Select Status</option>
-																			<option value="regular">Regular Stock</option>																
-																			<option value="slow">Slow Moving</option>
-																			<option value="dead">Dead Stock</option>
-																		</select>
-																		</div>
-																	</form>
+																	<div class="col-md-3">
+																		<form class="form-inline" style="width:100%;">
+																		<label>Inventory Health</label>
+																			<div class="form-group col-md-3">
+																			<select id="inventory_status" name="status" class="form-control">
+																				<option selected="selected" disabled>Select Status</option>
+																				<option value="regular">Regular Stock</option>																
+																				<option value="slow">Slow Moving</option>
+																				<option value="dead">Dead Stock</option>
+																			</select>
+																			</div>
+																		</form>
 																	</div>
 																	<div class="col-md-2">
 																	<button class="btn btn-primary" onclick="exportTableToExcel('inv_table','Inventory')"><i class="fa fa-download"></i> Download</button>
@@ -2208,9 +2210,9 @@
 					$("#inv_table tbody tr").remove();
 					$("#inv_table tbody").append(temp_str);
 					if($("#inventory_status").val()=='regular'){
-						$("#inv_table tbody tr").css('color','blue');
+						$("#inv_table tbody tr").css('color','green');
 					}else if($("#inventory_status").val()=='slow'){
-						$("#inv_table tbody tr").css('color','orange');
+						$("#inv_table tbody tr").css('color','blue');
 					}else{
 						$("#inv_table tbody tr").css('color','red');
 					}

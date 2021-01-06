@@ -6466,8 +6466,6 @@ public function SetCommission()
 		$year=$_POST['year'];
 		$month=$_POST['month_name'];
 		$_POST['month_name']=$year.'-'.$month;
-		// $this->PrettyPrintArray($_POST);
-		// exit;
 		
 		if($this->IsLoggedIn('business_admin')){
 			$data = $this->GetDataForAdmin("Employee_details");
@@ -6632,8 +6630,7 @@ public function SetCommission()
 					$this->ReturnJsonArray(true , false,'Commission Inserted Successfully.' );
 					exit;
 				}else{
-					//   $this->PrettyPrintArray($_POST);
-					//   exit;
+					
 					$start_range=$this->input->post('start_range[]');
 					$end_range=$this->input->post('end_range[]');
 					$comm=$this->input->post('comm[]');
@@ -7224,9 +7221,9 @@ public function AttendanceEMP()
 	public function CheckEmployeeSalary(){
 		if($this->IsLoggedIn('business_admin')){
 				$data = $this->GetDataForAdmin("Employee_details");
-				$data['business_outlet_details'] = $this->GetBusinessOutlets();
-				$data['business_admin_employees']  = $this->BusinessAdminModel->GetBusinessAdminEmployees();
-				$data['business_admin_employees']=$data['business_admin_employees']['res_arr'];
+				$data['business_outlet_details'] 	= $this->GetBusinessOutlets();
+				$data['business_admin_employees'] = $this->BusinessAdminModel->GetBusinessAdminEmployees();
+				$data['business_admin_employees']	=$data['business_admin_employees']['res_arr'];
 				
 				$data['emp']=$this->BusinessAdminModel->NewCommission($data);	
 				$data['sidebar_collapsed']="true";
@@ -7266,7 +7263,7 @@ public function AttendanceEMP()
 					}
 					$data['advance'] = $this->BusinessAdminModel->AdvanceSalaryDetails($data);
 					$data['advance'] = $data['advance']['res_arr'];
-					// $this->PrettyPrintArray($data['advance']);
+					
 					foreach($data['salary'] as $key=>$value){
 						foreach($data['advance'] as $k=>$v){
 							if($v['employee_id']==$value['employee_id']){
@@ -7274,17 +7271,19 @@ public function AttendanceEMP()
 							}
 						}
 					}
+					
 					foreach ($data['salary'] as $item=>$value) {
 						# code...
 						$comm=array();
 						array_push($comm,0);
 						$data['comm']=$this->BusinessAdminModel->CommissionDetails($value['employee_id']);
 						$data['comm']=$data['comm']['res_arr'];
-						
+						// $this->PrettyPrintArray($data['comm']);
 						if(isset($data['comm']))
 						{
 							foreach($data['comm'] as $com_key=>$com_value)
 							{
+								
 								$target=$data['comm'][$com_key]['targets'];	
 									$commission=array(
 										'base_value'=>$com_value['base_value'],
@@ -7295,15 +7294,19 @@ public function AttendanceEMP()
 								$target1=$com_value['set_target1'];
 								$target2=$com_value['set_target2'];	
 								
+								
 								$result['sales']=$this->BusinessAdminModel->CommissionBaseValueForSalary($commission);
+								// $this->PrettyPrintArray($result['sales']);
 								if(isset($result['sales']) && $target != 0){
-									// $result['sales']['total']=0;
-
+									
 									$comm_perc=round(($result['sales']/$target)*100);
 								}
 								else{
 									$comm_perc=0;
 								}
+								// echo $target1;
+								// echo $target2;
+								// $this->PrettyPrintArray($comm_perc);
 								//calculate commission
 								if($comm_perc >= $target1 && $comm_perc < $target2){
 									if($com_value['new_base_value'] == 'Calculation on Base Target'){
@@ -7328,12 +7331,13 @@ public function AttendanceEMP()
 							$data['salary'][$item]['comm']=$commission;
 						}
 					}
+					// $this->PrettyPrintArray($data['salary']);
 					//start
 					//end of loop				
 					// get half day for salary
 					$data['halfday']=$this->BusinessAdminModel->GetHalfDayAttendanceLoad($data);
 					$data['halfday']=$data['halfday']['res_arr'];
-					// $this->PrettyPrintArray($data['salary']);
+					
 					foreach($data['salary'] as $key=>$value){
 						foreach($data['halfday'] as $k=>$v){
 							if($v['employee_id']==$value['employee_id']){
@@ -7425,9 +7429,7 @@ public function AttendanceEMP()
 						foreach($data['salary'] as $key=>$value){
 							(int)$value['Net_Payout']=(int)$value['Net_Payout']+((int)$value['Salary']+(int)$value['comm'])-((int)$value['HalfDay']+$value['Leaves'])+$value['OverTime']-($value['employee_pt']+$value['employee_income_tax']);		
 						}
-					//end 
-					// $this->PrettyPrintArray($data['salary']);
-					// die;
+					
 					$this->load->view('business_admin/ba_emss_cal_salary_view',$data);
 				}
 				else if(isset($_GET) && !empty($_GET))
