@@ -4298,9 +4298,6 @@ public function commission_details()
 // bBase value for commission
    public function CommissionBaseValue($data)
   {
-        // $this->PrintArray($data);
-		// exit;
-    
         if($data[0]=='Total Sales' || $data[0]=='Total Sales Discount' ||  $data[0]=='Total Sales Net Price')
         {
         return $this->CommissionTotalSalesB($data); 
@@ -4347,8 +4344,7 @@ public function commission_details()
   //
   public function CommissionServiceValueB($commission)
   {
-      $sql="SELECT 
-                   
+      $sql="SELECT                    
       SUM(mss_transactions.txn_value) AS 'Service'
  FROM
       mss_transactions,
@@ -4991,7 +4987,12 @@ public function commission_details()
 //Get Commision Details
    public function CommissionDetails($data){
        
-        $sql="SELECT * from mss_emss_commision where Month(CONCAT(months,'-00'))=Month(CURRENT_DATE) AND Year(CONCAT(months,'-00'))=Year(CURRENT_DATE) AND mss_emss_commision.emp_id=".$this->db->escape($data)." AND bussiness_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
+        $sql="SELECT * FROM
+		mss_emss_commision 
+		where Month(CONCAT(months,'-00'))=Month(CURRENT_DATE) AND 
+		Year(CONCAT(months,'-00'))=Year(CURRENT_DATE) AND 
+		mss_emss_commision.emp_id=".$this->db->escape($data)." AND 
+		bussiness_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
         AND business_admin_id=".$this->session->userdata['logged_in']['business_admin_id']."
         ";
 
@@ -5008,17 +5009,15 @@ public function commission_details()
 
     // bBase value for commission
     public function CommissionBaseValueForSalary($data){
-        // $this->PrintArray($data);
-        // exit;
+		// $this->PrintArray($data);
         if($data['commission_type'] == 'all'){
             if($data['base_value']=='TotalSales' || $data['base_value']=='Total Sales MRP' )
             {
-            //total sales
                 $service = $this->SalaryCommissionTotalSalesB($data);
                 $package = $this->PackagessalesCommissionMrp($data);
                 $total=$service['res_arr'][0]['total']+$package['res_arr'][0]['package_sales'];
                 return $total;
-                // $this->PrettyPrintArray($result);
+                // $this->PrintArray($service);
             }
             elseif($data['base_value']=='Total Sales Net Price' || $data['base_value']=='ServiceSales' || $data['base_value']=='Total Sales Discount')
             {
@@ -5079,22 +5078,18 @@ public function commission_details()
         }    
     }
       //   Total Sales amt for salary
-      public function SalaryCommissionTotalSalesB($commission){
+    public function SalaryCommissionTotalSalesB($commission){
      $sql="SELECT 
      Round(sum(((mss_services.service_price_inr)*(mss_services.service_gst_percentage)/100)+ mss_services.service_price_inr)) as 'total' FROM mss_transaction_services,mss_transactions,mss_services,mss_employees,mss_business_outlets
      WHERE
-     mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
-     AND
-     mss_transaction_services.txn_service_service_id = mss_services.service_id
-     AND
-     mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
-     AND
-     mss_employees.employee_id =".$this->db->escape($commission['emp_id'])."
-     AND
-     mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
-     AND
-     mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
-    AND date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) AND CURRENT_DATE-1";
+     mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id AND
+     mss_transaction_services.txn_service_service_id = mss_services.service_id AND
+     mss_transaction_services.txn_service_expert_id = mss_employees.employee_id AND
+     mss_employees.employee_id =".$this->db->escape($commission['emp_id'])."  AND
+     mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id AND
+     mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND
+	 date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) AND 
+	 date(CURRENT_DATE-1)";
       $query = $this->db->query($sql);
       if($query){
       return $this->ModelHelper(true,false,'',$query->result_array());

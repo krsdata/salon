@@ -155,7 +155,7 @@
 																						<td>Professional Tax</td>
 																						<td>Income Tax</td>
 																						<td>Advance</td>
-																						<!-- <td>Commission</td> -->
+																						<td>Commission</td>
 																						<td>Half Days</td>
 																						<!-- <td>Leaves</td> -->
 																						<td>OverTime</td>
@@ -172,11 +172,11 @@
 																						<td><i class="fas fa-rupee-sign"></i>&nbsp;<?=number_format($item['employee_pt'],1);?></td>
 																						<td><i class="fas fa-rupee-sign"></i>&nbsp;<?=number_format($item['employee_income_tax'],1);?></td>
 																						<td><i class="fas fa-rupee-sign"></i>&nbsp;<?=number_format($item['amt']);?></td>
-																						<!-- <td><i class="fas fa-rupee-sign"></i>&nbsp;<?=number_format($item['comm']);?></td> -->
+																						<td><i class="fas fa-rupee-sign"></i>&nbsp;<?=number_format($item['comm']);?></td>
 																						<td><i class="fas fa-rupee-sign"></i>&nbsp;<?=number_format($item['HalfDay']);?></td>
 																						<!-- <td><i class="fas fa-rupee-sign"></i>&nbsp;<?=number_format($item['Leaves']);?></td> -->
 																						<td><i class="fas fa-rupee-sign"></i>&nbsp;<?=number_format($item['OverTime']);?></td>
-																						<td><i class="fas fa-rupee-sign"></i>&nbsp;<?=number_format((round($item['Salary'],1)+round($item['OverTime']))-($item['amt']+round($item['HalfDay']))-($item['employee_pt']+$item['employee_income_tax']));?></td>
+																						<td><i class="fas fa-rupee-sign"></i>&nbsp;<?=number_format((round($item['Salary'],1)+round($item['OverTime'])+round($item['comm']))-($item['amt']+round($item['HalfDay']))-($item['employee_pt']+$item['employee_income_tax']));?></td>
 																						<?php
 																					}
 																					?>
