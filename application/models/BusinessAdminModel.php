@@ -5013,11 +5013,13 @@ public function commission_details()
         if($data['commission_type'] == 'all'){
             if($data['base_value']=='TotalSales' || $data['base_value']=='Total Sales MRP' )
             {
-                $service = $this->SalaryCommissionTotalSalesB($data);
-                $package = $this->PackagessalesCommissionMrp($data);
+				$service = $this->SalaryCommissionTotalSalesB($data);
+				
+				$package = $this->PackagessalesCommissionMrp($data);
+				// $this->PrintArray($package);
                 $total=$service['res_arr'][0]['total']+$package['res_arr'][0]['package_sales'];
                 return $total;
-                // $this->PrintArray($service);
+                
             }
             elseif($data['base_value']=='Total Sales Net Price' || $data['base_value']=='ServiceSales' || $data['base_value']=='Total Sales Discount')
             {
@@ -5080,7 +5082,7 @@ public function commission_details()
       //   Total Sales amt for salary
     public function SalaryCommissionTotalSalesB($commission){
      $sql="SELECT 
-     Round(sum(((mss_services.service_price_inr)*(mss_services.service_gst_percentage)/100)+ mss_services.service_price_inr)) as 'total' FROM mss_transaction_services,mss_transactions,mss_services,mss_employees,mss_business_outlets
+     sum((mss_services.service_price_inr+(mss_services.service_price_inr * mss_services.service_gst_percentage * 0.01 )) * mss_transaction_services.txn_service_quantity) as 'total' FROM mss_transaction_services,mss_transactions,mss_services,mss_employees,mss_business_outlets
      WHERE
      mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id AND
      mss_transaction_services.txn_service_service_id = mss_services.service_id AND
@@ -5119,7 +5121,7 @@ public function commission_details()
          AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
          AND mss_transactions.txn_customer_id = mss_customers.customer_id
          AND date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-
-         1 DAY) AND CURRENT_DATE-1";
+         1 DAY) AND date(CURRENT_DATE-1)";
          $query = $this->db->query($sql);
          if($query){
          return $this->ModelHelper(true,false,'',$query->result_array());
@@ -5169,7 +5171,7 @@ public function commission_details()
             AND mss_employees.employee_id=mss_emss_attendance.employee_id
             AND mss_employees.employee_is_active=1
             AND mss_emss_attendance.employee_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-            AND mss_emss_attendance.attendance_date BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) AND CURRENT_DATE-1
+            AND mss_emss_attendance.attendance_date BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) AND date(CURRENT_DATE-1)
            
     group BY 
             mss_emss_attendance.employee_id";
@@ -5536,23 +5538,16 @@ public function GetAttendanceAll($data){
   //   Total Sales amt for commisiion
   public function CommissionTotalSalesMonth($data){
        $sql="SELECT 
-       Round(sum(((mss_services.service_price_inr)*(mss_services.service_gst_percentage)/100)+ mss_services.service_price_inr)) as 'total' FROM mss_transaction_services,mss_transactions,mss_services,mss_employees,mss_business_outlets
-       WHERE
-       mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
-       AND
-       mss_transaction_services.txn_service_service_id = mss_services.service_id
-       AND
-       mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
-       AND
-       mss_employees.employee_id =".$this->db->escape($data['expert_id'])."
-       AND
-       mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
-       AND
-       mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
-       AND
-       month(mss_transactions.txn_datetime) = month(CONCAT((".$this->db->escape($data['month'])."),'-','00'))
-       AND
-       Year(mss_transactions.txn_datetime) = Year(CONCAT((".$this->db->escape($data['month'])."),'-','00'))
+	   SUM(mss_transaction_services.txn_service_discounted_price) AS 'total'
+   FROM 
+	   mss_employees,
+	   mss_transactions,
+	   mss_transaction_services
+   WHERE
+	   mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id AND
+	   mss_transaction_services.txn_service_expert_id = mss_employees.employee_id AND
+	   mss_employees.employee_business_outlet=".$this->db->escape($data['employee_id'])." AND 
+	   date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) AND date(CURRENT_DATE-1)
         ";
       $query = $this->db->query($sql);
       if($query){
