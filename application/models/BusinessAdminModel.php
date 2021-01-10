@@ -5028,7 +5028,7 @@ public function commission_details()
                 $service = $this->SalaryCommissionServiceValue($data);
                 $package = $this->PackagessalesCommission($data);
                 $total=$service['res_arr'][0]['total']+$package['res_arr'][0]['package_sales'];
-                // $this->PrettyPrintArray($total);
+                // $this->PrintArray($total);
                 return $total;
             }
         }elseif($data['commission_type'] == 'service'){
