@@ -4298,9 +4298,6 @@ public function commission_details()
 // bBase value for commission
    public function CommissionBaseValue($data)
   {
-        // $this->PrintArray($data);
-		// exit;
-    
         if($data[0]=='Total Sales' || $data[0]=='Total Sales Discount' ||  $data[0]=='Total Sales Net Price')
         {
         return $this->CommissionTotalSalesB($data); 
@@ -4347,8 +4344,7 @@ public function commission_details()
   //
   public function CommissionServiceValueB($commission)
   {
-      $sql="SELECT 
-                   
+      $sql="SELECT                    
       SUM(mss_transactions.txn_value) AS 'Service'
  FROM
       mss_transactions,
@@ -4942,10 +4938,29 @@ public function commission_details()
 // Get Salary Till Date 
 
   public function GetSalaryTillDate($data){
-        $sql="SELECT employee_id,employee_first_name,employee_last_name,employee_gross_salary,employee_basic_salary,employee_pf,employee_gratuity,employee_others,(mss_employees.employee_gross_salary)/30 as Salary,employee_pt,employee_income_tax from mss_employees
-        where employee_business_outlet=".$this->session->userdata['outlets']['current_outlet']."
-        AND employee_business_admin=".$this->session->userdata['logged_in']['business_admin_id']."
-        AND employee_is_active=1";
+        $sql="SELECT 
+			mss_employees.employee_id,
+			employee_first_name,
+			employee_last_name,
+			employee_gross_salary,
+			employee_basic_salary,
+			employee_pf,
+			employee_gratuity,
+			employee_others,
+			(mss_employees.employee_gross_salary)/30 as Salary,
+			employee_pt,
+			employee_income_tax,
+			count(mss_employees.employee_id) AS 'attendance'
+		from 
+			mss_employees,
+			mss_emss_attendance
+        where 
+			mss_employees.employee_id=  mss_emss_attendance.employee_id AND
+			mss_emss_attendance.attendance_date between  DATE_FORMAT(NOW() ,'%Y-%m-01') AND NOW() AND
+			employee_business_outlet=".$this->session->userdata['outlets']['current_outlet']." AND 
+			employee_business_admin=".$this->session->userdata['logged_in']['business_admin_id']." AND
+			employee_is_active=1
+			GROUP BY mss_employees.employee_id";
         $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
@@ -4972,7 +4987,12 @@ public function commission_details()
 //Get Commision Details
    public function CommissionDetails($data){
        
-        $sql="SELECT * from mss_emss_commision where Month(CONCAT(months,'-00'))=Month(CURRENT_DATE) AND Year(CONCAT(months,'-00'))=Year(CURRENT_DATE) AND mss_emss_commision.emp_id=".$this->db->escape($data)." AND bussiness_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
+        $sql="SELECT * FROM
+		mss_emss_commision 
+		where Month(CONCAT(months,'-00'))=Month(CURRENT_DATE) AND 
+		Year(CONCAT(months,'-00'))=Year(CURRENT_DATE) AND 
+		mss_emss_commision.emp_id=".$this->db->escape($data)." AND 
+		bussiness_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
         AND business_admin_id=".$this->session->userdata['logged_in']['business_admin_id']."
         ";
 
@@ -4989,17 +5009,17 @@ public function commission_details()
 
     // bBase value for commission
     public function CommissionBaseValueForSalary($data){
-        // $this->PrintArray($data);
-        // exit;
+		// $this->PrintArray($data);
         if($data['commission_type'] == 'all'){
             if($data['base_value']=='TotalSales' || $data['base_value']=='Total Sales MRP' )
             {
-            //total sales
-                $service = $this->SalaryCommissionTotalSalesB($data);
-                $package = $this->PackagessalesCommissionMrp($data);
+				$service = $this->SalaryCommissionTotalSalesB($data);
+				
+				$package = $this->PackagessalesCommissionMrp($data);
+				// $this->PrintArray($package);
                 $total=$service['res_arr'][0]['total']+$package['res_arr'][0]['package_sales'];
                 return $total;
-                // $this->PrettyPrintArray($result);
+                
             }
             elseif($data['base_value']=='Total Sales Net Price' || $data['base_value']=='ServiceSales' || $data['base_value']=='Total Sales Discount')
             {
@@ -5007,7 +5027,7 @@ public function commission_details()
                 $service = $this->SalaryCommissionServiceValue($data);
                 $package = $this->PackagessalesCommission($data);
                 $total=$service['res_arr'][0]['total']+$package['res_arr'][0]['package_sales'];
-                // $this->PrettyPrintArray($total);
+                // $this->PrintArray($total);
                 return $total;
             }
         }elseif($data['commission_type'] == 'service'){
@@ -5060,22 +5080,18 @@ public function commission_details()
         }    
     }
       //   Total Sales amt for salary
-      public function SalaryCommissionTotalSalesB($commission){
+    public function SalaryCommissionTotalSalesB($commission){
      $sql="SELECT 
-     Round(sum(((mss_services.service_price_inr)*(mss_services.service_gst_percentage)/100)+ mss_services.service_price_inr)) as 'total' FROM mss_transaction_services,mss_transactions,mss_services,mss_employees,mss_business_outlets
+     sum((mss_services.service_price_inr+(mss_services.service_price_inr * mss_services.service_gst_percentage * 0.01 )) * mss_transaction_services.txn_service_quantity) as 'total' FROM mss_transaction_services,mss_transactions,mss_services,mss_employees,mss_business_outlets
      WHERE
-     mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
-     AND
-     mss_transaction_services.txn_service_service_id = mss_services.service_id
-     AND
-     mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
-     AND
-     mss_employees.employee_id =".$this->db->escape($commission['emp_id'])."
-     AND
-     mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
-     AND
-     mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
-    AND date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) AND CURRENT_DATE-1";
+     mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id AND
+     mss_transaction_services.txn_service_service_id = mss_services.service_id AND
+     mss_transaction_services.txn_service_expert_id = mss_employees.employee_id AND
+     mss_employees.employee_id =".$this->db->escape($commission['emp_id'])."  AND
+     mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id AND
+     mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']." AND
+	 date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) AND 
+	 date(CURRENT_DATE-1)";
       $query = $this->db->query($sql);
       if($query){
       return $this->ModelHelper(true,false,'',$query->result_array());
@@ -5105,7 +5121,7 @@ public function commission_details()
          AND mss_sub_categories.sub_category_category_id = mss_categories.category_id
          AND mss_transactions.txn_customer_id = mss_customers.customer_id
          AND date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-
-         1 DAY) AND CURRENT_DATE-1";
+         1 DAY) AND date(CURRENT_DATE-1)";
          $query = $this->db->query($sql);
          if($query){
          return $this->ModelHelper(true,false,'',$query->result_array());
@@ -5155,7 +5171,7 @@ public function commission_details()
             AND mss_employees.employee_id=mss_emss_attendance.employee_id
             AND mss_employees.employee_is_active=1
             AND mss_emss_attendance.employee_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-            AND mss_emss_attendance.attendance_date BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) AND CURRENT_DATE-1
+            AND mss_emss_attendance.attendance_date BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) AND date(CURRENT_DATE-1)
            
     group BY 
             mss_emss_attendance.employee_id";
@@ -5227,14 +5243,19 @@ public function GetAttendanceAll($data){
     }    // Calculayte Half Day for Load Attendance
      public function GetHalfDayAttendanceLoad($data)
     {
-        $sql="SELECT mss_emss_attendance.employee_id,mss_employees.employee_first_name,mss_employees.employee_last_name,count(mss_emss_attendance.attendance_id) as 'Half_Day' FROM mss_emss_attendance,mss_employees
-        where mss_emss_attendance.working_hours < ((mss_employees.working_hours*10)*0.5)
-        AND mss_employees.employee_is_active=1
-        AND mss_employees.employee_id=mss_emss_attendance.employee_id
-        AND mss_emss_attendance.employee_outlet_id=".$this->session->userdata['outlets']['current_outlet']."
-         AND mss_emss_attendance.attendance_date BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-
-        1 DAY) AND CURRENT_DATE-1
-        group BY mss_emss_attendance.employee_id";
+        $sql="SELECT 
+					mss_emss_attendance.employee_id, 
+					COUNT(mss_emss_attendance.attendance_id) AS 'Half_Day'
+				FROM 
+					mss_emss_attendance,
+					mss_employees
+					WHERE
+					mss_employees.employee_id = mss_emss_attendance.employee_id AND
+					mss_emss_attendance.employee_outlet_id=".$this->session->userdata['outlets']['current_outlet']." AND
+					mss_emss_attendance.working_hours < ((mss_employees.working_hours*60)/2) AND 
+					mss_emss_attendance.attendance_date between  DATE_FORMAT(NOW() ,'%Y-%m-01') AND NOW()
+					GROUP BY
+					mss_emss_attendance.employee_id ";
 
         $query = $this->db->query($sql);
         
@@ -5517,23 +5538,16 @@ public function GetAttendanceAll($data){
   //   Total Sales amt for commisiion
   public function CommissionTotalSalesMonth($data){
        $sql="SELECT 
-       Round(sum(((mss_services.service_price_inr)*(mss_services.service_gst_percentage)/100)+ mss_services.service_price_inr)) as 'total' FROM mss_transaction_services,mss_transactions,mss_services,mss_employees,mss_business_outlets
-       WHERE
-       mss_transactions.txn_id = mss_transaction_services.txn_service_txn_id
-       AND
-       mss_transaction_services.txn_service_service_id = mss_services.service_id
-       AND
-       mss_transaction_services.txn_service_expert_id = mss_employees.employee_id
-       AND
-       mss_employees.employee_id =".$this->db->escape($data['expert_id'])."
-       AND
-       mss_employees.employee_business_outlet = mss_business_outlets.business_outlet_id
-       AND
-       mss_business_outlets.business_outlet_id = ".$this->session->userdata['outlets']['current_outlet']."
-       AND
-       month(mss_transactions.txn_datetime) = month(CONCAT((".$this->db->escape($data['month'])."),'-','00'))
-       AND
-       Year(mss_transactions.txn_datetime) = Year(CONCAT((".$this->db->escape($data['month'])."),'-','00'))
+	   SUM(mss_transaction_services.txn_service_discounted_price) AS 'total'
+   FROM 
+	   mss_employees,
+	   mss_transactions,
+	   mss_transaction_services
+   WHERE
+	   mss_transaction_services.txn_service_txn_id= mss_transactions.txn_id AND
+	   mss_transaction_services.txn_service_expert_id = mss_employees.employee_id AND
+	   mss_employees.employee_business_outlet=".$this->db->escape($data['employee_id'])." AND 
+	   date(mss_transactions.txn_datetime) BETWEEN DATE_SUB(LAST_DAY(NOW()),INTERVAL DAY(LAST_DAY(NOW()))-1 DAY) AND date(CURRENT_DATE-1)
         ";
       $query = $this->db->query($sql);
       if($query){
@@ -10142,10 +10156,9 @@ $sql = str_replace(",)",")",$sql);
 				mss_employees.employee_first_name,
 				mss_employees.employee_id,
 				mss_emss_attendance.attendance_date,
-				mss_emss_attendance.in_time,
-				mss_emss_attendance.out_time,
-				(mss_emss_attendance.out_time - mss_emss_attendance.in_time) AS 'Working Time',
-				mss_emss_attendance.working_hours
+				SUBSTR(mss_emss_attendance.in_time,1,5) AS 'In Time',
+				SUBSTR(mss_emss_attendance.out_time,1,5) AS 'Out Time',
+				(mss_emss_attendance.working_hours)/60 AS 'hour'
 			FROM
 				mss_employees,
 				mss_emss_attendance
@@ -10698,7 +10711,7 @@ WHERE  Date(t1.txn_datetime)  between "'.$from.'" AND "'.$to.'" and t3.employee_
 
     public function GetTrigger(){
         $sql = "SELECT * FROM `V_SMS_TRIGGER` where created_by ='".$this->session->userdata['logged_in']['business_admin_id']."'";
-         $query = $this->db->query($sql);
+        $query = $this->db->query($sql);
         if($query){
             return $this->ModelHelper(true,false,'',$query->result_array());
         }

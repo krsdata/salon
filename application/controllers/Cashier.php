@@ -3156,8 +3156,11 @@ class Cashier extends CI_Controller {
 									'business_outlet_id'=>$this->session->userdata['logged_in']['business_outlet_id']
 								);
 
-								$data['stock']=$this->CashierModel->AvailableStock($where);
-								$data['stock']=	$data['stock']['res_arr'];
+								$data['total_stock']=$this->CashierModel->AvailableStock($where);
+								$data['total_stock']=	$data['total_stock']['res_arr'];
+
+								$data['itemwise_stock']=$this->CashierModel->AvailableStockItemWise($where);
+								$data['itemwise_stock']=	$data['itemwise_stock']['res_arr'];
 
 								$data['stock_incoming']=$this->CashierModel->IncomingStock($where);
 								$data['stock_incoming']=	$data['stock_incoming']['res_arr'];
@@ -7402,6 +7405,7 @@ public function AddToCartRedeemPoints(){
 
 							$where=array(
 								'stock_service_id' => $_POST['product_id'][$key],
+								'expiry_date' => $_POST['product_exp_date'][$key],
 								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id']
 							);
 							$data4=array(
@@ -7409,11 +7413,12 @@ public function AddToCartRedeemPoints(){
 								'total_stock'=> $_POST['product_qty'][$key],
 								'stock_in_unit'=>($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
 								'stock_outlet_id'	=> $this->session->userdata['logged_in']['business_outlet_id'],
-								'updated_on'	=>date('Y-m-d')
+								'updated_on'	=>date('Y-m-d'),
+								'expiry_date'=> $_POST['product_exp_date'][$key]
 							);
-					
-							$stock_exist= $this->CashierModel->CheckStockExist($where);
-							if($stock_exist['success']=='true'){
+							$stock_exist_with_same_expiry = $this->CashierModel->CheckStockExistWithSameExpiry($where);
+							// $stock_exist= $this->CashierModel->CheckStockExist($where);
+							if($stock_exist_with_same_expiry['success']=='true'){
 								$update_stock=$this->CashierModel->UpdateInventoryStock($data4);
 							}else{
 								$insert_stock=$this->CashierModel->Insert($data4,'inventory_stock');
@@ -7800,4 +7805,47 @@ public function AddToCartRedeemPoints(){
 			}
 		}
 	}
+
+
+	public function GetInventoryData(){
+		if($this->IsLoggedIn('cashier')){
+			if(isset($_GET) && !empty($_GET)){
+				if($_GET['exp_date']=='less_than_three'){
+					$where=array(
+						'from_date'	=> date('Y-m-d'),
+						'to_date'		=> date('Y-m-d', strtotime(date('Y-m-d')."+3 months")),
+						'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id']
+					);
+				}else if($_GET['exp_date']=='three_to_six'){
+					$where=array(
+						'from_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."+3 months")),
+						'to_date'		=> date('Y-m-d', strtotime(date('Y-m-d')."+6 months")),
+						'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id']
+					);
+				}else if($_GET['exp_date']=='more_than_six'){
+					$where=array(
+						'from_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."+6 months")),
+						'to_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."+10 years")),
+						'business_outlet_id'=> $this->session->userdata['logged_in']['business_outlet_id']
+					);
+				}else{
+					$this->ReturnJsonArray(false,true,'Invalid Date');
+					die;
+				}
+				
+				// $this->PrettyPrintArray($where);
+					$data=$this->CashierModel->GetInventoryExpiredBetween($where);						
+					$this->ReturnJsonArray(true,false,$data['res_arr']);
+					die;
+			}else{
+				$this->ReturnJsonArray(false,true,"Wrong Method!");
+				die;
+			}						
+		}
+		else{
+				$this->LogoutUrl(base_url()."Cashier/");
+		}
+	}
+
+
 }

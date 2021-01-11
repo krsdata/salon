@@ -52,27 +52,18 @@
 										<li class="nav-item">
 											<a class="nav-link active" data-toggle="tab" href="#tab-1">Add Stock</a>
 										</li>
-										<!-- <li class="nav-item">
-											<a class="nav-link" data-toggle="tab" href="#tab-2">Stock Transfer</a>
-										</li> -->
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-3">Stock Level</a>
-										</li>
+										</li>					
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-4">Incoming Stock</a>
 										</li>
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-5">Outgoing Stock</a>
 										</li>
-										<!-- <li class="nav-item">
-											<a class="nav-link" data-toggle="tab" href="#tab-6">Inventory Health</a>
-										</li> -->
 										<li class="nav-item">
 											<a class="nav-link" data-toggle="tab" href="#tab-7">Invoice Tracker</a>
 										</li>
-										<!-- <li class="nav-item">
-											<a class="nav-link" data-toggle="tab" href="#tab-8">Pending Payments</a>
-										</li> -->
 									</ul>
 								</div>
 								<div class="card-body">
@@ -446,85 +437,131 @@
 											</div>
 										</div>
 										<div class="tab-pane" id="tab-3" role="tabpanel">
-											<div class="card">
-												<div class="card-header">
-													<!-- <form action="#" class="form-inlne" method="POST">
-														<div class="form-row">
-															<div class="form-group col-md-2">
-																<input type="date" class="form-control" name="invoice_number" value="<?=date('Y-m-d');?>">
-															</div>										
-															<div class="form-group col-md-2">
-																<select name="" class="form-control" required>
-																<option selected="selected" disabled>Select type</option>
-																	<option value="">Warehouse</option>
-																	<option value="">Branch</option>
-																</select>
+											<!-- nested tab -->
+											<div class="col-md-12">
+												<div class="card">
+													<div class="card-header" style="margin-left:10px;">
+														<ul class="nav nav-pills card-header-pills pull-right" role="tablist" style="font-weight: bolder">
+															<li class="nav-item">
+																<a class="nav-link active" data-toggle="tab" href="#tab1-1">Stock(<small>Itemwise</small>)</a>
+															</li>
+															<li class="nav-item">
+																<a class="nav-link" data-toggle="tab" href="#tab1-2">Stock</a>
+															</li>
+														</ul>
+													</div>
+													<div class="card-body">
+														<div class="tab-content">
+															<div class="tab-pane show active" id="tab1-1" role="tabpanel">
+																<div class="card">
+																	<div class="card-header">													
+																		<div class="row">
+																			<div class="col-md-2">
+																				<h3>Total Stock</h3>
+																			</div>
+																			<div class="col-md-8">
+																				<form class="form-inline" >
+																					<select class="form-control" id="exp_date">
+																						<option value="" selected="selected" disabled>Select Expiry Range</option>
+																						<option value="less_than_three">Expiring in 3 Months</option>
+																						<option value="three_to_six">Expiring in 3-6 Months</option>
+																						<option value="more_than_six">Expiring in >6 Months</option>
+																					</select>
+																				</form>
+																			</div>
+																			<div class="col-md-2">
+																			<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="card-body">
+																		<table class="table table-hover datatables-basic" style="width: 100%;" id="availableStock">
+																			<thead>
+																				<th>Sr. No.</th>
+																				<th>Product Name</th>
+																				<th>Type</th>
+																				<th>Barcode</th>
+																				<th>SKU size</th>
+																				<th>Total Stock</th>
+																				<th>Stock in Volume</th>
+																				<th>Last Updated</th>
+																				<th>Location</th>
+																			</thead>
+																			<tbody>
+																				<?php $count=1; foreach($itemwise_stock as $stock){ ?>
+																					<tr>
+																						<td style="width:5%;"><?=$count?></td>
+																						<td style="width:15%;"><?=$stock['service_name'];?></td>
+																						<td style="width:8%;"><?=$stock['inventory_type'];?></td>
+																						<td style="width:8%;"><?=$stock['barcode'];?></td>
+																						<td style="width:8%;"><?=$stock['qty_per_item'].' '.$stock['service_unit'];?></td>
+																						<td style="width:8%;"><?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?></td>
+																						<td style="width:8%;"><?php if(empty($stock['stock_in_unit']) || $stock['stock_in_unit']==""){echo "0"." ".$stock['service_unit'];}else{echo $stock['stock_in_unit']." ".$stock['service_unit'];} ?></td>
+																						<td style="width:8%;"><?=$stock['updated_on'];?></td>
+																						<td style="width:8%;"><?=$stock['business_outlet_name'];?></td>
+																					</tr>
+																				<?php $count++; }?>
+																			</tbody>
+																		</table>
+																	</div>
+																</div>
 															</div>
-															<div class="form-group col-md-3">
-																<select name="" class="form-control" required>
-																	<option value="">Warehouse</option>
-																	<option value="">Branch</option>
-																</select>
+															<div class="tab-pane" id="tab1-2" role="tabpanel">
+																<div class="card">
+																	<div class="card-header">													
+																		<div class="row">
+																			<div class="col-md-10">
+																				<h3>Available Stock</h3>
+																			</div>
+																			<div class="col-md-2">
+																			<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="card-body">
+																		<table class="table table-hover datatables-basic" style="width: 100%;" id="availableStock">
+																			<thead>
+																				<th>Sr. No.</th>
+																				<th>Product Name</th>
+																				<th>Type</th>
+																				<th>Barcode</th>
+																				<th>SKU size</th>
+																				<th>Total Stock</th>
+																				<th>Stock in Volume</th>
+																				<th>Last Updated</th>
+																				<th>Expiry Date</th>
+																				<th>Location</th>
+																				<th>Action</th>
+																			</thead>
+																			<tbody>
+																				<?php $count=1; foreach($total_stock as $stock){ ?>
+																					<tr>
+																						<td style="width:5%;"><?=$count?></td>
+																						<td style="width:15%;"><?=$stock['service_name'];?></td>
+																						<td style="width:8%;"><?=$stock['inventory_type'];?></td>
+																						<td style="width:8%;"><?=$stock['barcode'];?></td>
+																						<td style="width:8%;"><?=$stock['qty_per_item'].' '.$stock['service_unit'];?></td>
+																						<td style="width:8%;"><?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?></td>
+																						<td style="width:8%;"><?php if(empty($stock['stock_in_unit']) || $stock['stock_in_unit']==""){echo "0"." ".$stock['service_unit'];}else{echo $stock['stock_in_unit']." ".$stock['service_unit'];} ?></td>
+																						<td style="width:8%;"><?=$stock['updated_on'];?></td>
+																						<td style="width:8%;color:red;"><?=$stock['expiry_date'];?></td>
+																						<td style="width:8%;"><?=$stock['business_outlet_name'];?></td>
+																						<td style="width:8%;">
+																							<button class="btn btn-primary EditInventory" data-toggle="modal" id="" data-target="#ModalEditInventory" service_id="<?=$stock['service_id'];?>" product_qty="<?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?>"><i class="fa fa-pen"></i></button>
+																						</td>
+																					</tr>
+																				<?php $count++; }?>
+																			</tbody>
+																		</table>
+																	</div>
+																</div>
 															</div>
-															<div class="form-group col-md-3">
-																<select name="" class="form-control" required>
-																	<option selected="selected" disabled>Stock Category</option>
-																	<option value="">All</option>
-																	<option value="">Regular</option>
-																	<option value="">Slow moving</option>
-																	<option value="">Dead</option>
-																</select>
-															</div>
-															<div class="form-group col-md-2">
-																<button type="submit" value="" class="btn btn-primary ">Submit</button>
-															</div>
-														</div>
-													</form> -->
-													<div class="row">
-														<div class="col-md-10">
-															<h3>Available Stock</h3>
-														</div>
-														<div class="col-md-2">
-														<button class="btn btn-primary" onclick="exportTableToExcel('availableStock','Product Stock')"><i class="fa fa-file-export"></i>Download</button>
 														</div>
 													</div>
 												</div>
-												<div class="card-body">
-													<table class="table table-hover datatables-basic" style="width: 100%;" id="availableStock">
-														<thead>
-															<th>Sr. No.</th>
-															<th>Product Name</th>
-															<th>Type</th>
-															<th>Barcode</th>
-															<th>SKU size</th>
-															<th>Total Stock</th>
-															<th>Stock in Unit</th>
-															<th>Last Updated</th>
-															<th>Location</th>
-															<th>Action</th>
-														</thead>
-														<tbody>
-															<?php $count=1; foreach($stock as $stock){ ?>
-																<tr>
-																	<td><?=$count?></td>
-																	<td><?=$stock['service_name'];?></td>
-																	<td><?=$stock['inventory_type'];?></td>
-																	<td><?=$stock['barcode'];?></td>
-																	<td><?=$stock['qty_per_item'].' '.$stock['service_unit'];?></td>
-																	<td><?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?></td>
-																	<td><?php if(empty($stock['stock_in_unit']) || $stock['stock_in_unit']==""){echo "0"." ".$stock['service_unit'];}else{echo $stock['stock_in_unit']." ".$stock['service_unit'];} ?></td>
-																	<td><?=$stock['updated_on'];?></td>
-																	<td><?=$stock['business_outlet_name'];?></td>
-																	<td>
-																		<button class="btn btn-primary EditInventory" data-toggle="modal" id="" data-target="#ModalEditInventory" service_id="<?=$stock['service_id'];?>" product_qty="<?php if(empty($stock['total_stock']) || $stock['total_stock']==""){echo 0;}else{echo $stock['total_stock'];}?>"><i class="fa fa-pen"></i></button>
-																	</td>
-																</tr>
-															<?php $count++; }?>
-														</tbody>
-													</table>
-												</div>
 											</div>
-										</div>
+											<!-- end -->										
+										</div>										
 										<div class="tab-pane" id="tab-4" role="tabpanel">
 											<div class="row">
 												<div class="col-md-12">
@@ -543,7 +580,7 @@
 																	<th>SKU size</th>
 																	<th>Product Qty</th>
 																	<th>MRP</th>
-																	<th>Entry Date</th>
+																	<th>Invoice Date</th>
 																	<th>Source Name</th>
 																	<th>Destination Name</th>
 																	<th>Actions</th>
@@ -584,16 +621,32 @@
 														<div class="card-header">
 															<div class="row">
 																	<div class="col-md-2">
-																	<h5 class="card-title">Inventory Details</h5>
+																		<h5 class="card-title">Inventory Details</h5>
 																	</div>
-																	<form class="form-inline" style="width:60%;" method="POST" action="#" id="txn200">
-																		<div class="form-group col-md-3">
-																			<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
-																		</div>
-																		<div class="form-group col-md-2">
-																			<input type="submit" class="btn btn-primary" id="get_txn"  value="Submit" />
-																		</div>
-																	</form>
+																	<div class="col-md-5">
+																		<form class="form-inline" style="width:100%;" method="POST" action="#" id="txn200">
+																			<label>Select Invoice Range</label>
+																			<div class="form-group col-md-6">
+																				<input type="text" class="form-control" name="daterange" value="<?=date('Y-m-d');?>" >
+																			</div>
+																			<div class="form-group col-md-2">
+																				<input type="submit" class="btn btn-primary" id="get_txn"  value="Submit" />
+																			</div>
+																		</form>
+																	</div>
+																	<div class="col-md-3">
+																		<form class="form-inline" style="width:100%;">
+																		<label>Inventory Health</label>
+																			<div class="form-group col-md-3">
+																			<select id="inventory_status" name="status" class="form-control">
+																				<option selected="selected" disabled>Select Status</option>
+																				<option value="regular">Regular Stock</option>																
+																				<option value="slow">Slow Moving</option>
+																				<option value="dead">Dead Stock</option>
+																			</select>
+																			</div>
+																		</form>
+																	</div>
 																	<div class="col-md-2">
 																	<button class="btn btn-primary" onclick="exportTableToExcel('inv_table','Inventory')"><i class="fa fa-download"></i> Download</button>
 																	</div>
@@ -925,7 +978,11 @@
 														</div>
 													</div>
 													<div class="row">
-														<div class="form-group col-md-12">
+													<div class="form-group col-md-4">
+														<label class="form-label">Product Expiry</label>
+															<input type="date" class="form-control" name="product_expiry_date" required>
+														</div>
+														<div class="form-group col-md-8">
 															<label class="form-labl">Remarks</label>
 															<textarea class="form-control" name="remarks" placeholder="Enter Remarks" ></textarea> 
 														</div>
@@ -1085,7 +1142,7 @@
 ?>
 <script type="text/javascript">
 
-function calPendAmt() {
+			function calPendAmt() {
             var t1 = parseInt(document.getElementById("reamt").value);
             var t2 = parseInt(document.getElementById("pendamtValue").value);
             
@@ -2002,7 +2059,7 @@ function calPendAmt() {
         });
 
         $('.date').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('YYYY-MM'));
+            $(this).val(picker.startDate.format('MM yy'));
         });	
 </script>
 <script type="text/javascript">
@@ -2129,60 +2186,37 @@ function calPendAmt() {
 </script>
 <script type="text/javascript">
 	$(document).ready(function(){
-		$("#status").on('change',function(e){
-			// alert($(this).val());
-			if($(this).val() == 'Regular'){
-				// alert("hoo");
-				window.location.reload();
-			}
+		$("#inventory_status").on('change',function(e){
 			var parameters = {
 				'status' :  $(this).val()
 			};
-			$.getJSON("<?=base_url()?>BusinessAdmin/InventoryStatus", parameters)
+			$.getJSON("<?=base_url()?>BusinessAdmin/GetInventoryStatus", parameters)
 			.done(function(data, textStatus, jqXHR) {
-				// alert(data.stock);
-				if((data.stock == 'Slow')){
-					$('#labeltotal').text("Rs "+data.total);
-					var temp_str="<thead><th>Bucket</th><th>Item Name</th><th>Sub Category</th><th>Category</th><th>SKU SIZE</th><th>Current Stock</th><th>Stock In Slow Stock Stage</th><th>Entry Date</th><th>No of Days since entry Date</th><th>Total Revenue Stuck</th></thead> ";
-					for(var i = 0;i < data.stockdetails.length;i++){
-				
+				var temp_str="";
+					for(var i = 0;i < data.message.length;i++){				
 					temp_str += "<tr>";
-								temp_str += "<td> Slow Stock  </td>";
-								temp_str += "<td>" + data.stockdetails[i].service_name + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].sub_category_name + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].category_name+"</td>";
-								temp_str += "<td>" + data.stockdetails[i].sku_size + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].sku_count+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].deadstock+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].entrydate+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].days+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].Total+ "</td>";
+								temp_str += "<td>"+(i+1)+" </td>";
+								temp_str += "<td>" + data.message[i].invoice_number + "</td>";
+								temp_str += "<td>" + data.message[i].invoice_date + "</td>";
+								temp_str += "<td>" + data.message[i].product_name+"</td>";
+								temp_str += "<td>" + data.message[i].product_type + "</td>";
+								temp_str += "<td>" + data.message[i].product_barcode+ "</td>";
+								temp_str += "<td>" + data.message[i].sku_size+ "</td>";
+								temp_str += "<td>" + data.message[i].product_qty+ "</td>";
+								temp_str += "<td>" + data.message[i].product_mrp+ "</td>";
+								temp_str += "<td>" + data.message[i].vendor_name+ "</td>";
 								temp_str += "</tr>";
 					}
-					$("#details").html("").html(temp_str);
-				}else if(data.stock == 'Dead'){
-					// document.getElementById("labeltotal").text=data.total;
-					$('#labeltotal').text("Rs "+data.total);
-					var temp_str="<thead><th>Bucket</th><th>Item Name</th><th>Sub Category</th><th>Category</th><th>SKU SIZE</th><th>Current Stock</th><th>Stock In Dead Stock Stage</th><th>Entry Date</th><th>No of Days since entry Date</th><th>Total Revenue Stuck</th></thead> ";
-					for(var i = 0;i < data.stockdetails.length;i++){
-				
-					temp_str += "<tr>";
-								temp_str += "<td> Dead Stock  </td>";
-								temp_str += "<td>" + data.stockdetails[i].service_name + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].sub_category_name + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].category_name+"</td>";
-								temp_str += "<td>" + data.stockdetails[i].sku_size + "</td>";
-								temp_str += "<td>" + data.stockdetails[i].sku_count+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].deadstock+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].entrydate+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].days+ "</td>";
-								temp_str += "<td>" + data.stockdetails[i].Total+ "</td>";
-								temp_str += "</tr>";
+					$("#inv_table tbody tr").remove();
+					$("#inv_table tbody").append(temp_str);
+					if($("#inventory_status").val()=='regular'){
+						$("#inv_table tbody tr").css('color','green');
+					}else if($("#inventory_status").val()=='slow'){
+						$("#inv_table tbody tr").css('color','blue');
+					}else{
+						$("#inv_table tbody tr").css('color','red');
 					}
-					$("#details").html("").html(temp_str);
-				}else{
-					window.location.reload();
-				}
+				
 			})
 			.fail(function(jqXHR, textStatus, errorThrown) {
 			console.log(errorThrown.toString());
@@ -2245,6 +2279,40 @@ function calPendAmt() {
 						}
 						$("#inv_table tbody tr").remove();
 						$("#inv_table tbody").append(str_2);
+					}
+				})
+				.fail(function(jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown.toString());
+			});
+  	});
+		//Fetch data according to Exp Date
+		$(document).on('change',"#exp_date",function(event){
+    	event.preventDefault();
+      this.blur();
+			// alert($(this).val());
+	      var parameters = {
+	        exp_date :  $(this).val()
+	      };
+				$.getJSON("<?=base_url()?>BusinessAdmin/GetInventoryData", parameters)
+				.done(function(data, textStatus, jqXHR) {
+					if(data.success == 'true'){
+						var str_2 = "";
+						// alert(data.service.res_arr.length);
+						for(var i=0;i< data.message.length;i++){
+							str_2+="<tr>";
+							str_2 += "<td>" + parseInt(i+1) + "</td>";
+							str_2 += "<td>" + data.message[i].service_name + "</td>";
+							str_2 += "<td>" + data.message[i].inventory_type+"</td>";
+							str_2 += "<td>" + data.message[i].barcode + "</td>";
+							str_2 += "<td>" + data.message[i].qty_per_item + "</td>";	
+							str_2 += "<td>" + data.message[i].total_stock + "</td>";
+							str_2 += "<td>" + data.message[i].stock_in_unit + "</td>";
+							str_2 += "<td>" + data.message[i].updated_on + "</td>";
+							str_2 += "<td>" + data.message[i].business_outlet_name+ "</td>";
+							str_2+="</tr>";
+						}
+						$("#availableStock tbody tr").remove();
+						$("#availableStock tbody").append(str_2);
 					}
 				})
 				.fail(function(jqXHR, textStatus, errorThrown) {

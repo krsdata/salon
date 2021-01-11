@@ -5766,11 +5766,11 @@ public function GetEmployee(){
 					$data['tags']=$data['tags']['res_arr'];
 					// $this->PrettyPrintArray($data['tags']);
 					// exit;
-                    $trigger_detail =$this->BusinessAdminModel->GetTrigger();
-                    $data['trigger_detail'] = [];
-                    if($trigger_detail['success']){
-                        $data['trigger_detail'] = $trigger_detail['res_arr'];
-                    }                    
+                    // $trigger_detail =$this->BusinessAdminModel->GetTrigger();
+                    // $data['trigger_detail'] = [];
+                    // if($trigger_detail['success']){
+                    //     $data['trigger_detail'] = $trigger_detail['res_arr'];
+                    // }                    
                     $outlet = [];
                     foreach ($data['business_outlet_details'] as $key => $ol) {
                         $outlet[] = $ol['business_outlet_id'];
@@ -6466,8 +6466,6 @@ public function SetCommission()
 		$year=$_POST['year'];
 		$month=$_POST['month_name'];
 		$_POST['month_name']=$year.'-'.$month;
-		// $this->PrettyPrintArray($_POST);
-		// exit;
 		
 		if($this->IsLoggedIn('business_admin')){
 			$data = $this->GetDataForAdmin("Employee_details");
@@ -6632,8 +6630,7 @@ public function SetCommission()
 					$this->ReturnJsonArray(true , false,'Commission Inserted Successfully.' );
 					exit;
 				}else{
-					//   $this->PrettyPrintArray($_POST);
-					//   exit;
+					
 					$start_range=$this->input->post('start_range[]');
 					$end_range=$this->input->post('end_range[]');
 					$comm=$this->input->post('comm[]');
@@ -7223,14 +7220,10 @@ public function AttendanceEMP()
 	// Check Salary for employee
 	public function CheckEmployeeSalary(){
 		if($this->IsLoggedIn('business_admin')){
-			// $where=array(
-			// 	'business_outlet_id' => $this->session->userdata['outlets']['current_outlet'],
-			// 	'business_admin_id'=> $this->session->userdata['logged_in']['business_admin_id']
-			// );
 				$data = $this->GetDataForAdmin("Employee_details");
-				$data['business_outlet_details'] = $this->GetBusinessOutlets();
-				$data['business_admin_employees']  = $this->BusinessAdminModel->GetBusinessAdminEmployees();
-				$data['business_admin_employees']=$data['business_admin_employees']['res_arr'];
+				$data['business_outlet_details'] 	= $this->GetBusinessOutlets();
+				$data['business_admin_employees'] = $this->BusinessAdminModel->GetBusinessAdminEmployees();
+				$data['business_admin_employees']	=$data['business_admin_employees']['res_arr'];
 				
 				$data['emp']=$this->BusinessAdminModel->NewCommission($data);	
 				$data['sidebar_collapsed']="true";
@@ -7240,8 +7233,7 @@ public function AttendanceEMP()
 					
 					$data['salary']=$this->BusinessAdminModel->GetSalaryTillDate($data);
 					$data['salary']=$data['salary']['res_arr'];
-					// $this->PrettyPrintArray($data['salary']);
-					// die;
+					// $this->PrettyPrintArray(date('d'));
 					if(date('m')==02 && date('d')==28 || date('d')==29){
 						for($i=0;$i<count($data['salary']);$i++){
 							$data['salary'][$i]['Salary']=$data['salary'][$i]['Salary']*30;
@@ -7254,9 +7246,12 @@ public function AttendanceEMP()
 					}
 					else{
 						for($i=0;$i<count($data['salary']);$i++){
-							$data['salary'][$i]['Salary']=$data['salary'][$i]['Salary']*(date('d')-1);
+							$data['salary'][$i]['Salary']=$data['salary'][$i]['Salary']*$data['salary'][$i]['attendance'];
 						}
 					}
+
+					// $this->PrettyPrintArray($data['salary']);
+					
 					//advance amoutn taken cal and appending into salary aarray 
 					for($i=0;$i<count($data['salary']);$i++){
 						$data['salary'][$i]+=['amt'=>'0'];
@@ -7268,6 +7263,7 @@ public function AttendanceEMP()
 					}
 					$data['advance'] = $this->BusinessAdminModel->AdvanceSalaryDetails($data);
 					$data['advance'] = $data['advance']['res_arr'];
+					
 					foreach($data['salary'] as $key=>$value){
 						foreach($data['advance'] as $k=>$v){
 							if($v['employee_id']==$value['employee_id']){
@@ -7275,17 +7271,19 @@ public function AttendanceEMP()
 							}
 						}
 					}
+					
 					foreach ($data['salary'] as $item=>$value) {
 						# code...
 						$comm=array();
 						array_push($comm,0);
 						$data['comm']=$this->BusinessAdminModel->CommissionDetails($value['employee_id']);
 						$data['comm']=$data['comm']['res_arr'];
-						
+						// $this->PrettyPrintArray($data['comm']);
 						if(isset($data['comm']))
 						{
 							foreach($data['comm'] as $com_key=>$com_value)
 							{
+								
 								$target=$data['comm'][$com_key]['targets'];	
 									$commission=array(
 										'base_value'=>$com_value['base_value'],
@@ -7296,15 +7294,19 @@ public function AttendanceEMP()
 								$target1=$com_value['set_target1'];
 								$target2=$com_value['set_target2'];	
 								
+								
 								$result['sales']=$this->BusinessAdminModel->CommissionBaseValueForSalary($commission);
+								// $this->PrettyPrintArray($result['sales']);
 								if(isset($result['sales']) && $target != 0){
-									// $result['sales']['total']=0;
-
+									
 									$comm_perc=round(($result['sales']/$target)*100);
 								}
 								else{
 									$comm_perc=0;
 								}
+								// echo $target1;
+								// echo $target2;
+								// $this->PrettyPrintArray($comm_perc);
 								//calculate commission
 								if($comm_perc >= $target1 && $comm_perc < $target2){
 									if($com_value['new_base_value'] == 'Calculation on Base Target'){
@@ -7329,12 +7331,22 @@ public function AttendanceEMP()
 							$data['salary'][$item]['comm']=$commission;
 						}
 					}
+					// <!-- $this->PrettyPrintArray($data['salary']); -->
 					//start
 					//end of loop				
 					// get half day for salary
 					$data['halfday']=$this->BusinessAdminModel->GetHalfDayAttendanceLoad($data);
 					$data['halfday']=$data['halfday']['res_arr'];
 					
+					foreach($data['salary'] as $key=>$value){
+						foreach($data['halfday'] as $k=>$v){
+							if($v['employee_id']==$value['employee_id']){
+								$data['salary'][$key]['HalfDay']=($data['salary'][$key]['HalfDay']+$v['Half_Day'])*($data['salary'][$key]['employee_gross_salary']/30)/2;
+							}
+						}
+					}
+					// $this->PrettyPrintArray($data['salary']);
+
 					$data['holidays']=$this->BusinessAdminModel->EmssGetHolidaysLoad($data);
 					$data['holidays']=$data['holidays']['res_arr'][0]['holiday'];
 					$res = array(
@@ -7345,9 +7357,10 @@ public function AttendanceEMP()
 					$data['weekoff']=$this->BusinessAdminModel->GetCalWeekOff($data);
 					$data['weekoff']=$data['weekoff']['res_arr'];
 					// $this->PrettyPrintArray($data['weekoff']);
-					// die;
+					
 					$data['attendance_details']=$this->BusinessAdminModel->GetAttendanceDetails($res);
 					$data['attendance_details']=$data['attendance_details']['res_arr'];
+					// $this->PrettyPrintArray($data['attendance_details']);
 						for($i=0;$i<count($data['weekoff']);$i++){
 								$data['weekoff'][$i]+=['count'=>0];
 								if($data['weekoff'][$i]['weekoff'] == 'null' || $data['weekoff'][$i]['weekoff'] == null || $data['weekoff'][$i]['weekoff'] == '[]'){
@@ -7382,24 +7395,24 @@ public function AttendanceEMP()
 							$data['attendance_details'][$i]['Working-Days']=$data['attendance_details'][$i]['Calender_Days']-$data['attendance_details'][$i]['weekoff'];
 							$data['attendance_details'][$i]['Absent']=$data['attendance_details'][$i]['Absent']-$data['attendance_details'][$i]['weekoff'];
 						}
-						foreach($data['salary'] as $key=>$value){
-							if(isset($data['halfday'])){
-								foreach($data['halfday'] as $k=>$v){
-									if($value['employee_id'] == $v['employee_id']){
-										$data['salary'][$key]['HalfDay']=($data['salary'][$key]['employee_gross_salary'])/30*($v['Half_Day']/2);
-									}
-								}
-							}
-							else{
-								$data['salary'][$key]['HalfDay']=0;	
-							}	
-						}
+						// foreach($data['salary'] as $key=>$value){
+						// 	if(isset($data['halfday'])){
+						// 		foreach($data['halfday'] as $k=>$v){
+						// 			if($value['employee_id'] == $v['employee_id']){
+						// 				$data['salary'][$key]['HalfDay']=($data['salary'][$key]['employee_gross_salary'])/30*($v['Half_Day']/2);
+						// 			}
+						// 		}
+						// 	}
+						// 	else{
+						// 		$data['salary'][$key]['HalfDay']=0;	
+						// 	}	
+						// }
 					
 						foreach($data['salary'] as $key=>$value){
 							if(isset($data['attendance_details'])){
 								foreach($data['attendance_details'] as $k=>$v){
 									if($value['employee_id'] == $v['employee_id']){
-										$data['salary'][$key]['Leaves']=($data['salary'][$key]['employee_gross_salary']/30)*$v['Absent'];
+										$data['salary'][$key]['Leaves']= 30 - $data['salary'][$key]['attendance'];
 									}
 								}
 							}else{
@@ -7416,9 +7429,7 @@ public function AttendanceEMP()
 						foreach($data['salary'] as $key=>$value){
 							(int)$value['Net_Payout']=(int)$value['Net_Payout']+((int)$value['Salary']+(int)$value['comm'])-((int)$value['HalfDay']+$value['Leaves'])+$value['OverTime']-($value['employee_pt']+$value['employee_income_tax']);		
 						}
-					//end 
-					// $this->PrettyPrintArray($data['salary']);
-					// die;
+					
 					$this->load->view('business_admin/ba_emss_cal_salary_view',$data);
 				}
 				else if(isset($_GET) && !empty($_GET))
@@ -11249,18 +11260,22 @@ public function InsertSalary(){
 									);
 									$this->BusinessAdminModel->Insert($data3,'inventory_data');
 									$where=array(
-										'stock_service_id' => $_POST['product_id'][$key],
-										'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet']
+										'stock_service_id' 	=> $_POST['product_id'][$key],
+										'expiry_date'				=> $_POST['product_exp_date'][$key],
+										'stock_outlet_id'		=> $this->session->userdata['outlets']['current_outlet']
 									);
 									$data4=array(
-										'stock_service_id' => $_POST['product_id'][$key],
-										'total_stock'=> $_POST['product_qty'][$key],
-										'stock_in_unit'	=>($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
-										'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
-										'updated_on'	=>date('Y-m-d')
+										'stock_service_id' 	=> $_POST['product_id'][$key],
+										'total_stock'				=> $_POST['product_qty'][$key],
+										'stock_in_unit'			=>($_POST['product_qty'][$key]*$_POST['sku_size'][$key]),
+										'stock_outlet_id'		=> $this->session->userdata['outlets']['current_outlet'],
+										'updated_on'				=>	date('Y-m-d'),
+										'expiry_date' 			=> $_POST['product_exp_date'][$key],
 									);
-									$stock_exist= $this->CashierModel->CheckStockExist($where);
-									if($stock_exist['success']=='true'){
+									$stock_exist_with_same_expiry = $this->CashierModel->CheckStockExistWithSameExpiry($where);
+									// $this->PrettyPrintArray($stock_exist_with_same_expiry);
+									// $stock_exist = $this->CashierModel->CheckStockExist($where);
+									if($stock_exist_with_same_expiry['success']=='true'){
 										$update_stock=$this->CashierModel->UpdateInventoryStock($data4);
 									}else{
 										$insert_stock=$this->CashierModel->Insert($data4,'inventory_stock');
@@ -11345,8 +11360,11 @@ public function InsertSalary(){
 													$data['vendors']=$data['vendors']['res_arr'];
 							}
 
-							$data['stock']=$this->CashierModel->AvailableStock($where);
-							$data['stock']=	$data['stock']['res_arr'];
+							$data['total_stock']=$this->CashierModel->AvailableStock($where);
+							$data['total_stock']=	$data['total_stock']['res_arr'];
+
+							$data['itemwise_stock']=$this->CashierModel->AvailableStockItemWise($where);
+							$data['itemwise_stock']=	$data['itemwise_stock']['res_arr'];
 							// $this->PrettyPrintArray($data['stock']);
 							$data['stock_incoming']=$this->CashierModel->IncomingStock($where);
 							$data['stock_incoming']=	$data['stock_incoming']['res_arr'];
@@ -12820,11 +12838,12 @@ public function daybook(){
 						'product_price'	=> $_POST['product_price'],
 						'product_gst'	=> $_POST['product_gst'],
 						'product_mrp'	=> $_POST['product_mrp'],
-						'expiry_date'	=> date('Y-m-d',strtotime('+ 1 year', strtotime(date('Y-m-d'))))
+						'expiry_date'	=> $_POST['product_expiry_date']
 					);
 					$result=$this->CashierModel->Insert($data2,'inventory_data');
 					$where=array(
 						'stock_service_id' => $_POST['service_id'],
+						'expiry_date'	=> $_POST['product_expiry_date'],
 						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet']
 					);
 					$data3=array(
@@ -12832,11 +12851,13 @@ public function daybook(){
 						'total_stock'	=>$_POST['product_qty'],
 						'stock_in_unit'	=>($_POST['product_qty']*$_POST['sku_size']),
 						'stock_outlet_id'	=> $this->session->userdata['outlets']['current_outlet'],
-						'updated_on'	=>date('Y-m-d')
+						'updated_on'	=>date('Y-m-d'),
+						'expiry_date'	=> $_POST['product_expiry_date']
 					);
 					// $this->PrettyPrintArray($data3);
-
-						$stock_exist= $this->CashierModel->CheckStockExist($where);
+					
+					$stock_exist= $this->CashierModel->CheckStockExistWithSameExpiry($where);
+						// $stock_exist= $this->CashierModel->CheckStockExist($where);
 						// $this->PrettyPrintArray($stock_exist);
 						if($stock_exist['success']=='true'){
 							$update_stock=$this->CashierModel->UpdateInventoryStockForAdmin($data3);
@@ -13057,6 +13078,86 @@ public function daybook(){
 					);
 					// $this->PrettyPrintArray($where);
 						$data=$this->BusinessAdminModel->GetInventoryDetailsBetween($where);						
+						$this->ReturnJsonArray(true,false,$data['res_arr']);
+						die;
+				}else{
+					$this->ReturnJsonArray(false,true,"Wrong Method!");
+					die;
+				}						
+			}
+			else{
+					$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}
+		}
+		public function GetInventoryData(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_GET) && !empty($_GET)){
+					if($_GET['exp_date']=='less_than_three'){
+						$where=array(
+							'from_date'	=> date('Y-m-d'),
+							'to_date'		=> date('Y-m-d', strtotime(date('Y-m-d')."+3 months")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else if($_GET['exp_date']=='three_to_six'){
+						$where=array(
+							'from_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."+3 months")),
+							'to_date'		=> date('Y-m-d', strtotime(date('Y-m-d')."+6 months")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else if($_GET['exp_date']=='more_than_six'){
+						$where=array(
+							'from_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."+6 months")),
+							'to_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."+10 years")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else{
+						$this->ReturnJsonArray(false,true,'Invalid Date');
+						die;
+					}
+					
+					// $this->PrettyPrintArray($where);
+						$data=$this->CashierModel->GetInventoryExpiredBetween($where);						
+						$this->ReturnJsonArray(true,false,$data['res_arr']);
+						die;
+				}else{
+					$this->ReturnJsonArray(false,true,"Wrong Method!");
+					die;
+				}						
+			}
+			else{
+					$this->LogoutUrl(base_url()."BusinessAdmin/");
+			}
+		}
+
+		public function GetInventoryStatus(){
+			if($this->IsLoggedIn('business_admin')){
+				if(isset($_GET) && !empty($_GET)){
+					
+					if($_GET['status']=='regular'){
+						$where=array(
+							'from_date'	=> date('Y-m-d'),
+							'to_date'		=> date('Y-m-d', strtotime(date('Y-m-d')."-3 months")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else if($_GET['status']=='slow'){
+						$where=array(
+							'from_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."-3 months")),
+							'to_date'		=> date('Y-m-d', strtotime(date('Y-m-d')."-6 months")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else if($_GET['status']=='dead'){
+						$where=array(
+							'from_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."-6 months")),
+							'to_date'	=> date('Y-m-d', strtotime(date('Y-m-d')."-10 years")),
+							'business_outlet_id'=> $this->session->userdata['outlets']['current_outlet']
+						);
+					}else{
+						$this->ReturnJsonArray(false,true,'Invalid status');
+						die;
+					}
+					
+					// $this->PrettyPrintArray($where);
+						$data=$this->CashierModel->GetInventoryEntryBetween($where);						
 						$this->ReturnJsonArray(true,false,$data['res_arr']);
 						die;
 				}else{

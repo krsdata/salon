@@ -1,8 +1,8 @@
 <nav class="sidebar <?php if(isset($sidebar_collapsed)){ if($sidebar_collapsed){ echo 'sidebar-collapsed toggled'; }} ?>">
 	<div class="sidebar-content">
 		<a class="sidebar-brand" href="<?=base_url()?>SuperAdmin/Dashboard">
- 		 <img src="<?=base_url()?>public/images/marks_logo.png" width="25px" height="25px" class="img-responsive">
-	   <span class="align-middle">MarkS ReTech</span>
+ 		 <img src="<?=base_url()?>public/images/salonfirst.jpeg" width="200px" height="70px" class="img-responsive">
+	   <!-- <span class="align-middle">MarkS ReTech</span> -->
     </a>
 
 		<ul class="sidebar-nav">

@@ -365,7 +365,7 @@ class CashierModel extends CI_Model {
         if($query->num_rows() === 0){
             return $this->ModelHelper(false,true);
         }
-        else if($query->num_rows() === 1){
+        else if($query->num_rows() > 0){
             return $this->ModelHelper(true,false);
         }   
     }
@@ -415,8 +415,7 @@ class CashierModel extends CI_Model {
         
         $this->db->where('otc_service_id', $data['otc_service_id']); 
         
-        $this->db->update('mss_otc_stock');
-       
+        $this->db->update('mss_otc_stock');       
         if($this->db->affected_rows() === 1){
             return $this->ModelHelper(true,false);    
         }
@@ -875,7 +874,7 @@ class CashierModel extends CI_Model {
                 $temp = array(
                     'otc_service_id' => $service_id,
 					'consumption_quantity' =>(int)$quantity,
-					'stock_in_unit'	=> (int)$quantity * $service_details['qty_per_item']
+					'stock_in_unit'	=> $service_details['qty_per_item']
                 );
                 $this->UpdateStockFromOTC($temp);
             }else{                
@@ -889,7 +888,7 @@ class CashierModel extends CI_Model {
 				$temp1 = array(
                     'otc_service_id' => $service_id,
 					'consumption_quantity' =>(int)$quantity,
-					'stock_in_unit'	=> (int)$quantity * $service_details['qty_per_item']
+					'stock_in_unit'	=> $service_details['qty_per_item']
                 );
                 $this->UpdateStockFromOTC($temp1);
             }
@@ -965,9 +964,39 @@ class CashierModel extends CI_Model {
     }
 
     private function UpdateStockFromOTC($data){
-		$query1="UPDATE  inventory_stock SET total_stock=total_stock - ".$data['consumption_quantity'].",
-		stock_in_unit=stock_in_unit- ".$data['stock_in_unit']." WHERE stock_service_id=".$data['otc_service_id']." ";
-        $this->db->query($query1); 
+        $stock="SELECT inventory_stock.total_stock,
+            inventory_stock.expiry_date
+        FROM inventory_stock WHERE stock_service_id=".$this->db->escape($data['otc_service_id'])." 
+        ORDER BY inventory_stock.expiry_date ASC";
+        
+        $res=$this->db->query($stock);
+        $res=$res->result_array();
+        // $this->PrintArray($res);
+        $qty = $data['consumption_quantity'];
+
+        foreach($res as $res){
+            if($res['total_stock'] < $qty){
+                $query1="UPDATE inventory_stock 
+                SET inventory_stock.total_stock = 0 ,
+                inventory_stock.stock_in_unit = 0
+                WHERE inventory_stock.stock_service_id=".$data['otc_service_id']."
+                AND inventory_stock.expiry_date = '".$res['expiry_date']."' ";           
+                
+                $this->db->query($query1);
+                $qty=$qty - $res['total_stock'];
+                
+            }else{
+                $query2="UPDATE inventory_stock 
+                SET inventory_stock.total_stock=inventory_stock.total_stock - $qty,
+                inventory_stock.stock_in_unit = inventory_stock.stock_in_unit - ($qty * ".$data['stock_in_unit'].")
+                WHERE inventory_stock.stock_service_id=".$data['otc_service_id']."
+                AND inventory_stock.expiry_date = '".$res['expiry_date']."' ";
+                $this->db->query($query2);
+                break;
+            }
+            
+        }
+		 
     }
 
     public function GetAllExpenses($where){
@@ -3416,9 +3445,17 @@ class CashierModel extends CI_Model {
 	}
 
 	public function AvailableStock($data){
-		$sql="Select X.service_id,Y.stock_service_id,X.service_name, X.inventory_type,X.barcode,X.qty_per_item,Y.total_stock, Y.stock_in_unit,Y.updated_on,X.business_outlet_name From 
+		$sql="Select X.service_id,
+			Y.stock_service_id,
+			X.service_name, 
+			X.inventory_type,
+			X.service_unit,
+			X.barcode,X.qty_per_item,
+			Y.total_stock, Y.stock_in_unit,Y.updated_on,Y.expiry_date,X.business_outlet_name From 
 			(
-			SELECT mss_services.*,mss_business_outlets.business_outlet_name FROM mss_services, mss_sub_categories,mss_categories, mss_business_outlets WHERE
+			SELECT mss_services.*,
+			mss_business_outlets.business_outlet_name FROM mss_services,
+			mss_sub_categories,mss_categories, mss_business_outlets WHERE
 			mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
 			mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
 			mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id AND
@@ -3433,7 +3470,45 @@ class CashierModel extends CI_Model {
 			inventory_stock.stock_outlet_id= mss_business_outlets.business_outlet_id AND 
     		mss_business_outlets.business_outlet_id=".$this->db->escape($data['business_outlet_id']).") AS Y
     		ON X.service_id = Y.stock_service_id
-    		GROUP BY X.service_id, Y.stock_service_id,X.service_name ";
+    		GROUP BY X.service_id, Y.stock_service_id,X.service_name,Y.expiry_date";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }   
+        else{
+            return $this->ModelHelper(false,true,"Product not Available in stock.");
+        } 
+	}
+
+	public function AvailableStockItemWise($data){
+		$sql="Select X.service_id,
+			Y.stock_service_id,
+			X.service_name, 
+			X.inventory_type,
+			X.service_unit,
+			X.barcode,X.qty_per_item,
+			SUM(Y.total_stock) AS 'total_stock', SUM(Y.stock_in_unit) AS 'stock_in_unit',Y.updated_on,Y.expiry_date,X.business_outlet_name From 
+			(
+			SELECT mss_services.*,
+			mss_business_outlets.business_outlet_name FROM mss_services,
+			mss_sub_categories,mss_categories, mss_business_outlets WHERE
+			mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
+			mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
+			mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id AND
+			mss_categories.category_business_outlet_id =".$this->db->escape($data['business_outlet_id'])." AND
+			mss_services.inventory_type_id > 0 AND
+			mss_services.service_is_active = 1
+			)
+			AS  X
+			left outer JOIN
+			( 
+			Select inventory_stock.*
+			FROM inventory_stock, mss_business_outlets WHERE
+			inventory_stock.stock_outlet_id= mss_business_outlets.business_outlet_id AND 
+    		mss_business_outlets.business_outlet_id=".$this->db->escape($data['business_outlet_id']).") AS Y
+    		ON X.service_id = Y.stock_service_id
+    		GROUP BY X.service_id";
         $query = $this->db->query($sql);
 
         if($query){
@@ -3560,12 +3635,31 @@ class CashierModel extends CI_Model {
             return $this->ModelHelper(true,false);
         }   
 	}
+	// Check otc exist with same expiry
+	public function CheckStockExistWithSameExpiry($where){
+        $this->db->select('*');
+        $this->db->from('inventory_stock');
+		$this->db->where('stock_service_id',$where['stock_service_id']);
+		$this->db->where('expiry_date',$where['expiry_date']);
+        $this->db->where('stock_outlet_id',$where['stock_outlet_id']);
+        $query = $this->db->get();
+		// $this->PrintArray($query);
+        if($query->num_rows() === 0){
+            return $this->ModelHelper(false,true);
+        }
+        else if($query->num_rows() === 1){
+            return $this->ModelHelper(true,false);
+        }   
+	}
 	public function UpdateInventoryStock($data){
 		$sql="UPDATE inventory_stock 
 		SET inventory_stock.total_stock= (inventory_stock.total_stock +  ".$data['total_stock']."),
 		inventory_stock.stock_in_unit 	= (inventory_stock.stock_in_unit +  ".$data['stock_in_unit']."),
-		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
-		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
+		inventory_stock.updated_on= ".$this->db->escape($data['updated_on']).",
+		inventory_stock.expiry_date= ".$this->db->escape($data['expiry_date'])." 
+		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND 
+		inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." AND
+		inventory_stock.expiry_date=".$this->db->escape($data['expiry_date'])." ";
 		   
 		   $query = $this->db->query($sql);
 		   if($this->db->affected_rows() > 0){
@@ -3583,8 +3677,11 @@ class CashierModel extends CI_Model {
 		$sql="UPDATE inventory_stock 
 		SET inventory_stock.total_stock	= ".$data['total_stock'].",
 		inventory_stock.stock_in_unit 	= ".$data['stock_in_unit'].",
-		inventory_stock.updated_on= ".$this->db->escape($data['updated_on'])." 
-		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." ";
+		inventory_stock.updated_on= ".$this->db->escape($data['updated_on']).",
+		inventory_stock.expiry_date= ".$this->db->escape($data['expiry_date'])." 
+		WHERE inventory_stock.stock_service_id=".$this->db->escape($data['stock_service_id'])." AND 
+		inventory_stock.stock_outlet_id=".$this->db->escape($data['stock_outlet_id'])." AND 
+		inventory_stock.expiry_date=".$this->db->escape($data['expiry_date'])." ";
 		   
 		   $query = $this->db->query($sql);
 		   if($this->db->affected_rows() > 0){
@@ -3908,4 +4005,73 @@ class CashierModel extends CI_Model {
 					}
 				}	
 
+
+	public function GetInventoryExpiredBetween($data){
+		$sql="Select X.service_id,
+			Y.stock_service_id,
+			X.service_name, 
+			X.inventory_type,
+			X.service_unit,
+			X.barcode,X.qty_per_item,
+			Y.total_stock, Y.stock_in_unit,Y.updated_on,Y.expiry_date,X.business_outlet_name From 
+			(
+			SELECT mss_services.*,
+			mss_business_outlets.business_outlet_name FROM mss_services,
+			mss_sub_categories,mss_categories, mss_business_outlets WHERE
+			mss_services.service_sub_category_id= mss_sub_categories.sub_category_id AND
+			mss_sub_categories.sub_category_category_id= mss_categories.category_id AND
+			mss_categories.category_business_outlet_id = mss_business_outlets.business_outlet_id AND
+			mss_categories.category_business_outlet_id =".$this->db->escape($data['business_outlet_id'])." AND
+			mss_services.inventory_type_id > 0 AND
+			mss_services.service_is_active = 1
+			)
+			AS  X
+			left outer JOIN
+			( 
+			Select inventory_stock.* From inventory_stock, mss_business_outlets WHERE
+			inventory_stock.stock_outlet_id= mss_business_outlets.business_outlet_id AND 
+			mss_business_outlets.business_outlet_id=".$this->db->escape($data['business_outlet_id']).") AS Y
+			ON X.service_id = Y.stock_service_id
+			WHERE Y.expiry_date BETWEEN ".$this->db->escape($data['from_date'])." AND ".$this->db->escape($data['to_date'])."
+			GROUP BY X.service_id, Y.stock_service_id,X.service_name,Y.expiry_date";
+		$query = $this->db->query($sql);
+
+		if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+		}   
+		else{
+			return $this->ModelHelper(false,true,"Product not Available in stock.");
+		} 
+	}
+
+	public function GetInventoryEntryBetween($data){
+		$sql="SELECT
+			inventory.inventory_id,
+			inventory.invoice_number,
+			inventory.invoice_date,
+			inventory_data.*,
+			mss_vendors.vendor_name
+		FROM
+			inventory,
+			mss_vendors,
+			inventory_data
+		WHERE
+			inventory.inventory_id = inventory_data.inventory_id AND
+			inventory.source_name = mss_vendors.vendor_id AND
+			inventory.invoice_date BETWEEN ".$this->db->escape($data['to_date'])." AND 
+			".$this->db->escape($data['from_date'])." AND
+			inventory.business_outlet_id= ".$this->db->escape($data['business_outlet_id'])."
+		GROUP BY
+			inventory_data.inventory_data_id ";
+        $query = $this->db->query($sql);
+
+        if($query){
+			return $this->ModelHelper(true,false,'',$query->result_array());            
+        }
+        else{
+            return $this->ModelHelper(false,true,"Product not available in stock.");
+        } 
+	}
+
+			
 }

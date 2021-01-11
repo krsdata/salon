@@ -435,7 +435,7 @@ class MasterAdmin extends CI_Controller {
         }                   
     }
     //Dashboard for the Business Admin
-   public function Dashboard(){
+   public function Dashboard_remove(){
         if($this->IsLoggedIn('master_admin')){
 					$data = $this->GetDataForMasterAdmin("Dashboard");
 					// $data['current_month_sales'] = $this->MasterAdminModel->CurrentMonthSales(1);
@@ -1606,7 +1606,7 @@ class MasterAdmin extends CI_Controller {
 // 			$this->LogoutUrl(base_url()."MasterAdmin");
 // 		}
 // 	}
-	public function GetDailyTrendsByOutlet(){
+	public function GetDailyTrendsByOutlet_remove(){
 		if($this->IsLoggedIn('master_admin')){
 			if(isset($_POST) && !empty($_POST))
 			{
@@ -2274,7 +2274,8 @@ class MasterAdmin extends CI_Controller {
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		}		
 	}
-   public function ReportsManagement(){
+  	
+   public function ReportsManagement_remove(){
 		if($this->IsLoggedIn('master_admin')){
 			
 			$data = $this->GetDataForMasterAdmin("Reports Management");
@@ -2558,4 +2559,6 @@ class MasterAdmin extends CI_Controller {
 			$this->LogoutUrl(base_url()."MasterAdmin");
 		} 
 	}
+	
+	
 }
