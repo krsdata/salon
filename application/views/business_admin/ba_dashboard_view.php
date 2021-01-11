@@ -312,7 +312,7 @@
 										<div class="col-md-12">
 											<div class="d-flex align-items-center mb-0 font-weight-light">
 												<table style="width:100%;">													
-												<tr><td>Generatd : </td><td><?=$monthly_due_amount?></td></tr>
+												<tr><td>Generated : </td><td><?=$monthly_due_amount?></td></tr>
 												<tr><td>Received : </td><td><?=$monthly_pending_amount_received?></td></tr>
 											</table>
 											</div>

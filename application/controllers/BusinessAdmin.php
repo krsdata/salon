@@ -7331,7 +7331,7 @@ public function AttendanceEMP()
 							$data['salary'][$item]['comm']=$commission;
 						}
 					}
-					// $this->PrettyPrintArray($data['salary']);
+					// <!-- $this->PrettyPrintArray($data['salary']); -->
 					//start
 					//end of loop				
 					// get half day for salary
