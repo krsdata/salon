@@ -1816,6 +1816,55 @@ class CashierModel extends CI_Model {
             return $this->ModelHelper(false,true,"DB error!");   
         }
 	}
+
+	public function CustomerPackages($data){
+		$sql = "SELECT DISTINCT
+		mss_salon_packages.salon_package_name,
+        mss_package_transactions.package_txn_value,
+        mss_package_transactions.package_txn_unique_serial_id,
+        mss_package_transaction_settlements.payment_mode,
+        mss_customers.customer_name,
+        mss_customers.customer_mobile,
+        mss_customer_packages.salon_package_type,
+        mss_customer_packages.package_expiry_date,
+        date(mss_customer_packages.datetime_of_purchase) AS 'date',
+        mss_employees.employee_first_name,
+		mss_salon_packages.salon_package_upfront_amt
+		FROM 
+		mss_salon_packages,
+        mss_salon_package_data,
+        mss_package_transactions,
+        mss_transaction_package_details,
+        mss_package_transaction_settlements,
+        mss_customer_packages,
+        mss_customers,
+        mss_employees
+		WHERE 	
+		mss_salon_packages.is_active=1 AND 
+			mss_salon_packages.salon_package_id=mss_salon_package_data.salon_package_id	AND 
+            mss_transaction_package_details.package_txn_id = mss_package_transactions.package_txn_id AND
+            mss_transaction_package_details.salon_package_id = mss_salon_packages.salon_package_id AND
+            mss_package_transaction_settlements.package_txn_id = mss_package_transactions.package_txn_id AND
+            mss_package_transactions.package_txn_customer_id = mss_customers.customer_id AND
+            mss_package_transactions.package_txn_expert = mss_employees.employee_id AND
+            mss_customer_packages.customer_id = mss_package_transactions.package_txn_customer_id AND
+			mss_salon_packages.business_admin_id=".$this->db->escape($data['business_admin_id'])." AND
+			mss_salon_packages.business_outlet_id=".$this->db->escape($data['business_outlet_id'])." AND
+            mss_customer_packages.package_expiry_date > CURRENT_DATE
+		GROUP BY
+			mss_customers.customer_id, mss_salon_packages.salon_package_id
+		ORDER BY mss_customers.customer_id ";
+
+        $query = $this->db->query($sql);
+        
+        if($query){
+            return $this->ModelHelper(true,false,'',$query->result_array());
+        }
+        else{
+            return $this->ModelHelper(false,true,"DB error!");   
+        }
+	}
+
 	//Package Redemption
 	public function GetPackageRedemptionDetails($where){
 		$sql = "SELECT 
