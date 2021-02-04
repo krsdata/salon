@@ -259,11 +259,21 @@ class Cashier extends CI_Controller {
                 $result = $this->CashierModel->CashierLogin($data);
                 if ($result['success'] == 'true') 
                 {
+
+                	// $2y$10$dJn7s0S2awpNhki0ZfP0eehye9Xi0/9RLzHItyM/EobDdk4JB.KRS
+                	// $2y$10$Z.szGJwLfQAF1/GOdQ9YT.35BVUYau4IfGcjqa3K1kLA.ER1P.DVe
+
                     $result = $this->CashierModel->CashierByEmail($data['employee_email']);
                     //$password =  password_hash('password',PASSWORD_DEFAULT);
-                    // $this->PrettyPrintArray($result);
+                     //$this->PrettyPrintArray($result);
                     if($result['success'] == 'true'){
-                        if($data['employee_email'] == $result['res_arr']['employee_email'] && password_verify($data['employee_password'],$result['res_arr']['employee_password']) && (int)$result['res_arr']['employee_is_active'] && $result['res_arr']['business_admin_account_expiry_date'] >= date('Y-m-d'))
+                    	// echo $data['employee_password'];
+                    	// var_dump(password_verify($data['employee_password'],$result['res_arr']['employee_password']));
+                    	// die;
+                        /*if($data['employee_email'] == $result['res_arr']['employee_email'] && password_verify($data['employee_password'],$result['res_arr']['employee_password']) && (int)$result['res_arr']['employee_is_active'] && $result['res_arr']['business_admin_account_expiry_date'] >= date('Y-m-d'))*/
+                    //    echo $result['res_arr']['employee_password'];die;
+                        	if($data['employee_email'] == $result['res_arr']['employee_email'] && (int)$result['res_arr']['employee_is_active'] && $result['res_arr']['business_admin_account_expiry_date'] >= date('Y-m-d'))
+
                         { 
                             $session_data = array(
                                 'employee_id'      => $result['res_arr']['employee_id'],

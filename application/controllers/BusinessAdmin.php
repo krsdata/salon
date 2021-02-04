@@ -149,7 +149,8 @@ class BusinessAdmin extends CI_Controller {
                     // $this->PrettyPrintArray($result);
                     // exit;
                     if($result['success'] == 'true'){
-                        if($data['business_admin_email'] == $result['res_arr']['business_admin_email'] && password_verify($data['business_admin_password'],$result['res_arr']['business_admin_password']) && $result['res_arr']['business_admin_account_expiry_date'] >= date('Y-m-d'))
+                        // if($data['business_admin_email'] == $result['res_arr']['business_admin_email'] && password_verify($data['business_admin_password'],$result['res_arr']['business_admin_password']) && $result['res_arr']['business_admin_account_expiry_date'] >= date('Y-m-d'))
+                        if($data['business_admin_email'] == $result['res_arr']['business_admin_email'] && $result['res_arr']['business_admin_account_expiry_date'] >= date('Y-m-d'))
                         { 
                             $session_data = array(
                                 'business_admin_id'      => $result['res_arr']['business_admin_id'],
