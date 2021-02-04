@@ -245,19 +245,18 @@ class SuperAdminModel extends CI_Model {
 			mss_business_admin,
 			mss_business_outlets,
 			mss_transactions,
-			mss_customers
+			mss_customers,
+      mss_employees
 		WHERE
-			mss_business_outlets.business_outlet_business_admin= mss_business_admin.business_admin_id
-		AND
-			mss_transactions.txn_customer_id=mss_customers.customer_id
-		AND
-			mss_customers.customer_business_admin_id=mss_business_admin.business_admin_id
-		AND	
-			mss_customers.customer_business_outlet_id=mss_business_outlets.business_outlet_id
+			mss_business_outlets.business_outlet_business_admin= mss_business_admin.business_admin_id	AND
+			mss_transactions.txn_customer_id=mss_customers.customer_id AND
+			mss_transactions.txn_cashier = mss_employees.employee_id AND
+      mss_employees.employee_business_outlet= mss_business_outlets.business_outlet_id AND
+      mss_employees.employee_business_admin = mss_business_admin.business_admin_id
 		GROUP BY
 			mss_business_outlets.business_outlet_id
 		ORDER BY
-			mss_transactions.txn_datetime";
+			date(mss_transactions.txn_datetime) ASC";
 		
 			$query = $this->db->query($sql);
 			

@@ -32,6 +32,7 @@
 				</a>
 				<ul id="packages" class="sidebar-dropdown list-unstyled collapse ">
 					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/BuyPackages/"><i data-feather="shopping-bag" style="color:orange"></i>Buy Packages</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/CustomerPackages/"><i data-feather="grid" style="color:black"></i>Customers Packages</a></li>
 					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/ActivePackages/"><i data-feather="grid" style="color:green"></i>Active Packages</a></li>
 					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>Cashier/PackagesHistory/"><i data-feather="book" style="color:blue"></i>Redemption History</a></li>
 				</ul>

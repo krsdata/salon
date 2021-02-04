@@ -12059,6 +12059,49 @@ public function InsertSalary(){
 			$this->LogoutUrl(base_url()."BusinessAdmin/Login");
 		}	
 	}
+	// ReprintPacakagebill
+	public function RePrintPackageBill(){
+		$this->load->helper('pdfhelper');//loading pdf helper
+		if($this->IsLoggedIn('business_admin')){	
+			$txn_id = $this->uri->segment(3);
+			$outlet_admin_id = $this->session->userdata['outlets']['current_outlet'];
+
+			$data['title'] = "Invoice";
+			$data['shop_details'] = $this->ShopDetails();
+			// $data['individual_customer'] = $this->GetCustomerBilling($customer_id);
+			// if(isset($this->session->userdata['package_cart'])){
+			// 		$data['package_cart'] = $this->session->userdata['package_cart'];
+			// }
+			// if(isset($this->session->userdata['package_payment'])){
+			// 		$data['package_payment'] = $this->session->userdata['package_payment'][$customer_id];
+			// }
+
+
+			$data['package_cart']=$this->BusinessAdminModel->GetPackageTransactionDetailByTxnId($txn_id);			
+			$data['package_cart']=$data['package_cart']['res_arr'][0];
+			$data['bill_no'] = $data['package_cart']['package_txn_unique_serial_id'];
+			// echo "<pre>";
+			// print_r($data);
+			// die;
+			$data['shop_details'] = $this->ShopDetails();
+			$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = $outlet_admin_id";	
+
+			$query = $this->db->query($sql);
+
+			$result = $query->result_array();
+			if(empty($result)){
+				$sql ="SELECT config_value from mss_config where config_key='salon_logo' and outlet_admin_id = 1";
+
+				$query = $this->db->query($sql);
+				$result = $query->result_array();
+			}
+			$data['logo'] = $result[0]['config_value'];						
+			$this->load->view('business_admin/ba_package_print_bill',$data);			
+		}else{
+			$this->LogoutUrl(base_url()."BusinessAdmin/Login");
+		}	
+	}
+
 
 	private function ShopDetails(){
 		if($this->IsLoggedIn('business_admin')){
