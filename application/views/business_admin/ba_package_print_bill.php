@@ -58,7 +58,7 @@ class MYPDF extends TCPDF {
 				// set color for text
 					$pdf->SetTextColor(0, 63, 127);
 					$shop=$shop_details['business_outlet_address'];
-					$cust=$individual_customer['customer_name'].' '.date('d-M-Y h:i A');
+					$cust=$individual_customer['customer_name'].' '.$package_cart['datetime'];
 					$pdf->MultiCell(45,	0,$shop, 0, 'L', 0, 0, '', '', true, 0, false, true, 0, 'T');
 					
 					$pdf->Ln(6);
