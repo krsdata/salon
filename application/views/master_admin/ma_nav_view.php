@@ -1,6 +1,6 @@
 <nav class="sidebar <?php if(isset($sidebar_collapsed)){ if($sidebar_collapsed){ echo 'sidebar-collapsed toggled'; }} ?>">
 	<div class="sidebar-content">
-		<a class="sidebar-brand" href="<?=base_url()?>MasterAdmin/Dashboard">
+		<a class="sidebar-brand" href="<?=base_url()?>MasterReport/Dashboard">
  		 <img src="<?=base_url()?>public/images/salonfirst.jpeg" width="200px" height="70px" class="img-responsive">
 	   <!-- <span class="align-middle">MarkS ReTech</span> -->
     </a>
@@ -14,7 +14,7 @@
 		      <i class="align-middle" data-feather="grid" style="color:#0070c0;"></i> <span class="align-middle">Dashboard</span>
 		    </a>
 				<ul id="dashboards" class="sidebar-dropdown list-unstyled collapse show">
-					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/Dashboard"><i data-feather="grid" style="color:#0070c0;"></i>Dashboard</a></li>
+					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterReport/Dashboard"><i data-feather="grid" style="color:#0070c0;"></i>Dashboard</a></li>
 					<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/Permissions"><i data-feather="user-x" style="color:#0070c0;"></i>Users & Permissions</a></li>
 					<!--<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/MenuManagement"><i data-feather="list" style="color:#0070c0;"></i>Menu Management</a></li>-->
 					<!--<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/Inventory"><i data-feather="book" style="color:#0070c0;"></i>Inventory & Stock</a></li>-->
@@ -30,7 +30,7 @@
 				    </ul>
 				</ul>
 			</li>
-			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/ReportsManagement"><i data-feather="book" style="color:#009925;"></i>Reports</a></li>
+			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterReport/ReportsManagement"><i data-feather="book" style="color:#009925;"></i>Reports</a></li>
 			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/Inventory"><i data-feather="book" style="color:#009925;"></i>Inventory</a></li>
 			<li class="sidebar-item"><a class="sidebar-link" href="<?=base_url()?>MasterAdmin/BillSettings"><i data-feather="grid" style="color:#3369e8;"></i>Bill Settings</a></li>
 			<!--  -->

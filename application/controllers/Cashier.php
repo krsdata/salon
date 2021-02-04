@@ -3923,7 +3923,42 @@ class Cashier extends CI_Controller {
 			$this->LogoutUrl(base_url()."Cashier/");
 		}	
 	}
+	//Customers Packages
+	public function CustomerPackages (){
+		if($this->IsLoggedIn('cashier')){	
+			//Unset any session so that no one interfere in billing logic
+			if(isset($this->session->userdata['Package_Customer'])){
+				$this->session->unset_userdata('Package_Customer');
+			}
 
+			if(isset($this->session->userdata['package_cart'])){
+			 $this->session->unset_userdata('package_cart');
+		 }
+
+		 if(isset($this->session->userdata['payment'])){
+				$this->session->unset_userdata('payment');
+			}
+
+			if(isset($this->session->userdata['package_payment'])){
+				$this->session->unset_userdata('package_payment');
+			}
+		 //
+		 $where = array(
+			'business_admin_id'  => $this->session->userdata['logged_in']['business_admin_id'],
+			'business_outlet_id' => $this->session->userdata['logged_in']['business_outlet_id'],
+			'is_active' => TRUE
+		);
+			$data = $this->GetDataForCashier("Customer Package");	
+			$data['customerPackages']=$this->CashierModel->CustomerPackages($where);
+			$data['customerPackages']=$data['customerPackages']['res_arr'];
+		
+			$data['sidebar_collapsed'] = "true";
+      $this->load->view('cashier/cashier_customer_package_view', $data);
+		}
+		else{
+			$this->LogoutUrl(base_url()."Cashier/Login");
+		}	
+	}
 	//Package History
 	public function PackagesHistory (){
 		if($this->IsLoggedIn('cashier')){		

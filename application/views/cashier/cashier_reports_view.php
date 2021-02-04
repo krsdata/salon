@@ -1339,13 +1339,12 @@
 				.done(function(data, textStatus, jqXHR) {
 					if(data.success == 'true'){
 						var str_2 = "";
-						// alert(data.service.res_arr.length);
 						for(var i=0;i< data.message.length;i++){
 							str_2+="<tr>";
-							str_2 += "<td>" + parseInt(i+1) + "</td>";
 							str_2 += "<td>" + data.message[i].txn_id + "</td>";
 							str_2 += "<td>" + data.message[i].billing_date + "</td>";
 							str_2 += "<td>" + data.message[i].mobile + "</td>";
+							str_2 += "<td>" + data.message[i].name + "</td>";
 							str_2 += "<td>" + data.message[i].Type + "</td>";	
 							str_2 += "<td>" + (new Intl.NumberFormat().format(data.message[i].mrp_amt)) + "</td>";
 							str_2 += "<td>" + data.message[i].discount + "</td>";
